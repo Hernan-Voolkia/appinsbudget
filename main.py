@@ -201,15 +201,15 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
             flLatValorReponeEspejo = np.round(lsLatMeanEsp[0],2)
             if len(lsLateralEspejoElems) >1: flLatValorReponeEspejo*=2
 
-        print("_Lateral Valores Promedio_______________")
-        print(f"Repara y Pintura = {flLatValorReparaAve}")
-        print(f"Repone Elem      = {flLatValorReponeElem}")
-        print(f"Repone Pint      = {flLatValorReponePint}")
-        print(f"Repone MO        = {flLatValorReponeMoAv}")
-        print(f"Repone Espejo    = {flLatValorReponeEspejo}")
-        print(f"Repone Moldura   = {flLatValorReponeMoldura}")
+        #print("_Lateral Valores Promedio_______________")
+        #print(f"Repara y Pintura = {flLatValorReparaAve}")
+        #print(f"Repone Elem      = {flLatValorReponeElem}")
+        #print(f"Repone Pint      = {flLatValorReponePint}")
+        #print(f"Repone MO        = {flLatValorReponeMoAv}")
+        #print(f"Repone Espejo    = {flLatValorReponeEspejo}")
+        #print(f"Repone Moldura   = {flLatValorReponeMoldura}")
         flLateral=np.round(flLatValorReparaAve+flLatValorReponeElem+flLatValorReponePint+flLatValorReponeMoAv+flLatValorReponeEspejo+flLatValorReponeMoldura,2)
-        print(f"Total            = {flLateral}")
+        #print(f"Total            = {flLateral}")
      
     if '1' in lsTrasero:
         lsTraseroCambiaElems,lsTraseroReparaElems,lsTraseroMolduraElems = fnGetTraseroElems(CLASE,MARCA,MODELO,lsTrasero)
@@ -265,14 +265,14 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
             if len(lsTraMeanMold) == 0: lsTraMeanMold.append(0)
             flTraValorReponeMoldura  = np.round(lsTraMeanMold[-1],2)
 
-        print("_Trasero Valores Promedio_______________")
-        print(f"Repara y Pintura = {flTraValorReparaAve}")
-        print(f"Repone Elem    = {flTraValorReponeElem}")
-        print(f"Repone Pint    = {flTraValorReponePint}")
-        print(f"Repone MO      = {flTraValorReponeMoAv}")
-        print(f"Repone Moldura = {flTraValorReponeMoldura}")
+        #print("_Trasero Valores Promedio_______________")
+        #print(f"Repara y Pintura = {flTraValorReparaAve}")
+        #print(f"Repone Elem    = {flTraValorReponeElem}")
+        #print(f"Repone Pint    = {flTraValorReponePint}")
+        #print(f"Repone MO      = {flTraValorReponeMoAv}")
+        #print(f"Repone Moldura = {flTraValorReponeMoldura}")
         flTrasero=np.round(flTraValorReparaAve+flTraValorReponeElem+flTraValorReponePint+flTraValorReponeMoAv+flTraValorReponeMoldura,2)
-        print(f"Total          = {flTrasero}")
+        #print(f"Total          = {flTrasero}")
 
     bfTmp = resumeDataBrief(CLIENTE,flLateral,flTrasero)
 
