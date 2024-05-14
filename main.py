@@ -772,7 +772,8 @@ def resumeDataBrief(intCLIENTE,fltLAteral,fltTrasero):
     if intCLIENTE == 1: ftSum *= param.bfAsegurado
     elif intCLIENTE == 2: ftSum *= param.bfTercero
            
-    txtValorTotal = "<span id=\"CostBrief\" class=\"pure-form-message-inline\" style=\"text-align:right;font-family:'helvetica neue';font-size:100%;color:rgb(170,27,23);\">Costo sugerido&nbsp$&nbsp{0:0.2f}".format(ftSum)+"</span>"
+    #txtValorTotal = "<span id=\"CostBrief\" class=\"pure-form-message-inline\" style=\"text-align:right;font-family:'helvetica neue';font-size:100%;color:rgb(170,27,23);\">Costo sugerido&nbsp$&nbsp{0:0.2f}".format(ftSum)+"</span>"
+    txtValorTotal = "<span id=\"CostBrief\" class=\"pure-form-message-inline\" style=\"text-align:left;font-family:'helvetica neue';font-size:100%;color:rgb(170,27,23);\">Costo sugerido&nbsp$&nbsp{0:0.2f}".format(ftSum)+"</span>"
 
     return txtValorTotal
 
