@@ -11,10 +11,6 @@ bfHTML = """
         body {background-color:rgb(255,255,255);}
         label {text-align:right;font-family:'helvetica neue';font-size: 100%;}
     </style>
-    </style>
-    </style>
-    </style>
-    </style>
 </head>
 <body>
     <div class="pure-g" style="text-align:center;"><div class="pure-u-*">&nbsp;</div></div> 
@@ -38,53 +34,48 @@ bfHTML = """
     </div>
      -->
     <div id = "divContent" class="pure-g" style="text-align:center;"><div class="pure-u-*">&nbsp;</div></div>
-    <div class="pure-g" style="justify-content: center;">
-        <div class="pure-u-1 pure-u-md-1-5">
-            <img src="./img/Pos_color_RGB.jpg" alt="logo" width="128" height="128"/>
+    <div class="pure-g" style="padding-left:5px;">
+        <div class="pure-u-1 pure-u-md-7-24"> <!--<div class="pure-u-1 pure-u-md-1-5">-->
+            <img src="./img/Pos_color_RGB.jpg" alt="logo" width="128" height="128"
+             style="margin-left:auto;margin-right:auto;display:block;"/>
         </div> 
-        <div class="pure-u-1 pure-u-md-3-5">
+        <div class="pure-u-1 pure-u-md-7-24"> <!--<div class="pure-u-1 pure-u-md-3-5">-->
             <form class="pure-form pure-form-aligned">
                 <fieldset>
-                    <div class="pure-control-group" style="min-width:250px;">
-                        <label for="aligned-name" style="color:#005993;">Cliente</label>
-                        <select id="stacked-cliente" style="min-width:250px;">
+                    <div class="pure-control-group">
+                        <label for="aligned-name" style="color:#005993;text-align:left;">Cliente</label>
+                        <select id="stacked-cliente" style="min-width:343px;">
                             <option id=0></option>
                             <option id=1>ASEGURADO</option>
                             <option id=2 selected>TERCERO</option>
                         </select>
                     </div>
                     <div class="pure-control-group">
-                        <label for="aligned-name" style="color:#005993;">Clase</label>
-                        <select id="stacked-clase" style="min-width:250px;" onchange="fnGetClase()">
+                        <label for="aligned-name" style="color:#005993;text-align:left;">Clase</label>
+                        <select id="stacked-clase" style="min-width:343px;" onchange="fnGetClase()">
                             <option id=0></option>
                             <option id=901>SEDAN</option>
                             <option id=907>SUV</option>
                         </select>
                     </div>
                     <div class="pure-control-group">
-                        <label for="aligned-name" style="color:#005993;">Marca</label>
-                        <select id="stacked-marca" style="min-width:250px;max-width:255px;" onchange="fnGetModelo()">
+                        <label for="aligned-name" style="color:#005993;text-align:left;">Marca</label>
+                        <select id="stacked-marca" style="min-width:343px;max-width:255px;" onchange="fnGetModelo()">
                             <option id=0></option>
                         </select>
                     </div>
                     <div class="pure-control-group">
-                        <label for="aligned-name" style="color:#005993;">Modelo</label>
-                        <select id="stacked-modelo" style="min-width:250px;">
+                        <label for="aligned-name" style="color:#005993;text-align:left;">Modelo</label>
+                        <select id="stacked-modelo" style="min-width:343px;">
                             <option id=0></option>
                         </select>
                     </div>
-                    <div class="pure-control-group"  style="color:#005993;">
-                        <label for="aligned-name">Siniestro</label>
-                        <input type="email" id="stacked-siniestro" placeholder="" style="min-width:250px;" onblur="checkLength(this)"/>
+                    <div class="pure-control-group">
+                        <label for="aligned-name" style="color:#005993;text-align:left;">Siniestro</label>
+                        <input type="email" id="stacked-siniestro" placeholder="" style="min-width:343px;" onblur="checkLength(this)"/>
                     </div>
                </fieldset>
             </form>
-        </div> 
-    </div>     
-    <div class="pure-g">
-        <div class="pure-u-3-8">
-        </div> 
-        <div class="pure-u-3-8">
             <table class="pure-table pure-table-striped">
                 <thead>
                     <tr>
@@ -166,15 +157,6 @@ bfHTML = """
                     </tr>
                 </tbody>
             </table>
-        </div>                        
-        <div class="pure-u-3-8">
-        </div>
-    </div>  
-    <br style="display: block;content:'';margin-top:5;">
-    <div class="pure-g">
-        <div class="pure-u-3-8">
-        </div> 
-        <div class="pure-u-3-8">
             <table class="pure-table pure-table-striped">
                 <thead>
                     <tr>
@@ -207,75 +189,57 @@ bfHTML = """
                     </tr>
                     <tr>
                         <td style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Guardabarro</td>
-                            <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_GUARDABARRO" onclick="unCheckOps('TRA_CAM_DER_GUARDABARRO','TRA_REP_DER_GUARDABARRO')"/></td>
-                            <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_DER_GUARDABARRO" onclick="unCheckOps('TRA_REP_DER_GUARDABARRO','TRA_CAM_DER_GUARDABARRO')"/></td>
-                            <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_IZQ_GUARDABARRO" onclick="unCheckOps('TRA_CAM_IZQ_GUARDABARRO','TRA_REP_IZQ_GUARDABARRO')"/></td>
-                            <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_IZQ_GUARDABARRO" onclick="unCheckOps('TRA_REP_IZQ_GUARDABARRO','TRA_CAM_IZQ_GUARDABARRO')"/></td>
-                        </tr>
-                        <tr>
-                            <td style="padding-left:5px;padding-right:5px;padding-bottom:3px;padding-top:3px;background-color:#FFFFFF;color:#000000;">Luneta</td>
-                            <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_LUNETA"/></td>
-                            <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                            <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                            <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        </tr>
-                        <tr>
-                            <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Moldura</td>
-                            <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_MOLDURA"/></td>
-                            <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                            <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                            <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        </tr>
-                        <tr>
-                            <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Panel Cola</td>
-                            <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_PANELCOLA" onclick="unCheckOps('TRA_CAM_DER_PANELCOLA','TRA_REP_DER_PANELCOLA')"/></td>
-                            <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_DER_PANELCOLA" onclick="unCheckOps('TRA_REP_DER_PANELCOLA','TRA_CAM_DER_PANELCOLA')"/></td>
-                            <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                            <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        </tr>
-                        <tr>
-                            <td style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Paragolpe</td>
-                            <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_PARAGOLPE" onclick="unCheckOps('TRA_CAM_DER_PARAGOLPE','TRA_REP_DER_PARAGOLPE')"/></td>
-                            <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_DER_PARAGOLPE" onclick="unCheckOps('TRA_REP_DER_PARAGOLPE','TRA_CAM_DER_PARAGOLPE')"/></td>
-                            <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                            <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        </tr>
-                    </tbody>
-                </table>
-        </div>
-        <div class="pure-u-3-8">
-        </div>
-    </div>       
-   <div class="pure-g">
-        <div class="pure-u-3-8">
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_GUARDABARRO" onclick="unCheckOps('TRA_CAM_DER_GUARDABARRO','TRA_REP_DER_GUARDABARRO')"/></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_DER_GUARDABARRO" onclick="unCheckOps('TRA_REP_DER_GUARDABARRO','TRA_CAM_DER_GUARDABARRO')"/></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_IZQ_GUARDABARRO" onclick="unCheckOps('TRA_CAM_IZQ_GUARDABARRO','TRA_REP_IZQ_GUARDABARRO')"/></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_IZQ_GUARDABARRO" onclick="unCheckOps('TRA_REP_IZQ_GUARDABARRO','TRA_CAM_IZQ_GUARDABARRO')"/></td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left:5px;padding-right:5px;padding-bottom:3px;padding-top:3px;background-color:#FFFFFF;color:#000000;">Luneta</td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_LUNETA"/></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                    <tr>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Moldura</td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_MOLDURA"/></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                    <tr>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Panel Cola</td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_PANELCOLA" onclick="unCheckOps('TRA_CAM_DER_PANELCOLA','TRA_REP_DER_PANELCOLA')"/></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_DER_PANELCOLA" onclick="unCheckOps('TRA_REP_DER_PANELCOLA','TRA_CAM_DER_PANELCOLA')"/></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Paragolpe</td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_PARAGOLPE" onclick="unCheckOps('TRA_CAM_DER_PARAGOLPE','TRA_REP_DER_PARAGOLPE')"/></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_DER_PARAGOLPE" onclick="unCheckOps('TRA_REP_DER_PARAGOLPE','TRA_CAM_DER_PARAGOLPE')"/></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <br style="display: block;content:'';margin-top:5;">
+            <span id="CostBrief" class="pure-form-message-inline" style="padding-left:3px;text-align:left;font-family:'helvetica neue';font-size:100%;color:rgb(170,27,23);">&nbsp;&nbsp;</span>
         </div> 
-        <div class="pure-u-3-8">
-            <span id="CostBrief" class="pure-form-message-inline" style=\"text-align:right; font-family:'helvetica neue';font-size:100%;\">&nbsp;&nbsp;</span>
-        </div>
-        <div class="pure-u-3-8">
-        </div>
-    </div>       
-    <div class="pure-g" style="justify-content: center;">
-        <div class="pure-u-1 pure-u-md-2-5">
-            &nbsp;
-        </div> 
-        <div class="pure-u-1 pure-u-md-3-5">
+    </div>     
+    <div class="pure-g" style="padding-left:5px;">
+        <div class="pure-u-1 pure-u-md-7-24"></div> 
+        <div class="pure-u-1 pure-u-md-7-24">
             <div class="pure-controls"><input type="hidden" id="HiddenData" value="">&nbsp;</div>
-            <div class="pure-controls" style="justify-content: center;">
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   
+            <div class="pure-controls" style="padding-left:3px;">
                 <button style="background-color:#005993;color:#ffffff;" class="pure-button pure-button-primary" onclick="fnGetData()">Consultar</button>
                 <button style="background-color:#005993;color:#ffffff;" class="pure-button pure-button-primary"  onclick="fnClean()">&nbsp;&nbsp;Limpiar&nbsp;&nbsp;</button>
             </div>
         </div>
-    </div>     
-    <div class="pure-g" style="justify-content: center;">
-        <div class="pure-u-1 pure-u-md-2-5">
-            &nbsp;
-        </div> 
-        <div class="pure-u-1 pure-u-md-3-5">
-            &nbsp;
-        </div>
-    </div>     
+        <div class="pure-u-1 pure-u-md-7-24"></div>
+    </div> 
+    <br style="display: block;content:'';margin-top:5;">    
    </body>
    <script>
     function fnClean(){
@@ -378,7 +342,7 @@ bfHTML = """
             e.checked = false;    
 
         var e = document.getElementById("CostBrief");
-            e.innerHTML = '&nbsp;&nbsp;';
+            e.innerHTML = '&nbsp;';
     }
     function fnGetData(){
         var e = document.getElementById("stacked-cliente");
