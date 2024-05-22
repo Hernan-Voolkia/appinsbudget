@@ -143,6 +143,8 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     if '1' in lsLateral:
         lsLateralCambiaElems,lsLateralReparaElems,lsLateralMolduraElems,lsLateralEspejoElems=fnGetLateralElems(lsLateral)
         
+        print(lsLateralMolduraElems)
+        
         if len(lsLateralReparaElems)>0:
             
             lsLatReparaAve,lsLatReparaMin,lsLatReparaMax = fnReparaLateral(iSEG,iCLASE,lsLateralReparaElems)
@@ -192,7 +194,9 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
 
         if len(lsLateralMolduraElems)>0:
             flLatValorReponeMoldura = fnMolduraLateral(iMARCA,iMODELO)
-            if len(lsLateralEspejoElems)>1: flLatValorReponeMoldura*=2
+            if   len(lsLateralMolduraElems)== 2: flLatValorReponeMoldura*=1.9 # Valor aprox por delantera y traserta
+            elif len(lsLateralMolduraElems)== 3: flLatValorReponeMoldura*=2.7 # Se proratea el valor
+            elif len(lsLateralMolduraElems)== 4: flLatValorReponeMoldura*=3.5 # Se proratea el valor
         
         if len(lsLateralEspejoElems)>0:
             lsLatMeanEsp = fnEspejoLateral(iMARCA,iMODELO)
@@ -201,16 +205,17 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
             flLatValorReponeEspejo = np.round(lsLatMeanEsp[0],2)
             if len(lsLateralEspejoElems) >1: flLatValorReponeEspejo*=2
 
-        #print("_Lateral Valores Promedio_______________")
-        #print(f"Repara y Pintura = {flLatValorReparaAve}")
-        #print(f"Repone Elem      = {flLatValorReponeElem}")
-        #print(f"Repone Pint      = {flLatValorReponePint}")
-        #print(f"Repone MO        = {flLatValorReponeMoAv}")
-        #print(f"Repone Espejo    = {flLatValorReponeEspejo}")
-        #print(f"Repone Moldura   = {flLatValorReponeMoldura}")
         flLateral=np.round(flLatValorReparaAve+flLatValorReponeElem+flLatValorReponePint+flLatValorReponeMoAv+flLatValorReponeEspejo+flLatValorReponeMoldura,2)
-        #print(f"Total            = {flLateral}")
-     
+    
+        print("_Lateral Valores Promedio_______________")
+        print(f"Repara y Pintura = {flLatValorReparaAve}")
+        print(f"Repone Elem      = {flLatValorReponeElem}")
+        print(f"Repone Pint      = {flLatValorReponePint}")
+        print(f"Repone MO        = {flLatValorReponeMoAv}")
+        print(f"Repone Espejo    = {flLatValorReponeEspejo}")
+        print(f"Repone Moldura   = {flLatValorReponeMoldura}")
+        print(f"Total            = {flLateral}")
+    
     if '1' in lsTrasero:
         lsTraseroCambiaElems,lsTraseroReparaElems,lsTraseroMolduraElems = fnGetTraseroElems(CLASE,MARCA,MODELO,lsTrasero)
         
@@ -264,16 +269,17 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
 
             if len(lsTraMeanMold) == 0: lsTraMeanMold.append(0)
             flTraValorReponeMoldura  = np.round(lsTraMeanMold[-1],2)
-
-        #print("_Trasero Valores Promedio_______________")
-        #print(f"Repara y Pintura = {flTraValorReparaAve}")
-        #print(f"Repone Elem    = {flTraValorReponeElem}")
-        #print(f"Repone Pint    = {flTraValorReponePint}")
-        #print(f"Repone MO      = {flTraValorReponeMoAv}")
-        #print(f"Repone Moldura = {flTraValorReponeMoldura}")
+    
         flTrasero=np.round(flTraValorReparaAve+flTraValorReponeElem+flTraValorReponePint+flTraValorReponeMoAv+flTraValorReponeMoldura,2)
-        #print(f"Total          = {flTrasero}")
-
+    '''
+        print("_Trasero Valores Promedio_______________")
+        print(f"Repara y Pintura = {flTraValorReparaAve}")
+        print(f"Repone Elem    = {flTraValorReponeElem}")
+        print(f"Repone Pint    = {flTraValorReponePint}")
+        print(f"Repone MO      = {flTraValorReponeMoAv}")
+        print(f"Repone Moldura = {flTraValorReponeMoldura}")
+        print(f"Total          = {flTrasero}")
+    '''
     bfTmp = resumeDataBrief(CLIENTE,flLateral,flTrasero)
 
     return bfTmp
@@ -320,20 +326,22 @@ def fnGetLateralElems(lsLateralLc):
     iPosCRISTAL_TRACambiaIzq=3
     iPosESPEJOCambiaDer=4
     iPosESPEJOCambiaIzq=5
-    iPosMOLDURACambiaDer=6
-    iPosMOLDURACambiaIzq=7
-    iPosPUERTA_DELCambiaDer=8
-    iPosPUERTA_DELCambiaIzq=9
-    iPosPUERTA_TRACambiaDer=10
-    iPosPUERTA_TRACambiaIzq=11
-    iPosPUERTA_DEL_PANELReparaDer=12
-    iPosPUERTA_DEL_PANELReparaIzq=13
-    iPosPUERTA_TRA_PANELReparaDer=14
-    iPosPUERTA_TRA_PANELReparaIzq=15
-    iPosZOCALOCambiaDer=16
-    iPosZOCALOReparaDer=17
-    iPosZOCALOCambiaIzq=18
-    iPosZOCALOReparaIzq=19
+    iPosMOLDURA_DELCambiaDer=6
+    iPosMOLDURA_DELCambiaIzq=7
+    iPosMOLDURA_TRACambiaDer=8
+    iPosMOLDURA_TRACambiaIzq=9
+    iPosPUERTA_DELCambiaDer=10
+    iPosPUERTA_DELCambiaIzq=11
+    iPosPUERTA_TRACambiaDer=12
+    iPosPUERTA_TRACambiaIzq=13
+    iPosPUERTA_DEL_PANELReparaDer=14
+    iPosPUERTA_DEL_PANELReparaIzq=15
+    iPosPUERTA_TRA_PANELReparaDer=16
+    iPosPUERTA_TRA_PANELReparaIzq=17
+    iPosZOCALOCambiaDer=18
+    iPosZOCALOReparaDer=19
+    iPosZOCALOCambiaIzq=20
+    iPosZOCALOReparaIzq=21
     
     lsLateralCambiaVal.append(lsLateralElemsLc[iPosCRISTAL_DEL] if lsLateralLc[iPosCRISTAL_DELCambiaDer]=="1" else "")
     lsLateralCambiaVal.append(lsLateralElemsLc[iPosCRISTAL_DEL] if lsLateralLc[iPosCRISTAL_DELCambiaIzq]=="1" else "")
@@ -341,8 +349,10 @@ def fnGetLateralElems(lsLateralLc):
     lsLateralCambiaVal.append(lsLateralElemsLc[iPosCRISTAL_TRA] if lsLateralLc[iPosCRISTAL_TRACambiaIzq]=="1" else "")
     lsLateralEspejoVal.append(lsLateralElemsLc[iPosESPEJO] if lsLateralLc[iPosESPEJOCambiaDer]== "1"else "")
     lsLateralEspejoVal.append(lsLateralElemsLc[iPosESPEJO] if lsLateralLc[iPosESPEJOCambiaIzq]== "1"else "")
-    lsLateralMolduraVal.append(lsLateralElemsLc[iPosMOLDURA] if lsLateralLc[iPosMOLDURACambiaDer]== "1"else "")
-    lsLateralMolduraVal.append(lsLateralElemsLc[iPosMOLDURA] if lsLateralLc[iPosMOLDURACambiaIzq]== "1"else "")
+    lsLateralMolduraVal.append(lsLateralElemsLc[iPosMOLDURA] if lsLateralLc[iPosMOLDURA_DELCambiaDer]== "1"else "")
+    lsLateralMolduraVal.append(lsLateralElemsLc[iPosMOLDURA] if lsLateralLc[iPosMOLDURA_DELCambiaIzq]== "1"else "")
+    lsLateralMolduraVal.append(lsLateralElemsLc[iPosMOLDURA] if lsLateralLc[iPosMOLDURA_TRACambiaDer]== "1"else "")
+    lsLateralMolduraVal.append(lsLateralElemsLc[iPosMOLDURA] if lsLateralLc[iPosMOLDURA_TRACambiaIzq]== "1"else "")
     lsLateralCambiaVal.append(lsLateralElemsLc[iPosPUERTA_DEL] if lsLateralLc[iPosPUERTA_DELCambiaDer]=="1" else "")
     lsLateralCambiaVal.append(lsLateralElemsLc[iPosPUERTA_DEL] if lsLateralLc[iPosPUERTA_DELCambiaIzq]=="1" else "")
     lsLateralCambiaVal.append(lsLateralElemsLc[iPosPUERTA_TRA] if lsLateralLc[iPosPUERTA_TRACambiaDer]=="1" else "")
@@ -766,13 +776,16 @@ def fnCambiaPinturaLateral(inSEG,inCOD_CLASE,lsRepone):
     return lsReponePintAve,lsReponePintMin,lsReponePintMax,lsReponeMoAv,lsReponeMoMin,lsReponeMoMax
 
 ##################################################
-def resumeDataBrief(intCLIENTE,fltLAteral,fltTrasero):
+def resumeDataBrief(intCLIENTE,fltLateral,fltTrasero):
     
-    ftSum = fltLAteral + fltTrasero
-    if intCLIENTE == 1: ftSum *= param.bfAsegurado
-    elif intCLIENTE == 2: ftSum *= param.bfTercero
+    intClientType = 2
+    if intCLIENTE.isnumeric(): intClientType = int(intCLIENTE)
+    
+    ftSum = (fltLateral + fltTrasero) * int(param.bfAjuste)
+    
+    if intClientType == 1: ftSum *= float(param.bfAsegurado)
+    else                 : ftSum *= float(param.bfTercero)
            
-    #txtValorTotal = "<span id=\"CostBrief\" class=\"pure-form-message-inline\" style=\"text-align:right;font-family:'helvetica neue';font-size:100%;color:rgb(170,27,23);\">Costo sugerido&nbsp$&nbsp{0:0.2f}".format(ftSum)+"</span>"
     txtValorTotal = "<span id=\"CostBrief\" class=\"pure-form-message-inline\" style=\"text-align:left;font-family:'helvetica neue';font-size:100%;color:rgb(170,27,23);\">Costo sugerido&nbsp$&nbsp{0:0.2f}".format(ftSum)+"</span>"
 
     return txtValorTotal
