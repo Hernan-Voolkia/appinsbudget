@@ -114,46 +114,53 @@ bfHTML = """
                         <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                     </tr>
                     <tr>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:3px;padding-top:5px;">Moldura</td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_MOLDURA"/></td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_MOLDURA"/></td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                    </tr>
-                    <tr>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Puerta Delantera</td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_PUERTA_DEL"/></td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_PUERTA_DEL"/></td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                    </tr>
-                    <tr>
-                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Puerta Trasera</td>
-                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_PUERTA_TRA"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:3px;padding-top:5px;">Moldura Pta Del</td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_MOLDURA_DEL"/></td>
                         <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_PUERTA_TRA"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_MOLDURA_DEL"/></td>
                         <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                     </tr>
                     <tr>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Puerta Panel Del</td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:3px;padding-top:5px;">Moldura Pta Tras</td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_MOLDURA_TRA"/></td>
                         <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_DER_PUERTA_DEL_PANEL"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_MOLDURA_TRA"/></td>
                         <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_IZQ_PUERTA_DEL_PANEL"/></td>
                     </tr>
                     <tr>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-left:5px;padding-right:3px;padding-bottom:3px;padding-top:5px;">Puerta Panel Tras</td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_DER_PUERTA_TRA_PANEL"/></td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_IZQ_PUERTA_TRA_PANEL"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Puerta Delantera</td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_PUERTA_DEL"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_PUERTA_DEL"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                     </tr>
                     <tr>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Zocalo</td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_ZOCALO" onclick="unCheckOps('LAT_CAM_DER_ZOCALO','LAT_REP_DER_ZOCALO')"/></td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_DER_ZOCALO" onclick="unCheckOps('LAT_REP_DER_ZOCALO','LAT_CAM_DER_ZOCALO')"/></td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_ZOCALO" onclick="unCheckOps('LAT_CAM_IZQ_ZOCALO','LAT_REP_IZQ_ZOCALO')"/></td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_IZQ_ZOCALO" onclick="unCheckOps('LAT_REP_IZQ_ZOCALO','LAT_CAM_IZQ_ZOCALO')"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Puerta Trasera</td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_PUERTA_TRA"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_PUERTA_TRA"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                    <tr>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Puerta Panel Del</td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_DER_PUERTA_DEL_PANEL"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_IZQ_PUERTA_DEL_PANEL"/></td>
+                    </tr>
+                    <tr>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:5px;padding-right:3px;padding-bottom:3px;padding-top:5px;">Puerta Panel Tras</td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_DER_PUERTA_TRA_PANEL"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_IZQ_PUERTA_TRA_PANEL"/></td>
+                    </tr>
+                    <tr>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Zocalo</td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_ZOCALO" onclick="unCheckOps('LAT_CAM_DER_ZOCALO','LAT_REP_DER_ZOCALO')"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_DER_ZOCALO" onclick="unCheckOps('LAT_REP_DER_ZOCALO','LAT_CAM_DER_ZOCALO')"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_ZOCALO" onclick="unCheckOps('LAT_CAM_IZQ_ZOCALO','LAT_REP_IZQ_ZOCALO')"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_IZQ_ZOCALO" onclick="unCheckOps('LAT_REP_IZQ_ZOCALO','LAT_CAM_IZQ_ZOCALO')"/></td>
                     </tr>
                 </tbody>
             </table>
@@ -275,9 +282,13 @@ bfHTML = """
             e.checked = false;  
         var e = document.getElementById("LAT_CAM_IZQ_ESPEJO");
             e.checked = false;                   
-        var e = document.getElementById("LAT_CAM_DER_MOLDURA");
+        var e = document.getElementById("LAT_CAM_DER_MOLDURA_DEL");
             e.checked = false;       
-        var e = document.getElementById("LAT_CAM_IZQ_MOLDURA");
+        var e = document.getElementById("LAT_CAM_IZQ_MOLDURA_DEL");
+            e.checked = false;       
+        var e = document.getElementById("LAT_CAM_DER_MOLDURA_TRA");
+            e.checked = false;       
+        var e = document.getElementById("LAT_CAM_IZQ_MOLDURA_TRA");
             e.checked = false;       
         var e = document.getElementById("LAT_CAM_DER_PUERTA_DEL");
             e.checked = false;       
@@ -345,17 +356,51 @@ bfHTML = """
             e.innerHTML = '&nbsp;';
     }
     function fnGetData(){
+        
         var e = document.getElementById("stacked-cliente");
+        if(e.options[e.selectedIndex].id == 0) 
+        {
+            alert('Debe seleccionar Cliente');
+            e.focus(); 
+            return
+        }    
         var text = 'CLIENTE=' + e.options[e.selectedIndex].id;
+        
         var e = document.getElementById("stacked-clase");
-            text = text + '&CLASE=' + e.options[e.selectedIndex].id;
+        if(e.options[e.selectedIndex].id == 0) 
+        {
+            alert('Debe seleccionar Clase');
+            e.focus(); 
+            return
+        }    
+        text = text + '&CLASE=' + e.options[e.selectedIndex].id;
+            
         var e = document.getElementById("stacked-marca");
-            text = text + '&MARCA=' + e.options[e.selectedIndex].id;
+        if(e.options[e.selectedIndex].id == 0) 
+        {
+            alert('Debe seleccionar Marca');
+            e.focus(); 
+            return
+        }    
+        text = text + '&MARCA=' + e.options[e.selectedIndex].id;
+            
         var e = document.getElementById("stacked-modelo");
-            text = text + '&MODELO=' + e.options[e.selectedIndex].id;
+        if(e.options[e.selectedIndex].id == 0) 
+        {
+            alert('Debe seleccionar Modelo');
+            e.focus(); 
+            return
+        }    
+        text = text + '&MODELO=' + e.options[e.selectedIndex].id;
+            
         var e = document.getElementById("stacked-siniestro");
             text = text + '&SINIESTRO=' + e.value;
         
+        if (document.getElementById('lateral_chk').checked == 0 &&
+            document.getElementById('trasero_chk').checked  == 0 ){
+                alert('Debe seleccionar elementos de lateral o trasero');
+                return
+        }
         if (document.getElementById('lateral_chk').checked){ 
             var e=(document.getElementById('LAT_CAM_DER_CRISTAL_DEL').checked==true)?1:0;
             var lateral=e + '-'; 
@@ -369,9 +414,13 @@ bfHTML = """
             lateral+= e + '-';
             e=(document.getElementById('LAT_CAM_IZQ_ESPEJO').checked==true)?1:0;
             lateral+= e + '-';
-            e= (document.getElementById('LAT_CAM_DER_MOLDURA').checked==true)?1:0;
+            e= (document.getElementById('LAT_CAM_DER_MOLDURA_DEL').checked==true)?1:0;
             lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_IZQ_MOLDURA').checked==true)?1:0;
+            e=(document.getElementById('LAT_CAM_IZQ_MOLDURA_DEL').checked==true)?1:0;
+            lateral+= e + '-';
+            e= (document.getElementById('LAT_CAM_DER_MOLDURA_TRA').checked==true)?1:0;
+            lateral+= e + '-';
+            e=(document.getElementById('LAT_CAM_IZQ_MOLDURA_TRA').checked==true)?1:0;
             lateral+= e + '-';
             e=(document.getElementById('LAT_CAM_DER_PUERTA_DEL').checked==true)?1:0;
             lateral+= e + '-';
