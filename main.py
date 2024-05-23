@@ -143,8 +143,6 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     if '1' in lsLateral:
         lsLateralCambiaElems,lsLateralReparaElems,lsLateralMolduraElems,lsLateralEspejoElems=fnGetLateralElems(lsLateral)
         
-        print(lsLateralMolduraElems)
-        
         if len(lsLateralReparaElems)>0:
             
             lsLatReparaAve,lsLatReparaMin,lsLatReparaMax = fnReparaLateral(iSEG,iCLASE,lsLateralReparaElems)
@@ -450,14 +448,36 @@ def fnReparaTrasero(inSEG,inCOD_CLASE,lsRepara):
                     (dfVALOR_MO_UNIF_TRASERO['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
                     [['VALOR_MO_MEAN','VALOR_MO_STD','CANT_HS_PINT_MEAN','CANT_HS_PINT_STD','VALOR_MAT_PINT_MEAN','VALOR_MAT_PINT_STD']] 
         
-        flAverage=np.round((bfID_ELEM['VALOR_MO_MEAN']+bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
+        #flAverage=np.round((bfID_ELEM['VALOR_MO_MEAN']+bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
+        #    
+        #flMin=np.round((bfID_ELEM['VALOR_MO_MEAN'] - bfID_ELEM['VALOR_MO_STD'])+ \
+        #               (bfID_ELEM['CANT_HS_PINT_MEAN'] - bfID_ELEM['CANT_HS_PINT_STD']) + \
+        #               (bfID_ELEM['VALOR_MAT_PINT_MEAN'] - bfID_ELEM['VALOR_MAT_PINT_STD']),2) 
+        #    
+        #flMax=np.round((bfID_ELEM['VALOR_MO_MEAN'] + bfID_ELEM['VALOR_MO_STD']) + \
+        #               (bfID_ELEM['CANT_HS_PINT_MEAN']   + bfID_ELEM['CANT_HS_PINT_STD']) + \
+        #               (bfID_ELEM['VALOR_MAT_PINT_MEAN'] + bfID_ELEM['VALOR_MAT_PINT_STD']),2)  
+
+        flVALOR_MO_MEAN     = bfID_ELEM['VALOR_MO_MEAN']
+        flVALOR_MO_STD      = bfID_ELEM['VALOR_MO_STD']
+        
+        flCANT_HS_PINT_MEAN = bfID_ELEM['CANT_HS_PINT_MEAN'] 
+        flCANT_HS_PINT_STD  = bfID_ELEM['CANT_HS_PINT_STD']
+
+        flVALOR_MO_MEAN     = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2)
+        flVALOR_MO_STD      = np.round((flVALOR_MO_STD / 6350) * float(param.bfMObra),2)
+        
+        flCANT_HS_PINT_MEAN = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfPintura),2)
+        flCANT_HS_PINT_STD  = np.round((flCANT_HS_PINT_STD / 6350) * float(param.bfPintura),2)
+
+        flAverage=np.round((flVALOR_MO_MEAN+bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
             
-        flMin=np.round((bfID_ELEM['VALOR_MO_MEAN'] - bfID_ELEM['VALOR_MO_STD'])+ \
-                       (bfID_ELEM['CANT_HS_PINT_MEAN'] - bfID_ELEM['CANT_HS_PINT_STD']) + \
+        flMin=np.round((flVALOR_MO_MEAN - flVALOR_MO_STD)+ \
+                       (flCANT_HS_PINT_MEAN - flCANT_HS_PINT_STD) + \
                        (bfID_ELEM['VALOR_MAT_PINT_MEAN'] - bfID_ELEM['VALOR_MAT_PINT_STD']),2) 
             
-        flMax=np.round((bfID_ELEM['VALOR_MO_MEAN'] + bfID_ELEM['VALOR_MO_STD']) + \
-                       (bfID_ELEM['CANT_HS_PINT_MEAN']   + bfID_ELEM['CANT_HS_PINT_STD']) + \
+        flMax=np.round((flVALOR_MO_MEAN + flVALOR_MO_STD) + \
+                       (flCANT_HS_PINT_MEAN   + flCANT_HS_PINT_STD) + \
                        (bfID_ELEM['VALOR_MAT_PINT_MEAN'] + bfID_ELEM['VALOR_MAT_PINT_STD']),2)  
             
         lsReparaAve.append(flAverage) 
@@ -529,16 +549,38 @@ def fnCambiaPinturaTrasero(inSEG,inCOD_CLASE,lsRepone):
                     (dfVALOR_REPUESTO_VALOR_MAT_TRASERO['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
                         [['VALOR_MO_MEAN','VALOR_MO_STD','CANT_HS_PINT_MEAN','CANT_HS_PINT_STD',
                          'VALOR_MAT_PINT_MEAN','VALOR_MAT_PINT_STD']] 
+
+        #flAverage = np.round((bfID_ELEM['CANT_HS_PINT_MEAN'] + bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
+        #flMin     = np.round(((bfID_ELEM['CANT_HS_PINT_MEAN'] - bfID_ELEM['CANT_HS_PINT_STD']) + \
+        #                     (bfID_ELEM['VALOR_MAT_PINT_MEAN'] - bfID_ELEM['VALOR_MAT_PINT_STD'])),2) 
+        #flMax     = np.round(((bfID_ELEM['CANT_HS_PINT_MEAN'] + bfID_ELEM['CANT_HS_PINT_STD']) + \
+        #                      (bfID_ELEM['VALOR_MAT_PINT_MEAN'] + bfID_ELEM['VALOR_MAT_PINT_STD'])),2)  
         
-        flAverage = np.round((bfID_ELEM['CANT_HS_PINT_MEAN'] + bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-        flMin     = np.round(((bfID_ELEM['CANT_HS_PINT_MEAN'] - bfID_ELEM['CANT_HS_PINT_STD']) + \
+        #flMoAv      = np.round(bfID_ELEM['VALOR_MO_MEAN'],2) 
+        #flMOMin     = np.round(((bfID_ELEM['VALOR_MO_MEAN'] - bfID_ELEM['VALOR_MO_STD'])),2) 
+        #flMoMax     = np.round(((bfID_ELEM['VALOR_MO_MEAN'] + bfID_ELEM['VALOR_MO_STD'])),2)  
+
+        flVALOR_MO_MEAN     = bfID_ELEM['VALOR_MO_MEAN']
+        flVALOR_MO_STD      = bfID_ELEM['VALOR_MO_STD']
+        
+        flCANT_HS_PINT_MEAN = bfID_ELEM['CANT_HS_PINT_MEAN'] 
+        flCANT_HS_PINT_STD  = bfID_ELEM['CANT_HS_PINT_STD']
+
+        flVALOR_MO_MEAN     = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2)
+        flVALOR_MO_STD      = np.round((flVALOR_MO_STD / 6350) * float(param.bfMObra),2)
+        
+        flCANT_HS_PINT_MEAN = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfPintura),2)
+        flCANT_HS_PINT_STD  = np.round((flCANT_HS_PINT_STD / 6350) * float(param.bfPintura),2)
+
+        flAverage = np.round((flCANT_HS_PINT_MEAN + bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
+        flMin     = np.round(((flCANT_HS_PINT_MEAN - flCANT_HS_PINT_STD) + \
                              (bfID_ELEM['VALOR_MAT_PINT_MEAN'] - bfID_ELEM['VALOR_MAT_PINT_STD'])),2) 
-        flMax     = np.round(((bfID_ELEM['CANT_HS_PINT_MEAN'] + bfID_ELEM['CANT_HS_PINT_STD']) + \
+        flMax     = np.round(((flCANT_HS_PINT_MEAN + flCANT_HS_PINT_STD) + \
                               (bfID_ELEM['VALOR_MAT_PINT_MEAN'] + bfID_ELEM['VALOR_MAT_PINT_STD'])),2)  
         
-        flMoAv      = np.round(bfID_ELEM['VALOR_MO_MEAN'],2) 
-        flMOMin     = np.round(((bfID_ELEM['VALOR_MO_MEAN'] - bfID_ELEM['VALOR_MO_STD'])),2) 
-        flMoMax     = np.round(((bfID_ELEM['VALOR_MO_MEAN'] + bfID_ELEM['VALOR_MO_STD'])),2)  
+        flMoAv      = np.round(flVALOR_MO_MEAN,2) 
+        flMOMin     = np.round(((flVALOR_MO_MEAN - flVALOR_MO_STD)),2) 
+        flMoMax     = np.round(((flVALOR_MO_MEAN + flVALOR_MO_STD)),2)  
         
         if len(flAverage)==0:flAverage=[0]
         if len(flMin)==0:flMin=[0]
@@ -630,7 +672,7 @@ def fnEspejoLateral(inCOD_MARCA,inCOD_MODELO):
 
 def fnMolduraLateral(inCOD_MARCA,inCOD_MODELO):
     inCOD_PARTE = 3
-    #espMold = ['PUERTA','LATERAL','ZOCALO'] #Todo: Ver relaicon con cambio
+    #espMold = ['PUERTA','LATERAL','ZOCALO'] #Todo: Ver relacion con cambio
     espMold = ['PUERTA']
     
     dfMOLD_LATERAL = dfMOLDURA.loc[(dfMOLDURA['COD_MARCA']  == inCOD_MARCA)  & 
@@ -664,12 +706,29 @@ def fnReparaLateral(inSEG,inCOD_CLASE,lsRepara):
                                                                       [['VALOR_MO_MEAN','VALOR_MO_STD','CANT_HS_PINT_MEAN','CANT_HS_PINT_STD',
                                                                         'VALOR_MAT_PINT_MEAN','VALOR_MAT_PINT_STD']] 
                                                                       
-        flAverage = np.round((bfID_ELEM['VALOR_MO_MEAN']+bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
+        #flAverage = np.round((bfID_ELEM['VALOR_MO_MEAN']+bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
+        #
+        #flMin     = np.round((bfID_ELEM['VALOR_MO_MEAN']-bfID_ELEM['VALOR_MO_STD'])+(bfID_ELEM['CANT_HS_PINT_MEAN']-bfID_ELEM['CANT_HS_PINT_STD'])+\
+        #                     (bfID_ELEM['VALOR_MAT_PINT_MEAN'] - bfID_ELEM['VALOR_MAT_PINT_STD']),2) 
+        #
+        #flMax     = np.round((bfID_ELEM['VALOR_MO_MEAN'] + bfID_ELEM['VALOR_MO_STD'])+(bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['CANT_HS_PINT_STD'])+\
+        #                     (bfID_ELEM['VALOR_MAT_PINT_MEAN'] + bfID_ELEM['VALOR_MAT_PINT_STD']),2)  
         
-        flMin     = np.round((bfID_ELEM['VALOR_MO_MEAN']-bfID_ELEM['VALOR_MO_STD'])+(bfID_ELEM['CANT_HS_PINT_MEAN']-bfID_ELEM['CANT_HS_PINT_STD'])+\
+        flVALOR_MO_MEAN      = bfID_ELEM['VALOR_MO_MEAN']
+        flVALOR_MO_STD       = bfID_ELEM['VALOR_MO_STD']
+        
+        flCANT_HS_PINT_MEAN  = bfID_ELEM['CANT_HS_PINT_MEAN'] 
+        flCANT_HS_PINT_STD   = bfID_ELEM['CANT_HS_PINT_STD'] 
+
+        flVALOR_MO_MEAN       = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2)
+        flCANT_HS_PINT_MEAN   = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfMObra),2)
+        
+        flAverage = np.round((flVALOR_MO_MEAN + flCANT_HS_PINT_MEAN + bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
+        
+        flMin     = np.round((flVALOR_MO_MEAN - flVALOR_MO_STD)+(flCANT_HS_PINT_MEAN-flCANT_HS_PINT_STD)+\
                              (bfID_ELEM['VALOR_MAT_PINT_MEAN'] - bfID_ELEM['VALOR_MAT_PINT_STD']),2) 
         
-        flMax     = np.round((bfID_ELEM['VALOR_MO_MEAN'] + bfID_ELEM['VALOR_MO_STD'])+(bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['CANT_HS_PINT_STD'])+\
+        flMax     = np.round((flVALOR_MO_MEAN + flVALOR_MO_STD)+(flCANT_HS_PINT_MEAN+flCANT_HS_PINT_STD)+\
                              (bfID_ELEM['VALOR_MAT_PINT_MEAN'] + bfID_ELEM['VALOR_MAT_PINT_STD']),2)  
         
         lsReparaAve.append(flAverage) 
@@ -743,15 +802,32 @@ def fnCambiaPinturaLateral(inSEG,inCOD_CLASE,lsRepone):
                                                                                       [['VALOR_MO_MEAN','VALOR_MO_STD','CANT_HS_PINT_MEAN',
                                                                                         'CANT_HS_PINT_STD','VALOR_MAT_PINT_MEAN','VALOR_MAT_PINT_STD']] 
         
+        #flAverage = np.round((bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
+        #flMin     = np.round(((bfID_ELEM['CANT_HS_PINT_MEAN']-bfID_ELEM['CANT_HS_PINT_STD'])+(bfID_ELEM['VALOR_MAT_PINT_MEAN']-bfID_ELEM['VALOR_MAT_PINT_STD'])),2) 
+        #flMax     = np.round(((bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['CANT_HS_PINT_STD'])+(bfID_ELEM['VALOR_MAT_PINT_MEAN']+bfID_ELEM['VALOR_MAT_PINT_STD'])),2)  
         
-        flAverage = np.round((bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-        flMin     = np.round(((bfID_ELEM['CANT_HS_PINT_MEAN']-bfID_ELEM['CANT_HS_PINT_STD'])+(bfID_ELEM['VALOR_MAT_PINT_MEAN']-bfID_ELEM['VALOR_MAT_PINT_STD'])),2) 
-        flMax     = np.round(((bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['CANT_HS_PINT_STD'])+(bfID_ELEM['VALOR_MAT_PINT_MEAN']+bfID_ELEM['VALOR_MAT_PINT_STD'])),2)  
+        #flMoAv  = np.round(bfID_ELEM['VALOR_MO_MEAN'],2) 
+        #flMOMin = np.round(((bfID_ELEM['VALOR_MO_MEAN']-bfID_ELEM['VALOR_MO_STD'])),2) 
+        #flMoMax = np.round(((bfID_ELEM['VALOR_MO_MEAN']+bfID_ELEM['VALOR_MO_STD'])),2)  
         
-        flMoAv  = np.round(bfID_ELEM['VALOR_MO_MEAN'],2) 
-        flMOMin = np.round(((bfID_ELEM['VALOR_MO_MEAN']-bfID_ELEM['VALOR_MO_STD'])),2) 
-        flMoMax = np.round(((bfID_ELEM['VALOR_MO_MEAN']+bfID_ELEM['VALOR_MO_STD'])),2)  
+        flVALOR_MO_MEAN = bfID_ELEM['VALOR_MO_MEAN']
+        flVALOR_MO_MEAN = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2)
+        flVALOR_MO_STD  = bfID_ELEM['VALOR_MO_STD']
+        flVALOR_MO_STD  = np.round((flVALOR_MO_STD / 6350) * float(param.bfMObra),2)
         
+        flCANT_HS_PINT_MEAN = bfID_ELEM['CANT_HS_PINT_MEAN']
+        flCANT_HS_PINT_MEAN = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfPintura),2)
+        flCANT_HS_PINT_STD  = bfID_ELEM['CANT_HS_PINT_STD']
+        flCANT_HS_PINT_STD  = np.round((flCANT_HS_PINT_STD / 6350) * float(param.bfPintura),2)
+
+        flAverage = np.round((flCANT_HS_PINT_MEAN+bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
+        flMin     = np.round(((flCANT_HS_PINT_MEAN-flCANT_HS_PINT_STD)+(flCANT_HS_PINT_MEAN-flCANT_HS_PINT_STD)),2) 
+        flMax     = np.round(((flCANT_HS_PINT_MEAN+flCANT_HS_PINT_STD)+(flCANT_HS_PINT_MEAN+flCANT_HS_PINT_STD)),2)  
+        
+        flMoAv  = np.round(flVALOR_MO_MEAN,2) 
+        flMOMin = np.round(((flVALOR_MO_MEAN-flVALOR_MO_STD)),2) 
+        flMoMax = np.round(((flVALOR_MO_MEAN+flVALOR_MO_STD)),2)  
+
         if len(flAverage) == 0: flAverage = [0]
         lsReponePintAve.append(flAverage) 
         if len(flMin) == 0: flMin = [0]
