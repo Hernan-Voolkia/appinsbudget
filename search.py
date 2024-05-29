@@ -259,6 +259,8 @@ bfHTML = """
         var e = document.getElementById("stacked-modelo");
             e.selectedIndex = 0;
             e.style.width = "250px";
+        var e = document.getElementById("stacked-siniestro");
+            e.value = "";
             
         var e = document.getElementById("lateral_chk");
             e.checked = false;    
