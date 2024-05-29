@@ -9,11 +9,14 @@ import re
 import pandas as pd
 import numpy as np
 np.set_printoptions(suppress=True)
+import sqlalchemy as db
+from sqlalchemy import text
 
 import param
 import search
 import marca
 import index
+import admvalue
 
 df = pd.read_csv('./data/dfBaseCleanSumV1.csv',sep=';',encoding='utf-8',decimal='.',
                  dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
@@ -73,6 +76,19 @@ dfESPEJO = pd.read_csv('./data/_dfVALOR_REPUESTO_ESPEJOS_V7.csv',sep=';',encodin
                         dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','DESC_MARC':'str','COD_MODELO':'int16',
                                  'DESC_MODE':'str','COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
                                  'COD_ELEM':'int64','NRO_PIEZA':'str','VALOR': 'float64'})
+#DBVALUES
+engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+conn = engine.connect()
+result = conn.execute(text('SELECT * FROM admvalue;'))
+for row in result:
+    if row[0] == 'Tercero': param.bfTercero = float(row[1])
+    if row[0] == 'MObra': param.bfMObra = float(row[1])
+    if row[0] == 'Pintura': param.bfPintura = float(row[1])
+    if row[0] == 'Ajuste': param.bfAjuste = float(row[1])
+    if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
+conn.close()
+engine.dispose()
+
 app = FastAPI()
 app.mount("/img", StaticFiles(directory="img"), name='img')
 
@@ -98,12 +114,69 @@ async def modelo(CLASE:int=901, MARCA:int=0):
 
 @app.get("/consulta", response_class=HTMLResponse)
 async def consulta():
+    #DBVALUES
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    conn = engine.connect()
+    result = conn.execute(text('SELECT * FROM admvalue;'))
+    for row in result:
+        if row[0] == 'Tercero': param.bfTercero = float(row[1])
+        if row[0] == 'MObra': param.bfMObra = float(row[1])
+        if row[0] == 'Pintura': param.bfPintura = float(row[1])
+        if row[0] == 'Ajuste': param.bfAjuste = float(row[1])
+        if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
+    conn.close()
+    engine.dispose()    
+    
     return search.bfHTML
 
-@app.post("/searchV1", response_class=PlainTextResponse)
-async def searchV1(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIESTRO:str="",LATERAL:str="",TRASERO:str=""):
-    bfTmp = CLIENTE+";"+CLASE+";"+MARCA+";"+MODELO+";"+SINIESTRO+";"+LATERAL+";"+TRASERO+";";
-    return bfTmp
+@app.get("/admvalue", response_class=HTMLResponse)
+async def adminValues():
+    #DBVALUES
+    try:
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        conn = engine.connect()
+        result = conn.execute(text('SELECT * FROM admvalue;'))
+        for row in result:
+            if row[0] == 'Tercero': param.bfTercero = float(row[1])
+            if row[0] == 'MObra': param.bfMObra = float(row[1])
+            if row[0] == 'Pintura': param.bfPintura = float(row[1])
+            if row[0] == 'Ajuste': param.bfAjuste = float(row[1])
+            if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
+        conn.close()
+        engine.dispose()
+    except Exception as e:
+        param.bfTercero = ""
+        param.bfMObra = ""
+        param.bfPintura = ""
+        param.bfAjuste = ""
+        param.bfAsegurado = ""
+    
+    bfAdminValues = admvalue.bfHTML
+    bfAdminValues = bfAdminValues.replace('rplBfAsegurado',str(param.bfAsegurado))
+    bfAdminValues = bfAdminValues.replace('rplBfTercero',str(param.bfTercero))
+    bfAdminValues = bfAdminValues.replace('rplBfMObra',str(param.bfMObra))
+    bfAdminValues = bfAdminValues.replace('rplBfPintura',str(param.bfPintura))
+    bfAdminValues = bfAdminValues.replace('rplBfAjuste',str(param.bfAjuste))
+    return bfAdminValues
+
+@app.post("/admvaluesave", response_class=PlainTextResponse)
+async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",PINTURA:str="",AJUSTE:str=""):
+    #DBVALUES
+    bfMsg = "Valores grabados satisfactoriamente" 
+    try:
+       engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
+       conn = engine.connect()
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(ASEGURADO).replace(',','.') + ' WHERE stName="Asegurado"'))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(TERCERO).replace(',','.') + ' WHERE stName="Tercero"'))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(MOBRA).replace(',','.') + ' WHERE stName="MObra"'))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(PINTURA).replace(',','.') + ' WHERE stName="Pintura"'))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(AJUSTE).replace(',','.') + ' WHERE stName="Ajuste"'))
+       conn.commit()
+       conn.close()
+       engine.dispose()
+    except Exception as e:
+       bfMsg = "Se produjo un error al grabar"     
+    return bfMsg
 
 @app.post("/search", response_class=PlainTextResponse)
 async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIESTRO:str="",LATERAL:str="",TRASERO:str=""):
@@ -205,14 +278,14 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
 
         flLateral=np.round(flLatValorReparaAve+flLatValorReponeElem+flLatValorReponePint+flLatValorReponeMoAv+flLatValorReponeEspejo+flLatValorReponeMoldura,2)
     
-        print("_Lateral Valores Promedio_______________")
-        print(f"Repara y Pintura = {flLatValorReparaAve}")
-        print(f"Repone Elem      = {flLatValorReponeElem}")
-        print(f"Repone Pint      = {flLatValorReponePint}")
-        print(f"Repone MO        = {flLatValorReponeMoAv}")
-        print(f"Repone Espejo    = {flLatValorReponeEspejo}")
-        print(f"Repone Moldura   = {flLatValorReponeMoldura}")
-        print(f"Total            = {flLateral}")
+        #print("_Lateral Valores Promedio_______________")
+        #print(f"Repara y Pintura = {flLatValorReparaAve}")
+        #print(f"Repone Elem      = {flLatValorReponeElem}")
+        #print(f"Repone Pint      = {flLatValorReponePint}")
+        #print(f"Repone MO        = {flLatValorReponeMoAv}")
+        #print(f"Repone Espejo    = {flLatValorReponeEspejo}")
+        #print(f"Repone Moldura   = {flLatValorReponeMoldura}")
+        #print(f"Total            = {flLateral}")
     
     if '1' in lsTrasero:
         lsTraseroCambiaElems,lsTraseroReparaElems,lsTraseroMolduraElems = fnGetTraseroElems(CLASE,MARCA,MODELO,lsTrasero)
@@ -269,15 +342,15 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
             flTraValorReponeMoldura  = np.round(lsTraMeanMold[-1],2)
     
         flTrasero=np.round(flTraValorReparaAve+flTraValorReponeElem+flTraValorReponePint+flTraValorReponeMoAv+flTraValorReponeMoldura,2)
-    '''
-        print("_Trasero Valores Promedio_______________")
-        print(f"Repara y Pintura = {flTraValorReparaAve}")
-        print(f"Repone Elem    = {flTraValorReponeElem}")
-        print(f"Repone Pint    = {flTraValorReponePint}")
-        print(f"Repone MO      = {flTraValorReponeMoAv}")
-        print(f"Repone Moldura = {flTraValorReponeMoldura}")
-        print(f"Total          = {flTrasero}")
-    '''
+
+        #print("_Trasero Valores Promedio_______________")
+        #print(f"Repara y Pintura = {flTraValorReparaAve}")
+        #print(f"Repone Elem    = {flTraValorReponeElem}")
+        #print(f"Repone Pint    = {flTraValorReponePint}")
+        #print(f"Repone MO      = {flTraValorReponeMoAv}")
+        #print(f"Repone Moldura = {flTraValorReponeMoldura}")
+        #print(f"Total          = {flTrasero}")
+
     bfTmp = resumeDataBrief(CLIENTE,flLateral,flTrasero)
 
     return bfTmp
@@ -861,7 +934,7 @@ def resumeDataBrief(intCLIENTE,fltLateral,fltTrasero):
     
     if intClientType == 1: ftSum *= float(param.bfAsegurado)
     else                 : ftSum *= float(param.bfTercero)
-           
+    
     txtValorTotal = "<span id=\"CostBrief\" class=\"pure-form-message-inline\" style=\"text-align:left;font-family:'helvetica neue';font-size:100%;color:rgb(170,27,23);\">Costo sugerido&nbsp$&nbsp{0:0.2f}".format(ftSum)+"</span>"
 
     return txtValorTotal
