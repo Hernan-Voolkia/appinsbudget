@@ -120,7 +120,7 @@ bfHTML = """
                 var e = document.getElementById("CostBrief");
                     e.innerHTML = this.responseText; 
                     //e.disabled = false;
-            }
+            } 
         }
         xhr.send();
     } 
