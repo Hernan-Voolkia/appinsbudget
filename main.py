@@ -278,14 +278,14 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
 
         flLateral=np.round(flLatValorReparaAve+flLatValorReponeElem+flLatValorReponePint+flLatValorReponeMoAv+flLatValorReponeEspejo+flLatValorReponeMoldura,2)
     
-        #print("_Lateral Valores Promedio_______________")
-        #print(f"Repara y Pintura = {flLatValorReparaAve}")
-        #print(f"Repone Elem      = {flLatValorReponeElem}")
-        #print(f"Repone Pint      = {flLatValorReponePint}")
-        #print(f"Repone MO        = {flLatValorReponeMoAv}")
-        #print(f"Repone Espejo    = {flLatValorReponeEspejo}")
-        #print(f"Repone Moldura   = {flLatValorReponeMoldura}")
-        #print(f"Total            = {flLateral}")
+        print("_Lateral Valores Promedio_______________")
+        print(f"Repara y Pintura = {flLatValorReparaAve}")
+        print(f"Repone Elem      = {flLatValorReponeElem}")
+        print(f"Repone Pint      = {flLatValorReponePint}")
+        print(f"Repone MO        = {flLatValorReponeMoAv}")
+        print(f"Repone Espejo    = {flLatValorReponeEspejo}")
+        print(f"Repone Moldura   = {flLatValorReponeMoldura}")
+        print(f"Total            = {flLateral}")
     
     if '1' in lsTrasero:
         lsTraseroCambiaElems,lsTraseroReparaElems,lsTraseroMolduraElems = fnGetTraseroElems(CLASE,MARCA,MODELO,lsTrasero)
@@ -437,6 +437,7 @@ def fnGetLateralElems(lsLateralLc):
     lsLateralCambiaVal.append(lsLateralElemsLc[iPosZOCALO] if lsLateralLc[iPosZOCALOCambiaIzq]=="1" else "")
     lsLateralReparaVal.append(lsLateralElemsLc[iPosZOCALO] if lsLateralLc[iPosZOCALOReparaIzq]=="1" else "")
     
+    
     lsLateralCambiaVal = [i for i in lsLateralCambiaVal if i != ""]
     lsLateralReparaVal = [i for i in lsLateralReparaVal if i != ""]
     lsLateralMolduraVal = [i for i in lsLateralMolduraVal if i != ""]
@@ -462,20 +463,22 @@ def fnGetTraseroElems(iClaseLc, iMarcaLc, iModeloLc, lsTraseroLc):
     
     #Array lsTraseroLc
     iPosBAULPORTONCambiaDer=0
-    iPosFAROCambiaDer=1
-    iPosFAROCambiaIzq=2
-    iPosGUARDABARROCambiaDer=3
-    iPosGUARDABARROReparaDer=4
-    iPosGUARDABARROCambiaIzq=5
-    iPosGUARDABARROReparaIzq=6
-    iPosLUNETACambiaDer=7
-    iPosMOLDURACambiaDer=8
-    iPosPANELCOLACOMPCambiaDer=9
-    iPosPANELCOLACOMPReparaDer=10
-    iPosPARAGOLPECambiaDer=11
-    iPosPARAGOLPEReparaDer=12
+    iPosBAULPORTONReparaDer=1
+    iPosFAROCambiaDer=2
+    iPosFAROCambiaIzq=3
+    iPosGUARDABARROCambiaDer=4
+    iPosGUARDABARROReparaDer=5
+    iPosGUARDABARROCambiaIzq=6
+    iPosGUARDABARROReparaIzq=7
+    iPosLUNETACambiaDer=8
+    iPosMOLDURACambiaDer=9
+    iPosPANELCOLACOMPCambiaDer=10
+    iPosPANELCOLACOMPReparaDer=11
+    iPosPARAGOLPECambiaDer=12
+    iPosPARAGOLPEReparaDer=13
     
     lsTraseroCambiaVal.append(lsTraseroElemsLc[iPosBAULPORTON] if lsTraseroLc[iPosBAULPORTONCambiaDer] == "1" else "")
+    lsTraseroReparaVal.append(lsTraseroElemsLc[iPosBAULPORTON] if lsTraseroLc[iPosBAULPORTONReparaDer] == "1" else "")
     lsTraseroCambiaVal.append(lsTraseroElemsLc[iPosFARO] if lsTraseroLc[iPosFAROCambiaDer] == "1" else "")
     lsTraseroCambiaVal.append(lsTraseroElemsLc[iPosFARO] if lsTraseroLc[iPosFAROCambiaIzq] == "1" else "")
     lsTraseroCambiaVal.append(lsTraseroElemsLc[iPosGUARDABARRO] if lsTraseroLc[iPosGUARDABARROCambiaDer] == "1" else "")
@@ -493,6 +496,9 @@ def fnGetTraseroElems(iClaseLc, iMarcaLc, iModeloLc, lsTraseroLc):
     if lsTraseroCambiaVal[iPosBAULPORTON]=="BAULPORTON":
         if blPorton==True: lsTraseroCambiaVal[iPosBAULPORTON]="PORTON"
         else: lsTraseroCambiaVal[iPosBAULPORTON]="BAUL"
+    if lsTraseroReparaVal[iPosBAULPORTON]=="BAULPORTON":
+        if blPorton==True: lsTraseroReparaVal[iPosBAULPORTON]="PORTON"
+        else: lsTraseroReparaVal[iPosBAULPORTON]="BAUL"
     
     lsTraseroCambiaVal = [i for i in lsTraseroCambiaVal if i != ""]
     lsTraseroReparaVal = [i for i in lsTraseroReparaVal if i != ""]
@@ -514,13 +520,13 @@ def fnReparaTrasero(inSEG,inCOD_CLASE,lsRepara):
     flAverage = 0
     flMin     = 0
     flMax     = 0
-        
+   
     for index, item in enumerate(lsRepara):
         bfID_ELEM = dfVALOR_MO_UNIF_TRASERO.loc[(dfVALOR_MO_UNIF_TRASERO['SEG'] == inSEG) & 
                     (dfVALOR_MO_UNIF_TRASERO['COD_CLASE'] == inCOD_CLASE) & (dfVALOR_MO_UNIF_TRASERO['COD_PARTE'] == inCOD_PARTE) &
                     (dfVALOR_MO_UNIF_TRASERO['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
                     [['VALOR_MO_MEAN','VALOR_MO_STD','CANT_HS_PINT_MEAN','CANT_HS_PINT_STD','VALOR_MAT_PINT_MEAN','VALOR_MAT_PINT_STD']] 
-        
+
         #flAverage=np.round((bfID_ELEM['VALOR_MO_MEAN']+bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
         #    
         #flMin=np.round((bfID_ELEM['VALOR_MO_MEAN'] - bfID_ELEM['VALOR_MO_STD'])+ \
@@ -678,7 +684,8 @@ def fnCambiaPinturaTrasero(inSEG,inCOD_CLASE,lsRepone):
     
     return lsReponePintAve,lsReponePintMin,lsReponePintMax,lsReponeMoAv,lsReponeMoMin,lsReponeMoMax 
 
-def fnMolduraTrasero(inCOD_MARCA,inCOD_MODELO):
+#def fnMolduraTrasero(inCOD_MARCA,inCOD_MODELO,lsMold):
+def fnMolduraTrasero(inCOD_MARCA,inCOD_MODELO):    
     inCOD_PARTE = 2
     lsVersion = ['1','2','3','4','5'] 
     lsDf_MOLDURA = []
@@ -831,6 +838,7 @@ def fnCambiaLateral(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
                                         (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  &
                         (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
                                                                                        [['PRECIO_MEAN','PRECIO_STD']] 
+        print(bfID_ELEM)
         flAverage = np.round(bfID_ELEM['PRECIO_MEAN'],2)
         flMin     = np.round((bfID_ELEM['PRECIO_MEAN'] - bfID_ELEM['PRECIO_STD']),2) 
         flMax     = np.round((bfID_ELEM['PRECIO_MEAN'] + bfID_ELEM['PRECIO_STD']),2)  
