@@ -182,8 +182,8 @@ bfHTML = """
                     </tr>
                     <tr>
                         <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Baul/Portón</td>
-                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_BAUL"/></td>
-                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_BAUL" onclick="unCheckOps('TRA_CAM_DER_BAUL','TRA_REP_DER_BAUL')"/></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_DER_BAUL"  onclick="unCheckOps('TRA_REP_DER_BAUL','TRA_CAM_DER_BAUL')"/></td>
                         <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                         <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                     </tr>
@@ -328,7 +328,9 @@ bfHTML = """
             e.style.display = "none";    
             
         var e = document.getElementById("TRA_CAM_DER_BAUL");
-            e.checked = false;    
+            e.checked = false; 
+        var e = document.getElementById("TRA_REP_DER_BAUL");
+            e.checked = false;                
         var e = document.getElementById("TRA_CAM_DER_FARO");    
             e.checked = false;    
         var e = document.getElementById("TRA_CAM_IZQ_FARO");
@@ -455,7 +457,9 @@ bfHTML = """
         }    
         if (document.getElementById('trasero_chk').checked){ 
             var e=(document.getElementById('TRA_CAM_DER_BAUL').checked==true)?1:0;
-            var trasero=e + '-'; 
+            var trasero=e + '-';
+            e=(document.getElementById('TRA_REP_DER_BAUL').checked==true)?1:0;
+            trasero+=e + '-'; 
             e=(document.getElementById('TRA_CAM_DER_FARO').checked==true)?1:0;
             trasero+= e + '-';
             e=(document.getElementById('TRA_CAM_IZQ_FARO').checked==true)?1:0;
