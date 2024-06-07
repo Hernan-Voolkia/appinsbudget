@@ -678,7 +678,7 @@ def fnCambiaPinturaTrasero(inSEG,inCOD_CLASE,lsRepone):
     
     return lsReponePintAve,lsReponePintMin,lsReponePintMax,lsReponeMoAv,lsReponeMoMin,lsReponeMoMax 
 
-def fnMolduraTrasero(inCOD_MARCA,inCOD_MODELO,lsMold):
+def fnMolduraTrasero(inCOD_MARCA,inCOD_MODELO):
     inCOD_PARTE = 2
     lsVersion = ['1','2','3','4','5'] 
     lsDf_MOLDURA = []
