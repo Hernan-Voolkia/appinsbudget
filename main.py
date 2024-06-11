@@ -68,14 +68,14 @@ dfVALOR_REPUESTO_VALOR_MAT_LATERAL = pd.read_csv('./data/_dfVALOR_REPUESTO_MO&PI
                                  'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_STD':'float64'})
 #MOLDURAS
 dfMOLDURA = pd.read_csv('./data/_dfVALOR_REPUESTO_MOLDURAS_V7.csv',sep=';',encoding='utf-8',decimal='.',parse_dates=['FECHA'],
-                        dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','DESC_MARC':'str','COD_MODELO':'int16',
-                                 'DESC_MODE':'str','COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
-                                 'COD_ELEM':'int64','NRO_PIEZA':'str','VALOR':'float64'})
+                        dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
+                                 'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
+                                 'COD_ELEM':'int64','VALOR':'float64'})
 #ESPEJO
 dfESPEJO = pd.read_csv('./data/_dfVALOR_REPUESTO_ESPEJOS_V7.csv',sep=';',encoding='utf-8',decimal='.',parse_dates=['FECHA'],
-                        dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','DESC_MARC':'str','COD_MODELO':'int16',
-                                 'DESC_MODE':'str','COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
-                                 'COD_ELEM':'int64','NRO_PIEZA':'str','VALOR': 'float64'})
+                        dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
+                                 'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
+                                 'COD_ELEM':'int64','VALOR': 'float64'})
 #DBVALUES
 engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
 conn = engine.connect()
