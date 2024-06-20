@@ -67,15 +67,35 @@ dfVALOR_REPUESTO_VALOR_MAT_LATERAL = pd.read_csv('./data/_dfVALOR_REPUESTO_MO&PI
                                  'RATIO_HS_PINT_MEAN':'float64','RATIO_HS_PINT_STD':'float64',
                                  'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_STD':'float64'})
 #MOLDURAS
-dfMOLDURA = pd.read_csv('./data/_dfVALOR_REPUESTO_MOLDURAS_V7.csv',sep=';',encoding='utf-8',decimal='.',parse_dates=['FECHA'],
+#dfMOLDURA = pd.read_csv('./data/_dfVALOR_REPUESTO_MOLDURAS_V7.csv',sep=';',encoding='utf-8',decimal='.',parse_dates=['FECHA'],
+#                        dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
+#                                 'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
+#                                 'COD_ELEM':'int64','VALOR':'float64'})
+#
+dfMOLDURA = pd.read_csv('./data/MolduraSedanValueMin.csv',sep=';',encoding='utf-8',decimal='.',
                         dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
                                  'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
                                  'COD_ELEM':'int64','VALOR':'float64'})
 #ESPEJO
-dfESPEJO = pd.read_csv('./data/_dfVALOR_REPUESTO_ESPEJOS_V7.csv',sep=';',encoding='utf-8',decimal='.',parse_dates=['FECHA'],
+dfESPEJO = pd.read_csv('./data/PuertaEspejoSedanValueMin.csv',sep=';',encoding='utf-8',decimal='.',
                         dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
                                  'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
                                  'COD_ELEM':'int64','VALOR': 'float64'})
+#FARO
+dfFARO = pd.read_csv('./data/FaroOnlySedanValueMin.csv',sep=';',encoding='utf-8',decimal='.',
+                     dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
+                              'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
+                              'COD_ELEM':'int64','VALOR': 'float64'})
+#CRISTAL
+dfCRISTAL = pd.read_csv('./data/PuertaCristalSedanValueMin.csv',sep=';',encoding='utf-8',decimal='.',
+                        dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
+                                 'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
+                                 'COD_ELEM':'int64','VALOR': 'float64'})
+#MANIJA
+dfMANIJA = pd.read_csv('./data/PuertaManijaSedanValueMin.csv',sep=';',encoding='utf-8',decimal='.',
+                       dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
+                                'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
+                                'COD_ELEM':'int64','VALOR': 'float64'})
 #DBVALUES
 engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
 conn = engine.connect()
@@ -183,26 +203,47 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     #Segmenta Input
     lsLateral = LATERAL.split('-')
     lsTrasero = TRASERO.split('-')
-    #Lateral
+    
+    ###LATERAL###
     lsLateralCambiaElems = []
     lsLateralReparaElems = []
-    lsLateralMolduraElems= []
-    lsLateralEspejoElems= []
+    lsLateralMolduraElemsDel= []
+    lsLateralMolduraElemsTra= []
+    lsLateralEspejoElecElems= []
+    lsLateralEspejoManElems= []
+    lsLateralManijaElemsDel= []
+    lsLateralManijaElemsTra= []
+    lsLateralCristalElemDel= []
+    lsLateralCristalElemTra= []
+    
     flLatValorReparaAve=0
     flLatValorReponeElem=0
     flLatValorReponePint=0
     flLatValorReponeMoAv=0
-    flLatValorReponeEspejo=0 
-    flLatValorReponeMoldura=0 
-    #Trasero
+    flLatValorReponeEspejoElec=0 
+    flLatValorReponeEspejoMan=0 
+    flLatValorReponeMolduraDel=0 
+    flLatValorReponeMolduraTra=0 
+    flLatValorReponeManDel=0
+    flLatValorReponeManTra=0
+    flLatValorReponeCriDel=0
+    flLatValorReponeCriTra=0
+    
+    ###TRASERO###
     lsTraseroCambiaElems = []
     lsTraseroReparaElems = []
     lsTraseroMolduraElems= []
+    lsTraseroFaroExtElems= []
+    lsTraseroFaroIntElems= []
+    
     flTraValorReparaAve=0
     flTraValorReponeElem=0
     flTraValorReponePint=0
     flTraValorReponeMoAv=0
     flTraValorReponeMoldura=0
+    flTraValorReponeFaroExt=0
+    flTraValorReponeFaroInt=0
+    
     #ToDo: Agregar si no es numerico mensaje de error    
     if CLASE.isdigit(): iCLASE = int(CLASE)
     if MARCA.isdigit(): iMARCA = int(MARCA)
@@ -214,142 +255,147 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     flTrasero=0
 
     if '1' in lsLateral:
-        lsLateralCambiaElems,lsLateralReparaElems,lsLateralMolduraElems,lsLateralEspejoElems=fnGetLateralElems(lsLateral)
-        
+        lsLateralCambiaElems,lsLateralReparaElems,\
+        lsLateralMolduraElemsDel,lsLateralMolduraElemsTra,\
+        lsLateralEspejoElecElems,lsLateralEspejoManElems,\
+        lsLateralManijaElemsDel,lsLateralManijaElemsTra,\
+        lsLateralCristalElemDel,lsLateralCristalElemTra =fnGetLateralElems(lsLateral)
+
         if len(lsLateralReparaElems)>0:
-            
-            lsLatReparaAve,lsLatReparaMin,lsLatReparaMax = fnReparaLateral(iSEG,iCLASE,lsLateralReparaElems)
-            
+            lsLatReparaAve=fnReparaLateral(iSEG,iCLASE,lsLateralReparaElems)
             if len(lsLatReparaAve) == 0: lsLatReparaAve.append(0)
             flLatValorReparaAve = np.round(sum(lsLatReparaAve),2)
-            
-            if len(lsLatReparaMin) == 0: lsLatReparaMin.append(0)  
-            flLatValorReparaMin = np.round(sum(lsLatReparaMin),2)
-              
-            if len(lsLatReparaMax) == 0: lsLatReparaMax.append(0)   
-            flLatValorReparaMax = np.round(sum(lsLatReparaMax),2)
-            
+
         if len(lsLateralCambiaElems)>0:
-            
-            lsLatReponeAve,lsLatReponeMin,lsLatReponeMax=fnCambiaLateral(iSEG,iCLASE,iMARCA,iMODELO,lsLateralCambiaElems)
-            
+            lsLatReponeAve=fnCambiaLateral(iSEG,iCLASE,iMARCA,iMODELO,lsLateralCambiaElems)
             if len(lsLatReponeAve) == 0: lsLatReponeAve.append(0)
             flLatValorReponeElem = np.round(sum(lsLatReponeAve),2)
-            
-            if len(lsLatReponeMin) == 0: lsLatReponeMin.append(0) 
-            flLatValorReponeElemMin = np.round(sum(lsLatReponeMin),2)
-               
-            if len(lsLatReponeMax) == 0: lsLatReponeMax.append(0) 
-            flLatValorReponeElemMax = np.round(sum(lsLatReponeMax),2)
-            
-            lsLatReponePintAve,lsLatReponePintMin,lsLatReponePintMax,lsLatReponeMoAv,lsLatReponeMoMin,lsLatReponeMoMax=\
-                                                               fnCambiaPinturaLateral(iSEG,iCLASE,lsLateralCambiaElems) 
 
+            lsLatReponePintAve,lsLatReponeMoAv=fnCambiaPinturaLateral(iSEG,iCLASE,lsLateralCambiaElems) 
             if len(lsLatReponePintAve) == 0: lsLatReponePintAve.append(0)
             flLatValorReponePint = np.round(sum(lsLatReponePintAve),2)
-            
-            if len(lsLatReponePintMin) == 0: lsLatReponePintMin.append(0)
-            flLatValorReponePintMin = np.round(sum(lsLatReponePintMin),2)
-                
-            if len(lsLatReponePintMax) == 0: lsLatReponePintMax.append(0)
-            flLatValorReponePintMax = np.round(sum(lsLatReponePintMax),2)           
-    
             if len(lsLatReponeMoAv)  == 0: lsLatReponeMoAv.append(0)        
             flLatValorReponeMoAv = np.round(sum(lsLatReponeMoAv),2)
-                 
-            if len(lsLatReponeMoMin) == 0: lsLatReponeMoMin.append(0)
-            flLatValorReponeMoMin   = np.round(sum(lsLatReponeMoMin),2)
-              
-            if len(lsLatReponeMoMax) == 0: lsLatReponeMoMax.append(0)
-            flLatValorReponeMoMax   = np.round(sum(lsLatReponeMoMax),2)
 
-        if len(lsLateralMolduraElems)>0:
-            flLatValorReponeMoldura = fnMolduraLateral(iMARCA,iMODELO)
-            if   len(lsLateralMolduraElems)== 2: flLatValorReponeMoldura*=1.9 # Valor aprox por delantera y traserta
-            elif len(lsLateralMolduraElems)== 3: flLatValorReponeMoldura*=2.7 # Se proratea el valor
-            elif len(lsLateralMolduraElems)== 4: flLatValorReponeMoldura*=3.5 # Se proratea el valor
+        if len(lsLateralMolduraElemsDel)>0:
+            lsLatMeanMod = fnMolduraLateralDel(iMARCA,iMODELO)
+            if len(lsLatMeanMod) == 0: lsLatMeanMod.append(0)   
+            flLatValorReponeMolduraDel = np.round(lsLatMeanMod[0],2)
+            if len(lsLateralMolduraElemsDel)== 2: flLatValorReponeMolduraDel*=2 # Si se reponen las dos molduras
+
+        if len(lsLateralMolduraElemsTra)>0:
+            lsLatMeanMod = fnMolduraLateralTra(iMARCA,iMODELO)
+            if len(lsLatMeanMod) == 0: lsLatMeanMod.append(0) 
+            flLatValorReponeMolduraTra = np.round(lsLatMeanMod[0],2) 
+            if len(lsLateralMolduraElemsTra)== 2: flLatValorReponeMolduraTra*=2 # Si se reponen las dos molduras
         
-        if len(lsLateralEspejoElems)>0:
-            lsLatMeanEsp = fnEspejoLateral(iMARCA,iMODELO)
-            
+        if len(lsLateralEspejoElecElems)>0:
+            lsLatMeanEsp = fnEspejoLateralElec(iMARCA,iMODELO)
             if len(lsLatMeanEsp) == 0: lsLatMeanEsp.append(0)    
-            flLatValorReponeEspejo = np.round(lsLatMeanEsp[0],2)
-            if len(lsLateralEspejoElems) >1: flLatValorReponeEspejo*=2
+            flLatValorReponeEspejoElec = np.round(lsLatMeanEsp[0],2)
+            if len(lsLateralEspejoElecElems) >1: flLatValorReponeEspejoElec*=2 # Si se reponen los dos espejos
 
-        flLateral=np.round(flLatValorReparaAve+flLatValorReponeElem+flLatValorReponePint+flLatValorReponeMoAv+flLatValorReponeEspejo+flLatValorReponeMoldura,2)
-    
+        if len(lsLateralEspejoManElems)>0:
+            lsLatMeanEsp = fnEspejoLateralMan(iMARCA,iMODELO)
+            if len(lsLatMeanEsp) == 0: lsLatMeanEsp.append(0)    
+            flLatValorReponeEspejoMan = np.round(lsLatMeanEsp[0],2)
+            if len(lsLateralEspejoManElems) >1: flLatValorReponeEspejoMan*=2 # Si se reponen los dos espejos
+
+        if len(lsLateralManijaElemsDel)>0:
+            lsLatMeanManDel = fnManijaLateralDel(iMARCA,iMODELO)
+            if len(lsLatMeanManDel) == 0: lsLatMeanManDel.append(0)    
+            flLatValorReponeManDel = np.round(lsLatMeanManDel[0],2)
+            if len(lsLateralManijaElemsDel) >1: flLatValorReponeManDel*=2 # Si se reponen los dos espejos
+
+        if len(lsLateralManijaElemsTra)>0:
+            lsLatMeanManTra = fnManijaLateralTra(iMARCA,iMODELO)
+            if len(lsLatMeanManTra) == 0: lsLatMeanManTra.append(0)    
+            flLatValorReponeManTra = np.round(lsLatMeanManTra[0],2)
+            if len(lsLateralManijaElemsTra) >1: flLatValorReponeManTra*=2 # Si se reponen los dos espejos
+
+        if len(lsLateralCristalElemDel)>0:
+            lsLatMeanCriDel = fnCristalLateralDel(iMARCA,iMODELO)
+            if len(lsLatMeanCriDel) == 0: lsLatMeanCriDel.append(0)    
+            flLatValorReponeCriDel = np.round(lsLatMeanCriDel[0],2)
+            if len(lsLateralCristalElemDel) >1: flLatValorReponeCriDel*=2 # Si se reponen los dos espejos
+
+        if len(lsLateralCristalElemTra)>0:
+            lsLatMeanCriTra = fnCristalLateralTra(iMARCA,iMODELO)
+            if len(lsLatMeanCriTra) == 0: lsLatMeanCriTra.append(0)    
+            flLatValorReponeCriTra = np.round(lsLatMeanCriTra[0],2)
+            if len(lsLateralCristalElemTra) >1: flLatValorReponeCriTra*=2 # Si se reponen los dos espejos
+
+        flLateral=np.round(flLatValorReparaAve+flLatValorReponeElem+flLatValorReponePint+flLatValorReponeMoAv+\
+                           flLatValorReponeEspejoElec+flLatValorReponeEspejoMan+\
+                           flLatValorReponeManDel+flLatValorReponeManTra+\
+                           flLatValorReponeMolduraDel+flLatValorReponeMolduraTra+\
+                           flLatValorReponeCriDel+flLatValorReponeCriTra,2)
+   
         print("_Lateral Valores Promedio_______________")
-        print(f"Repara y Pintura = {flLatValorReparaAve}")
-        print(f"Repone Elem      = {flLatValorReponeElem}")
-        print(f"Repone Pint      = {flLatValorReponePint}")
-        print(f"Repone MO        = {flLatValorReponeMoAv}")
-        print(f"Repone Espejo    = {flLatValorReponeEspejo}")
-        print(f"Repone Moldura   = {flLatValorReponeMoldura}")
-        print(f"Total            = {flLateral}")
+        print(f"Repara y Pintura  = {flLatValorReparaAve}")
+        print(f"Repone Elem       = {flLatValorReponeElem}")
+        print(f"Repone Pint       = {flLatValorReponePint}")
+        print(f"Repone MO         = {flLatValorReponeMoAv}")
+        print(f"Repone Espejo Ele = {flLatValorReponeEspejoElec}")
+        print(f"Repone Espejo Man = {flLatValorReponeEspejoMan}")
+        print(f"Repone Manija Del = {flLatValorReponeManDel}")
+        print(f"Repone Manija Tra = {flLatValorReponeManTra}")
+        print(f"Repone Moldura Del= {flLatValorReponeMolduraDel}")
+        print(f"Repone Moldura Tra= {flLatValorReponeMolduraTra}")
+        print(f"Repone Cristal Del= {flLatValorReponeCriDel}")
+        print(f"Repone Cristal Tra= {flLatValorReponeCriTra}")
+        print(f"Total             = {flLateral}")
     
     if '1' in lsTrasero:
-        lsTraseroCambiaElems,lsTraseroReparaElems,lsTraseroMolduraElems = fnGetTraseroElems(CLASE,MARCA,MODELO,lsTrasero)
+        lsTraseroCambiaElems,lsTraseroReparaElems,lsTraseroMolduraElems,\
+        lsTraseroFaroExtElems,lsTraseroFaroIntElems= fnGetTraseroElems(CLASE,MARCA,MODELO,lsTrasero)
         
         if len(lsTraseroReparaElems)>0:
-            lsTraReparaAve,lsTraReparaMin,lsTraReparaMax=fnReparaTrasero(iSEG,iCLASE,lsTraseroReparaElems)
-            
+            lsTraReparaAve=fnReparaTrasero(iSEG,iCLASE,lsTraseroReparaElems)
             if len(lsTraReparaAve) == 0: lsTraReparaAve.append(0)
             flTraValorReparaAve = np.round(sum(lsTraReparaAve),2)
             
-            if len(lsTraReparaMin) == 0: lsTraReparaMin.append(0)    
-            flTraValorReparaMin = np.round(sum(lsTraReparaMin),2)
-            
-            if len(lsTraReparaMax) == 0: lsTraReparaMax.append(0)     
-            flTraValorReparaMax = np.round(sum(lsTraReparaMax),2)
-            
         if len(lsTraseroCambiaElems)>0:
-            lsTraReponeAve,lsTraReponeMin,lsTraReponeMax=fnCambiaTrasero(iSEG,iCLASE,iMARCA,iMODELO,lsTraseroCambiaElems)    
-
+            lsTraReponeAve=fnCambiaTrasero(iSEG,iCLASE,iMARCA,iMODELO,lsTraseroCambiaElems) 
             if len(lsTraReponeAve)  == 0: lsTraReponeAve.append(0)
             flTraValorReponeElem = np.round(sum(lsTraReponeAve),2)
             
-            if len(lsTraReponeMin)  == 0: lsTraReponeMin.append(0)    
-            flTraValorReponeElemMin = np.round(sum(lsTraReponeMin),2)
-            
-            if len(lsTraReponeMax)  == 0: lsTraReponeMax.append(0) 
-            flTraValorReponeElemMax = np.round(sum(lsTraReponeMax),2)
- 
-            lsTraReponePintAve,lsTraReponePintMin,lsTraReponePintMax,lsTraReponeMoAv,lsTraReponeMoMin,lsTraReponeMoMax=\
-                                                                fnCambiaPinturaTrasero(iSEG,iCLASE,lsTraseroCambiaElems) 
-
+            lsTraReponePintAve,lsTraReponeMoAv=fnCambiaPinturaTrasero(iSEG,iCLASE,lsTraseroCambiaElems)                                                                 
             if len(lsTraReponePintAve) == 0: lsTraReponePintAve.append(0)
             flTraValorReponePint = np.round(sum(lsTraReponePintAve),2) 
-            
-            if len(lsTraReponePintMin) == 0: lsTraReponePintMin.append(0)    
-            flTraValorReponePintMin = np.round(sum(lsTraReponePintMin),2)
-            
-            if len(lsTraReponePintMax) == 0: lsTraReponePintMax.append(0)       
-            flTraValorReponePintMax = np.round(sum(lsTraReponePintMax),2)
-    
             if len(lsTraReponeMoAv)  == 0: lsTraReponeMoAv.append(0)             
             flTraValorReponeMoAv = np.round(sum(lsTraReponeMoAv),2)
             
-            if len(lsTraReponeMoMin) == 0: lsTraReponeMoMin.append(0)  
-            flTraValorReponeMoMin   = np.round(sum(lsTraReponeMoMin),2)
-            
-            if len(lsTraReponeMoMax) == 0: lsTraReponeMoMax.append(0)     
-            flTraValorReponeMoMax   = np.round(sum(lsTraReponeMoMax),2)
-            
         if len(lsTraseroMolduraElems)>0:
             lsTraMeanMold=fnMolduraTrasero(iMARCA,iMODELO)      
-
             if len(lsTraMeanMold) == 0: lsTraMeanMold.append(0)
             flTraValorReponeMoldura  = np.round(lsTraMeanMold[-1],2)
-    
-        flTrasero=np.round(flTraValorReparaAve+flTraValorReponeElem+flTraValorReponePint+flTraValorReponeMoAv+flTraValorReponeMoldura,2)
 
-        #print("_Trasero Valores Promedio_______________")
-        #print(f"Repara y Pintura = {flTraValorReparaAve}")
-        #print(f"Repone Elem    = {flTraValorReponeElem}")
-        #print(f"Repone Pint    = {flTraValorReponePint}")
-        #print(f"Repone MO      = {flTraValorReponeMoAv}")
-        #print(f"Repone Moldura = {flTraValorReponeMoldura}")
-        #print(f"Total          = {flTrasero}")
+        if len(lsTraseroFaroExtElems)>0:
+            lsTraMeanFExt=fnFaroExtTrasero(iMARCA,iMODELO)    
+            if len(lsTraMeanFExt) == 0: lsTraMeanFExt.append(0)
+            flTraValorReponeFaroExt  = np.round(lsTraMeanFExt[-1],2)
+            if len(lsTraseroFaroExtElems) >1: flTraValorReponeFaroExt*=2 # Si se reponen los dos faros
+
+        if len(lsTraseroFaroIntElems)>0:
+            lsTraMeanFInt=fnFaroIntTrasero(iMARCA,iMODELO)    
+            if len(lsTraMeanFInt) == 0: lsTraMeanFInt.append(0)
+            flTraValorReponeFaroInt  = np.round(lsTraMeanFInt[-1],2)
+            if len(lsTraseroFaroIntElems) >1: flTraValorReponeFaroInt*=2 # Si se reponen los dos faros
+    
+        flTrasero=np.round(flTraValorReparaAve+flTraValorReponeElem+flTraValorReponePint+\
+                           flTraValorReponeMoAv+flTraValorReponeMoldura+\
+                           flTraValorReponeFaroExt+flTraValorReponeFaroInt,2)
+
+        print("_Trasero Valores Promedio_______________")
+        print(f"Repara y Pintura = {flTraValorReparaAve}")
+        print(f"Repone Elem     = {flTraValorReponeElem}")
+        print(f"Repone Pint     = {flTraValorReponePint}")
+        print(f"Repone MO       = {flTraValorReponeMoAv}")
+        print(f"Repone Moldura  = {flTraValorReponeMoldura}")
+        print(f"Repone Faro Ext = {flTraValorReponeFaroExt}")
+        print(f"Repone Faro Int = {flTraValorReponeFaroInt}") 
+        print(f"Total           = {flTrasero}")
 
     bfTmp = resumeDataBrief(CLIENTE,flLateral,flTrasero)
 
@@ -373,57 +419,80 @@ def fnSegmento(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO):
     else: return lsSEG[0]
     
 def fnGetLateralElems(lsLateralLc):
-    lsLateralElemsLc = ["CRISTAL_DEL","CRISTAL_TRA","ESPEJO","MOLDURA","PUERTA_DEL","PUERTA_TRA","PUERTA_DEL_PANEL","PUERTA_TRA_PANEL","ZOCALO"]
-    #Array lsLateralElemsLc
+    lsLateralElemsLc = ["CRISTAL_DEL","CRISTAL_TRA","ESPEJOELEC","ESPEJOMAN","MANIJA_DEL","MANIJA_TRA",
+                        "MOLDURA_DEL","MOLDURA_TRA","PUERTA_DEL","PUERTA_TRA","PUERTA_DEL_PANEL","PUERTA_TRA_PANEL",
+                        "ZOCALO"]
+
+    lsLateralCambiaVal     = []
+    lsLateralReparaVal     = []
+    lsLateralMolduraDelVal = []
+    lsLateralMolduraTraVal = []
+    lsLateralEspejoElecVal = []
+    lsLateralEspejoManVal  = []
+    lsLateralManijaDel     = []
+    lsLateralManijaTra     = []
+    lsLateralCristalDel    = []
+    lsLateralCristalTra    = []
+    
     iPosCRISTAL_DEL=0
     iPosCRISTAL_TRA=1
-    iPosESPEJO=2
-    iPosMOLDURA=3
-    iPosPUERTA_DEL=4
-    iPosPUERTA_TRA=5
-    iPosPUERTA_DEL_PANEL=6
-    iPosPUERTA_TRA_PANEL=7
-    iPosZOCALO=8
+    iPosESPEJOELEC=2
+    iPosESPEJOMAN=3
+    iPosMANIJA_DEL=4
+    iPosMANIJA_TRA=5
+    iPosMOLDURA_DEL=6
+    iPosMOLDURA_TRA=7
+    iPosPUERTA_DEL=8
+    iPosPUERTA_TRA=9
+    iPosPUERTA_DEL_PANEL=10
+    iPosPUERTA_TRA_PANEL=11
+    iPosZOCALO=12
     
-    lsLateralCambiaVal  = []
-    lsLateralReparaVal  = []
-    lsLateralMolduraVal = []
-    lsLateralEspejoVal  = []
-
-    #Array lsLateralLc
     iPosCRISTAL_DELCambiaDer=0
     iPosCRISTAL_DELCambiaIzq=1
     iPosCRISTAL_TRACambiaDer=2
     iPosCRISTAL_TRACambiaIzq=3
-    iPosESPEJOCambiaDer=4
-    iPosESPEJOCambiaIzq=5
-    iPosMOLDURA_DELCambiaDer=6
-    iPosMOLDURA_DELCambiaIzq=7
-    iPosMOLDURA_TRACambiaDer=8
-    iPosMOLDURA_TRACambiaIzq=9
-    iPosPUERTA_DELCambiaDer=10
-    iPosPUERTA_DELCambiaIzq=11
-    iPosPUERTA_TRACambiaDer=12
-    iPosPUERTA_TRACambiaIzq=13
-    iPosPUERTA_DEL_PANELReparaDer=14
-    iPosPUERTA_DEL_PANELReparaIzq=15
-    iPosPUERTA_TRA_PANELReparaDer=16
-    iPosPUERTA_TRA_PANELReparaIzq=17
-    iPosZOCALOCambiaDer=18
-    iPosZOCALOReparaDer=19
-    iPosZOCALOCambiaIzq=20
-    iPosZOCALOReparaIzq=21
+    iPosESPEJOELECCambiaDer=4
+    iPosESPEJOELECCambiaIzq=5
+    iPosESPEJOMANCambiaDer=6
+    iPosESPEJOMANCambiaIzq=7
+    iPosMANIJA_DELCambiaDer=8
+    iPosMANIJA_DELCambiaIzq=9
+    iPosMANIJA_TRACambiaDer=10
+    iPosMANIJA_TRACambiaIzq=11
+    iPosMOLDURA_DELCambiaDer=12
+    iPosMOLDURA_DELCambiaIzq=13
+    iPosMOLDURA_TRACambiaDer=14
+    iPosMOLDURA_TRACambiaIzq=15
+    iPosPUERTA_DELCambiaDer=16
+    iPosPUERTA_DELCambiaIzq=17
+    iPosPUERTA_TRACambiaDer=18
+    iPosPUERTA_TRACambiaIzq=19
+    iPosPUERTA_DEL_PANELReparaDer=20
+    iPosPUERTA_DEL_PANELReparaIzq=21
+    iPosPUERTA_TRA_PANELReparaDer=22
+    iPosPUERTA_TRA_PANELReparaIzq=23
+    iPosZOCALOCambiaDer=24
+    iPosZOCALOReparaDer=25
+    iPosZOCALOCambiaIzq=26
+    iPosZOCALOReparaIzq=27
     
-    lsLateralCambiaVal.append(lsLateralElemsLc[iPosCRISTAL_DEL] if lsLateralLc[iPosCRISTAL_DELCambiaDer]=="1" else "")
-    lsLateralCambiaVal.append(lsLateralElemsLc[iPosCRISTAL_DEL] if lsLateralLc[iPosCRISTAL_DELCambiaIzq]=="1" else "")
-    lsLateralCambiaVal.append(lsLateralElemsLc[iPosCRISTAL_TRA] if lsLateralLc[iPosCRISTAL_TRACambiaDer]=="1" else "")
-    lsLateralCambiaVal.append(lsLateralElemsLc[iPosCRISTAL_TRA] if lsLateralLc[iPosCRISTAL_TRACambiaIzq]=="1" else "")
-    lsLateralEspejoVal.append(lsLateralElemsLc[iPosESPEJO] if lsLateralLc[iPosESPEJOCambiaDer]== "1"else "")
-    lsLateralEspejoVal.append(lsLateralElemsLc[iPosESPEJO] if lsLateralLc[iPosESPEJOCambiaIzq]== "1"else "")
-    lsLateralMolduraVal.append(lsLateralElemsLc[iPosMOLDURA] if lsLateralLc[iPosMOLDURA_DELCambiaDer]== "1"else "")
-    lsLateralMolduraVal.append(lsLateralElemsLc[iPosMOLDURA] if lsLateralLc[iPosMOLDURA_DELCambiaIzq]== "1"else "")
-    lsLateralMolduraVal.append(lsLateralElemsLc[iPosMOLDURA] if lsLateralLc[iPosMOLDURA_TRACambiaDer]== "1"else "")
-    lsLateralMolduraVal.append(lsLateralElemsLc[iPosMOLDURA] if lsLateralLc[iPosMOLDURA_TRACambiaIzq]== "1"else "")
+    lsLateralCristalDel.append(lsLateralElemsLc[iPosCRISTAL_DEL] if lsLateralLc[iPosCRISTAL_DELCambiaDer]=="1" else "")
+    lsLateralCristalDel.append(lsLateralElemsLc[iPosCRISTAL_DEL] if lsLateralLc[iPosCRISTAL_DELCambiaIzq]=="1" else "")
+    lsLateralCristalTra.append(lsLateralElemsLc[iPosCRISTAL_TRA] if lsLateralLc[iPosCRISTAL_TRACambiaDer]=="1" else "")
+    lsLateralCristalTra.append(lsLateralElemsLc[iPosCRISTAL_TRA] if lsLateralLc[iPosCRISTAL_TRACambiaIzq]=="1" else "")
+    lsLateralEspejoElecVal.append(lsLateralElemsLc[iPosESPEJOELEC] if lsLateralLc[iPosESPEJOELECCambiaDer]== "1"else "")
+    lsLateralEspejoElecVal.append(lsLateralElemsLc[iPosESPEJOELEC] if lsLateralLc[iPosESPEJOELECCambiaIzq]== "1"else "")
+    lsLateralEspejoManVal.append(lsLateralElemsLc[iPosESPEJOMAN] if lsLateralLc[iPosESPEJOMANCambiaDer]== "1"else "")
+    lsLateralEspejoManVal.append(lsLateralElemsLc[iPosESPEJOMAN] if lsLateralLc[iPosESPEJOMANCambiaIzq]== "1"else "")
+    lsLateralManijaDel.append(lsLateralElemsLc[iPosMANIJA_DEL] if lsLateralLc[iPosMANIJA_DELCambiaDer]== "1"else "")
+    lsLateralManijaDel.append(lsLateralElemsLc[iPosMANIJA_DEL] if lsLateralLc[iPosMANIJA_DELCambiaIzq]== "1"else "")
+    lsLateralManijaTra.append(lsLateralElemsLc[iPosMANIJA_TRA] if lsLateralLc[iPosMANIJA_TRACambiaDer]== "1"else "")
+    lsLateralManijaTra.append(lsLateralElemsLc[iPosMANIJA_TRA] if lsLateralLc[iPosMANIJA_TRACambiaIzq]== "1"else "")
+    lsLateralMolduraDelVal.append(lsLateralElemsLc[iPosMOLDURA_DEL] if lsLateralLc[iPosMOLDURA_DELCambiaDer]== "1"else "")
+    lsLateralMolduraDelVal.append(lsLateralElemsLc[iPosMOLDURA_DEL] if lsLateralLc[iPosMOLDURA_DELCambiaIzq]== "1"else "")
+    lsLateralMolduraTraVal.append(lsLateralElemsLc[iPosMOLDURA_TRA] if lsLateralLc[iPosMOLDURA_TRACambiaDer]== "1"else "")
+    lsLateralMolduraTraVal.append(lsLateralElemsLc[iPosMOLDURA_TRA] if lsLateralLc[iPosMOLDURA_TRACambiaIzq]== "1"else "")
     lsLateralCambiaVal.append(lsLateralElemsLc[iPosPUERTA_DEL] if lsLateralLc[iPosPUERTA_DELCambiaDer]=="1" else "")
     lsLateralCambiaVal.append(lsLateralElemsLc[iPosPUERTA_DEL] if lsLateralLc[iPosPUERTA_DELCambiaIzq]=="1" else "")
     lsLateralCambiaVal.append(lsLateralElemsLc[iPosPUERTA_TRA] if lsLateralLc[iPosPUERTA_TRACambiaDer]=="1" else "")
@@ -437,50 +506,65 @@ def fnGetLateralElems(lsLateralLc):
     lsLateralCambiaVal.append(lsLateralElemsLc[iPosZOCALO] if lsLateralLc[iPosZOCALOCambiaIzq]=="1" else "")
     lsLateralReparaVal.append(lsLateralElemsLc[iPosZOCALO] if lsLateralLc[iPosZOCALOReparaIzq]=="1" else "")
     
+    lsLateralCambiaVal     = [i for i in lsLateralCambiaVal if i != ""]
+    lsLateralReparaVal     = [i for i in lsLateralReparaVal if i != ""]
+    lsLateralMolduraDelVal = [i for i in lsLateralMolduraDelVal if i != ""]
+    lsLateralMolduraTraVal = [i for i in lsLateralMolduraTraVal if i != ""]
+    lsLateralEspejoElecVal = [i for i in lsLateralEspejoElecVal if i != ""]
+    lsLateralEspejoManVal  = [i for i in lsLateralEspejoManVal if i != ""]
+    lsLateralManijaDel     = [i for i in lsLateralManijaDel if i != ""]
+    lsLateralManijaTra     = [i for i in lsLateralManijaTra if i != ""]
+    lsLateralCristalDel    = [i for i in lsLateralCristalDel if i != ""]
+    lsLateralCristalTra    = [i for i in lsLateralCristalTra if i != ""]    
     
-    lsLateralCambiaVal = [i for i in lsLateralCambiaVal if i != ""]
-    lsLateralReparaVal = [i for i in lsLateralReparaVal if i != ""]
-    lsLateralMolduraVal = [i for i in lsLateralMolduraVal if i != ""]
-    lsLateralEspejoVal = [i for i in lsLateralEspejoVal if i != ""]
-    
-    return lsLateralCambiaVal,lsLateralReparaVal,lsLateralMolduraVal,lsLateralEspejoVal 
+    return lsLateralCambiaVal,lsLateralReparaVal,\
+           lsLateralMolduraDelVal,lsLateralMolduraTraVal,\
+           lsLateralEspejoElecVal,lsLateralEspejoManVal,\
+           lsLateralManijaDel,lsLateralManijaTra,\
+           lsLateralCristalDel,lsLateralCristalTra     
 
 def fnGetTraseroElems(iClaseLc, iMarcaLc, iModeloLc, lsTraseroLc):    
-    lsTraseroElemsLc = ['BAULPORTON','FARO','GUARDABARRO','LUNETA','MOLDURA','PANELCOLACOMP','PARAGOLPE','PANELCOLASUP']
-    #Array lsTraseroElemsLc
-    iPosBAULPORTON=0
-    iPosFARO=1
-    iPosGUARDABARRO=2
-    iPosLUNETA=3
-    iPosMOLDURA=4
-    iPosPANELCOLACOMP=5
-    iPosPARAGOLPE=6
-    iPosPANELCOLASUP=7
-       
+    lsTraseroElemsLc = ['BAULPORTON','FAROEXT','FAROINT','GUARDABARRO','LUNETA','MOLDURA','PANELCOLACOMP','PARAGOLPE','PANELCOLASUP']
+
     lsTraseroCambiaVal  = []
     lsTraseroReparaVal  = []
     lsTraseroMolduraVal = []
-    
-    #Array lsTraseroLc
+    lsTraseroFaroExtVal = []
+    lsTraseroFaroIntVal = []
+
+    iPosBAULPORTON=0
+    iPosFAROEXT=1
+    iPosFAROINT=2
+    iPosGUARDABARRO=3
+    iPosLUNETA=4
+    iPosMOLDURA=5
+    iPosPANELCOLACOMP=6
+    iPosPARAGOLPE=7
+    iPosPANELCOLASUP=8
+       
     iPosBAULPORTONCambiaDer=0
     iPosBAULPORTONReparaDer=1
-    iPosFAROCambiaDer=2
-    iPosFAROCambiaIzq=3
-    iPosGUARDABARROCambiaDer=4
-    iPosGUARDABARROReparaDer=5
-    iPosGUARDABARROCambiaIzq=6
-    iPosGUARDABARROReparaIzq=7
-    iPosLUNETACambiaDer=8
-    iPosMOLDURACambiaDer=9
-    iPosPANELCOLACOMPCambiaDer=10
-    iPosPANELCOLACOMPReparaDer=11
-    iPosPARAGOLPECambiaDer=12
-    iPosPARAGOLPEReparaDer=13
+    iPosFAROEXTCambiaDer=2
+    iPosFAROEXTCambiaIzq=3
+    iPosFAROINTCambiaDer=4
+    iPosFAROINTCambiaIzq=5
+    iPosGUARDABARROCambiaDer=6
+    iPosGUARDABARROReparaDer=7
+    iPosGUARDABARROCambiaIzq=8
+    iPosGUARDABARROReparaIzq=9
+    iPosLUNETACambiaDer=10
+    iPosMOLDURACambiaDer=11
+    iPosPANELCOLACOMPCambiaDer=12
+    iPosPANELCOLACOMPReparaDer=13
+    iPosPARAGOLPECambiaDer=14
+    iPosPARAGOLPEReparaDer=15
     
     lsTraseroCambiaVal.append(lsTraseroElemsLc[iPosBAULPORTON] if lsTraseroLc[iPosBAULPORTONCambiaDer] == "1" else "")
     lsTraseroReparaVal.append(lsTraseroElemsLc[iPosBAULPORTON] if lsTraseroLc[iPosBAULPORTONReparaDer] == "1" else "")
-    lsTraseroCambiaVal.append(lsTraseroElemsLc[iPosFARO] if lsTraseroLc[iPosFAROCambiaDer] == "1" else "")
-    lsTraseroCambiaVal.append(lsTraseroElemsLc[iPosFARO] if lsTraseroLc[iPosFAROCambiaIzq] == "1" else "")
+    lsTraseroFaroExtVal.append(lsTraseroElemsLc[iPosFAROEXT] if lsTraseroLc[iPosFAROEXTCambiaDer] == "1" else "")
+    lsTraseroFaroExtVal.append(lsTraseroElemsLc[iPosFAROEXT] if lsTraseroLc[iPosFAROEXTCambiaIzq] == "1" else "")
+    lsTraseroFaroIntVal.append(lsTraseroElemsLc[iPosFAROINT] if lsTraseroLc[iPosFAROINTCambiaDer] == "1" else "")
+    lsTraseroFaroIntVal.append(lsTraseroElemsLc[iPosFAROINT] if lsTraseroLc[iPosFAROINTCambiaIzq] == "1" else "")
     lsTraseroCambiaVal.append(lsTraseroElemsLc[iPosGUARDABARRO] if lsTraseroLc[iPosGUARDABARROCambiaDer] == "1" else "")
     lsTraseroReparaVal.append(lsTraseroElemsLc[iPosGUARDABARRO] if lsTraseroLc[iPosGUARDABARROReparaDer] == "1" else "")
     lsTraseroCambiaVal.append(lsTraseroElemsLc[iPosGUARDABARRO] if lsTraseroLc[iPosGUARDABARROCambiaIzq] == "1" else "")
@@ -500,11 +584,13 @@ def fnGetTraseroElems(iClaseLc, iMarcaLc, iModeloLc, lsTraseroLc):
         if blPorton==True: lsTraseroReparaVal[iPosBAULPORTON]="PORTON"
         else: lsTraseroReparaVal[iPosBAULPORTON]="BAUL"
     
-    lsTraseroCambiaVal = [i for i in lsTraseroCambiaVal if i != ""]
-    lsTraseroReparaVal = [i for i in lsTraseroReparaVal if i != ""]
+    lsTraseroCambiaVal  = [i for i in lsTraseroCambiaVal if i != ""]
+    lsTraseroReparaVal  = [i for i in lsTraseroReparaVal if i != ""]
     lsTraseroMolduraVal = [i for i in lsTraseroMolduraVal if i != ""]
+    lsTraseroFaroExtVal = [i for i in lsTraseroFaroExtVal if i != ""]
+    lsTraseroFaroIntVal = [i for i in lsTraseroFaroIntVal if i != ""]
      
-    return lsTraseroCambiaVal,lsTraseroReparaVal,lsTraseroMolduraVal 
+    return lsTraseroCambiaVal,lsTraseroReparaVal,lsTraseroMolduraVal,lsTraseroFaroExtVal,lsTraseroFaroIntVal 
     
 def fnHasPorton(iClaseLc, iMarcaLc, iModeloLc):
     blPorton = False
@@ -513,70 +599,34 @@ def fnHasPorton(iClaseLc, iMarcaLc, iModeloLc):
     return blPorton    
 
 def fnReparaTrasero(inSEG,inCOD_CLASE,lsRepara):
-    inCOD_PARTE  =   2
+    inCOD_PARTE = 2
     lsReparaAve = []
-    lsReparaMin = []
-    lsReparaMax = []
     flAverage = 0
-    flMin     = 0
-    flMax     = 0
    
     for index, item in enumerate(lsRepara):
         bfID_ELEM = dfVALOR_MO_UNIF_TRASERO.loc[(dfVALOR_MO_UNIF_TRASERO['SEG'] == inSEG) & 
-                    (dfVALOR_MO_UNIF_TRASERO['COD_CLASE'] == inCOD_CLASE) & (dfVALOR_MO_UNIF_TRASERO['COD_PARTE'] == inCOD_PARTE) &
-                    (dfVALOR_MO_UNIF_TRASERO['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                    [['VALOR_MO_MEAN','VALOR_MO_STD','CANT_HS_PINT_MEAN','CANT_HS_PINT_STD','VALOR_MAT_PINT_MEAN','VALOR_MAT_PINT_STD']] 
-
-        #flAverage=np.round((bfID_ELEM['VALOR_MO_MEAN']+bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-        #    
-        #flMin=np.round((bfID_ELEM['VALOR_MO_MEAN'] - bfID_ELEM['VALOR_MO_STD'])+ \
-        #               (bfID_ELEM['CANT_HS_PINT_MEAN'] - bfID_ELEM['CANT_HS_PINT_STD']) + \
-        #               (bfID_ELEM['VALOR_MAT_PINT_MEAN'] - bfID_ELEM['VALOR_MAT_PINT_STD']),2) 
-        #    
-        #flMax=np.round((bfID_ELEM['VALOR_MO_MEAN'] + bfID_ELEM['VALOR_MO_STD']) + \
-        #               (bfID_ELEM['CANT_HS_PINT_MEAN']   + bfID_ELEM['CANT_HS_PINT_STD']) + \
-        #               (bfID_ELEM['VALOR_MAT_PINT_MEAN'] + bfID_ELEM['VALOR_MAT_PINT_STD']),2)  
+                                                (dfVALOR_MO_UNIF_TRASERO['COD_CLASE'] == inCOD_CLASE) & 
+                                                (dfVALOR_MO_UNIF_TRASERO['COD_PARTE'] == inCOD_PARTE) &
+                        (dfVALOR_MO_UNIF_TRASERO['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
+                                                [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']] 
 
         flVALOR_MO_MEAN     = bfID_ELEM['VALOR_MO_MEAN']
-        flVALOR_MO_STD      = bfID_ELEM['VALOR_MO_STD']
-        
         flCANT_HS_PINT_MEAN = bfID_ELEM['CANT_HS_PINT_MEAN'] 
-        flCANT_HS_PINT_STD  = bfID_ELEM['CANT_HS_PINT_STD']
 
-        flVALOR_MO_MEAN     = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2)
-        flVALOR_MO_STD      = np.round((flVALOR_MO_STD / 6350) * float(param.bfMObra),2)
-        
-        flCANT_HS_PINT_MEAN = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfPintura),2)
-        flCANT_HS_PINT_STD  = np.round((flCANT_HS_PINT_STD / 6350) * float(param.bfPintura),2)
+        flVALOR_MO_MEAN     = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2) #Todo: Sacar
+        flCANT_HS_PINT_MEAN = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfPintura),2) #Todo: Sacar
 
         flAverage=np.round((flVALOR_MO_MEAN+bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-            
-        flMin=np.round((flVALOR_MO_MEAN - flVALOR_MO_STD)+ \
-                       (flCANT_HS_PINT_MEAN - flCANT_HS_PINT_STD) + \
-                       (bfID_ELEM['VALOR_MAT_PINT_MEAN'] - bfID_ELEM['VALOR_MAT_PINT_STD']),2) 
-            
-        flMax=np.round((flVALOR_MO_MEAN + flVALOR_MO_STD) + \
-                       (flCANT_HS_PINT_MEAN   + flCANT_HS_PINT_STD) + \
-                       (bfID_ELEM['VALOR_MAT_PINT_MEAN'] + bfID_ELEM['VALOR_MAT_PINT_STD']),2)  
-            
         lsReparaAve.append(flAverage) 
-        lsReparaMin.append(flMin) 
-        lsReparaMax.append(flMax) 
-   
+
     for index, item in enumerate(lsReparaAve): lsReparaAve[index] = list(set(item))[0]     
-    for index, item in enumerate(lsReparaMin): lsReparaMin[index] = list(set(item))[0]     
-    for index, item in enumerate(lsReparaMax): lsReparaMax[index] = list(set(item))[0]             
-    
-    return lsReparaAve,lsReparaMin,lsReparaMax
+
+    return lsReparaAve
 
 def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
     inCOD_PARTE = 2
     lsReponeAve = []
-    lsReponeMin = []
-    lsReponeMax = []
     flAverage = 0
-    flMin     = 0
-    flMax     = 0
     
     for index, item in enumerate(lsRepone):
         bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & 
@@ -586,174 +636,199 @@ def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
                                         (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  &
                     (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
                                                                                     [['PRECIO_MEAN','PRECIO_STD']] 
-        flAverage = np.round(bfID_ELEM['PRECIO_MEAN'],2)
-        flMin     = np.round((bfID_ELEM['PRECIO_MEAN'] - bfID_ELEM['PRECIO_STD']),2) 
-        flMax     = np.round((bfID_ELEM['PRECIO_MEAN'] + bfID_ELEM['PRECIO_STD']),2)  
         
-        if len(flMin) == 0: flMin = [0]
-        lsReponeMin.append(flMin) 
+        flAverage = np.round(bfID_ELEM['PRECIO_MEAN'],2)
         if len(flAverage) == 0: flAverage = [0]
-        if  item.upper().count('FARO') > 0:   
-            lsReponeAve.append(flMin) 
-        else:
-            lsReponeAve.append(flAverage)
-        if len(flMax) == 0: flMax = [0]
-        lsReponeMax.append(flMax) 
+        lsReponeAve.append(flAverage)
     
-    for index, item in enumerate(lsReponeMin): lsReponeMin[index] = list(set(item))[0]     
     for index, item in enumerate(lsReponeAve): lsReponeAve[index] = list(set(item))[0]     
-    for index, item in enumerate(lsReponeMax): lsReponeMax[index] = list(set(item))[0]    
     
-    return lsReponeAve,lsReponeMin,lsReponeMax 
+    return lsReponeAve 
 
 def fnCambiaPinturaTrasero(inSEG,inCOD_CLASE,lsRepone):
     inCOD_PARTE = 2
     lsReponePintAve=[]
-    lsReponePintMin=[]
-    lsReponePintMax=[]
     lsReponeMoAv=[]
-    lsReponeMoMin=[]
-    lsReponeMoMax=[]
     flAverage=0
-    flMin=0
-    flMax=0
     flMoAv=0
-    flMOMin=0
-    flMoMax=0
     
     for index, item in enumerate(lsRepone):
         bfID_ELEM = dfVALOR_REPUESTO_VALOR_MAT_TRASERO.loc[(dfVALOR_REPUESTO_VALOR_MAT_TRASERO['SEG']==inSEG)& 
                     (dfVALOR_REPUESTO_VALOR_MAT_TRASERO['COD_CLASE']==inCOD_CLASE)&
                     (dfVALOR_REPUESTO_VALOR_MAT_TRASERO['COD_PARTE']==inCOD_PARTE)&
                     (dfVALOR_REPUESTO_VALOR_MAT_TRASERO['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                        [['VALOR_MO_MEAN','VALOR_MO_STD','CANT_HS_PINT_MEAN','CANT_HS_PINT_STD',
-                         'VALOR_MAT_PINT_MEAN','VALOR_MAT_PINT_STD']] 
-
-        #flAverage = np.round((bfID_ELEM['CANT_HS_PINT_MEAN'] + bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-        #flMin     = np.round(((bfID_ELEM['CANT_HS_PINT_MEAN'] - bfID_ELEM['CANT_HS_PINT_STD']) + \
-        #                     (bfID_ELEM['VALOR_MAT_PINT_MEAN'] - bfID_ELEM['VALOR_MAT_PINT_STD'])),2) 
-        #flMax     = np.round(((bfID_ELEM['CANT_HS_PINT_MEAN'] + bfID_ELEM['CANT_HS_PINT_STD']) + \
-        #                      (bfID_ELEM['VALOR_MAT_PINT_MEAN'] + bfID_ELEM['VALOR_MAT_PINT_STD'])),2)  
-        
-        #flMoAv      = np.round(bfID_ELEM['VALOR_MO_MEAN'],2) 
-        #flMOMin     = np.round(((bfID_ELEM['VALOR_MO_MEAN'] - bfID_ELEM['VALOR_MO_STD'])),2) 
-        #flMoMax     = np.round(((bfID_ELEM['VALOR_MO_MEAN'] + bfID_ELEM['VALOR_MO_STD'])),2)  
+                        [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']] 
 
         flVALOR_MO_MEAN     = bfID_ELEM['VALOR_MO_MEAN']
-        flVALOR_MO_STD      = bfID_ELEM['VALOR_MO_STD']
-        
         flCANT_HS_PINT_MEAN = bfID_ELEM['CANT_HS_PINT_MEAN'] 
-        flCANT_HS_PINT_STD  = bfID_ELEM['CANT_HS_PINT_STD']
 
-        flVALOR_MO_MEAN     = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2)
-        flVALOR_MO_STD      = np.round((flVALOR_MO_STD / 6350) * float(param.bfMObra),2)
-        
-        flCANT_HS_PINT_MEAN = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfPintura),2)
-        flCANT_HS_PINT_STD  = np.round((flCANT_HS_PINT_STD / 6350) * float(param.bfPintura),2)
+        flVALOR_MO_MEAN     = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2)  #Todo: Sacar
+        flCANT_HS_PINT_MEAN = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfPintura),2) #Todo: Sacar
 
         flAverage = np.round((flCANT_HS_PINT_MEAN + bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-        flMin     = np.round(((flCANT_HS_PINT_MEAN - flCANT_HS_PINT_STD) + \
-                             (bfID_ELEM['VALOR_MAT_PINT_MEAN'] - bfID_ELEM['VALOR_MAT_PINT_STD'])),2) 
-        flMax     = np.round(((flCANT_HS_PINT_MEAN + flCANT_HS_PINT_STD) + \
-                              (bfID_ELEM['VALOR_MAT_PINT_MEAN'] + bfID_ELEM['VALOR_MAT_PINT_STD'])),2)  
-        
-        flMoAv      = np.round(flVALOR_MO_MEAN,2) 
-        flMOMin     = np.round(((flVALOR_MO_MEAN - flVALOR_MO_STD)),2) 
-        flMoMax     = np.round(((flVALOR_MO_MEAN + flVALOR_MO_STD)),2)  
+        flMoAv    = np.round(flVALOR_MO_MEAN,2) 
         
         if len(flAverage)==0:flAverage=[0]
-        if len(flMin)==0:flMin=[0]
-        if len(flMax)==0:flMax=[0]
         if len(flMoAv)==0:flMoAv=[0]
-        if len(flMOMin)==0:flMOMin=[0]
-        if len(flMoMax)==0:flMoMax=[0]
                                   
         lsReponePintAve.append(flAverage) 
-        lsReponePintMin.append(flMin) 
-        lsReponePintMax.append(flMax) 
         lsReponeMoAv.append(flMoAv) 
-        lsReponeMoMin.append(flMOMin) 
-        lsReponeMoMax.append(flMoMax) 
 
     for index, item in enumerate(lsReponePintAve): lsReponePintAve[index]=list(set(item))[0]     
-    for index, item in enumerate(lsReponePintMin): lsReponePintMin[index]=list(set(item))[0]     
-    for index, item in enumerate(lsReponePintMax): lsReponePintMax[index]=list(set(item))[0]  
-    for index, item in enumerate(lsReponeMoAv): lsReponeMoAv[index]=list(set(item))[0]      
-    for index, item in enumerate(lsReponeMoMin): lsReponeMoMin[index]=list(set(item))[0]      
-    for index, item in enumerate(lsReponeMoMax): lsReponeMoMax[index]=list(set(item))[0]        
+    for index, item in enumerate(lsReponeMoAv)   : lsReponeMoAv[index]=list(set(item))[0]      
     
-    return lsReponePintAve,lsReponePintMin,lsReponePintMax,lsReponeMoAv,lsReponeMoMin,lsReponeMoMax 
+    return lsReponePintAve,lsReponeMoAv 
 
-#def fnMolduraTrasero(inCOD_MARCA,inCOD_MODELO,lsMold):
 def fnMolduraTrasero(inCOD_MARCA,inCOD_MODELO):    
     inCOD_PARTE = 2
-    lsVersion = ['1','2','3','4','5'] 
-    lsDf_MOLDURA = []
-    lsMeanMold = []
-    espMold = ['BAUL','PORTON','PARAGOLPE']
+    moldCtro = ['PARAGOLPE EMBELLEC / MOLD']
+    lsVersion = ['1','2','3'] 
+    lsMoldCtro = []
     
-    dfMOLD_BAUL = dfMOLDURA.loc[(dfMOLDURA['COD_MARCA']  == inCOD_MARCA)  & 
+    dfMOLD_CTRO = dfMOLDURA.loc[(dfMOLDURA['COD_MARCA']  == inCOD_MARCA)  & 
                                 (dfMOLDURA['COD_MODELO'] == inCOD_MODELO) &
                                 (dfMOLDURA['COD_PARTE']  == inCOD_PARTE)  &
-                                (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
+                                (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, moldCtro))))]\
                                 .sort_values(['VALOR'], ascending=[False])
-    if len(dfMOLD_BAUL)==0:
-            dfMOLD_BAUL = dfMOLDURA.loc[(dfMOLDURA['COD_MARCA'] == inCOD_MARCA)   & 
-                                        (dfMOLDURA['COD_PARTE']  == inCOD_PARTE)  &
-                                        (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
-                                        .sort_values(['VALOR'], ascending=[False])
-    # Extrae todos los que tienen numero incremental
-    iIdx = 0
-    for esp in lsVersion:
-        dfTmp = dfMOLD_BAUL.loc[dfMOLD_BAUL['DESC_ELEM'].str.contains('|'.join(map(re.escape, esp)))]
-        if len(dfTmp)==0: break
-        lsDf_MOLDURA.append(dfTmp)
-        iIdx+=1 
-    # Extrae los que no tienen numero
-    dfTmp = dfMOLD_BAUL.loc[~dfMOLD_BAUL['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-    if len(dfTmp)!=0: lsDf_MOLDURA.append(dfTmp)    
-    
-    for dfMean in lsDf_MOLDURA:
-        lsMeanMold.append(dfMean['VALOR'].mean().round(2))           
-       
-    return lsMeanMold
+    if len(dfMOLD_CTRO)==0:
+        dfMOLD_CTRO = dfMOLDURA.loc[(dfMOLDURA['COD_MARCA'] == inCOD_MARCA) & 
+                                    (dfMOLDURA['COD_PARTE'] == inCOD_PARTE) &
+                                    (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, moldCtro))))]\
+                                    .sort_values(['VALOR'], ascending=[False])
 
-def fnEspejoLateral(inCOD_MARCA,inCOD_MODELO):
-    lsVersion = ['1','2','3','4','5'] 
-    lsDf_ESPEJO = []
-    lsMeanEsp = []
-    espElec = ['ESPEJO ELECTRICO']
-    espMan  = ['ESPEJO MANUAL']
-    espOut  = ['DER','IZQ','EMBELLEC','GIRO','MOLD','MOTOR','SONDA','SOP']
+    dfTmp = dfMOLD_CTRO.loc[~dfMOLD_CTRO['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
+        
+    if len(dfTmp)!=0: lsMoldCtro.append(dfTmp['VALOR'].mean().round(2))
+
+    return lsMoldCtro
+
+def fnFaroExtTrasero(inCOD_MARCA,inCOD_MODELO):    
+    inCOD_PARTE = 2
+    faroDer = ['FARO DER']
+    lsVersion = ['1','2','3','4','5','6'] 
+    lsFaroExt = []
     
-    dfESPEJO_ELEC = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA) & (dfESPEJO['COD_MODELO'] == inCOD_MODELO) &
-                                (dfESPEJO['DESC_ELEM'].str.contains('|'.join(map(re.escape, espElec)))) &
-                                (~dfESPEJO['DESC_ELEM'].str.contains('|'.join(map(re.escape, espOut))))]\
-                                .sort_values(['VALOR'], ascending=[False])
+    dfFARO_EXT = dfFARO.loc[(dfFARO['COD_MARCA']  == inCOD_MARCA)  & 
+                            (dfFARO['COD_MODELO'] == inCOD_MODELO) &
+                            (dfFARO['COD_PARTE']  == inCOD_PARTE)  &
+                            (dfFARO['DESC_ELEM'].str.contains('|'.join(map(re.escape, faroDer))))]\
+                            .sort_values(['VALOR'], ascending=[False])
+    if len(dfFARO_EXT)==0:
+            dfFARO_EXT = dfFARO.loc[(dfFARO['COD_MARCA'] == inCOD_MARCA) & 
+                                    (dfFARO['COD_PARTE'] == inCOD_PARTE) &
+                                    (dfFARO['DESC_ELEM'].str.contains('|'.join(map(re.escape, faroDer))))]\
+                                    .sort_values(['VALOR'], ascending=[False])
+
+    dfTmp = dfFARO_EXT.loc[~dfFARO_EXT['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
+    
+    if len(dfTmp)!=0: lsFaroExt.append(dfTmp['VALOR'].mean().round(2))
+    
+    return lsFaroExt
+
+def fnFaroIntTrasero(inCOD_MARCA,inCOD_MODELO):    
+    inCOD_PARTE = 2
+    faroDer = ['FARO DER 1']
+    lsFaroExt = []
+    
+    dfFARO_INT = dfFARO.loc[(dfFARO['COD_MARCA']  == inCOD_MARCA)  & 
+                            (dfFARO['COD_MODELO'] == inCOD_MODELO) &
+                            (dfFARO['COD_PARTE']  == inCOD_PARTE)  &
+                            (dfFARO['DESC_ELEM'].str.contains('|'.join(map(re.escape, faroDer))))]\
+                            .sort_values(['VALOR'], ascending=[False])
+    if len(dfFARO_INT)==0:
+            dfFARO_INT = dfFARO.loc[(dfFARO['COD_MARCA'] == inCOD_MARCA) & 
+                                    (dfFARO['COD_PARTE'] == inCOD_PARTE) &
+                                    (dfFARO['DESC_ELEM'].str.contains('|'.join(map(re.escape, faroDer))))]\
+                                    .sort_values(['VALOR'], ascending=[False])
+    
+    if len(dfFARO_INT)!=0: lsFaroExt.append(dfFARO_INT['VALOR'].mean().round(2))
+    
+    return lsFaroExt
+
+def fnEspejoLateralElec(inCOD_MARCA,inCOD_MODELO):
+    espElec = ['ESPEJO ELECTRICO']
+    lsVersion = ['1','2','3','4','5'] 
+    lsMeanEsp = []
+    
+    dfESPEJO_ELEC = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA) & 
+                                 (dfESPEJO['COD_MODELO'] == inCOD_MODELO) &
+                                 (dfESPEJO['DESC_ELEM'].str.contains('|'.join(map(re.escape, espElec))))]\
+                                 .sort_values(['VALOR'], ascending=[False])
         
     if len(dfESPEJO_ELEC)==0:
-        dfESPEJO_ELEC = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA)   & 
-                                (dfESPEJO['DESC_ELEM'].str.contains('|'.join(map(re.escape, espElec)))) &
-                                (~dfESPEJO['DESC_ELEM'].str.contains('|'.join(map(re.escape, espOut))))]\
-                                .sort_values(['VALOR'], ascending=[False])
-    iIdx = 0
-    for esp in lsVersion:
-        dfTmp = dfESPEJO_ELEC.loc[dfESPEJO_ELEC['DESC_ELEM'].str.contains('|'.join(map(re.escape, esp)))]
-        if len(dfTmp)==0: break
-        lsDf_ESPEJO.append(dfTmp)
-        iIdx+=1 
+        dfESPEJO_ELEC = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA) & 
+                                     (dfESPEJO['DESC_ELEM'].str.contains('|'.join(map(re.escape, espElec))))]\
+                                     .sort_values(['VALOR'], ascending=[False])
     
     dfTmp = dfESPEJO_ELEC.loc[~dfESPEJO_ELEC['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-    if len(dfTmp)!=0: lsDf_ESPEJO.append(dfTmp)
-
-    for dfMean in lsDf_ESPEJO: lsMeanEsp.append(dfMean['VALOR'].mean().round(2))   
+    if len(dfTmp)!=0: lsMeanEsp.append(dfTmp['VALOR'].mean().round(2))   
     
-    return lsMeanEsp    
+    return lsMeanEsp 
 
-def fnMolduraLateral(inCOD_MARCA,inCOD_MODELO):
+def fnEspejoLateralMan(inCOD_MARCA,inCOD_MODELO):
+    espMan = ['ESPEJO MANUAL']
+    lsVersion = ['1','2','3','4','5'] 
+    lsMeanEsp = []
+    
+    dfESPEJO_MAN = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA) & 
+                                (dfESPEJO['COD_MODELO'] == inCOD_MODELO) &
+                                (dfESPEJO['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMan))))]\
+                                .sort_values(['VALOR'], ascending=[False])
+        
+    if len(dfESPEJO_MAN)==0:
+        dfESPEJO_MAN = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA) & 
+                                    (dfESPEJO['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMan))))]\
+                                    .sort_values(['VALOR'], ascending=[False])
+    
+    dfTmp = dfESPEJO_MAN.loc[~dfESPEJO_MAN['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
+    if len(dfTmp)!=0: lsMeanEsp.append(dfTmp['VALOR'].mean().round(2))   
+    
+    return lsMeanEsp 
+
+def fnManijaLateralDel(inCOD_MARCA,inCOD_MODELO):
+    lsManija = ['DEL MANIJA']
+    lsVersion = ['1','2','3','4','5'] 
+    lsMeanMan = []
+    
+    dfMANIJA_RST  = dfMANIJA.loc[(dfMANIJA['COD_MARCA'] == inCOD_MARCA) & 
+                                 (dfMANIJA['COD_MODELO'] == inCOD_MODELO) &
+                                 (dfMANIJA['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsManija))))]\
+                                 .sort_values(['VALOR'], ascending=[False])
+        
+    if len(dfMANIJA_RST)==0:
+        dfMANIJA_RST = dfMANIJA.loc[(dfMANIJA['COD_MARCA'] == inCOD_MARCA) & 
+                                    (dfMANIJA['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsManija))))]\
+                                    .sort_values(['VALOR'], ascending=[False])
+   
+    dfTmp = dfMANIJA_RST.loc[~dfMANIJA_RST['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
+    if len(dfTmp)!=0: lsMeanMan.append(dfTmp['VALOR'].mean().round(2))   
+
+    return lsMeanMan 
+
+def fnManijaLateralTra(inCOD_MARCA,inCOD_MODELO):
+    lsManija = ['TRAS MANIJA']
+    lsVersion = ['1','2','3','4','5'] 
+    lsMeanMan = []
+    
+    dfMANIJA_RST  = dfMANIJA.loc[(dfMANIJA['COD_MARCA'] == inCOD_MARCA) & 
+                                 (dfMANIJA['COD_MODELO'] == inCOD_MODELO) &
+                                 (dfMANIJA['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsManija))))]\
+                                 .sort_values(['VALOR'], ascending=[False])
+        
+    if len(dfMANIJA_RST)==0:
+        dfMANIJA_RST = dfMANIJA.loc[(dfMANIJA['COD_MARCA'] == inCOD_MARCA) & 
+                                    (dfMANIJA['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsManija))))]\
+                                    .sort_values(['VALOR'], ascending=[False])
+   
+    dfTmp = dfMANIJA_RST.loc[~dfMANIJA_RST['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
+    if len(dfTmp)!=0: lsMeanMan.append(dfTmp['VALOR'].mean().round(2))   
+
+    return lsMeanMan 
+
+def fnMolduraLateralDel(inCOD_MARCA,inCOD_MODELO):
     inCOD_PARTE = 3
-    #espMold = ['PUERTA','LATERAL','ZOCALO'] #Todo: Ver relacion con cambio
-    espMold = ['PUERTA']
+    espMold = ['DEL MOLD']
+    lsMeanMold = []
     
     dfMOLD_LATERAL = dfMOLDURA.loc[(dfMOLDURA['COD_MARCA']  == inCOD_MARCA)  & 
                                    (dfMOLDURA['COD_MODELO'] == inCOD_MODELO) &
@@ -766,69 +841,102 @@ def fnMolduraLateral(inCOD_MARCA,inCOD_MODELO):
                                            (dfMOLDURA['COD_PARTE']  == inCOD_PARTE)  &
                                            (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                            .sort_values(['VALOR'], ascending=[False])
-    bfTmpMold = 0
-    if len(dfMOLD_LATERAL)>=0:bfTmpMold=dfMOLD_LATERAL['VALOR'].mean().round(2)
+
+    if len(dfMOLD_LATERAL)!=0: lsMeanMold.append(dfMOLD_LATERAL['VALOR'].mean().round(2))   
         
-    return bfTmpMold
+    return lsMeanMold
+
+def fnMolduraLateralTra(inCOD_MARCA,inCOD_MODELO):
+    inCOD_PARTE = 3
+    espMold = ['TRAS MOLD']
+    lsMeanMold = []
+    
+    dfMOLD_LATERAL = dfMOLDURA.loc[(dfMOLDURA['COD_MARCA']  == inCOD_MARCA)  & 
+                                   (dfMOLDURA['COD_MODELO'] == inCOD_MODELO) &
+                                   (dfMOLDURA['COD_PARTE']  == inCOD_PARTE)  &
+                                   (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
+                                   .sort_values(['VALOR'], ascending=[False])
+    
+    if len(dfMOLD_LATERAL)==0:
+            dfMOLD_LATERAL = dfMOLDURA.loc[(dfMOLDURA['COD_MARCA'] == inCOD_MARCA)   & 
+                                           (dfMOLDURA['COD_PARTE']  == inCOD_PARTE)  &
+                                           (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
+                                           .sort_values(['VALOR'], ascending=[False])
+                                           
+    if len(dfMOLD_LATERAL)!=0: lsMeanMold.append(dfMOLD_LATERAL['VALOR'].mean().round(2)) 
+        
+    return lsMeanMold
+
+def fnCristalLateralDel(inCOD_MARCA,inCOD_MODELO):
+    inCOD_PARTE = 3
+    espMold = ['DEL CRISTAL']
+    lsMeanMold = []
+    
+    dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_MARCA']  == inCOD_MARCA)  & 
+                                   (dfCRISTAL['COD_MODELO'] == inCOD_MODELO) &
+                                   (dfCRISTAL['COD_PARTE']  == inCOD_PARTE)  &
+                                   (dfCRISTAL['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
+                                   .sort_values(['VALOR'], ascending=[False])
+    
+    if len(dfMOLD_LATERAL)==0:
+            dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_MARCA'] == inCOD_MARCA)   & 
+                                           (dfCRISTAL['COD_PARTE']  == inCOD_PARTE)  &
+                                           (dfCRISTAL['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
+                                           .sort_values(['VALOR'], ascending=[False])
+
+    if len(dfMOLD_LATERAL)!=0: lsMeanMold.append(dfMOLD_LATERAL['VALOR'].mean().round(2))   
+        
+    return lsMeanMold
+
+def fnCristalLateralTra(inCOD_MARCA,inCOD_MODELO):
+    inCOD_PARTE = 3
+    espMold = ['TRAS CRISTAL']
+    lsMeanMold = []
+    
+    dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_MARCA']  == inCOD_MARCA)  & 
+                                   (dfCRISTAL['COD_MODELO'] == inCOD_MODELO) &
+                                   (dfCRISTAL['COD_PARTE']  == inCOD_PARTE)  &
+                                   (dfCRISTAL['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
+                                   .sort_values(['VALOR'], ascending=[False])
+    
+    if len(dfMOLD_LATERAL)==0:
+            dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_MARCA'] == inCOD_MARCA)   & 
+                                           (dfCRISTAL['COD_PARTE']  == inCOD_PARTE)  &
+                                           (dfCRISTAL['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
+                                           .sort_values(['VALOR'], ascending=[False])
+                                           
+    if len(dfMOLD_LATERAL)!=0: lsMeanMold.append(dfMOLD_LATERAL['VALOR'].mean().round(2)) 
+        
+    return lsMeanMold
  
 def fnReparaLateral(inSEG,inCOD_CLASE,lsRepara):
     inCOD_PARTE = 3
     lsReparaAve = []
-    lsReparaMin = []
-    lsReparaMax = []
     flAverage = 0
-    flMin     = 0
-    flMax     = 0
     for index, item in enumerate(lsRepara):
-        bfID_ELEM = dfVALOR_MO_UNIF_LATERAL.loc[(dfVALOR_MO_UNIF_LATERAL['SEG']==inSEG)&(dfVALOR_MO_UNIF_LATERAL['COD_CLASE']==inCOD_CLASE)& 
-                                        (dfVALOR_MO_UNIF_LATERAL['COD_PARTE']==inCOD_PARTE)&
-                                        (dfVALOR_MO_UNIF_LATERAL['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                                                                      [['VALOR_MO_MEAN','VALOR_MO_STD','CANT_HS_PINT_MEAN','CANT_HS_PINT_STD',
-                                                                        'VALOR_MAT_PINT_MEAN','VALOR_MAT_PINT_STD']] 
+        bfID_ELEM = dfVALOR_MO_UNIF_LATERAL.loc[(dfVALOR_MO_UNIF_LATERAL['SEG']==inSEG)&
+                                                (dfVALOR_MO_UNIF_LATERAL['COD_CLASE']==inCOD_CLASE)& 
+                                                (dfVALOR_MO_UNIF_LATERAL['COD_PARTE']==inCOD_PARTE)&
+                                (dfVALOR_MO_UNIF_LATERAL['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
+                                                        [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']] 
                                                                       
-        #flAverage = np.round((bfID_ELEM['VALOR_MO_MEAN']+bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-        #
-        #flMin     = np.round((bfID_ELEM['VALOR_MO_MEAN']-bfID_ELEM['VALOR_MO_STD'])+(bfID_ELEM['CANT_HS_PINT_MEAN']-bfID_ELEM['CANT_HS_PINT_STD'])+\
-        #                     (bfID_ELEM['VALOR_MAT_PINT_MEAN'] - bfID_ELEM['VALOR_MAT_PINT_STD']),2) 
-        #
-        #flMax     = np.round((bfID_ELEM['VALOR_MO_MEAN'] + bfID_ELEM['VALOR_MO_STD'])+(bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['CANT_HS_PINT_STD'])+\
-        #                     (bfID_ELEM['VALOR_MAT_PINT_MEAN'] + bfID_ELEM['VALOR_MAT_PINT_STD']),2)  
-        
         flVALOR_MO_MEAN      = bfID_ELEM['VALOR_MO_MEAN']
-        flVALOR_MO_STD       = bfID_ELEM['VALOR_MO_STD']
-        
         flCANT_HS_PINT_MEAN  = bfID_ELEM['CANT_HS_PINT_MEAN'] 
-        flCANT_HS_PINT_STD   = bfID_ELEM['CANT_HS_PINT_STD'] 
 
-        flVALOR_MO_MEAN       = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2)
-        flCANT_HS_PINT_MEAN   = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfMObra),2)
+        flVALOR_MO_MEAN       = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2) #Todo: sacar 6350
+        flCANT_HS_PINT_MEAN   = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfMObra),2) #Todo: sacar 6350
         
         flAverage = np.round((flVALOR_MO_MEAN + flCANT_HS_PINT_MEAN + bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-        
-        flMin     = np.round((flVALOR_MO_MEAN - flVALOR_MO_STD)+(flCANT_HS_PINT_MEAN-flCANT_HS_PINT_STD)+\
-                             (bfID_ELEM['VALOR_MAT_PINT_MEAN'] - bfID_ELEM['VALOR_MAT_PINT_STD']),2) 
-        
-        flMax     = np.round((flVALOR_MO_MEAN + flVALOR_MO_STD)+(flCANT_HS_PINT_MEAN+flCANT_HS_PINT_STD)+\
-                             (bfID_ELEM['VALOR_MAT_PINT_MEAN'] + bfID_ELEM['VALOR_MAT_PINT_STD']),2)  
-        
         lsReparaAve.append(flAverage) 
-        lsReparaMin.append(flMin) 
-        lsReparaMax.append(flMax) 
         
     for index, item in enumerate(lsReparaAve): lsReparaAve[index]=list(set(item))[0]     
-    for index, item in enumerate(lsReparaMin): lsReparaMin[index]=list(set(item))[0]     
-    for index, item in enumerate(lsReparaMax): lsReparaMax[index]=list(set(item))[0]    
     
-    return lsReparaAve,lsReparaMin,lsReparaMax           
+    return lsReparaAve           
 
 def fnCambiaLateral(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
     inCOD_PARTE = 3
     lsReponeAve = []
-    lsReponeMin = []
-    lsReponeMax = []
     flAverage = 0
-    flMin     = 0
-    flMax     = 0
     
     for index, item in enumerate(lsRepone):
         bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & 
@@ -837,100 +945,51 @@ def fnCambiaLateral(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
                                         (dfVALOR_REPUESTO_MO_Unif['COD_MODELO']   == inCOD_MODELO) &          
                                         (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  &
                         (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                                                                                       [['PRECIO_MEAN','PRECIO_STD']] 
-        print(bfID_ELEM)
+                                                                                       [['PRECIO_MEAN']] 
+
         flAverage = np.round(bfID_ELEM['PRECIO_MEAN'],2)
-        flMin     = np.round((bfID_ELEM['PRECIO_MEAN'] - bfID_ELEM['PRECIO_STD']),2) 
-        flMax     = np.round((bfID_ELEM['PRECIO_MEAN'] + bfID_ELEM['PRECIO_STD']),2)  
-        
-        if len(flMin) == 0: flMin = [0]
-        lsReponeMin.append(flMin) 
         if len(flAverage) == 0: flAverage = [0]
-        if  item.upper().count('FARO') > 0:   
-            lsReponeAve.append(flMin) 
-        else:
-            lsReponeAve.append(flAverage)
-        if len(flMax) == 0: flMax = [0]
-        lsReponeMax.append(flMax) 
+        lsReponeAve.append(flAverage)
         
-    for index, item in enumerate(lsReponeMin): lsReponeMin[index] = list(set(item))[0]     
     for index, item in enumerate(lsReponeAve): lsReponeAve[index] = list(set(item))[0]     
-    for index, item in enumerate(lsReponeMax): lsReponeMax[index] = list(set(item))[0]         
     
-    return lsReponeAve,lsReponeMin,lsReponeMax
+    return lsReponeAve
 
 def fnCambiaPinturaLateral(inSEG,inCOD_CLASE,lsRepone):
     inCOD_PARTE = 3
     lsReponePintAve = []
-    lsReponePintMin = []
-    lsReponePintMax = []
     lsReponeMoAv    = []
-    lsReponeMoMin   = []
-    lsReponeMoMax   = []
     
     flAverage = 0
-    flMin     = 0
-    flMax     = 0
     flMoAv    = 0
-    flMOMin   = 0
-    flMoMax   = 0
     
     for index, item in enumerate(lsRepone):
-        bfID_ELEM = dfVALOR_REPUESTO_VALOR_MAT_LATERAL.loc[(dfVALOR_REPUESTO_VALOR_MAT_LATERAL['SEG']==inSEG)       & 
+        bfID_ELEM = dfVALOR_REPUESTO_VALOR_MAT_LATERAL.loc[(dfVALOR_REPUESTO_VALOR_MAT_LATERAL['SEG']==inSEG) & 
                                              (dfVALOR_REPUESTO_VALOR_MAT_LATERAL['COD_CLASE']==inCOD_CLASE) & 
                                              (dfVALOR_REPUESTO_VALOR_MAT_LATERAL['COD_PARTE']==inCOD_PARTE) &
                         (dfVALOR_REPUESTO_VALOR_MAT_LATERAL['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                                                                                      [['VALOR_MO_MEAN','VALOR_MO_STD','CANT_HS_PINT_MEAN',
-                                                                                        'CANT_HS_PINT_STD','VALOR_MAT_PINT_MEAN','VALOR_MAT_PINT_STD']] 
-        
-        #flAverage = np.round((bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-        #flMin     = np.round(((bfID_ELEM['CANT_HS_PINT_MEAN']-bfID_ELEM['CANT_HS_PINT_STD'])+(bfID_ELEM['VALOR_MAT_PINT_MEAN']-bfID_ELEM['VALOR_MAT_PINT_STD'])),2) 
-        #flMax     = np.round(((bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['CANT_HS_PINT_STD'])+(bfID_ELEM['VALOR_MAT_PINT_MEAN']+bfID_ELEM['VALOR_MAT_PINT_STD'])),2)  
-        
-        #flMoAv  = np.round(bfID_ELEM['VALOR_MO_MEAN'],2) 
-        #flMOMin = np.round(((bfID_ELEM['VALOR_MO_MEAN']-bfID_ELEM['VALOR_MO_STD'])),2) 
-        #flMoMax = np.round(((bfID_ELEM['VALOR_MO_MEAN']+bfID_ELEM['VALOR_MO_STD'])),2)  
+                                                                                      [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']] 
         
         flVALOR_MO_MEAN = bfID_ELEM['VALOR_MO_MEAN']
-        flVALOR_MO_MEAN = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2)
-        flVALOR_MO_STD  = bfID_ELEM['VALOR_MO_STD']
-        flVALOR_MO_STD  = np.round((flVALOR_MO_STD / 6350) * float(param.bfMObra),2)
+        flVALOR_MO_MEAN = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2) #Todo: Para simplificar y no procesar todo
         
         flCANT_HS_PINT_MEAN = bfID_ELEM['CANT_HS_PINT_MEAN']
-        flCANT_HS_PINT_MEAN = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfPintura),2)
-        flCANT_HS_PINT_STD  = bfID_ELEM['CANT_HS_PINT_STD']
-        flCANT_HS_PINT_STD  = np.round((flCANT_HS_PINT_STD / 6350) * float(param.bfPintura),2)
+        flCANT_HS_PINT_MEAN = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfPintura),2) #Todo: Para simplificar y no procesar todo
 
         flAverage = np.round((flCANT_HS_PINT_MEAN+bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-        flMin     = np.round(((flCANT_HS_PINT_MEAN-flCANT_HS_PINT_STD)+(flCANT_HS_PINT_MEAN-flCANT_HS_PINT_STD)),2) 
-        flMax     = np.round(((flCANT_HS_PINT_MEAN+flCANT_HS_PINT_STD)+(flCANT_HS_PINT_MEAN+flCANT_HS_PINT_STD)),2)  
         
         flMoAv  = np.round(flVALOR_MO_MEAN,2) 
-        flMOMin = np.round(((flVALOR_MO_MEAN-flVALOR_MO_STD)),2) 
-        flMoMax = np.round(((flVALOR_MO_MEAN+flVALOR_MO_STD)),2)  
 
         if len(flAverage) == 0: flAverage = [0]
         lsReponePintAve.append(flAverage) 
-        if len(flMin) == 0: flMin = [0]
-        lsReponePintMin.append(flMin) 
-        if len(flMax) == 0: flMax = [0]
-        lsReponePintMax.append(flMax) 
         if len(flMoAv) == 0: flMoAv = [0]
         lsReponeMoAv.append(flMoAv) 
-        if len(flMOMin) == 0: flMOMin = [0]
-        lsReponeMoMin.append(flMOMin) 
-        if len(flMoMax) == 0: flMoMax = [0]
-        lsReponeMoMax.append(flMoMax) 
         
     for index, item in enumerate(lsReponePintAve): lsReponePintAve[index] = list(set(item))[0]     
-    for index, item in enumerate(lsReponePintMin): lsReponePintMin[index] = list(set(item))[0]     
-    for index, item in enumerate(lsReponePintMax): lsReponePintMax[index] = list(set(item))[0]  
     
     for index, item in enumerate(lsReponeMoAv): lsReponeMoAv[index] = list(set(item))[0]      
-    for index, item in enumerate(lsReponeMoMin): lsReponeMoMin[index] = list(set(item))[0]      
-    for index, item in enumerate(lsReponeMoMax): lsReponeMoMax[index] = list(set(item))[0]      
 
-    return lsReponePintAve,lsReponePintMin,lsReponePintMax,lsReponeMoAv,lsReponeMoMin,lsReponeMoMax
+    return lsReponePintAve,lsReponeMoAv
 
 ##################################################
 def resumeDataBrief(intCLIENTE,fltLateral,fltTrasero):
@@ -938,7 +997,7 @@ def resumeDataBrief(intCLIENTE,fltLateral,fltTrasero):
     intClientType = 2
     if intCLIENTE.isnumeric(): intClientType = int(intCLIENTE)
     
-    ftSum = (fltLateral + fltTrasero) * int(param.bfAjuste)
+    ftSum = (fltLateral + fltTrasero) * float(param.bfAjuste)
     
     if intClientType == 1: ftSum *= float(param.bfAsegurado)
     else                 : ftSum *= float(param.bfTercero)
