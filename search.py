@@ -107,10 +107,31 @@ bfHTML = """
                         <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                     </tr>
                     <tr>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Espejo</td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_ESPEJO"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Espejo El&eacute;ctrico</td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_ESPEJO_ELEC" onclick="document.getElementById('LAT_CAM_DER_ESPEJO_MAN').checked=false;"/></td>
                         <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_ESPEJO"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_ESPEJO_ELEC" onclick="document.getElementById('LAT_CAM_IZQ_ESPEJO_MAN').checked=false;"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                    <tr>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Espejo Manual</td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_ESPEJO_MAN" onclick="document.getElementById('LAT_CAM_DER_ESPEJO_ELEC').checked=false;"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_ESPEJO_MAN" onclick="document.getElementById('LAT_CAM_IZQ_ESPEJO_ELEC').checked=false;"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                    <tr>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Manija Pta Del</td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_MANIJA_DEL"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_MANIJA_DEL"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                    <tr>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Manija Pta Tras</td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_MANIJA_TRA"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_MANIJA_TRA"/></td>
                         <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                     </tr>
                     <tr>
@@ -181,17 +202,24 @@ bfHTML = """
                         <td height="10px" style="font-size:small;text-align:center;vertical-align:middle;background-color:#FFFFFF;color:#000000;padding-bottom:2px;padding-left:3px;padding-top:2px;padding-right:3px;">Repara</td>
                     </tr>
                     <tr>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Baul/Portón</td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Baul/Port&oacute;n</td>
                         <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_BAUL" onclick="unCheckOps('TRA_CAM_DER_BAUL','TRA_REP_DER_BAUL')"/></td>
                         <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_DER_BAUL"  onclick="unCheckOps('TRA_REP_DER_BAUL','TRA_CAM_DER_BAUL')"/></td>
                         <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                         <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                     </tr>
                     <tr>
-                        <td style="padding-left:5px;padding-right:5px;padding-bottom:3px;padding-top:3px;background-color:#FFFFFF;color:#000000;">Faro</td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_FARO"/></td>
+                        <td style="padding-left:5px;padding-right:5px;padding-bottom:3px;padding-top:3px;background-color:#FFFFFF;color:#000000;">Faro Ext</td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_FARO_EXT"/></td>
                         <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_IZQ_FARO"/></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_IZQ_FARO_EXT"/></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left:5px;padding-right:5px;padding-bottom:3px;padding-top:3px;background-color:#FFFFFF;color:#000000;">Faro Int</td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_FARO_INT"/></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_IZQ_FARO_INT"/></td>
                         <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                     </tr>
                     <tr>
@@ -280,10 +308,22 @@ bfHTML = """
             e.checked = false;       
         var e = document.getElementById("LAT_CAM_IZQ_CRISTAL_TRA");
             e.checked = false;       
-        var e = document.getElementById("LAT_CAM_DER_ESPEJO");
+        var e = document.getElementById("LAT_CAM_DER_ESPEJO_ELEC");
             e.checked = false;  
-        var e = document.getElementById("LAT_CAM_IZQ_ESPEJO");
+        var e = document.getElementById("LAT_CAM_IZQ_ESPEJO_ELEC");
             e.checked = false;                   
+        var e = document.getElementById("LAT_CAM_DER_ESPEJO_MAN");
+            e.checked = false;  
+        var e = document.getElementById("LAT_CAM_IZQ_ESPEJO_MAN");
+            e.checked = false;                   
+        var e = document.getElementById("LAT_CAM_DER_MANIJA_DEL");
+            e.checked = false;  
+        var e = document.getElementById("LAT_CAM_IZQ_MANIJA_DEL");
+            e.checked = false;  
+        var e = document.getElementById("LAT_CAM_DER_MANIJA_TRA");
+            e.checked = false;  
+        var e = document.getElementById("LAT_CAM_IZQ_MANIJA_TRA");
+            e.checked = false;  
         var e = document.getElementById("LAT_CAM_DER_MOLDURA_DEL");
             e.checked = false;       
         var e = document.getElementById("LAT_CAM_IZQ_MOLDURA_DEL");
@@ -331,9 +371,13 @@ bfHTML = """
             e.checked = false; 
         var e = document.getElementById("TRA_REP_DER_BAUL");
             e.checked = false;                
-        var e = document.getElementById("TRA_CAM_DER_FARO");    
+        var e = document.getElementById("TRA_CAM_DER_FARO_EXT");    
             e.checked = false;    
-        var e = document.getElementById("TRA_CAM_IZQ_FARO");
+        var e = document.getElementById("TRA_CAM_IZQ_FARO_EXT");
+            e.checked = false;     
+        var e = document.getElementById("TRA_CAM_DER_FARO_INT");    
+            e.checked = false;    
+        var e = document.getElementById("TRA_CAM_IZQ_FARO_INT");
             e.checked = false;     
         var e = document.getElementById("TRA_CAM_DER_GUARDABARRO");
             e.checked = false;    
@@ -414,9 +458,21 @@ bfHTML = """
             lateral+= e + '-';  
             e=(document.getElementById('LAT_CAM_IZQ_CRISTAL_TRA').checked==true)?1:0;
             lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_DER_ESPEJO').checked==true)?1:0;
+            e=(document.getElementById('LAT_CAM_DER_ESPEJO_ELEC').checked==true)?1:0;
             lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_IZQ_ESPEJO').checked==true)?1:0;
+            e=(document.getElementById('LAT_CAM_IZQ_ESPEJO_ELEC').checked==true)?1:0;
+            lateral+= e + '-';
+            e=(document.getElementById('LAT_CAM_IZQ_ESPEJO_MAN').checked==true)?1:0;
+            lateral+= e + '-';
+            e=(document.getElementById('LAT_CAM_DER_ESPEJO_MAN').checked==true)?1:0;
+            lateral+= e + '-';
+            e=(document.getElementById('LAT_CAM_DER_MANIJA_DEL').checked==true)?1:0;
+            lateral+= e + '-';
+            e=(document.getElementById('LAT_CAM_IZQ_MANIJA_DEL').checked==true)?1:0;
+            lateral+= e + '-';
+            e=(document.getElementById('LAT_CAM_DER_MANIJA_TRA').checked==true)?1:0;
+            lateral+= e + '-';
+            e=(document.getElementById('LAT_CAM_IZQ_MANIJA_TRA').checked==true)?1:0;
             lateral+= e + '-';
             e= (document.getElementById('LAT_CAM_DER_MOLDURA_DEL').checked==true)?1:0;
             lateral+= e + '-';
@@ -460,9 +516,13 @@ bfHTML = """
             var trasero=e + '-';
             e=(document.getElementById('TRA_REP_DER_BAUL').checked==true)?1:0;
             trasero+=e + '-'; 
-            e=(document.getElementById('TRA_CAM_DER_FARO').checked==true)?1:0;
+            e=(document.getElementById('TRA_CAM_DER_FARO_EXT').checked==true)?1:0;
             trasero+= e + '-';
-            e=(document.getElementById('TRA_CAM_IZQ_FARO').checked==true)?1:0;
+            e=(document.getElementById('TRA_CAM_IZQ_FARO_EXT').checked==true)?1:0;
+            trasero+= e + '-';
+            e=(document.getElementById('TRA_CAM_DER_FARO_INT').checked==true)?1:0;
+            trasero+= e + '-';
+            e=(document.getElementById('TRA_CAM_IZQ_FARO_INT').checked==true)?1:0;
             trasero+= e + '-';
             e=(document.getElementById('TRA_CAM_DER_GUARDABARRO').checked==true)?1:0;
             trasero+= e + '-';
