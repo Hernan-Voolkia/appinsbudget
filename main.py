@@ -1231,4 +1231,4 @@ def getStatus():
         bfWrite =False
    
     #return bfWrite,";".join(str(x) for x in lsResult) 
-    return bfWrite,str(lsResult[0])
+    return bfWrite,str(len(lsResult))
