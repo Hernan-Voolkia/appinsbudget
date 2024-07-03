@@ -212,8 +212,9 @@ async def adminResult():
 
 @app.get("/admstatus", response_class=PlainTextResponse)
 async def adminStatus():
-    isHistory, bfAdminStatus = getStatus()
-    return bfAdminStatus
+    #isHistory, bfAdminStatus = getStatus()
+    #return bfAdminStatus
+    return "status"
   
 @app.post("/search", response_class=PlainTextResponse)
 async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIESTRO:str="",LATERAL:str="",TRASERO:str=""):
