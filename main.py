@@ -4,6 +4,7 @@ from fastapi.staticfiles import StaticFiles
 
 import warnings
 warnings.filterwarnings("ignore")
+import datetime
 import math
 import re
 import pandas as pd
@@ -11,6 +12,7 @@ import numpy as np
 np.set_printoptions(suppress=True)
 import sqlalchemy as db
 from sqlalchemy import text
+from sqlalchemy import Table, insert
 
 import param
 import search
