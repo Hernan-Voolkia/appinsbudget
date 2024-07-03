@@ -1095,7 +1095,8 @@ def fnWriteSearch(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIEST
     pk = 0 
     nuevo_registro = {'cliente':CLIENTE,'clase':CLASE,'marca':MARCA,'modelo':MODELO,
                       'siniestro':SINIESTRO,'lateral':LATERAL,'trasero':TRASERO}
-    try:
+  print('fnWriteSearch')  
+  try:
         engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         metadata = db.MetaData()
         tabla = Table('history', metadata, autoload_with=engine)
@@ -1103,12 +1104,13 @@ def fnWriteSearch(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIEST
             insercion = insert(tabla).values(nuevo_registro).returning(tabla.c.id)  
             resultado = conn.execute(insercion)
             pk = resultado.scalar()
+            print(str(pk))
             conn.commit()
             conn.close()
         engine.dispose()
     except Exception as e:
         bfWrite =False
-        
+    print(str(bfWrite))    
     return bfWrite, pk        
 
 def fnWriteResult(pkSearch,lsValuesResultWrite):
