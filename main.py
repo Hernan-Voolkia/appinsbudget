@@ -1096,8 +1096,8 @@ def fnWriteSearch(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIEST
     nuevo_registro = {'cliente':CLIENTE,'clase':CLASE,'marca':MARCA,'modelo':MODELO,
                       'siniestro':SINIESTRO,'lateral':LATERAL,'trasero':TRASERO}
   
-  print('fnWriteSearch')  
-  try:
+    print('fnWriteSearch')  
+    try:
         engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         metadata = db.MetaData()
         tabla = Table('history', metadata, autoload_with=engine)
