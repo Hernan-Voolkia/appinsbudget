@@ -200,6 +200,21 @@ async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",PINTURA:s
        bfMsg = "Se produjo un error al grabar"     
     return bfMsg
 
+@app.get("/admhistory", response_class=HTMLResponse)
+async def adminHistory():
+    isHistory, bfAdminHistory = getHistory()
+    return bfAdminHistory
+
+@app.get("/admresult", response_class=HTMLResponse)
+async def adminResult():
+    isResult, bfAdminResult = getResult()
+    return bfAdminResult
+
+@app.get("/admstatus", response_class=HTMLResponse)
+async def adminStatus():
+    isHistory, bfAdminStatus = getStatus()
+    return bfAdminStatus
+  
 @app.post("/search", response_class=PlainTextResponse)
 async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIESTRO:str="",LATERAL:str="",TRASERO:str=""):
     #Segmenta Input
@@ -1167,3 +1182,51 @@ def fnWriteStatus(pkSearch):
         bfWrite =False
         
     return bfWrite,pkStatus
+
+def getHistory():
+    bfWrite =True
+    lsResult = []
+    try:
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        conn = engine.connect()
+        result = conn.execute(text('SELECT * FROM history;'))
+        for row in result:
+            lsResult.append(row)    
+        conn.close()
+        engine.dispose()
+    except Exception as e:
+        bfWrite =False
+   
+    return bfWrite,";".join(str(x) for x in lsResult)
+
+def getResult():
+    bfWrite =True
+    lsResult = []
+    try:
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        conn = engine.connect()
+        result = conn.execute(text('SELECT * FROM result;'))
+        for row in result:
+            lsResult.append(row)    
+        conn.close()
+        engine.dispose()
+    except Exception as e:
+        bfWrite =False
+  
+    return bfWrite,";".join(str(x) for x in lsResult)        
+
+def getStatus():
+    bfWrite =True
+    lsResult = []
+    try:
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        conn = engine.connect()
+        result = conn.execute(text('SELECT * FROM status;'))
+        for row in result:
+            lsResult.append(row)    
+        conn.close()
+        engine.dispose()
+    except Exception as e:
+        bfWrite =False
+   
+    return bfWrite,";".join(str(x) for x in lsResult)   
