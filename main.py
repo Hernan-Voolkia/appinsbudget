@@ -203,6 +203,8 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     #Segmenta Input
     lsLateral = LATERAL.split('-')
     lsTrasero = TRASERO.split('-')
+
+    isWrited,pkValue = fnWriteSearch(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,LATERAL,TRASERO)
     
     ###LATERAL###
     lsLateralCambiaElems = []
@@ -235,6 +237,9 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     lsTraseroMolduraElems= []
     lsTraseroFaroExtElems= []
     lsTraseroFaroIntElems= []
+
+    ###RESULT###
+    lsValuesResult = []
     
     flTraValorReparaAve=0
     flTraValorReponeElem=0
@@ -330,22 +335,50 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
                            flLatValorReponeManDel+flLatValorReponeManTra+\
                            flLatValorReponeMolduraDel+flLatValorReponeMolduraTra+\
                            flLatValorReponeCriDel+flLatValorReponeCriTra,2)
-   
-        print("_Lateral Valores Promedio_______________")
-        print(f"Repara y Pintura  = {flLatValorReparaAve}")
-        print(f"Repone Elem       = {flLatValorReponeElem}")
-        print(f"Repone Pint       = {flLatValorReponePint}")
-        print(f"Repone MO         = {flLatValorReponeMoAv}")
-        print(f"Repone Espejo Ele = {flLatValorReponeEspejoElec}")
-        print(f"Repone Espejo Man = {flLatValorReponeEspejoMan}")
-        print(f"Repone Manija Del = {flLatValorReponeManDel}")
-        print(f"Repone Manija Tra = {flLatValorReponeManTra}")
-        print(f"Repone Moldura Del= {flLatValorReponeMolduraDel}")
-        print(f"Repone Moldura Tra= {flLatValorReponeMolduraTra}")
-        print(f"Repone Cristal Del= {flLatValorReponeCriDel}")
-        print(f"Repone Cristal Tra= {flLatValorReponeCriTra}")
-        print(f"Total             = {flLateral}")
-    
+
+        lsValuesResult.append(flLatValorReparaAve)
+        lsValuesResult.append(flLatValorReponeElem)
+        lsValuesResult.append(flLatValorReponePint)
+        lsValuesResult.append(flLatValorReponeMoAv)
+        lsValuesResult.append(flLatValorReponeEspejoElec)
+        lsValuesResult.append(flLatValorReponeEspejoMan)
+        lsValuesResult.append(flLatValorReponeManDel)
+        lsValuesResult.append(flLatValorReponeManTra)
+        lsValuesResult.append(flLatValorReponeMolduraDel)
+        lsValuesResult.append(flLatValorReponeMolduraTra)
+        lsValuesResult.append(flLatValorReponeCriDel)
+        lsValuesResult.append(flLatValorReponeCriTra)
+        lsValuesResult.append(flLateral)
+
+        #print("_Lateral Valores Promedio_______________")
+        #print(f"Repara y Pintura  = {flLatValorReparaAve}")
+        #print(f"Repone Elem       = {flLatValorReponeElem}")
+        #print(f"Repone Pint       = {flLatValorReponePint}")
+        #print(f"Repone MO         = {flLatValorReponeMoAv}")
+        #print(f"Repone Espejo Ele = {flLatValorReponeEspejoElec}")
+        #print(f"Repone Espejo Man = {flLatValorReponeEspejoMan}")
+        #print(f"Repone Manija Del = {flLatValorReponeManDel}")
+        #print(f"Repone Manija Tra = {flLatValorReponeManTra}")
+        #print(f"Repone Moldura Del= {flLatValorReponeMolduraDel}")
+        #print(f"Repone Moldura Tra= {flLatValorReponeMolduraTra}")
+        #print(f"Repone Cristal Del= {flLatValorReponeCriDel}")
+        #print(f"Repone Cristal Tra= {flLatValorReponeCriTra}")
+        #print(f"Total             = {flLateral}")
+    else:
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+
     if '1' in lsTrasero:
         lsTraseroCambiaElems,lsTraseroReparaElems,lsTraseroMolduraElems,\
         lsTraseroFaroExtElems,lsTraseroFaroIntElems= fnGetTraseroElems(CLASE,MARCA,MODELO,lsTrasero)
@@ -387,17 +420,37 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
                            flTraValorReponeMoAv+flTraValorReponeMoldura+\
                            flTraValorReponeFaroExt+flTraValorReponeFaroInt,2)
 
-        print("_Trasero Valores Promedio_______________")
-        print(f"Repara y Pintura = {flTraValorReparaAve}")
-        print(f"Repone Elem     = {flTraValorReponeElem}")
-        print(f"Repone Pint     = {flTraValorReponePint}")
-        print(f"Repone MO       = {flTraValorReponeMoAv}")
-        print(f"Repone Moldura  = {flTraValorReponeMoldura}")
-        print(f"Repone Faro Ext = {flTraValorReponeFaroExt}")
-        print(f"Repone Faro Int = {flTraValorReponeFaroInt}") 
-        print(f"Total           = {flTrasero}")
+        lsValuesResult.append(flTraValorReparaAve)
+        lsValuesResult.append(flTraValorReponeElem)
+        lsValuesResult.append(flTraValorReponePint)
+        lsValuesResult.append(flTraValorReponeMoAv)
+        lsValuesResult.append(flTraValorReponeMoldura)
+        lsValuesResult.append(flTraValorReponeFaroExt)
+        lsValuesResult.append(flTraValorReponeFaroInt)
+        lsValuesResult.append(flTrasero)
+
+        #print("_Trasero Valores Promedio_______________")
+        #print(f"Repara y Pintura = {flTraValorReparaAve}")
+        #print(f"Repone Elem     = {flTraValorReponeElem}")
+        #print(f"Repone Pint     = {flTraValorReponePint}")
+        #print(f"Repone MO       = {flTraValorReponeMoAv}")
+        #print(f"Repone Moldura  = {flTraValorReponeMoldura}")
+        #print(f"Repone Faro Ext = {flTraValorReponeFaroExt}")
+        #print(f"Repone Faro Int = {flTraValorReponeFaroInt}") 
+        #print(f"Total           = {flTrasero}")
+    else:
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
 
     bfTmp = resumeDataBrief(CLIENTE,flLateral,flTrasero)
+    isWritedRst,pkValueRst = fnWriteResult(pkValue,lsValuesResult)
+    isWritedSts,pkValueSts = fnWriteStatus(pkValue)
 
     return bfTmp
 
@@ -1017,3 +1070,98 @@ def getModeloDesc(bfCLASE,bfMARCA,bfMODELO):
     idf = dfModelo.loc[(dfModelo['CLASE']==bfCLASE) & (dfModelo['MARCA']==bfMARCA) & (dfModelo['MODELO']==bfMODELO)]
     bfTmp = idf.iloc[0]['DMODELO']  
     return bfTmp
+
+def fnWriteSearch(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIESTRO:str="",LATERAL:str="",TRASERO:str=""):
+    
+    bfWrite =True
+    pk = 0 
+    nuevo_registro = {'cliente':CLIENTE,'clase':CLASE,'marca':MARCA,'modelo':MODELO,
+                      'siniestro':SINIESTRO,'lateral':LATERAL,'trasero':TRASERO}
+    try:
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        metadata = db.MetaData()
+        tabla = Table('history', metadata, autoload_with=engine)
+        with engine.connect() as conn:
+            insercion = insert(tabla).values(nuevo_registro).returning(tabla.c.id)  
+            resultado = conn.execute(insercion)
+            pk = resultado.scalar()
+            conn.commit()
+            conn.close()
+        engine.dispose()
+    except Exception as e:
+        bfWrite =False
+        
+    return bfWrite, pk        
+
+def fnWriteResult(pkSearch,lsValuesResultWrite):
+    
+    bfWrite =True
+    pkResult = 0 
+    ts = datetime.datetime.now().timestamp()
+ 
+    nuevo_registro = {'id':pkSearch,
+                      'timestamp':str(ts),
+                      'ltReparaPintura':lsValuesResultWrite[0],
+                      'ltReponeElemento':lsValuesResultWrite[1],
+                      'ltReponePintura':lsValuesResultWrite[2],
+                      'ltReponeManoObra':lsValuesResultWrite[3],
+                      'ltReponeEspejoEle':lsValuesResultWrite[4],
+                      'ltReponeEspejoMan':lsValuesResultWrite[5],
+                      'ltReponeManijaDel':lsValuesResultWrite[6],
+                      'ltReponeManijaTra':lsValuesResultWrite[7],
+                      'ltReponeMolduraDel':lsValuesResultWrite[8],
+                      'ltReponeMolduraTra':lsValuesResultWrite[9],
+                      'ltReponeCristalDel':lsValuesResultWrite[10],
+                      'ltReponeCristalTra':lsValuesResultWrite[11],
+                      'ltTotal':lsValuesResultWrite[12],
+                      'trReparaPintura':lsValuesResultWrite[13],
+                      'trReponeElemento':lsValuesResultWrite[14],
+                      'trReponePintura':lsValuesResultWrite[15],
+                      'trReponeManoObra':lsValuesResultWrite[16],
+                      'trReponeMoldura':lsValuesResultWrite[17],
+                      'trReponeFaroExt':lsValuesResultWrite[18],
+                      'trReponeFaroInt':lsValuesResultWrite[19],
+                      'trTotal':lsValuesResultWrite[20]
+                     }
+    try:
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        metadata = db.MetaData()
+        tabla = Table('result', metadata, autoload_with=engine)
+        with engine.connect() as conn:
+            insResult = insert(tabla).values(nuevo_registro).returning(tabla.c.id)  
+            resResult = conn.execute(insResult)
+            pkResult = resResult.scalar()
+            conn.commit()
+            conn.close()
+        engine.dispose()
+    except Exception as e:
+        bfWrite =False
+        
+    return bfWrite,pkResult
+
+def fnWriteStatus(pkSearch):
+    bfWrite =True
+    pkStatus = 0 
+ 
+    nuevo_registro = {'id':pkSearch,
+                      'Asegurado':param.bfAsegurado,
+                      'Tercero':param.bfTercero,
+                      'MObra':param.bfMObra,
+                      'Pintura':param.bfPintura,
+                      'Ajuste':param.bfAjuste,
+                     }
+    try:
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        metadata = db.MetaData()
+        tabla = Table('status', metadata, autoload_with=engine)
+        with engine.connect() as conn:
+            insResult = insert(tabla).values(nuevo_registro).returning(tabla.c.id)  
+            resResult = conn.execute(insResult)
+            pkStatus = resResult.scalar()
+            conn.commit()
+            conn.close()
+        engine.dispose()
+    except Exception as e:
+        bfWrite =False
+        
+    return bfWrite,pkStatus
