@@ -1097,21 +1097,21 @@ def fnWriteSearch(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIEST
                       'siniestro':SINIESTRO,'lateral':LATERAL,'trasero':TRASERO}
   
     print('fnWriteSearch')  
-    try:
-        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
-        metadata = db.MetaData()
-        tabla = Table('history', metadata, autoload_with=engine)
-        with engine.connect() as conn:
+    #try:
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    metadata = db.MetaData()
+    tabla = Table('history', metadata, autoload_with=engine)
+    with engine.connect() as conn:
             insercion = insert(tabla).values(nuevo_registro).returning(tabla.c.id)  
             resultado = conn.execute(insercion)
             pk = resultado.scalar()
             print(str(pk))
             conn.commit()
             conn.close()
-        engine.dispose()
-    except Exception as e:
-        bfWrite =False
-    print(str(bfWrite))    
+    engine.dispose()
+    #except Exception as e:
+    #    bfWrite =False
+    #print(str(bfWrite))    
     return bfWrite, pk        
 
 def fnWriteResult(pkSearch,lsValuesResultWrite):
