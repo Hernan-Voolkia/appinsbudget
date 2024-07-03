@@ -200,17 +200,17 @@ async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",PINTURA:s
        bfMsg = "Se produjo un error al grabar"     
     return bfMsg
 
-@app.get("/admhistory", response_class=HTMLResponse)
+@app.get("/admhistory", response_class=PlainTextResponse)
 async def adminHistory():
     isHistory, bfAdminHistory = getHistory()
     return bfAdminHistory
 
-@app.get("/admresult", response_class=HTMLResponse)
+@app.get("/admresult", response_class=PlainTextResponse)
 async def adminResult():
     isResult, bfAdminResult = getResult()
     return bfAdminResult
 
-@app.get("/admstatus", response_class=HTMLResponse)
+@app.get("/admstatus", response_class=PlainTextResponse)
 async def adminStatus():
     isHistory, bfAdminStatus = getStatus()
     return bfAdminStatus
