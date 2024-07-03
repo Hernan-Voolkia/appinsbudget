@@ -214,7 +214,7 @@ async def adminResult():
 async def adminStatus():
     isHistory, bfAdminStatus = getStatus()
     #return bfAdminStatus
-    return "status"
+    return bfAdminStatus
   
 @app.post("/search", response_class=PlainTextResponse)
 async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIESTRO:str="",LATERAL:str="",TRASERO:str=""):
@@ -1230,4 +1230,5 @@ def getStatus():
     except Exception as e:
         bfWrite =False
    
-    return bfWrite,";".join(str(x) for x in lsResult)   
+    #return bfWrite,";".join(str(x) for x in lsResult) 
+    return bfWrite,str(bfWrite)
