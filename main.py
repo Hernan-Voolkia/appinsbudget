@@ -212,7 +212,7 @@ async def adminResult():
 
 @app.get("/admstatus", response_class=PlainTextResponse)
 async def adminStatus():
-    #isHistory, bfAdminStatus = getStatus()
+    isHistory, bfAdminStatus = getStatus()
     #return bfAdminStatus
     return "status"
   
