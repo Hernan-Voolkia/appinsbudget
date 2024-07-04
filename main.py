@@ -17,8 +17,6 @@ import sqlalchemy as db
 from sqlalchemy import text
 from sqlalchemy import Table, insert
 
-logging.info('Admin logged in')
-
 import param
 import search
 import marca
@@ -242,6 +240,18 @@ async def adminDB():
     conn.close()
     engine.dispose()
     '''
+@app.get("/dbread", response_class=PlainTextResponse)
+async def adminDBRead():
+     lsResult = []
+     with psycopg.connect("postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb") as conn:
+       with conn.cursor() as cur:   
+         cur.execute("SELECT * FROM test")
+         cur.fetch()
+         for record in cur:
+             lsResult.append(record)
+
+     return ";".join(str(x) for x in lsResult) 
+
 @app.post("/search", response_class=PlainTextResponse)
 async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIESTRO:str="",LATERAL:str="",TRASERO:str=""):
     #Segmenta Input
