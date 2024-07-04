@@ -1111,7 +1111,7 @@ def fnWriteSearch(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIEST
         tabla = Table('history', metadata, autoload_with=engine)
         with engine.connect() as conn:
             #insercion = insert(tabla).values(nuevo_registro).returning(tabla.c.id) 
-            insercion = insert(tabla).values(nuevo_registro).returning(tabla.c.id) 
+            insercion = insert(tabla).values(nuevo_registro)
             resultado = conn.execute(insercion)
             #pk = resultado.scalar()
             conn.commit()
