@@ -223,9 +223,9 @@ async def adminStatus():
 
 @app.get("/db", response_class=PlainTextResponse)
 async def adminDB():
-  logging.info('adminDB')  
-  with psycopg.connect("postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb") as conn:
-      with conn.cursor() as cur:   
+    logging.info('adminDB')  
+    with psycopg.connect("postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb") as conn:
+       with conn.cursor() as cur:   
          #cur.execute("""CREATE TABLE test (id serial PRIMARY KEY, num integer, data text)""")
          cur.execute("INSERT INTO test (num, data) VALUES (%s, %s)",(100, "abc'def"))
          cur.execute("SELECT * FROM test")
