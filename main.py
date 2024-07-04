@@ -220,13 +220,18 @@ async def adminStatus():
 
 @app.get("/db", response_class=PlainTextResponse)
 async def adminDB():
+    import psycopg
+
+    with psycopg.connect("postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb") as conn:
+         pass
+    '''
     engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
     conn = engine.connect()
     #conn.execute(text(""))
     #conn.commit()
     conn.close()
     engine.dispose()
-  
+    '''
 @app.post("/search", response_class=PlainTextResponse)
 async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIESTRO:str="",LATERAL:str="",TRASERO:str=""):
     #Segmenta Input
