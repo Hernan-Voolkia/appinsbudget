@@ -2,26 +2,22 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 
-import psycopg
-
 import warnings
-warnings.filterwarnings("ignore")
 import datetime
-import math
 import re
 import pandas as pd
 import numpy as np
-import logging
-np.set_printoptions(suppress=True)
 import sqlalchemy as db
 from sqlalchemy import text
-from sqlalchemy import Table, insert
 
 import param
 import search
 import marca
 import index
 import admvalue
+
+warnings.filterwarnings("ignore")
+np.set_printoptions(suppress=True)
 
 df = pd.read_csv('./data/dfBaseCleanSumV1.csv',sep=';',encoding='utf-8',decimal='.',
                  dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
@@ -72,11 +68,6 @@ dfVALOR_REPUESTO_VALOR_MAT_LATERAL = pd.read_csv('./data/_dfVALOR_REPUESTO_MO&PI
                                  'RATIO_HS_PINT_MEAN':'float64','RATIO_HS_PINT_STD':'float64',
                                  'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_STD':'float64'})
 #MOLDURAS
-#dfMOLDURA = pd.read_csv('./data/_dfVALOR_REPUESTO_MOLDURAS_V7.csv',sep=';',encoding='utf-8',decimal='.',parse_dates=['FECHA'],
-#                        dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
-#                                 'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
-#                                 'COD_ELEM':'int64','VALOR':'float64'})
-#
 dfMOLDURA = pd.read_csv('./data/MolduraSedanValueMin.csv',sep=';',encoding='utf-8',decimal='.',
                         dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
                                  'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
@@ -203,61 +194,36 @@ async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",PINTURA:s
        bfMsg = "Se produjo un error al grabar"     
     return bfMsg
 
-@app.get("/admhistory", response_class=PlainTextResponse)
-async def adminHistory():
-    isHistory, bfAdminHistory = getHistory()
-    return bfAdminHistory
-
-@app.get("/admresult", response_class=PlainTextResponse)
-async def adminResult():
-    isResult, bfAdminResult = getResult()
-    return bfAdminResult
-
-@app.get("/admstatus", response_class=PlainTextResponse)
-async def adminStatus():
-    isHistory, bfAdminStatus = getStatus()
-    #return bfAdminStatus
-    return bfAdminStatus
-
 @app.get("/db", response_class=PlainTextResponse)
 async def adminDB():
-    logging.info('adminDB')  
-    with psycopg.connect("postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb") as conn:
-       with conn.cursor() as cur:   
-         #cur.execute("""CREATE TABLE test (id serial PRIMARY KEY, num integer, data text)""")
-         cur.execute("INSERT INTO test (num, data) VALUES (%s, %s)",(100, "abc'def"))
-         cur.execute("SELECT * FROM test")
-         cur.fetchone()
-         for record in cur:
-             logging.info(str(record))
-         conn.commit()
-         
-    '''
     engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
     conn = engine.connect()
-    #conn.execute(text(""))
-    #conn.commit()
+    conn.execute(text('''CREATE TABLE 'logpresupuestosV1' ('id' SERIAL PRIMARY KEY, 'timestamp'	TEXT DEFAULT ' ',
+	                       'user' TEXT DEFAULT ' ', 'cliente'	INTEGER, 'clase' INTEGER,	'marca' INTEGER,
+	                       'modelo'	INTEGER, 'siniestro' TEXT DEFAULT ' ', 'lateral' TEXT DEFAULT ' ', 'trasero' TEXT DEFAULT ' ',
+                         'ltReparaPintura'	FLOAT DEFAULT 0, 'ltReponeElemento'	FLOAT DEFAULT 0, 'ltReponePintura'	FLOAT DEFAULT 0,
+                         'ltReponeManoObra'	FLOAT DEFAULT 0, 'ltReponeEspejoEle'	FLOAT DEFAULT 0, 'ltReponeEspejoMan'	FLOAT DEFAULT 0,
+                         'ltReponeManijaDel'	FLOAT DEFAULT 0, 'ltReponeManijaTra'	FLOAT DEFAULT 0, 'ltReponeMolduraDel'	FLOAT DEFAULT 0,
+                         'ltReponeMolduraTra'	FLOAT DEFAULT 0, 'ltReponeCristalDel'	FLOAT DEFAULT 0, 'ltReponeCristalTra'	FLOAT DEFAULT 0,
+                         'ltTotal' FLOAT DEFAULT 0, 'trReparaPintura'	FLOAT DEFAULT 0, 'trReponeElemento'	FLOAT DEFAULT 0,
+                         'trReponePintura'	FLOAT DEFAULT 0, 'trReponeManoObra'	FLOAT DEFAULT 0, 'trReponeMoldura'	FLOAT DEFAULT 0,
+                         'trReponeFaroExt'	FLOAT DEFAULT 0, 'trReponeFaroInt'	FLOAT DEFAULT 0, 'trTotal' FLOAT DEFAULT 0,
+                         'Asegurado' FLOAT DEFAULT 0, 'Tercero'	FLOAT DEFAULT 0, 'MObra' FLOAT DEFAULT 0,
+                         'Pintura' FLOAT DEFAULT 0, 'Ajuste' FLOAT DEFAULT 0)'''))
+    conn.commit()
     conn.close()
     engine.dispose()
-    '''
+
 @app.get("/dbread", response_class=PlainTextResponse)
 async def adminDBRead():
     lsResult = []
     engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
     conn = engine.connect()
-    result = conn.execute(text('SELECT * FROM test;'))
+    result = conn.execute(text('''SELECT * FROM logpresupuestosV1;'''))
     for row in result:
         lsResult.append(row)    
     conn.close()
     engine.dispose()
-    '''
-    with psycopg.connect("postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb") as conn:
-       with conn.cursor() as cur:   
-         cur.execute("SELECT * FROM test")
-         cur.fetchall()
-         for record in cur:
-             lsResult.append(record)
-    '''
     return ";".join(str(x) for x in lsResult) 
 
 @app.post("/search", response_class=PlainTextResponse)
@@ -265,8 +231,11 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     #Segmenta Input
     lsLateral = LATERAL.split('-')
     lsTrasero = TRASERO.split('-')
-
-    isWrited,pkValue = fnWriteSearch(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,LATERAL,TRASERO)
+    
+    #isWrited,pkValue = fnWriteSearch(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,LATERAL,TRASERO)
+    #print("First")
+    #print(isWrited)
+    #print(pkValue)
     
     ###LATERAL###
     lsLateralCambiaElems = []
@@ -299,7 +268,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     lsTraseroMolduraElems= []
     lsTraseroFaroExtElems= []
     lsTraseroFaroIntElems= []
-
+    
     ###RESULT###
     lsValuesResult = []
     
@@ -397,7 +366,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
                            flLatValorReponeManDel+flLatValorReponeManTra+\
                            flLatValorReponeMolduraDel+flLatValorReponeMolduraTra+\
                            flLatValorReponeCriDel+flLatValorReponeCriTra,2)
-
+   
         lsValuesResult.append(flLatValorReparaAve)
         lsValuesResult.append(flLatValorReponeElem)
         lsValuesResult.append(flLatValorReponePint)
@@ -440,7 +409,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(0)
         lsValuesResult.append(0)
         lsValuesResult.append(0)
-
+    
     if '1' in lsTrasero:
         lsTraseroCambiaElems,lsTraseroReparaElems,lsTraseroMolduraElems,\
         lsTraseroFaroExtElems,lsTraseroFaroIntElems= fnGetTraseroElems(CLASE,MARCA,MODELO,lsTrasero)
@@ -490,7 +459,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(flTraValorReponeFaroExt)
         lsValuesResult.append(flTraValorReponeFaroInt)
         lsValuesResult.append(flTrasero)
-
+        
         #print("_Trasero Valores Promedio_______________")
         #print(f"Repara y Pintura = {flTraValorReparaAve}")
         #print(f"Repone Elem     = {flTraValorReponeElem}")
@@ -511,9 +480,9 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(0)
 
     bfTmp = resumeDataBrief(CLIENTE,flLateral,flTrasero)
-    isWritedRst,pkValueRst = fnWriteResult(pkValue,lsValuesResult)
-    isWritedSts,pkValueSts = fnWriteStatus(pkValue)
-
+    
+    isWrited = fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,LATERAL,TRASERO,lsValuesResult)
+    
     return bfTmp
 
 ###########################################################
@@ -1108,7 +1077,6 @@ def fnCambiaPinturaLateral(inSEG,inCOD_CLASE,lsRepone):
 
 ##################################################
 def resumeDataBrief(intCLIENTE,fltLateral,fltTrasero):
-    
     intClientType = 2
     if intCLIENTE.isnumeric(): intClientType = int(intCLIENTE)
     
@@ -1118,7 +1086,6 @@ def resumeDataBrief(intCLIENTE,fltLateral,fltTrasero):
     else                 : ftSum *= float(param.bfTercero)
     
     txtValorTotal = "<span id=\"CostBrief\" class=\"pure-form-message-inline\" style=\"text-align:left;font-family:'helvetica neue';font-size:100%;color:rgb(170,27,23);\">Costo sugerido&nbsp$&nbsp{0:0.2f}".format(ftSum)+"</span>"
-
     return txtValorTotal
 
 def getMarcaDesc(bfCLASE,bfMARCA):
@@ -1133,156 +1100,33 @@ def getModeloDesc(bfCLASE,bfMARCA,bfMODELO):
     bfTmp = idf.iloc[0]['DMODELO']  
     return bfTmp
 
-def fnWriteSearch(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIESTRO:str="",LATERAL:str="",TRASERO:str=""):
-    
+
+def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,LATERAL,TRASERO,lsValuesResultWrite):
     bfWrite =True
-    pk = 0 
-      
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    ts = datetime.datetime.now().timestamp()
+  
+    bfValues = str(ts)+","+str(CLIENTE)+","+str(CLASE)+","+str(MARCA)+","+str(MODELO)+",\""+SINIESTRO+"\",\""+LATERAL+"\",\""+TRASERO+"\","
+    bfValues += str(lsValuesResultWrite[0])+","+str(lsValuesResultWrite[1])+","+str(lsValuesResultWrite[2])+","+str(lsValuesResultWrite[3])+","\
+             +str(lsValuesResultWrite[4])+","+str(lsValuesResultWrite[5])+","+str(lsValuesResultWrite[6])+","+str(lsValuesResultWrite[7])+","\
+             +str(lsValuesResultWrite[8])+","+str(lsValuesResultWrite[9])+","+str(lsValuesResultWrite[10])+","+str(lsValuesResultWrite[11])+","\
+             +str(lsValuesResultWrite[12])+","+str(lsValuesResultWrite[13])+","+str(lsValuesResultWrite[14])+","+str(lsValuesResultWrite[15])+","\
+             +str(lsValuesResultWrite[16])+","+str(lsValuesResultWrite[17])+","+str(lsValuesResultWrite[18])+","+str(lsValuesResultWrite[19])+","+str(lsValuesResultWrite[20])+","
+    bfValues += str(param.bfAsegurado)+","+str(param.bfTercero)+","+str(param.bfMObra)+","+str(param.bfPintura)+","+str(param.bfAjuste)
+
+    bfClause = '''INSERT INTO logpresupuestosV1 (timestamp,cliente,clase,marca,modelo,siniestro,lateral,trasero,
+                                                 ltReparaPintura,ltReponeElemento,ltReponePintura,ltReponeManoObra,
+                                                 ltReponeEspejoEle,ltReponeEspejoMan,ltReponeManijaDel,ltReponeManijaTra,
+                                                 ltReponeMolduraDel,ltReponeMolduraTra,ltReponeCristalDel,ltReponeCristalTra,
+                                                 ltTotal,trReparaPintura,trReponeElemento,trReponePintura,trReponeManoObra,
+                                                 trReponeMoldura,trReponeFaroExt,trReponeFaroInt,trTotal,Asegurado,
+                                                 Tercero,MObra,Pintura,Ajuste) VALUES (''' + bfValues + ');'
+    #try:
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
     conn = engine.connect()
-    conn.execute(text("INSERT INTO history (cliente, clase, marca, modelo, siniestro, lateral, trasero) VALUES ('1', '901', '1', '48', '12345678901', '1-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0', '1-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0');"))
+    result = conn.execute(text(bfClause))
     conn.commit()
     conn.close()
     engine.dispose()
-    
-    '''
-    nuevo_registro = {'cliente':CLIENTE,'clase':CLASE,'marca':MARCA,'modelo':MODELO,
-                      'siniestro':SINIESTRO,'lateral':LATERAL,'trasero':TRASERO}
-    try:
-        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
-        metadata = db.MetaData()
-        tabla = Table('history', metadata, autoload_with=engine)
-        with engine.connect() as conn:
-            #insercion = insert(tabla).values(nuevo_registro).returning(tabla.c.id) 
-            insercion = insert(tabla).values(nuevo_registro)
-            resultado = conn.execute(insercion)
-            #pk = resultado.scalar()
-            conn.commit()
-            conn.close()
-        engine.dispose()
-    except Exception as e:
-        bfWrite =False
-    '''
-    return bfWrite, pk        
-
-def fnWriteResult(pkSearch,lsValuesResultWrite):
-    
-    bfWrite =True
-    pkResult = 0 
-    ts = datetime.datetime.now().timestamp()
- 
-    nuevo_registro = {'id':pkSearch,
-                      'timestamp':str(ts),
-                      'ltReparaPintura':lsValuesResultWrite[0],
-                      'ltReponeElemento':lsValuesResultWrite[1],
-                      'ltReponePintura':lsValuesResultWrite[2],
-                      'ltReponeManoObra':lsValuesResultWrite[3],
-                      'ltReponeEspejoEle':lsValuesResultWrite[4],
-                      'ltReponeEspejoMan':lsValuesResultWrite[5],
-                      'ltReponeManijaDel':lsValuesResultWrite[6],
-                      'ltReponeManijaTra':lsValuesResultWrite[7],
-                      'ltReponeMolduraDel':lsValuesResultWrite[8],
-                      'ltReponeMolduraTra':lsValuesResultWrite[9],
-                      'ltReponeCristalDel':lsValuesResultWrite[10],
-                      'ltReponeCristalTra':lsValuesResultWrite[11],
-                      'ltTotal':lsValuesResultWrite[12],
-                      'trReparaPintura':lsValuesResultWrite[13],
-                      'trReponeElemento':lsValuesResultWrite[14],
-                      'trReponePintura':lsValuesResultWrite[15],
-                      'trReponeManoObra':lsValuesResultWrite[16],
-                      'trReponeMoldura':lsValuesResultWrite[17],
-                      'trReponeFaroExt':lsValuesResultWrite[18],
-                      'trReponeFaroInt':lsValuesResultWrite[19],
-                      'trTotal':lsValuesResultWrite[20]
-                     }
-    try:
-        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
-        metadata = db.MetaData()
-        tabla = Table('result', metadata, autoload_with=engine)
-        with engine.connect() as conn:
-            insResult = insert(tabla).values(nuevo_registro).returning(tabla.c.id)  
-            resResult = conn.execute(insResult)
-            pkResult = resResult.scalar()
-            conn.commit()
-            conn.close()
-        engine.dispose()
-    except Exception as e:
-        bfWrite =False
-        
-    return bfWrite,pkResult
-
-def fnWriteStatus(pkSearch):
-    bfWrite =True
-    pkStatus = 0 
- 
-    nuevo_registro = {'id':pkSearch,
-                      'Asegurado':param.bfAsegurado,
-                      'Tercero':param.bfTercero,
-                      'MObra':param.bfMObra,
-                      'Pintura':param.bfPintura,
-                      'Ajuste':param.bfAjuste,
-                     }
-    try:
-        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
-        metadata = db.MetaData()
-        tabla = Table('status', metadata, autoload_with=engine)
-        with engine.connect() as conn:
-            insResult = insert(tabla).values(nuevo_registro).returning(tabla.c.id)  
-            resResult = conn.execute(insResult)
-            pkStatus = resResult.scalar()
-            conn.commit()
-            conn.close()
-        engine.dispose()
-    except Exception as e:
-        bfWrite =False
-        
-    return bfWrite,pkStatus
-
-def getHistory():
-    bfWrite =True
-    lsResult = []
-    try:
-        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
-        conn = engine.connect()
-        result = conn.execute(text('SELECT * FROM history;'))
-        for row in result:
-            lsResult.append(row)    
-        conn.close()
-        engine.dispose()
-    except Exception as e:
-        bfWrite =False
-   
-    return bfWrite,";".join(str(x) for x in lsResult)
-
-def getResult():
-    bfWrite =True
-    lsResult = []
-    try:
-        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
-        conn = engine.connect()
-        result = conn.execute(text('SELECT * FROM result;'))
-        for row in result:
-            lsResult.append(row)    
-        conn.close()
-        engine.dispose()
-    except Exception as e:
-        bfWrite =False
-  
-    return bfWrite,";".join(str(x) for x in lsResult)        
-
-def getStatus():
-    bfWrite =True
-    lsResult = []
-    try:
-        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
-        conn = engine.connect()
-        result = conn.execute(text('SELECT * FROM status;'))
-        for row in result:
-            lsResult.append(row)    
-        conn.close()
-        engine.dispose()
-    except Exception as e:
-        bfWrite =False
-   
-    #return bfWrite,";".join(str(x) for x in lsResult) 
-    return bfWrite,str(len(lsResult))
+    #except Exception as e:
+    #    bfWrite =False
+    return bfWrite
