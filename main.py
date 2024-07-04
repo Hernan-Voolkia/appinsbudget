@@ -14,6 +14,8 @@ import sqlalchemy as db
 from sqlalchemy import text
 from sqlalchemy import Table, insert
 
+import psycopg2
+
 import param
 import search
 import marca
