@@ -246,7 +246,7 @@ async def adminDBRead():
      with psycopg.connect("postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb") as conn:
        with conn.cursor() as cur:   
          cur.execute("SELECT * FROM test")
-         cur.fetch()
+         cur.fetchall()
          for record in cur:
              lsResult.append(record)
 
