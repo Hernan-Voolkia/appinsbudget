@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 
-import psycopg2
+import psycopg
 
 import warnings
 warnings.filterwarnings("ignore")
