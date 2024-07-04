@@ -258,7 +258,7 @@ async def adminDBRead():
          for record in cur:
              lsResult.append(record)
     '''
-     return ";".join(str(x) for x in lsResult) 
+    return ";".join(str(x) for x in lsResult) 
 
 @app.post("/search", response_class=PlainTextResponse)
 async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIESTRO:str="",LATERAL:str="",TRASERO:str=""):
