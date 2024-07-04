@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 
+import psycopg2
+
 import warnings
 warnings.filterwarnings("ignore")
 import datetime
@@ -13,8 +15,6 @@ np.set_printoptions(suppress=True)
 import sqlalchemy as db
 from sqlalchemy import text
 from sqlalchemy import Table, insert
-
-import psycopg2
 
 import param
 import search
