@@ -1094,10 +1094,9 @@ def fnWriteSearch(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIEST
     bfWrite =True
     pk = 0 
     
-    '''
     engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
-    conn.execute(text("INSERT INTO history (cliente, clase, marca, modelo, siniestro, lateral, trasero) VALUES ('1', '901', '1', '45', '12345678901', '1-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0', '1-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0');"))
+    conn.execute(text("INSERT INTO history (cliente, clase, marca, modelo, siniestro, lateral, trasero) VALUES ('1', '901', '1', '48', '12345678901', '1-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0', '1-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0');"))
     conn.commit()
     conn.close()
     engine.dispose()
@@ -1119,7 +1118,7 @@ def fnWriteSearch(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIEST
         engine.dispose()
     except Exception as e:
         bfWrite =False
-    
+    '''
     return bfWrite, pk        
 
 def fnWriteResult(pkSearch,lsValuesResultWrite):
