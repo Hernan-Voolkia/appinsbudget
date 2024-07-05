@@ -198,7 +198,7 @@ async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",PINTURA:s
 async def adminDB():
     engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
     conn = engine.connect()
-    conn.execute(text('CREATE TABLE logpresupuestosV1 (id SERIAL PRIMARY KEY,timestamp VARCHAR(25) DEFAULT " ",userapp VARCHAR(25) DEFAULT " ",cliente INTEGER,clase INTEGER,marca INTEGER,modelo INTEGER, siniestro VARCHAR(25), lateral VARCHAR(100), trasero VARCHAR(100) DEFAULT " ",ltReparaPintura FLOAT DEFAULT 0,ltReponeElemento FLOAT DEFAULT 0,ltReponePintura FLOAT DEFAULT 0,ltReponeManoObra FLOAT DEFAULT 0,ltReponeEspejoEle FLOAT DEFAULT 0,ltReponeEspejoMan	FLOAT DEFAULT 0,ltReponeManijaDel FLOAT DEFAULT 0,ltReponeManijaTra FLOAT DEFAULT 0,ltReponeMolduraDel FLOAT DEFAULT 0,ltReponeMolduraTra FLOAT DEFAULT 0,ltReponeCristalDel FLOAT DEFAULT 0,ltReponeCristalTra FLOAT DEFAULT 0,ltTotal FLOAT DEFAULT 0,trReparaPintura FLOAT DEFAULT 0,trReponeElemento FLOAT DEFAULT 0,trReponePintura FLOAT DEFAULT 0,trReponeManoObra FLOAT DEFAULT 0,trReponeMoldura FLOAT DEFAULT 0,trReponeFaroExt FLOAT DEFAULT 0,trReponeFaroInt FLOAT DEFAULT 0,trTotal FLOAT DEFAULT 0,Asegurado FLOAT DEFAULT 0,Tercero FLOAT DEFAULT 0,MObra FLOAT DEFAULT 0,Pintura FLOAT DEFAULT 0,Ajuste FLOAT DEFAULT 0)'))
+    conn.execute(text('CREATE TABLE logpresupuestosV1 (id SERIAL PRIMARY KEY,timestamp VARCHAR(25) DEFAULT " ",userapp VARCHAR(25) DEFAULT " ",cliente INTEGER,clase INTEGER,marca INTEGER,modelo INTEGER, siniestro VARCHAR(25), laterald VARCHAR(100), trasero VARCHAR(100) DEFAULT " ",ltReparaPintura FLOAT DEFAULT 0,ltReponeElemento FLOAT DEFAULT 0,ltReponePintura FLOAT DEFAULT 0,ltReponeManoObra FLOAT DEFAULT 0,ltReponeEspejoEle FLOAT DEFAULT 0,ltReponeEspejoMan	FLOAT DEFAULT 0,ltReponeManijaDel FLOAT DEFAULT 0,ltReponeManijaTra FLOAT DEFAULT 0,ltReponeMolduraDel FLOAT DEFAULT 0,ltReponeMolduraTra FLOAT DEFAULT 0,ltReponeCristalDel FLOAT DEFAULT 0,ltReponeCristalTra FLOAT DEFAULT 0,ltTotal FLOAT DEFAULT 0,trReparaPintura FLOAT DEFAULT 0,trReponeElemento FLOAT DEFAULT 0,trReponePintura FLOAT DEFAULT 0,trReponeManoObra FLOAT DEFAULT 0,trReponeMoldura FLOAT DEFAULT 0,trReponeFaroExt FLOAT DEFAULT 0,trReponeFaroInt FLOAT DEFAULT 0,trTotal FLOAT DEFAULT 0,Asegurado FLOAT DEFAULT 0,Tercero FLOAT DEFAULT 0,MObra FLOAT DEFAULT 0,Pintura FLOAT DEFAULT 0,Ajuste FLOAT DEFAULT 0)'))
     conn.commit()
     conn.close()
     engine.dispose()
@@ -1102,7 +1102,7 @@ def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,LATERAL,TRASERO,lsValuesResu
              +str(lsValuesResultWrite[16])+","+str(lsValuesResultWrite[17])+","+str(lsValuesResultWrite[18])+","+str(lsValuesResultWrite[19])+","+str(lsValuesResultWrite[20])+","
     bfValues += str(param.bfAsegurado)+","+str(param.bfTercero)+","+str(param.bfMObra)+","+str(param.bfPintura)+","+str(param.bfAjuste)
 
-    bfClause = '''INSERT INTO logpresupuestosV1 (timestamp,cliente,clase,marca,modelo,siniestro,lateral,trasero,
+    bfClause = '''INSERT INTO logpresupuestosV1 (timestamp,cliente,clase,marca,modelo,siniestro,laterald,trasero,
                                                  ltReparaPintura,ltReponeElemento,ltReponePintura,ltReponeManoObra,
                                                  ltReponeEspejoEle,ltReponeEspejoMan,ltReponeManijaDel,ltReponeManijaTra,
                                                  ltReponeMolduraDel,ltReponeMolduraTra,ltReponeCristalDel,ltReponeCristalTra,
