@@ -1110,12 +1110,12 @@ def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,LATERAL,TRASERO,lsValuesResu
                                                  trReponeMoldura,trReponeFaroExt,trReponeFaroInt,trTotal,Asegurado,
                                                  Tercero,MObra,Pintura,Ajuste) VALUES (''' + bfValues + ');'
     #try:
-    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #conn = engine.connect()
-    #result = conn.execute(text(bfClause))
-    #conn.commit()
-    #conn.close()
-    #engine.dispose()
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    conn = engine.connect()
+    result = conn.execute(text(bfClause))
+    conn.commit()
+    conn.close()
+    engine.dispose()
     #except Exception as e:
     #    bfWrite =False
     return bfWrite
