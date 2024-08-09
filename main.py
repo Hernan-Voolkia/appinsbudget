@@ -35,8 +35,7 @@ dfSEGMENTO = pd.read_csv('./data/_dfSEGMENTACION_V1.csv',sep=';',encoding='utf-8
 #VALOR-REPUESTO
 dfVALOR_REPUESTO_MO_Unif = pd.read_csv('./data/_dfVALOR_REPUESTO_ALL_V7.csv',sep=';',encoding='utf-8',decimal='.',parse_dates = ['FECHA'],
                         dtype = {'SEG':'int8','COD_CLASE':'int16','COD_MARCA':'int8','COD_MODELO':'int8', 
-                                 'COD_PARTE':'int8','COD_TAREA':'int8','DESC_ELEM':'str','ELEM_MOD':'int64',
-                                 'TOTAL_ELEM':'int64','PRECIO_MEAN':'float64','PRECIO_STD':'float64'})
+                                 'COD_PARTE':'int8','DESC_ELEM':'str','PRECIO_MEAN':'float64','VIEJO':'bool'})
 #VALOR-MO-TRASERO
 dfVALOR_MO_UNIF_TRASERO = pd.read_csv('./data/_dfVALOR_REPARA_MO&PINT_TRASEROV7.csv',sep=';',encoding='utf-8',decimal='.',
                         dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
@@ -71,27 +70,27 @@ dfVALOR_REPUESTO_VALOR_MAT_LATERAL = pd.read_csv('./data/_dfVALOR_REPUESTO_MO&PI
 dfMOLDURA = pd.read_csv('./data/MolduraSedanValueMin.csv',sep=';',encoding='utf-8',decimal='.',
                         dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
                                  'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
-                                 'COD_ELEM':'int64','VALOR':'float64'})
+                                 'COD_ELEM':'int64','VALOR':'float64','VIEJO':'bool'})
 #ESPEJO
 dfESPEJO = pd.read_csv('./data/PuertaEspejoSedanValueMin.csv',sep=';',encoding='utf-8',decimal='.',
                         dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
                                  'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
-                                 'COD_ELEM':'int64','VALOR': 'float64'})
+                                 'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
 #FARO
 dfFARO = pd.read_csv('./data/FaroOnlySedanValueMin.csv',sep=';',encoding='utf-8',decimal='.',
                      dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
                               'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
-                              'COD_ELEM':'int64','VALOR': 'float64'})
+                              'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
 #CRISTAL
 dfCRISTAL = pd.read_csv('./data/PuertaCristalSedanValueMin.csv',sep=';',encoding='utf-8',decimal='.',
                         dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
                                  'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
-                                 'COD_ELEM':'int64','VALOR': 'float64'})
+                                 'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
 #MANIJA
 dfMANIJA = pd.read_csv('./data/PuertaManijaSedanValueMin.csv',sep=';',encoding='utf-8',decimal='.',
                        dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
                                 'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
-                                'COD_ELEM':'int64','VALOR': 'float64'})
+                                'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
 #DBVALUES
 engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
 conn = engine.connect()
@@ -708,7 +707,7 @@ def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
                                         (dfVALOR_REPUESTO_MO_Unif['COD_MODELO']   == inCOD_MODELO) &          
                                         (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  &
                     (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                                                                                    [['PRECIO_MEAN','PRECIO_STD']] 
+                                                                                    [['PRECIO_MEAN']] 
         
         flAverage = np.round(bfID_ELEM['PRECIO_MEAN'],2)
         if len(flAverage) == 0: flAverage = [0]
