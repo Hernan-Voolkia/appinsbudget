@@ -296,6 +296,20 @@ async def dbInsertAdminValue():
     conn.close()
     engine.dispose()
     return dbstatus.bfHTMLdbCreateAdminValue.replace('<<value>>',bfValue)
+
+@app.get("/dbreadAdmin", response_class=PlainTextResponse)
+async def dbreadAdmin():
+    lsResult = []
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    conn = engine.connect()
+    result = conn.execute(text('''SELECT * FROM admvalue;'''))
+    for row in result:
+        lsResult.append(row)    
+    conn.close()
+    engine.dispose()
+    return ";".join(str(x) for x in lsResult) 
+
  
 @app.get("/dbread", response_class=PlainTextResponse)
 async def adminDBRead():
