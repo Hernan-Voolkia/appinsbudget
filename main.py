@@ -268,7 +268,7 @@ async def dbcreateAdminValue():
     try:
         conn.execute(text('''CREATE TABLE admvalue (
                              stName TEXT NOT NULL UNIQUE,
-                             flValue REAL NOT NULL;
+                             flValue REAL DEFAULT 0);
                           '''))
         conn.commit()
     except exc.SQLAlchemyError as e:
