@@ -267,7 +267,7 @@ async def dbcreateAdminValue():
     conn = engine.connect()
     try:
         conn.execute(text('''CREATE TABLE admvalue (
-                             stName TEXT NOT NULL UNIQUE,
+                             stName TEXT,
                              flValue REAL DEFAULT 0);
                           '''))
         conn.commit()
