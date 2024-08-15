@@ -41,6 +41,10 @@ bfHTML = """
                         <input type="text" id="stacked-MObra" style="min-width:343px;" value="rplBfMObra" onblur="validarCampoDecimal(this)"/>
                     </div>
                     <div class="pure-control-group">
+                        <label for="stacked-MOMinimo" style="color:#005993;text-align:left;">Mano de Obra Minimo</label>
+                        <input type="text" id="stacked-MOMinimo" style="min-width:343px;" value="rplBfMOMinimo" onblur="validarCampoDecimal(this)"/>
+                    </div>
+                    <div class="pure-control-group">
                         <label for="stacked-Pintura" style="color:#005993;text-align:left;">Pintura</label>
                         <input type="text" id="stacked-Pintura" style="min-width:343px;" value="rplBfPintura" onblur="validarCampoDecimal(this)"/>
                     </div>
@@ -102,6 +106,9 @@ bfHTML = """
         var e = document.getElementById("stacked-MObra");
         text = text + '&MOBRA=' + e.value;
 
+        var e = document.getElementById("stacked-MOMinimo");
+        text = text + '&MOMINIMO=' + e.value;
+
         var e = document.getElementById("stacked-Pintura");
         text = text + '&PINTURA=' + e.value;
 
@@ -120,11 +127,10 @@ bfHTML = """
                 var e = document.getElementById("CostBrief");
                     e.innerHTML = this.responseText; 
                     //e.disabled = false;
-            } 
+            }
         }
         xhr.send();
     } 
     </script>
  </html>    
-        
  """
