@@ -266,11 +266,10 @@ async def dbcreateAdminValue():
     #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
-        conn.execute(text('''CREATE TABLE IF NOT EXISTS 'admvalue' (
-                              'stName'  TEXT NOT NULL UNIQUE,
-                              'flValue' REAL NOT NULL,
-                               PRIMARY KEY('stName')
-                          ) '''))
+        conn.execute(text('''CREATE TABLE admvalue (
+                             stName TEXT NOT NULL UNIQUE,
+                             flValue REAL NOT NULL;
+                          '''))
         conn.commit()
     except exc.SQLAlchemyError as e:
         bfValue = "dbCreateAdminValue Error: "+str(e)          
