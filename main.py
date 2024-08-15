@@ -297,6 +297,21 @@ async def dbInsertAdminValue():
     engine.dispose()
     return dbstatus.bfHTMLdbCreateAdminValue.replace('<<value>>',bfValue)
 
+@app.get("/dbDropAdminValue", response_class=HTMLResponse)
+async def dbDropAdminValue():
+    bfValue = "dbDropAdminValue finalizado satisfactoriamente"
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    conn = engine.connect()
+    try:
+        conn.execute(text('DROP TABLE admvalue;'))
+        conn.commit()
+    except exc.SQLAlchemyError as e:
+        bfValue = "dbDropAdminValue Error: "+str(e)          
+    conn.close()
+    engine.dispose()
+    return dbstatus.bfHTMLdbCreateAdminValue.replace('<<value>>',bfValue)
+  
 @app.get("/dbreadAdmin", response_class=PlainTextResponse)
 async def dbreadAdmin():
     lsResult = []
