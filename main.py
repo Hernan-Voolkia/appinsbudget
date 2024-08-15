@@ -8,13 +8,14 @@ import re
 import pandas as pd
 import numpy as np
 import sqlalchemy as db
-from sqlalchemy import text
+from sqlalchemy import text, exc
 
 import param
 import search
 import marca
 import index
 import admvalue
+import dbstatus
 
 warnings.filterwarnings("ignore")
 np.set_printoptions(suppress=True)
@@ -26,6 +27,9 @@ df = pd.read_csv('./data/dfBaseCleanSumV1.csv',sep=';',encoding='utf-8',decimal=
 #MARCA-MODELO
 dfModelo = pd.read_csv('./data/ClaseMarcaModelo.csv',sep=';',encoding='latin-1',decimal='.',
                        dtype={'CLASE':'int16','MARCA':'int16','MODELO':'int16','DMARCA':'object','DMODELO':'object'})
+#MARCA-MODELO-NUEVO
+dfModeloNuevo = pd.read_csv('./data/ClaseMarcaModeloNuevosRed.csv',sep=';',encoding='latin-1',decimal='.',
+                           dtype={'CLASE':'int16','MARCA':'int16','MODELO':'int16'})
 #PORTON
 dfPorton = pd.read_csv('./data/dfPortonV2.csv',sep=';',encoding='utf-8',decimal='.',
                        dtype = {'COD_CLASE':'int16','COD_MARCA':'int8','COD_MODELO':'int8'})
@@ -92,12 +96,14 @@ dfMANIJA = pd.read_csv('./data/PuertaManijaSedanValueMin.csv',sep=';',encoding='
                                 'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
                                 'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
 #DBVALUES
-engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+#engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
 conn = engine.connect()
 result = conn.execute(text('SELECT * FROM admvalue;'))
 for row in result:
     if row[0] == 'Tercero': param.bfTercero = float(row[1])
     if row[0] == 'MObra': param.bfMObra = float(row[1])
+    if row[0] == 'MOMinimo': param.bfMOMinimo = float(row[1])
     if row[0] == 'Pintura': param.bfPintura = float(row[1])
     if row[0] == 'Ajuste': param.bfAjuste = float(row[1])
     if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
@@ -130,7 +136,8 @@ async def modelo(CLASE:int=901, MARCA:int=0):
 @app.get("/consulta", response_class=HTMLResponse)
 async def consulta():
     #DBVALUES
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text('SELECT * FROM admvalue;'))
     for row in result:
@@ -148,12 +155,14 @@ async def consulta():
 async def adminValues():
     #DBVALUES
     try:
-        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvalue;'))
         for row in result:
             if row[0] == 'Tercero': param.bfTercero = float(row[1])
             if row[0] == 'MObra': param.bfMObra = float(row[1])
+            if row[0] == 'MOMinimo': param.bfMOMinimo = float(row[1])
             if row[0] == 'Pintura': param.bfPintura = float(row[1])
             if row[0] == 'Ajuste': param.bfAjuste = float(row[1])
             if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
@@ -162,6 +171,7 @@ async def adminValues():
     except Exception as e:
         param.bfTercero = ""
         param.bfMObra = ""
+        param.bfMOMinimo = ""
         param.bfPintura = ""
         param.bfAjuste = ""
         param.bfAsegurado = ""
@@ -170,42 +180,109 @@ async def adminValues():
     bfAdminValues = bfAdminValues.replace('rplBfAsegurado',str(param.bfAsegurado))
     bfAdminValues = bfAdminValues.replace('rplBfTercero',str(param.bfTercero))
     bfAdminValues = bfAdminValues.replace('rplBfMObra',str(param.bfMObra))
+    bfAdminValues = bfAdminValues.replace('rplBfMOMinimo',str(param.bfMOMinimo))
     bfAdminValues = bfAdminValues.replace('rplBfPintura',str(param.bfPintura))
     bfAdminValues = bfAdminValues.replace('rplBfAjuste',str(param.bfAjuste))
     return bfAdminValues
 
 @app.post("/admvaluesave", response_class=PlainTextResponse)
-async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",PINTURA:str="",AJUSTE:str=""):
+async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:str="",PINTURA:str="",AJUSTE:str=""):
     #DBVALUES
     bfMsg = "Valores grabados satisfactoriamente" 
     try:
-       engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
+       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvalue SET flValue =' + str(ASEGURADO).replace(',','.') + ' WHERE stName="Asegurado"'))
        result = conn.execute(text('UPDATE admvalue SET flValue =' + str(TERCERO).replace(',','.') + ' WHERE stName="Tercero"'))
        result = conn.execute(text('UPDATE admvalue SET flValue =' + str(MOBRA).replace(',','.') + ' WHERE stName="MObra"'))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(MOMINIMO).replace(',','.') + ' WHERE stName="MOMinimo"'))
        result = conn.execute(text('UPDATE admvalue SET flValue =' + str(PINTURA).replace(',','.') + ' WHERE stName="Pintura"'))
        result = conn.execute(text('UPDATE admvalue SET flValue =' + str(AJUSTE).replace(',','.') + ' WHERE stName="Ajuste"'))
        conn.commit()
        conn.close()
        engine.dispose()
     except Exception as e:
-       bfMsg = "Se produjo un error al grabar"     
+       bfMsg = "Se produjo un error al grabar: "+str(e)     
     return bfMsg
 
-@app.get("/db", response_class=PlainTextResponse)
-async def adminDB():
+@app.get("/dbCreateLog", response_class=HTMLResponse)
+async def dbCreateLog():
+    bfValue = "bfHTMLdbCreateLog finalizado satisfactoriamente"
     engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
-    conn.execute(text('CREATE TABLE logpresupuestosV1 (id SERIAL PRIMARY KEY,timestamp VARCHAR(25),userapp VARCHAR(25),cliente INTEGER,clase INTEGER,marca INTEGER,modelo INTEGER, siniestro VARCHAR(25), laterald VARCHAR(100), trasero VARCHAR(100), ltReparaPintura FLOAT DEFAULT 0,ltReponeElemento FLOAT DEFAULT 0,ltReponePintura FLOAT DEFAULT 0,ltReponeManoObra FLOAT DEFAULT 0,ltReponeEspejoEle FLOAT DEFAULT 0,ltReponeEspejoMan	FLOAT DEFAULT 0,ltReponeManijaDel FLOAT DEFAULT 0,ltReponeManijaTra FLOAT DEFAULT 0,ltReponeMolduraDel FLOAT DEFAULT 0,ltReponeMolduraTra FLOAT DEFAULT 0,ltReponeCristalDel FLOAT DEFAULT 0,ltReponeCristalTra FLOAT DEFAULT 0,ltTotal FLOAT DEFAULT 0,trReparaPintura FLOAT DEFAULT 0,trReponeElemento FLOAT DEFAULT 0,trReponePintura FLOAT DEFAULT 0,trReponeManoObra FLOAT DEFAULT 0,trReponeMoldura FLOAT DEFAULT 0,trReponeFaroExt FLOAT DEFAULT 0,trReponeFaroInt FLOAT DEFAULT 0,trTotal FLOAT DEFAULT 0,Asegurado FLOAT DEFAULT 0,Tercero FLOAT DEFAULT 0,MObra FLOAT DEFAULT 0,Pintura FLOAT DEFAULT 0,Ajuste FLOAT DEFAULT 0)'))
-    conn.commit()
+    try:
+        conn.execute(text('''CREATE TABLE  IF NOT EXISTS 'logpresupuestosV1' (
+                            'id'	             INTEGER NOT NULL UNIQUE,
+                            'timestamp'	         TEXT DEFAULT ' ',
+                            'user'	             TEXT NOT NULL DEFAULT ' ',
+                            'cliente'	         INTEGER NOT NULL,
+                            'clase'	             INTEGER NOT NULL,
+                            'marca'	             INTEGER NOT NULL,
+                            'modelo'	         INTEGER NOT NULL,
+                            'siniestro'	         TEXT DEFAULT ' ',
+                            'lateral'	         TEXT DEFAULT ' ',
+                            'trasero'	         TEXT DEFAULT ' ',
+                            'ltReparaPintura'	 REAL DEFAULT 0,
+                            'ltReponeElemento'	 REAL DEFAULT 0,
+                            'ltReponePintura'	 REAL DEFAULT 0,
+                            'ltReponeManoObra'	 REAL DEFAULT 0,
+                            'ltReponeEspejoEle'	 REAL DEFAULT 0,
+                            'ltReponeEspejoMan'	 REAL DEFAULT 0,
+                            'ltReponeManijaDel'	 REAL DEFAULT 0,
+                            'ltReponeManijaTra'	 REAL DEFAULT 0,
+                            'ltReponeMolduraDel' REAL DEFAULT 0,
+                            'ltReponeMolduraTra' REAL DEFAULT 0,
+                            'ltReponeCristalDel' REAL DEFAULT 0,
+                            'ltReponeCristalTra' REAL DEFAULT 0,
+                            'ltTotal'	         REAL DEFAULT 0,
+                            'trReparaPintura'	 REAL DEFAULT 0,
+                            'trReponeElemento'	 REAL DEFAULT 0,
+                            'trReponePintura'	 REAL DEFAULT 0,
+                            'trReponeManoObra'	 REAL DEFAULT 0,
+                            'trReponeMoldura'	 REAL DEFAULT 0,
+                            'trReponeFaroExt'	 REAL DEFAULT 0,
+                            'trReponeFaroInt'	 REAL DEFAULT 0,
+                            'trTotal'	         REAL DEFAULT 0,
+                            'Asegurado'	         REAL DEFAULT 0,
+                            'Tercero'	         REAL DEFAULT 0,
+                            'MObra'	             REAL DEFAULT 0,
+                            'Pintura'	         REAL DEFAULT 0,
+                            'Ajuste'	         REAL DEFAULT 0,
+                            PRIMARY KEY('id' AUTOINCREMENT)
+                        ) '''))
+        conn.commit()
+    except exc.SQLAlchemyError as e:
+        bfValue = "dbCreateAdminValue Error: "+str(e)     
     conn.close()
     engine.dispose()
+    return dbstatus.bfHTMLdbCreateLog.replace('<<value>>',bfValue)
+
+@app.get("/dbCreateAdminValue", response_class=HTMLResponse)
+async def dbcreateAdminValue():
+    bfValue = "dbCreateAdminValue finalizado satisfactoriamente"
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    conn = engine.connect()
+    try:
+        conn.execute(text('''CREATE TABLE IF NOT EXISTS 'admvalue' (
+                              'stName'  TEXT NOT NULL UNIQUE,
+                              'flValue' REAL NOT NULL,
+                               PRIMARY KEY('stName')
+                          ) '''))
+        conn.commit()
+    except exc.SQLAlchemyError as e:
+        bfValue = "dbCreateAdminValue Error: "+str(e)          
+    conn.close()
+    engine.dispose()
+    return dbstatus.bfHTMLdbCreateAdminValue.replace('<<value>>',bfValue)
 
 @app.get("/dbread", response_class=PlainTextResponse)
 async def adminDBRead():
     lsResult = []
     engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text('''SELECT * FROM logpresupuestosV1;'''))
     for row in result:
@@ -219,11 +296,6 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     #Segmenta Input
     lsLateral = LATERAL.split('-')
     lsTrasero = TRASERO.split('-')
-    
-    #isWrited,pkValue = fnWriteSearch(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,LATERAL,TRASERO)
-    #print("First")
-    #print(isWrited)
-    #print(pkValue)
     
     ###LATERAL###
     lsLateralCambiaElems = []
@@ -708,7 +780,6 @@ def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
                                         (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  &
                     (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
                                                                                     [['PRECIO_MEAN']] 
-        
         flAverage = np.round(bfID_ELEM['PRECIO_MEAN'],2)
         if len(flAverage) == 0: flAverage = [0]
         lsReponeAve.append(flAverage)
@@ -770,7 +841,9 @@ def fnMolduraTrasero(inCOD_MARCA,inCOD_MODELO):
 
     dfTmp = dfMOLD_CTRO.loc[~dfMOLD_CTRO['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
         
-    if len(dfTmp)!=0: lsMoldCtro.append(dfTmp['VALOR'].mean().round(2))
+    if len(dfTmp)!=0: 
+        flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
+        lsMoldCtro.append(flValue.round(2))
 
     return lsMoldCtro
 
@@ -793,7 +866,9 @@ def fnFaroExtTrasero(inCOD_MARCA,inCOD_MODELO):
 
     dfTmp = dfFARO_EXT.loc[~dfFARO_EXT['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
     
-    if len(dfTmp)!=0: lsFaroExt.append(dfTmp['VALOR'].mean().round(2))
+    if len(dfTmp)!=0: 
+        flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
+        lsFaroExt.append(flValue.round(2))
     
     return lsFaroExt
 
@@ -813,7 +888,9 @@ def fnFaroIntTrasero(inCOD_MARCA,inCOD_MODELO):
                                     (dfFARO['DESC_ELEM'].str.contains('|'.join(map(re.escape, faroDer))))]\
                                     .sort_values(['VALOR'], ascending=[False])
     
-    if len(dfFARO_INT)!=0: lsFaroExt.append(dfFARO_INT['VALOR'].mean().round(2))
+    if len(dfFARO_INT)!=0: 
+        flValue = dfFARO_INT['VALOR'].mean() + param.bfMOMinimo
+        lsFaroExt.append(flValue.round(2))
     
     return lsFaroExt
 
@@ -833,7 +910,10 @@ def fnEspejoLateralElec(inCOD_MARCA,inCOD_MODELO):
                                      .sort_values(['VALOR'], ascending=[False])
     
     dfTmp = dfESPEJO_ELEC.loc[~dfESPEJO_ELEC['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-    if len(dfTmp)!=0: lsMeanEsp.append(dfTmp['VALOR'].mean().round(2))   
+    
+    if len(dfTmp)!=0: 
+        flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
+        lsMeanEsp.append(flValue.round(2))   
     
     return lsMeanEsp 
 
@@ -853,7 +933,9 @@ def fnEspejoLateralMan(inCOD_MARCA,inCOD_MODELO):
                                     .sort_values(['VALOR'], ascending=[False])
     
     dfTmp = dfESPEJO_MAN.loc[~dfESPEJO_MAN['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-    if len(dfTmp)!=0: lsMeanEsp.append(dfTmp['VALOR'].mean().round(2))   
+    if len(dfTmp)!=0: 
+        flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
+        lsMeanEsp.append(flValue.round(2))   
     
     return lsMeanEsp 
 
@@ -873,7 +955,10 @@ def fnManijaLateralDel(inCOD_MARCA,inCOD_MODELO):
                                     .sort_values(['VALOR'], ascending=[False])
    
     dfTmp = dfMANIJA_RST.loc[~dfMANIJA_RST['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-    if len(dfTmp)!=0: lsMeanMan.append(dfTmp['VALOR'].mean().round(2))   
+    
+    if len(dfTmp)!=0: 
+        flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
+        lsMeanMan.append(flValue.round(2))   
 
     return lsMeanMan 
 
@@ -893,7 +978,10 @@ def fnManijaLateralTra(inCOD_MARCA,inCOD_MODELO):
                                     .sort_values(['VALOR'], ascending=[False])
    
     dfTmp = dfMANIJA_RST.loc[~dfMANIJA_RST['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-    if len(dfTmp)!=0: lsMeanMan.append(dfTmp['VALOR'].mean().round(2))   
+    
+    if len(dfTmp)!=0: 
+        flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
+        lsMeanMan.append(flValue.round(2))   
 
     return lsMeanMan 
 
@@ -914,7 +1002,9 @@ def fnMolduraLateralDel(inCOD_MARCA,inCOD_MODELO):
                                            (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                            .sort_values(['VALOR'], ascending=[False])
 
-    if len(dfMOLD_LATERAL)!=0: lsMeanMold.append(dfMOLD_LATERAL['VALOR'].mean().round(2))   
+    if len(dfMOLD_LATERAL)!=0: 
+        flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
+        lsMeanMold.append(flValue.round(2))   
         
     return lsMeanMold
 
@@ -935,7 +1025,9 @@ def fnMolduraLateralTra(inCOD_MARCA,inCOD_MODELO):
                                            (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                            .sort_values(['VALOR'], ascending=[False])
                                            
-    if len(dfMOLD_LATERAL)!=0: lsMeanMold.append(dfMOLD_LATERAL['VALOR'].mean().round(2)) 
+    if len(dfMOLD_LATERAL)!=0: 
+        flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
+        lsMeanMold.append(flValue.round(2)) 
         
     return lsMeanMold
 
@@ -956,7 +1048,9 @@ def fnCristalLateralDel(inCOD_MARCA,inCOD_MODELO):
                                            (dfCRISTAL['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                            .sort_values(['VALOR'], ascending=[False])
 
-    if len(dfMOLD_LATERAL)!=0: lsMeanMold.append(dfMOLD_LATERAL['VALOR'].mean().round(2))   
+    if len(dfMOLD_LATERAL)!=0: 
+        flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
+        lsMeanMold.append(flValue.round(2))   
         
     return lsMeanMold
 
@@ -977,7 +1071,9 @@ def fnCristalLateralTra(inCOD_MARCA,inCOD_MODELO):
                                            (dfCRISTAL['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                            .sort_values(['VALOR'], ascending=[False])
                                            
-    if len(dfMOLD_LATERAL)!=0: lsMeanMold.append(dfMOLD_LATERAL['VALOR'].mean().round(2)) 
+    if len(dfMOLD_LATERAL)!=0: 
+        flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
+        lsMeanMold.append(flValue.round(2)) 
         
     return lsMeanMold
  
@@ -1093,15 +1189,15 @@ def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,LATERAL,TRASERO,lsValuesResu
     bfWrite =True
     ts = datetime.datetime.now().timestamp()
   
-    bfValues = str(ts)+","+str(CLIENTE)+","+str(CLASE)+","+str(MARCA)+","+str(MODELO)+",'"+SINIESTRO+"','"+LATERAL+"','"+TRASERO+"',"
+    bfValues = str(ts)+","+str(CLIENTE)+","+str(CLASE)+","+str(MARCA)+","+str(MODELO)+",\""+SINIESTRO+"\",\""+LATERAL+"\",\""+TRASERO+"\","
     bfValues += str(lsValuesResultWrite[0])+","+str(lsValuesResultWrite[1])+","+str(lsValuesResultWrite[2])+","+str(lsValuesResultWrite[3])+","\
-             +str(lsValuesResultWrite[4])+","+str(lsValuesResultWrite[5])+","+str(lsValuesResultWrite[6])+","+str(lsValuesResultWrite[7])+","\
-             +str(lsValuesResultWrite[8])+","+str(lsValuesResultWrite[9])+","+str(lsValuesResultWrite[10])+","+str(lsValuesResultWrite[11])+","\
-             +str(lsValuesResultWrite[12])+","+str(lsValuesResultWrite[13])+","+str(lsValuesResultWrite[14])+","+str(lsValuesResultWrite[15])+","\
-             +str(lsValuesResultWrite[16])+","+str(lsValuesResultWrite[17])+","+str(lsValuesResultWrite[18])+","+str(lsValuesResultWrite[19])+","+str(lsValuesResultWrite[20])+","
+            +str(lsValuesResultWrite[4])+","+str(lsValuesResultWrite[5])+","+str(lsValuesResultWrite[6])+","+str(lsValuesResultWrite[7])+","\
+            +str(lsValuesResultWrite[8])+","+str(lsValuesResultWrite[9])+","+str(lsValuesResultWrite[10])+","+str(lsValuesResultWrite[11])+","\
+            +str(lsValuesResultWrite[12])+","+str(lsValuesResultWrite[13])+","+str(lsValuesResultWrite[14])+","+str(lsValuesResultWrite[15])+","\
+            +str(lsValuesResultWrite[16])+","+str(lsValuesResultWrite[17])+","+str(lsValuesResultWrite[18])+","+str(lsValuesResultWrite[19])+","+str(lsValuesResultWrite[20])+","
     bfValues += str(param.bfAsegurado)+","+str(param.bfTercero)+","+str(param.bfMObra)+","+str(param.bfPintura)+","+str(param.bfAjuste)
 
-    bfClause = '''INSERT INTO logpresupuestosV1 (timestamp,cliente,clase,marca,modelo,siniestro,laterald,trasero,
+    bfClause = '''INSERT INTO logpresupuestosV1 (timestamp,cliente,clase,marca,modelo,siniestro,lateral,trasero,
                                                  ltReparaPintura,ltReponeElemento,ltReponePintura,ltReponeManoObra,
                                                  ltReponeEspejoEle,ltReponeEspejoMan,ltReponeManijaDel,ltReponeManijaTra,
                                                  ltReponeMolduraDel,ltReponeMolduraTra,ltReponeCristalDel,ltReponeCristalTra,
@@ -1110,6 +1206,7 @@ def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,LATERAL,TRASERO,lsValuesResu
                                                  Tercero,MObra,Pintura,Ajuste) VALUES (''' + bfValues + ');'
     #try:
     engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text(bfClause))
     conn.commit()
