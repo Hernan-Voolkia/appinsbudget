@@ -99,14 +99,14 @@ dfMANIJA = pd.read_csv('./data/PuertaManijaSedanValueMin.csv',sep=';',encoding='
 engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
 #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
 conn = engine.connect()
-result = conn.execute(text('SELECT * FROM admvalue;'))
-for row in result:
-    if row[0] == 'Tercero': param.bfTercero = float(row[1])
-    if row[0] == 'MObra': param.bfMObra = float(row[1])
-    if row[0] == 'MOMinimo': param.bfMOMinimo = float(row[1])
-    if row[0] == 'Pintura': param.bfPintura = float(row[1])
-    if row[0] == 'Ajuste': param.bfAjuste = float(row[1])
-    if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
+#result = conn.execute(text('SELECT * FROM admvalue;'))
+#for row in result:
+#    if row[0] == 'Tercero': param.bfTercero = float(row[1])
+#    if row[0] == 'MObra': param.bfMObra = float(row[1])
+#    if row[0] == 'MOMinimo': param.bfMOMinimo = float(row[1])
+#    if row[0] == 'Pintura': param.bfPintura = float(row[1])
+#    if row[0] == 'Ajuste': param.bfAjuste = float(row[1])
+#    if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
 conn.close()
 engine.dispose()
 
