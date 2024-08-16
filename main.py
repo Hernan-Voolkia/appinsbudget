@@ -267,9 +267,10 @@ async def dbcreateAdminValue():
     conn = engine.connect()
     try:
         conn.execute(text('''CREATE TABLE admvalue (
-                             stname TEXT,
+                             id	INTEGER NOT NULL UNIQUE,
+                             stname TEXT DEFAULT ' ',
                              flvalue REAL DEFAULT 0,
-                             PRIMARY KEY(stname));
+                             PRIMARY KEY(id AUTOINCREMENT));
                           '''))
         conn.commit()
     except exc.SQLAlchemyError as e:
