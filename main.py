@@ -193,12 +193,12 @@ async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
        conn = engine.connect()
-       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(ASEGURADO).replace(',','.') + ' WHERE stName="Asegurado"'))
-       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(TERCERO).replace(',','.') + ' WHERE stName="Tercero"'))
-       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(MOBRA).replace(',','.') + ' WHERE stName="MObra"'))
-       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(MOMINIMO).replace(',','.') + ' WHERE stName="MOMinimo"'))
-       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(PINTURA).replace(',','.') + ' WHERE stName="Pintura"'))
-       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(AJUSTE).replace(',','.') + ' WHERE stName="Ajuste"'))
+       result = conn.execute(text('UPDATE admvalue SET flvalue =' + str(ASEGURADO).replace(',','.') + ' WHERE stname="Asegurado"'))
+       result = conn.execute(text('UPDATE admvalue SET flvalue =' + str(TERCERO).replace(',','.') + ' WHERE stname="Tercero"'))
+       result = conn.execute(text('UPDATE admvalue SET flvalue =' + str(MOBRA).replace(',','.') + ' WHERE stname="MObra"'))
+       result = conn.execute(text('UPDATE admvalue SET flvalue =' + str(MOMINIMO).replace(',','.') + ' WHERE stname="MOMinimo"'))
+       result = conn.execute(text('UPDATE admvalue SET flvalue =' + str(PINTURA).replace(',','.') + ' WHERE stname="Pintura"'))
+       result = conn.execute(text('UPDATE admvalue SET flvalue =' + str(AJUSTE).replace(',','.') + ' WHERE stname="Ajuste"'))
        conn.commit()
        conn.close()
        engine.dispose()
@@ -266,9 +266,10 @@ async def dbcreateAdminValue():
     #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
-        conn.execute(text('''CREATE TABLE admvalue (
-                             stName TEXT,
-                             flValue REAL DEFAULT 0);
+        conn.execute(text('''CREATE TABLE 'admvalue' (
+                             'stname' TEXT,
+                             'flvalue' REAL DEFAULT 0,
+                             PRIMARY KEY('stname'));
                           '''))
         conn.commit()
     except exc.SQLAlchemyError as e:
@@ -284,7 +285,7 @@ async def dbInsertAdminValue():
     engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
-        result = conn.execute(text('INSERT OR REPLACE INTO admvalue (stName, flValue) VALUES ("Asegurado",1);'))
+        result = conn.execute(text('INSERT OR REPLACE INTO admvalue (stname, flvalue) VALUES ("Asegurado",1);'))
         #result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('Tercero',0.8);'''))
         #result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('MObra',18250);'''))
         #result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('MOMinimo',9250);'''))
