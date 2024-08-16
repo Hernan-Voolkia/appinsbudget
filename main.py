@@ -266,11 +266,9 @@ async def dbcreateAdminValue():
     #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
-        conn.execute(text('''CREATE TABLE admvalue (
-                             id	INTEGER NOT NULL UNIQUE,
-                             stname TEXT DEFAULT ' ',
-                             flvalue REAL DEFAULT 0,
-                             PRIMARY KEY(id AUTOINCREMENT));
+        conn.execute(text('''CREATE TABLE admvalueV1 (id SERIAL PRIMARY KEY,
+                                                      stname character varying(25) COLLATE pg_catalog."default",
+                                                      flvalue double precision DEFAULT 0);
                           '''))
         conn.commit()
     except exc.SQLAlchemyError as e:
@@ -287,7 +285,7 @@ async def dbInsertAdminValue():
     conn = engine.connect()
     try:
         #result = conn.execute(text('INSERT OR REPLACE INTO admvalue (stname, flvalue) VALUES ("Asegurado",1);'))
-        result = conn.execute(text("INSERT INTO admvalue (stname, flvalue) VALUES ('Tercero',0.8);"))
+        result = conn.execute(text("INSERT INTO admvalueV1 (stname, flvalue) VALUES ('Tercero',0.8);"))
         #result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('MObra',18250);'''))
         #result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('MOMinimo',9250);'''))
         #result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('Pintura',22500);'''))
