@@ -285,8 +285,8 @@ async def dbInsertAdminValue():
     engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
-        result = conn.execute(text('INSERT OR REPLACE INTO admvalue (stname, flvalue) VALUES ("Asegurado",1);'))
-        #result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('Tercero',0.8);'''))
+        #result = conn.execute(text('INSERT OR REPLACE INTO admvalue (stname, flvalue) VALUES ("Asegurado",1);'))
+        result = conn.execute(text("INSERT INTO admvalue (stname, flvalue) VALUES ('Tercero',0.8);"))
         #result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('MObra',18250);'''))
         #result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('MOMinimo',9250);'''))
         #result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('Pintura',22500);'''))
