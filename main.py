@@ -318,7 +318,7 @@ async def dbreadAdmin():
     engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
     #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
-    result = conn.execute(text('''SELECT * FROM admvalue;'''))
+    result = conn.execute(text('''SELECT stname, flvalue FROM admvalue;'''))
     for row in result:
         lsResult.append(row)    
     conn.close()
