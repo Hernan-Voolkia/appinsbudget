@@ -99,14 +99,14 @@ dfMANIJA = pd.read_csv('./data/PuertaManijaSedanValueMin.csv',sep=';',encoding='
 engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
 #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
 conn = engine.connect()
-result = conn.execute(text('SELECT stname, flvalue FROM admvalue;'))
+result = conn.execute(text('SELECT * FROM admvalue;'))
 for row in result:
-    if row[0] == 'Ajuste': param.bfAjuste = float(row[1])
-    if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
     if row[0] == 'Tercero': param.bfTercero = float(row[1])
     if row[0] == 'MObra': param.bfMObra = float(row[1])
     if row[0] == 'MOMinimo': param.bfMOMinimo = float(row[1])
     if row[0] == 'Pintura': param.bfPintura = float(row[1])
+    if row[0] == 'Ajuste': param.bfAjuste = float(row[1])
+    if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
 conn.close()
 engine.dispose()
 
@@ -139,14 +139,14 @@ async def consulta():
     engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
     #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
-    result = conn.execute(text('SELECT stname, flvalue FROM admvalue;'))
+    result = conn.execute(text('SELECT * FROM admvalue;'))
     for row in result:
-        if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
         if row[0] == 'Tercero': param.bfTercero = float(row[1])
         if row[0] == 'MObra': param.bfMObra = float(row[1])
-        if row[0] == 'MOMinimo': param.bfMOMinimo = float(row[1])  
+        if row[0] == 'MOMinimo': param.bfMOMinimo = float(row[1])
         if row[0] == 'Pintura': param.bfPintura = float(row[1])
         if row[0] == 'Ajuste': param.bfAjuste = float(row[1])
+        if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
     conn.close()
     engine.dispose()    
     
@@ -159,14 +159,14 @@ async def adminValues():
         engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
         #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
-        result = conn.execute(text('SELECT stname, flvalue FROM admvalue;'))
+        result = conn.execute(text('SELECT * FROM admvalue;'))
         for row in result:
-            if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
             if row[0] == 'Tercero': param.bfTercero = float(row[1])
             if row[0] == 'MObra': param.bfMObra = float(row[1])
             if row[0] == 'MOMinimo': param.bfMOMinimo = float(row[1])
             if row[0] == 'Pintura': param.bfPintura = float(row[1])
             if row[0] == 'Ajuste': param.bfAjuste = float(row[1])
+            if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
         conn.close()
         engine.dispose()
     except Exception as e:
@@ -194,12 +194,12 @@ async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
        conn = engine.connect()
-       result = conn.execute(text('UPDATE admvalue SET flvalue =' + str(ASEGURADO).replace(',','.') + ''' WHERE stname='Asegurado' '''))
-       result = conn.execute(text('UPDATE admvalue SET flvalue =' + str(TERCERO).replace(',','.') + ''' WHERE stname='Tercero' '''))
-       result = conn.execute(text('UPDATE admvalue SET flvalue =' + str(MOBRA).replace(',','.') + ''' WHERE stname='MObra' '''))
-       result = conn.execute(text('UPDATE admvalue SET flvalue =' + str(MOMINIMO).replace(',','.') + ''' WHERE stname='MOMinimo' '''))
-       result = conn.execute(text('UPDATE admvalue SET flvalue =' + str(PINTURA).replace(',','.') + ''' WHERE stname='Pintura' '''))
-       result = conn.execute(text('UPDATE admvalue SET flvalue =' + str(AJUSTE).replace(',','.') + ''' WHERE stname='Ajuste' '''))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(ASEGURADO).replace(',','.') + ' WHERE stName="Asegurado"'))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(TERCERO).replace(',','.') + ' WHERE stName="Tercero"'))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(MOBRA).replace(',','.') + ' WHERE stName="MObra"'))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(MOMINIMO).replace(',','.') + ' WHERE stName="MOMinimo"'))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(PINTURA).replace(',','.') + ' WHERE stName="Pintura"'))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(AJUSTE).replace(',','.') + ' WHERE stName="Ajuste"'))
        conn.commit()
        conn.close()
        engine.dispose()
@@ -223,7 +223,7 @@ async def dbCreateLog():
                             'marca'	             INTEGER NOT NULL,
                             'modelo'	         INTEGER NOT NULL,
                             'siniestro'	         TEXT DEFAULT ' ',
-                            'laterald'	       TEXT DEFAULT ' ',
+                            'lateral'	         TEXT DEFAULT ' ',
                             'trasero'	         TEXT DEFAULT ' ',
                             'ltReparaPintura'	 REAL DEFAULT 0,
                             'ltReponeElemento'	 REAL DEFAULT 0,
@@ -267,33 +267,17 @@ async def dbcreateAdminValue():
     #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
-        conn.execute(text('''CREATE TABLE admvalue (id SERIAL PRIMARY KEY,
-                                                      stname character varying(25) COLLATE pg_catalog."default",
-                                                      flvalue double precision DEFAULT 0);
-                          '''))
+        conn.execute(text('''CREATE TABLE IF NOT EXISTS 'admvalue' (
+                              'stName'  TEXT NOT NULL UNIQUE,
+                              'flValue' REAL DEFAULT 0,
+                               PRIMARY KEY('stName')
+                          ) '''))
+        #CREATE TABLE admvalue (id SERIAL PRIMARY KEY,
+        #               stname TEXT DEFAULT ' ',
+        #               flvalue REAL DEFAULT 0);
         conn.commit()
     except exc.SQLAlchemyError as e:
         bfValue = "dbCreateAdminValue Error: "+str(e)          
-    conn.close()
-    engine.dispose()
-    return dbstatus.bfHTMLdbCreateAdminValue.replace('<<value>>',bfValue)
-
-@app.get("/dbInsertAdminValue", response_class=HTMLResponse)
-async def dbInsertAdminValue():
-    bfValue = "dbInsertAdminValue finalizado satisfactoriamente"
-    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
-    conn = engine.connect()
-    try:
-        #result = conn.execute(text('INSERT OR REPLACE INTO admvalue (stname, flvalue) VALUES ("Asegurado",1);'))
-        result = conn.execute(text("INSERT INTO admvalue (stname, flvalue) VALUES ('Tercero',0.8);"))
-        #result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('MObra',18250);'''))
-        #result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('MOMinimo',9250);'''))
-        #result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('Pintura',22500);'''))
-        #result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('Ajuste',1);'''))
-        conn.commit()
-    except exc.SQLAlchemyError as e:
-        bfValue = "dbInsertAdminValue Error: "+str(e)          
     conn.close()
     engine.dispose()
     return dbstatus.bfHTMLdbCreateAdminValue.replace('<<value>>',bfValue)
@@ -305,28 +289,47 @@ async def dbDropAdminValue():
     #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
-        conn.execute(text('DROP TABLE admvalue;'))
+        conn.execute(text('''DROP TABLE admvalue;'''))
         conn.commit()
     except exc.SQLAlchemyError as e:
         bfValue = "dbDropAdminValue Error: "+str(e)          
     conn.close()
     engine.dispose()
     return dbstatus.bfHTMLdbCreateAdminValue.replace('<<value>>',bfValue)
-  
+
+@app.get("/dbInsertAdminValue", response_class=HTMLResponse)
+async def dbInsertAdminValue():
+    bfValue = "dbInsertAdminValue finalizado satisfactoriamente"
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    conn = engine.connect()
+    try:
+        result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('Asegurado',1);'''))
+        result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('Tercero',0.8);'''))
+        result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('MObra',18250);'''))
+        result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('MOMinimo',9250);'''))
+        result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('Pintura',22500);'''))
+        result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('Ajuste',1);'''))
+        conn.commit()
+    except exc.SQLAlchemyError as e:
+        bfValue = "dbInsertAdminValue Error: "+str(e)          
+    conn.close()
+    engine.dispose()
+    return dbstatus.bfHTMLdbCreateAdminValue.replace('<<value>>',bfValue)
+
 @app.get("/dbreadAdmin", response_class=PlainTextResponse)
 async def dbreadAdmin():
     lsResult = []
     engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
     #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
-    result = conn.execute(text('''SELECT stname, flvalue FROM admvalue;'''))
+    result = conn.execute(text('''SELECT * FROM admvalue;'''))
     for row in result:
         lsResult.append(row)    
     conn.close()
     engine.dispose()
     return ";".join(str(x) for x in lsResult) 
 
- 
 @app.get("/dbread", response_class=PlainTextResponse)
 async def adminDBRead():
     lsResult = []
@@ -539,6 +542,12 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
             if len(lsTraReponeMoAv)  == 0: lsTraReponeMoAv.append(0)             
             flTraValorReponeMoAv = np.round(sum(lsTraReponeMoAv),2)
             
+        if len(lsTraseroCambiaElems) + len(lsTraseroReparaElems) == 1:
+            if flTraValorReparaAve != 0: 
+                flTraValorReparaAve = flTraValorReparaAve + param.bfMObra
+            if flTraValorReponeElem != 0:     
+                flTraValorReponeElem = flTraValorReponeElem + param.bfMObra
+        
         if len(lsTraseroMolduraElems)>0:
             lsTraMeanMold=fnMolduraTrasero(iMARCA,iMODELO)      
             if len(lsTraMeanMold) == 0: lsTraMeanMold.append(0)
@@ -587,6 +596,14 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(0)
         lsValuesResult.append(0)
         lsValuesResult.append(0)
+
+    if len(lsLateralCambiaElems) + len(lsLateralReparaElems) + \
+       len(lsTraseroCambiaElems) + len(lsTraseroReparaElems) == 1:
+        # Agregar en lsValuesResult   
+        if flLateral != 0: 
+            flLateral = flLateral + param.bfMObra
+        if flTrasero != 0:     
+            flTrasero = flTrasero + param.bfMObra
 
     bfTmp = resumeDataBrief(CLIENTE,flLateral,flTrasero)
     
@@ -806,12 +823,12 @@ def fnReparaTrasero(inSEG,inCOD_CLASE,lsRepara):
         flVALOR_MO_MEAN     = bfID_ELEM['VALOR_MO_MEAN']
         flCANT_HS_PINT_MEAN = bfID_ELEM['CANT_HS_PINT_MEAN'] 
 
-        flVALOR_MO_MEAN     = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2) #Todo: Sacar
+        flVALOR_MO_MEAN     = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2)       #Todo: Sacar
         flCANT_HS_PINT_MEAN = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfPintura),2) #Todo: Sacar
 
-        flAverage=np.round((flVALOR_MO_MEAN+bfID_ELEM['CANT_HS_PINT_MEAN']+bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
+        flAverage=np.round((flVALOR_MO_MEAN + flCANT_HS_PINT_MEAN + bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
         lsReparaAve.append(flAverage) 
-
+    
     for index, item in enumerate(lsReparaAve): lsReparaAve[index] = list(set(item))[0]     
 
     return lsReparaAve
@@ -820,7 +837,7 @@ def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
     inCOD_PARTE = 2
     lsReponeAve = []
     flAverage = 0
-    
+      
     for index, item in enumerate(lsRepone):
         bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & 
                                         (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']    == inCOD_CLASE)  & 
@@ -830,7 +847,19 @@ def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
                     (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
                                                                                     [['PRECIO_MEAN']] 
         flAverage = np.round(bfID_ELEM['PRECIO_MEAN'],2)
+
+        if len(flAverage) == 0:
+            bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & 
+                                            (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']    == inCOD_CLASE)  & 
+                                            (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  &
+                        (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
+                                                                                        [['PRECIO_MEAN']] 
+            
+            flMean = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)   
+            flAverage = pd.Series([flMean])
+
         if len(flAverage) == 0: flAverage = [0]
+
         lsReponeAve.append(flAverage)
     
     for index, item in enumerate(lsReponeAve): lsReponeAve[index] = list(set(item))[0]     
@@ -1165,7 +1194,19 @@ def fnCambiaLateral(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
                                                                                        [['PRECIO_MEAN']] 
 
         flAverage = np.round(bfID_ELEM['PRECIO_MEAN'],2)
+        
+        if len(flAverage) == 0:
+            bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & 
+                                            (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']    == inCOD_CLASE)  & 
+                                            (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  &
+                        (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
+                                                                                        [['PRECIO_MEAN']] 
+            
+            flMean = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)   
+            flAverage = pd.Series([flMean])
+        
         if len(flAverage) == 0: flAverage = [0]
+
         lsReponeAve.append(flAverage)
         
     for index, item in enumerate(lsReponeAve): lsReponeAve[index] = list(set(item))[0]     
@@ -1238,7 +1279,7 @@ def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,LATERAL,TRASERO,lsValuesResu
     bfWrite =True
     ts = datetime.datetime.now().timestamp()
   
-    bfValues = str(ts)+","+str(CLIENTE)+","+str(CLASE)+","+str(MARCA)+","+str(MODELO)+",'"+SINIESTRO+"','"+LATERAL+"','"+TRASERO+"',"
+    bfValues = str(ts)+","+str(CLIENTE)+","+str(CLASE)+","+str(MARCA)+","+str(MODELO)+",\""+SINIESTRO+"\",\""+LATERAL+"\",\""+TRASERO+"\","
     bfValues += str(lsValuesResultWrite[0])+","+str(lsValuesResultWrite[1])+","+str(lsValuesResultWrite[2])+","+str(lsValuesResultWrite[3])+","\
             +str(lsValuesResultWrite[4])+","+str(lsValuesResultWrite[5])+","+str(lsValuesResultWrite[6])+","+str(lsValuesResultWrite[7])+","\
             +str(lsValuesResultWrite[8])+","+str(lsValuesResultWrite[9])+","+str(lsValuesResultWrite[10])+","+str(lsValuesResultWrite[11])+","\
@@ -1246,7 +1287,7 @@ def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,LATERAL,TRASERO,lsValuesResu
             +str(lsValuesResultWrite[16])+","+str(lsValuesResultWrite[17])+","+str(lsValuesResultWrite[18])+","+str(lsValuesResultWrite[19])+","+str(lsValuesResultWrite[20])+","
     bfValues += str(param.bfAsegurado)+","+str(param.bfTercero)+","+str(param.bfMObra)+","+str(param.bfPintura)+","+str(param.bfAjuste)
 
-    bfClause = '''INSERT INTO logpresupuestosV1 (timestamp,cliente,clase,marca,modelo,siniestro,laterald,trasero,
+    bfClause = '''INSERT INTO logpresupuestosV1 (timestamp,cliente,clase,marca,modelo,siniestro,lateral,trasero,
                                                  ltReparaPintura,ltReponeElemento,ltReponePintura,ltReponeManoObra,
                                                  ltReponeEspejoEle,ltReponeEspejoMan,ltReponeManijaDel,ltReponeManijaTra,
                                                  ltReponeMolduraDel,ltReponeMolduraTra,ltReponeCristalDel,ltReponeCristalTra,
