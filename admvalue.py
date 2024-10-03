@@ -16,14 +16,52 @@ bfHTML = """
     <style>
         body {background-color:rgb(255,255,255);}
         label {text-align:right;font-family:'helvetica neue';font-size: 100%;}
+        .vertical-text {
+            writing-mode: vertical-rl; /* Texto vertical de derecha a izquierda */
+            transform: rotate(180deg); /* Opcional: rota 180 grados para cambiar la dirección */
+        }
     </style>
 </head>
 <body>
     <div id="divContent" class="pure-g" style="text-align:center;"><div class="pure-u-*">&nbsp;</div></div>
     <div class="pure-g" style="padding-left:5px;">
         <div class="pure-u-1 pure-u-md-7-24"> <!--<div class="pure-u-1 pure-u-md-1-5">-->
+            &nbsp;
+        </div>
+        <div class="pure-u-1 pure-u-md-7-24">
+            <div class="pure-menu pure-menu-horizontal">
+                <a href="#" id="btnConsulta" class="pure-menu-link pure-menu-heading">Consulta</a>
+                <ul class="pure-menu-list">
+                    <li class="pure-menu-item pure-menu-selected">
+                        <a href="#" id="btnParams" class="pure-menu-link">Params</a>
+                    </li>
+                    <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+                        <a href="#" id="menuLink1" class="pure-menu-link">Repuestos</a>
+                        <ul class="pure-menu-children">
+                            <li class="pure-menu-item"></li>
+                                <a href="#" id="btnDelantero" class="pure-menu-link">Delantero</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnLateral" class="pure-menu-link">Lateral</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnTrasero" class="pure-menu-link">Trasero</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>      
+    <div class="pure-g" style="padding-left:5px;">
+        <div class="pure-u-1 pure-u-md-7-24"> <!--<div class="pure-u-1 pure-u-md-1-5">-->
             <img src="./img/Pos_color_RGB.jpg" alt="logo" width="128" height="128"
-             style="margin-left:auto;margin-right:auto;display:block;"/>
+                 style="margin-left:auto;margin-right:auto;display:block;"/>
+            <p>&nbsp;</p>
+            <p class="vertical-text"
+                style="margin-left:auto;margin-right:auto;display:block;
+                       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                       color:#005993;text-align:left; font-size: 20px;" >Parámetros</p>             
         </div> 
         <div class="pure-u-1 pure-u-md-7-24"> <!--<div class="pure-u-1 pure-u-md-3-5">-->
             <form class="pure-form pure-form-stacked">
@@ -64,7 +102,6 @@ bfHTML = """
         <div class="pure-u-1 pure-u-md-7-24">
             <div class="pure-controls" style="padding-left:3px;">
                 <button style="background-color:#005993;color:#ffffff;" class="pure-button pure-button-primary" onclick="fnSaveData()">&nbsp;&nbsp;&nbsp;Grabar&nbsp;&nbsp;&nbsp;</button>
-                <button style="background-color:#005993;color:#ffffff;" class="pure-button pure-button-primary"  onclick="fnRtnConsulta()">Volver&nbsp;Consulta</button>
             </div>
         </div>
         <div class="pure-u-1 pure-u-md-7-24"></div>
@@ -72,14 +109,23 @@ bfHTML = """
     <br style="display: block;content:'';margin-top:5;">    
    </body>
    <script>
-    function fnRtnConsulta(){  
-        var protocolo = window.location.protocol;
-        var hostname = window.location.hostname;
-        var puerto = window.location.port;
-        var direccionCompleta = protocolo + '//' + hostname;
-        if (puerto){direccionCompleta+=':'+puerto;}
-        window.location.href = direccionCompleta + '/consulta';
-    }
+    document.getElementById("btnConsulta").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/consulta"; 
+    });
+    document.getElementById("btnParams").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admvalue"; 
+    });
+    document.getElementById("btnLateral").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admreplat"; 
+    });
+    document.getElementById("btnTrasero").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admreptra"; 
+    });
+    
     function validarNumeroDecimal(cadena) {
         // Expresión regular para validar números decimales con hasta dos decimales
         const regexDecimal = /^[+-]?\d+([.,]\d{1,2})?$/;
@@ -133,4 +179,5 @@ bfHTML = """
     } 
     </script>
  </html>    
+        
  """
