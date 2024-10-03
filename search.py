@@ -10,6 +10,10 @@ bfHTML = """
     <style>
         body {background-color:rgb(255,255,255);}
         label {text-align:right;font-family:'helvetica neue';font-size: 100%;}
+        .vertical-text {
+            writing-mode: vertical-rl; /* Texto vertical de derecha a izquierda */
+            transform: rotate(180deg); /* Opcional: rota 180 grados para cambiar la dirección */
+        }
     </style>
 </head>
 <body>
@@ -38,6 +42,11 @@ bfHTML = """
         <div class="pure-u-1 pure-u-md-7-24"> <!--<div class="pure-u-1 pure-u-md-1-5">-->
             <img src="./img/Pos_color_RGB.jpg" alt="logo" width="128" height="128"
              style="margin-left:auto;margin-right:auto;display:block;"/>
+            <p>&nbsp;</p>
+            <p class="vertical-text"
+                style="margin-left:auto;margin-right:auto;display:block;
+                       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                       color:#005993;text-align:left; font-size: 20px;">Cotizador</p>
         </div> 
         <div class="pure-u-1 pure-u-md-7-24"> <!--<div class="pure-u-1 pure-u-md-3-5">-->
             <form class="pure-form pure-form-aligned">
@@ -73,6 +82,14 @@ bfHTML = """
                     <div class="pure-control-group">
                         <label for="aligned-name" style="color:#005993;text-align:left;">Siniestro</label>
                         <input type="email" id="stacked-siniestro" placeholder="" style="min-width:343px;" onblur="checkLength(this)"/>
+                    </div>
+                    <div class="pure-control-group">
+                        <label for="aligned-name" style="color:#005993;text-align:left;">Perito</label>
+                        <input type="email" id="stacked-perito" placeholder="" style="min-width:343px;"/>
+                    </div>
+                    <div class="pure-control-group">
+                        <label for="aligned-name" style="color:#005993;text-align:left;">Valor</label>
+                        <input type="email" id="stacked-valorperito" placeholder="" style="min-width:343px;"/>
                     </div>
                </fieldset>
             </form>
@@ -289,6 +306,10 @@ bfHTML = """
             e.style.width = "250px";
         var e = document.getElementById("stacked-siniestro");
             e.value = "";
+        var e = document.getElementById("stacked-perito");
+            e.value = "";
+        var e = document.getElementById("stacked-valorperito");
+            e.value = "";        
             
         var e = document.getElementById("lateral_chk");
             e.checked = false;    
@@ -443,6 +464,12 @@ bfHTML = """
             
         var e = document.getElementById("stacked-siniestro");
             text = text + '&SINIESTRO=' + e.value;
+        
+        var e = document.getElementById("stacked-perito");
+            text = text + '&PERITO=' + e.value;
+            
+        var e = document.getElementById("stacked-valorperito");
+            text = text + '&VALORPERITO=' + e.value;            
         
         if (document.getElementById('lateral_chk').checked == 0 &&
             document.getElementById('trasero_chk').checked  == 0 ){
