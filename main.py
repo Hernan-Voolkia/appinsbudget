@@ -1,6 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 import warnings
 import datetime
@@ -112,6 +113,7 @@ engine.dispose()
 
 app = FastAPI()
 app.mount("/img", StaticFiles(directory="img"), name='img')
+templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
@@ -141,15 +143,52 @@ async def consulta():
     conn = engine.connect()
     result = conn.execute(text('SELECT * FROM admvalue;'))
     for row in result:
-        if row[0] == 'Tercero': param.bfTercero = float(row[1])
-        if row[0] == 'MObra': param.bfMObra = float(row[1])
-        if row[0] == 'MOMinimo': param.bfMOMinimo = float(row[1])
-        if row[0] == 'Pintura': param.bfPintura = float(row[1])
-        if row[0] == 'Ajuste': param.bfAjuste = float(row[1])
+        if row[0] == 'Tercero':   param.bfTercero   = float(row[1])
+        if row[0] == 'MObra':     param.bfMObra     = float(row[1])
+        if row[0] == 'MOMinimo':  param.bfMOMinimo  = float(row[1])
+        if row[0] == 'Pintura':   param.bfPintura   = float(row[1])
+        if row[0] == 'Ajuste':    param.bfAjuste    = float(row[1])
         if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
     conn.close()
     engine.dispose()    
+
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    conn = engine.connect()
+    result = conn.execute(text('SELECT * FROM admvalueslat;'))
+    for row in result:
+        if row[0] == 'Lat_Cristal_Delantero': param.bfLat_Cristal_Delantero = float(row[1])
+        if row[0] == 'Lat_Cristal_Trasero':   param.bfLat_Cristal_Trasero   = float(row[1])
+        if row[0] == 'Lat_Espejo_Electrico':  param.bfLat_Espejo_Electrico  = float(row[1])
+        if row[0] == 'Lat_Espejo_Manual':     param.bfLat_Espejo_Manual     = float(row[1])
+        if row[0] == 'Lat_Manija_Pta_Del':    param.bfLat_Manija_Pta_Del    = float(row[1])
+        if row[0] == 'Lat_Manija_Pta_Tras':   param.bfLat_Manija_Pta_Tras   = float(row[1])
+        if row[0] == 'Lat_Moldura_Pta_Del':   param.bfLat_Moldura_Pta_Del   = float(row[1])
+        if row[0] == 'Lat_Moldura_Pta_Tras':  param.bfLat_Moldura_Pta_Tras  = float(row[1])
+        if row[0] == 'Lat_Puerta_Delantera':  param.bfLat_Puerta_Delantera  = float(row[1])
+        if row[0] == 'Lat_Puerta_Trasera':    param.bfLat_Puerta_Trasera    = float(row[1])
+        if row[0] == 'Lat_Puerta_Panel_Del':  param.bfLat_Puerta_Panel_Del  = float(row[1])
+        if row[0] == 'Lat_Puerta_Panel_Tras': param.bfLat_Puerta_Panel_Tras = float(row[1])
+        if row[0] == 'Lat_Zocalo':            param.bfLat_Zocalo            = float(row[1])
+    conn.close()
+    engine.dispose()  
     
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    conn = engine.connect()
+    result = conn.execute(text('SELECT * FROM admvaluestra;'))
+    for row in result:
+        if row[0] == 'Baul_Porton': param.bfBaul_Porton = float(row[1])
+        if row[0] == 'Faro_Ext':    param.bfFaro_Ext    = float(row[1])
+        if row[0] == 'Faro_Int':    param.bfFaro_Int    = float(row[1])
+        if row[0] == 'Guardabarro': param.bfGuardabarro = float(row[1])
+        if row[0] == 'Luneta':      param.bfLuneta      = float(row[1])
+        if row[0] == 'Moldura':     param.bfMoldura     = float(row[1])
+        if row[0] == 'Panel_Cola':  param.bfPanel_Cola  = float(row[1])
+        if row[0] == 'Paragolpe':   param.bfParagolpe   = float(row[1])
+    conn.close()
+    engine.dispose()
+        
     return search.bfHTML
 
 @app.get("/admvalue", response_class=HTMLResponse)
@@ -200,11 +239,152 @@ async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:
        result = conn.execute(text('UPDATE admvalue SET flValue =' + str(MOMINIMO).replace(',','.') + ' WHERE stName="MOMinimo"'))
        result = conn.execute(text('UPDATE admvalue SET flValue =' + str(PINTURA).replace(',','.') + ' WHERE stName="Pintura"'))
        result = conn.execute(text('UPDATE admvalue SET flValue =' + str(AJUSTE).replace(',','.') + ' WHERE stName="Ajuste"'))
-       conn.commit()
+       if conn.in_transaction(): conn.commit()
        conn.close()
        engine.dispose()
     except Exception as e:
        bfMsg = "Se produjo un error al grabar: "+str(e)     
+    return bfMsg
+
+@app.get("/admreplat", response_class=HTMLResponse)
+async def admreplat(request: Request):
+
+    context = {"request": request,
+               "Lat_Cristal_Delantero":"Cristal Delantero","Lat_Cristal_Delantero_Val":0.0,
+               "Lat_Cristal_Trasero":"Cristal Trasero","Lat_Cristal_Trasero_Val":0.0,
+               "Lat_Espejo_Electrico":"Espejo Eléctrico","Lat_Espejo_Eléctrico_Val":0.0,
+               "Lat_Espejo_Manual":"Espejo Manual","Lat_Espejo_Manual_Val":0.0,
+               "Lat_Manija_Pta_Del":"Manija Puerta Delantera","Lat_Manija_Pta_Del_Val":0.0,
+               "Lat_Manija_Pta_Tras":"Manija Puerta Trasera","Lat_Manija_Pta_Tras_Val":0.0,
+               "Lat_Moldura_Pta_Del":"Moldura Puerta Delantera","Lat_Moldura_Pta_Del_Val":0.0,
+               "Lat_Moldura_Pta_Tras":"Moldura Puerta Trasera","Lat_Moldura_Pta_Tras_Val":0.0,
+               "Lat_Puerta_Delantera":"Puerta Delantera","Lat_Puerta_Delantera_Val":0.0,
+               "Lat_Puerta_Trasera":"Puerta Trasera","Lat_Puerta_Trasera_Val":0.0,
+               "Lat_Puerta_Panel_Del":"Puerta Panel Delantera","Lat_Puerta_Panel_Del_Val":0.0,
+               "Lat_Puerta_Panel_Tras":"Puerta Panel Trasera","Lat_Puerta_Panel_Tras_Val":0.0,
+               "Lat_Zocalo":"Zocalo","Lat_Zocalo_Val":0.0,
+               "MensajeRetorno":""}
+    try:
+        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        conn = engine.connect()
+        result = conn.execute(text('SELECT * FROM admvalueslat;'))
+        for row in result:
+            if row[0] == 'Lat_Cristal_Delantero': context["Lat_Cristal_Delantero_Val"] = float(row[1])
+            if row[0] == 'Lat_Cristal_Trasero'  : context["Lat_Cristal_Trasero_Val"] = float(row[1])
+            if row[0] == 'Lat_Espejo_Electrico' : context["Lat_Espejo_Electrico_Val"] = float(row[1])
+            if row[0] == 'Lat_Espejo_Manual'    : context["Lat_Espejo_Manual_Val"] = float(row[1])
+            if row[0] == 'Lat_Manija_Pta_Del'   : context["Lat_Manija_Pta_Del_Val"] = float(row[1])
+            if row[0] == 'Lat_Manija_Pta_Tras'  : context["Lat_Manija_Pta_Tras_Val"] = float(row[1])
+            if row[0] == 'Lat_Moldura_Pta_Del'  : context["Lat_Moldura_Pta_Del_Val"] = float(row[1])
+            if row[0] == 'Lat_Moldura_Pta_Tras' : context["Lat_Moldura_Pta_Tras_Val"] = float(row[1])
+            if row[0] == 'Lat_Puerta_Delantera' : context["Lat_Puerta_Delantera_Val"] = float(row[1])
+            if row[0] == 'Lat_Puerta_Trasera'   : context["Lat_Puerta_Trasera_Val"] = float(row[1])
+            if row[0] == 'Lat_Puerta_Panel_Del' : context["Lat_Puerta_Panel_Del_Val"] = float(row[1])
+            if row[0] == 'Lat_Puerta_Panel_Tras': context["Lat_Puerta_Panel_Tras_Val"] = float(row[1])
+            if row[0] == 'Lat_Zocalo'           : context["Lat_Zocalo_Val"] = float(row[1])
+        conn.close()
+        engine.dispose()
+    except Exception as e:
+        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"  
+    
+    return templates.TemplateResponse("admreplat.html", context)
+
+@app.post("/admvalueslat", response_class=PlainTextResponse)
+async def admvalueslat(request: Request, Lat_Cristal_Delantero:str="",Lat_Cristal_Trasero:str="",\
+                       Lat_Espejo_Electrico:str="",Lat_Espejo_Manual:str="",Lat_Manija_Pta_Del:str="",\
+                       Lat_Manija_Pta_Tras:str="",Lat_Moldura_Pta_Del:str="",Lat_Moldura_Pta_Tras:str="",\
+                       Lat_Puerta_Delantera:str="",Lat_Puerta_Trasera:str="",Lat_Puerta_Panel_Del:str="" ,\
+                       Lat_Puerta_Panel_Tras:str="",Lat_Zocalo:str=""):
+    
+    bfMsg = "Valores grabados satisfactoriamente"
+    try:
+       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+       conn = engine.connect()
+
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName="Lat_Cristal_Delantero"'))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Cristal_Trasero).replace(',','.') + ' WHERE stName="Lat_Cristal_Trasero"'))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Espejo_Electrico).replace(',','.') + ' WHERE stName="Lat_Espejo_Electrico"'))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Espejo_Manual).replace(',','.') + ' WHERE stName="Lat_Espejo_Manual"'))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Manija_Pta_Del).replace(',','.') + ' WHERE stName="Lat_Manija_Pta_Del"'))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Manija_Pta_Tras).replace(',','.') + ' WHERE stName="Lat_Manija_Pta_Tras"'))       
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Moldura_Pta_Del).replace(',','.') + ' WHERE stName="Lat_Moldura_Pta_Del"'))       
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Moldura_Pta_Tras).replace(',','.') + ' WHERE stName="Lat_Moldura_Pta_Tras"'))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Puerta_Delantera).replace(',','.') + ' WHERE stName="Lat_Puerta_Delantera"'))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Puerta_Trasera).replace(',','.') + ' WHERE stName="Lat_Puerta_Trasera"'))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Puerta_Panel_Del).replace(',','.') + ' WHERE stName="Lat_Puerta_Panel_Del"'))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Puerta_Panel_Tras).replace(',','.') + ' WHERE stName="Lat_Puerta_Panel_Tras"'))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Zocalo).replace(',','.') + ' WHERE stName="Lat_Zocalo"'))
+
+       if conn.in_transaction(): conn.commit()
+       conn.close()
+       engine.dispose()
+    except Exception as e:
+       bfMsg = "Se produjo un error al grabar, comuniquese con el administrador " + str(e)    
+       
+    return bfMsg         
+
+@app.get("/admreptra", response_class=HTMLResponse)
+async def admreptra(request: Request):
+    context = {"request": request,
+               "Baul_Porton":"Baul Portón","Baul_Porton_Val":0.0,
+               "Faro_Ext":"Faro Externo","Faro_Ext_Val":0.0,
+               "Faro_Int":"Faro Interno","Faro_Int_Val":0.0,
+               "Guardabarro":"Guardabarro","Guardabarro_Val":0.0,
+               "Luneta":"Luneta","Luneta_Val":0.0,
+               "Moldura":"Moldura","Moldura_Val":0.0,
+               "Panel_Cola":"Panel Cola","Panel_Cola_Val":0.0,
+               "Paragolpe":"Paragolpe","Paragolpe_Val":0.0,
+               "MensajeRetorno":""
+               }
+    
+    try:
+        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        conn = engine.connect()
+        result = conn.execute(text('SELECT * FROM admvaluestra;'))
+        for row in result:
+            if row[0] == 'Baul_Porton' : context["Baul_Porton_Val"] = float(row[1])
+            if row[0] == 'Faro_Ext'    : context["Faro_Ext_Val"] = float(row[1])
+            if row[0] == 'Faro_Int'    : context["Faro_Int_Val"] = float(row[1])
+            if row[0] == 'Guardabarro' : context["Guardabarro_Val"] = float(row[1])
+            if row[0] == 'Luneta'      : context["Luneta_Val"] = float(row[1])
+            if row[0] == 'Moldura'     : context["Moldura_Val"] = float(row[1])
+            if row[0] == 'Panel_Cola'  : context["Panel_Cola_Val"] = float(row[1])
+            if row[0] == 'Paragolpe'   : context["Paragolpe_Val"] = float(row[1])
+        conn.close()
+        engine.dispose()
+    except Exception as e:
+        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador" 
+            
+    return templates.TemplateResponse("admreptra.html", context)
+
+@app.post("/admvaluestra", response_class=PlainTextResponse)
+async def admvaluestra(Baul_Porton:str="" ,Faro_Ext:str="" ,Faro_Int:str="",\
+                       Guardabarro:str="" ,Luneta:str=""   ,Moldura:str="",\
+                       Panel_Cola:str=""  ,Paragolpe:str="" ):
+    bfMsg = "Valores grabados satisfactoriamente" 
+    try:
+       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
+       conn = engine.connect()
+       
+       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName="Baul_Porton"'))
+       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Faro_Ext).replace(',','.') + ' WHERE stName="Faro_Ext"'))
+       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Faro_Int).replace(',','.') + ' WHERE stName="Faro_Int"'))
+       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName="Guardabarro"'))
+       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Luneta).replace(',','.') + ' WHERE stName="Luneta"'))
+       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Moldura).replace(',','.') + ' WHERE stName="Moldura"'))
+       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Panel_Cola).replace(',','.') + ' WHERE stName="Panel_Cola"'))
+       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Paragolpe).replace(',','.') + ' WHERE stName="Paragolpe"'))
+       
+       if conn.in_transaction(): conn.commit()
+       conn.close()
+       engine.dispose()
+    except Exception as e:
+       bfMsg = "Se produjo un error al grabar: "+str(e)     
+    
     return bfMsg
 
 @app.get("/dbCreateLog", response_class=HTMLResponse)
@@ -253,7 +433,7 @@ async def dbCreateLog():
                             'Ajuste'	         REAL DEFAULT 0,
                             PRIMARY KEY('id' AUTOINCREMENT)
                         ) '''))
-        conn.commit()
+        if conn.in_transaction(): conn.commit()
     except exc.SQLAlchemyError as e:
         bfValue = "dbCreateAdminValue Error: "+str(e)     
     conn.close()
@@ -275,7 +455,7 @@ async def dbcreateAdminValue():
         #CREATE TABLE admvalue (id SERIAL PRIMARY KEY,
         #               stname TEXT DEFAULT ' ',
         #               flvalue REAL DEFAULT 0);
-        conn.commit()
+        if conn.in_transaction(): conn.commit()
     except exc.SQLAlchemyError as e:
         bfValue = "dbCreateAdminValue Error: "+str(e)          
     conn.close()
@@ -290,7 +470,7 @@ async def dbDropAdminValue():
     conn = engine.connect()
     try:
         conn.execute(text('''DROP TABLE admvalue;'''))
-        conn.commit()
+        if conn.in_transaction(): conn.commit()
     except exc.SQLAlchemyError as e:
         bfValue = "dbDropAdminValue Error: "+str(e)          
     conn.close()
@@ -310,7 +490,7 @@ async def dbInsertAdminValue():
         result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('MOMinimo',9250);'''))
         result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('Pintura',22500);'''))
         result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('Ajuste',1);'''))
-        conn.commit()
+        if conn.in_transaction(): conn.commit()
     except exc.SQLAlchemyError as e:
         bfValue = "dbInsertAdminValue Error: "+str(e)          
     conn.close()
@@ -344,8 +524,9 @@ async def adminDBRead():
     return ";".join(str(x) for x in lsResult) 
 
 @app.post("/search", response_class=PlainTextResponse)
-async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIESTRO:str="",LATERAL:str="",TRASERO:str=""):
     #Segmenta Input
+async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIESTRO:str="",\
+                      PERITO:str="",VALORPERITO:str="",LATERAL:str="",TRASERO:str=""):
     lsLateral = LATERAL.split('-')
     lsTrasero = TRASERO.split('-')
     
@@ -607,7 +788,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
 
     bfTmp = resumeDataBrief(CLIENTE,flLateral,flTrasero)
     
-    isWrited = fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,LATERAL,TRASERO,lsValuesResult)
+    isWrited = fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,TRASERO,lsValuesResult)
     
     return bfTmp
 
@@ -1275,11 +1456,12 @@ def getModeloDesc(bfCLASE,bfMARCA,bfMODELO):
     return bfTmp
 
 
-def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,LATERAL,TRASERO,lsValuesResultWrite):
+def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,TRASERO,lsValuesResultWrite):
     bfWrite =True
     ts = datetime.datetime.now().timestamp()
   
-    bfValues = str(ts)+","+str(CLIENTE)+","+str(CLASE)+","+str(MARCA)+","+str(MODELO)+",\""+SINIESTRO+"\",\""+LATERAL+"\",\""+TRASERO+"\","
+    bfValues = str(ts)+","+str(CLIENTE)+","+str(CLASE)+","+str(MARCA)+","+str(MODELO)+",\""+SINIESTRO+"\",\""+PERITO+"\",\""+VALORPERITO+"\",\""+LATERAL+"\",\""+TRASERO+"\","
+    
     bfValues += str(lsValuesResultWrite[0])+","+str(lsValuesResultWrite[1])+","+str(lsValuesResultWrite[2])+","+str(lsValuesResultWrite[3])+","\
             +str(lsValuesResultWrite[4])+","+str(lsValuesResultWrite[5])+","+str(lsValuesResultWrite[6])+","+str(lsValuesResultWrite[7])+","\
             +str(lsValuesResultWrite[8])+","+str(lsValuesResultWrite[9])+","+str(lsValuesResultWrite[10])+","+str(lsValuesResultWrite[11])+","\
@@ -1287,7 +1469,7 @@ def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,LATERAL,TRASERO,lsValuesResu
             +str(lsValuesResultWrite[16])+","+str(lsValuesResultWrite[17])+","+str(lsValuesResultWrite[18])+","+str(lsValuesResultWrite[19])+","+str(lsValuesResultWrite[20])+","
     bfValues += str(param.bfAsegurado)+","+str(param.bfTercero)+","+str(param.bfMObra)+","+str(param.bfPintura)+","+str(param.bfAjuste)
 
-    bfClause = '''INSERT INTO logpresupuestosV1 (timestamp,cliente,clase,marca,modelo,siniestro,lateral,trasero,
+    bfClause = '''INSERT INTO logpresupuestosV1 (timestamp,cliente,clase,marca,modelo,siniestro,Perito,ValorPerito,lateral,trasero,
                                                  ltReparaPintura,ltReponeElemento,ltReponePintura,ltReponeManoObra,
                                                  ltReponeEspejoEle,ltReponeEspejoMan,ltReponeManijaDel,ltReponeManijaTra,
                                                  ltReponeMolduraDel,ltReponeMolduraTra,ltReponeCristalDel,ltReponeCristalTra,
@@ -1299,7 +1481,7 @@ def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,LATERAL,TRASERO,lsValuesResu
     #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text(bfClause))
-    conn.commit()
+    if conn.in_transaction(): conn.commit()
     conn.close()
     engine.dispose()
     #except Exception as e:
