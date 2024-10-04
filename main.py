@@ -155,7 +155,7 @@ async def consulta():
     engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
     #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
-    result = conn.execute(text('SELECT * FROM admvalueslat;'))
+    result = conn.execute(text('SELECT stname,flvalue FROM admvalueslat;'))
     for row in result:
         if row[0] == 'Lat_Cristal_Delantero': param.bfLat_Cristal_Delantero = float(row[1])
         if row[0] == 'Lat_Cristal_Trasero':   param.bfLat_Cristal_Trasero   = float(row[1])
@@ -268,7 +268,7 @@ async def admreplat(request: Request):
         engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
         #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
-        result = conn.execute(text('SELECT * FROM admvalueslat;'))
+        result = conn.execute(text('SELECT stname,flvalue FROM admvalueslat;'))
         for row in result:
             if row[0] == 'Lat_Cristal_Delantero': context["Lat_Cristal_Delantero_Val"] = float(row[1])
             if row[0] == 'Lat_Cristal_Trasero'  : context["Lat_Cristal_Trasero_Val"] = float(row[1])
