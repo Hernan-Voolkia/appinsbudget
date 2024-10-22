@@ -30,8 +30,14 @@ bfHTML = """
         </div>
         <div class="pure-u-1 pure-u-md-7-24">
             <div class="pure-menu pure-menu-horizontal">
-                <a href="#" id="btnConsulta" class="pure-menu-link pure-menu-heading">Consulta</a>
+                <!--<a href="#" id="btnConsulta" class="pure-menu-link pure-menu-heading">Consulta</a>-->
                 <ul class="pure-menu-list">
+                    <li class="pure-menu-item">
+                        <a href="#" id="btnConsulta" class="pure-menu-link">Consulta</a>
+                    </li>
+                    <li class="pure-menu-item">
+                        <a href="#" id="btnHistorial" class="pure-menu-link">Historial</a>
+                    </li>
                     <li class="pure-menu-item pure-menu-selected">
                         <a href="#" id="btnParams" class="pure-menu-link">Params</a>
                     </li>
@@ -112,6 +118,10 @@ bfHTML = """
     document.getElementById("btnConsulta").addEventListener("click", function(event) {
         event.preventDefault(); 
         window.location.href =  "/consulta"; 
+    });
+    document.getElementById("btnHistorial").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/dbread"; 
     });
     document.getElementById("btnParams").addEventListener("click", function(event) {
         event.preventDefault(); 
