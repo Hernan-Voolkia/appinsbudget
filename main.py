@@ -537,8 +537,8 @@ async def dbRead(request: Request):
             lsTimeStamp.append(datetime.datetime.fromtimestamp(float(record.timestamp)).strftime('%Y-%m-%d %H:%M:%S'))
             lsReparaTrasero.append(fnRepTrasero(record.trasero))
             lsCambiaTrasero.append(fnCmbTrasero(record.trasero))
-            lsReparaLateral.append(fnRepLateral(record.lateral))
-            lsCambiaLateral.append(fnCmbLateral(record.lateral))
+            lsReparaLateral.append(fnRepLateral(record.lateralr))
+            lsCambiaLateral.append(fnCmbLateral(record.lateralr))
 
     except exc.SQLAlchemyError as e:
         bfValue = 'dbInsertAdminValue Error: '+str(e)
