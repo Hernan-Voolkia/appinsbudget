@@ -28,6 +28,9 @@
         .navbar-brand {
             margin-right: 0px; 
         }
+        .tooltip-inner {
+            text-align: left; /* Alinea el texto a la izquierda */
+        }
     </style>
 </head>
 <body>
@@ -62,7 +65,7 @@
     <table id="logtable" class="table table-striped table-bordered" style="width:100%">
         <thead>
             <tr>
-                <th colspan="8">Datos Básicos</th>
+                <th colspan="7">Datos Básicos</th>
                 <th colspan="2">Repara Lateral</th>
                 <th colspan="13">Repone Lateral + Elementos Pequeños</th>
                 <th colspan="2">Repara Trasero</th>
@@ -71,14 +74,20 @@
                 <th colspan="2">Perito</th>    
             </tr>            
             <tr>
-                <th>ID</th><th>Fecha&HoraCarga</th><th>User</th><th>Cliente</th>
+                <th>ID</th><th>Fecha&HoraCarga</th>
+                <!--<th>User</th>-->
+                <th>Cliente</th>
                 <th>Clase</th><th>Marca</th><th>Modelo</th><th>Siniestro</th>
-                <th>D.Piezas</th><th>V.PPMO</th>
-                <th>D.Piezas</th><th>V.Piezas</th><th>V.Pint</th><th>V.MO</th>
+                <th data-toggle="ttRLDPiezas" data-placement="top" title="<p>Repara<br><u>Panel Puerta Delantera</u><br>Pdd = Derecha<br>Pdi = Izquierda<br><u>Panel Puerta Trasera</u><br>Ptd =  Derecha<br>Pti = Izquierda<br><u>Zocalo</u><br>Zd = Derecho<br>Zi = Izqierdo</p>">D.Piezas</th>
+                <th data-toggle="ttVPPMO" data-placement="top" title="Valor Total de Reparación de Pieza, Pintura y Mano de Mano">V.PPMO</th>
+                <th data-toggle="ttCLDPiezas" data-placement="top" title="<p>Repone<br><u>Panel Puerta Delantera</u><br>Pdd = Derecha<br>Pdi = Izquierda<br><u>Panel Puerta Trasera</u><br>Ptd =  Derecha<br>Pti = Izquierda<br><u>Zocalo</u><br>Zd = Derecho<br>Zi = Izqierdo</p>">D.Piezas</th>
+                <th>V.Piezas</th>
+                <th>V.Pint</th><th>V.MO</th>
                 <th>EspejoEle</th><th>EspejoMan</th><th>ManijaDel</th>
                 <th>ManijaTra</th><th>MolduraDel</th><th>MolduraTra</th>
                 <th>CristalDel</th><th>CristalTra</th><th>Total</th>
-                <th>D.Piezas</th><th>V.PPMO</th>
+                <th data-toggle="ttRTDPiezas" data-placement="top" title="<p>Repara<br>B = Baul Porton</u><br>Gd = Guardabarro Derecho<br>Gd = Guardabarro Izquierda<br>C = Panel Cola<br>P = Paragolpe</p>">D.Piezas</th>
+                <th data-toggle="ttVPPMO" data-placement="top" title="Valor Total de Reparación de Pieza, Pintura y Mano de Mano">V.PPMO</th>
                 <th>D.Piezas</th><th>V.Piezas</th><th>V.Pint</th><th>V.MO</th>
                 <th>Moldura</th><th>FaroExt</th><th>FaroInt</th><th>Total</th>
                 <th>Aseg</th><th>Tercero</th><th>M.Obra</th><th>Pintura</th><th>Ajuste</th>
@@ -90,11 +99,17 @@
             <tr>
                 <td>{{record[0]}}</td>
                 <td>{{restimestamp[loop.index-1]}}</td>
-                <td>{{record[2]}}</td>
-                <td>{{record[3]}}</td>
-                <td>{{record[4]}}</td>
-                <td>{{record[5]}}</td>
-                <td>{{record[6]}}</td>
+                <!--<td>{{record[2]}}</td>-->
+                <td>
+                {% if record[3] == 1 %}
+                    Asegurado
+                {% else %}
+                    Tercero
+                {% endif %}
+                </td>
+                <td align="center">{{record[4]}}</td>
+                <td align="center">{{record[5]}}</td>
+                <td align="center">{{record[6]}}</td>
                 <td>{{record[7]}}</td>
                 <td>{{reparalateral[loop.index-1]}}</td>
                <td>{{record[10]}}</td>
@@ -143,6 +158,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
 <script>
+    $(document).ready(function(){$('[data-toggle="ttCLDPiezas"]').tooltip({ html: true });});
+    $(document).ready(function(){$('[data-toggle="ttVPPMO"]').tooltip({ html: true });});
+    $(document).ready(function(){$('[data-toggle="ttRLDPiezas"]').tooltip({ html: true });});
+    $(document).ready(function(){$('[data-toggle="ttRTDPiezas"]').tooltip({ html: true });});
     $(document).ready(function () {
         $('#logtable').DataTable({
             "paging": true,
