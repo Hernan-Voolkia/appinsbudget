@@ -65,6 +65,7 @@ bfHTML = """
                             <option id=0></option>
                             <option id=901>SEDAN</option>
                             <option id=907>SUV</option>
+                            <option id=915>MOTO</option>
                         </select>
                     </div>
                     <div class="pure-control-group">
@@ -443,36 +444,53 @@ bfHTML = """
             return
         }    
         text = text + '&CLASE=' + e.options[e.selectedIndex].id;
+        isMoto = e.options[e.selectedIndex].id;
             
-        var e = document.getElementById("stacked-marca");
-        if(e.options[e.selectedIndex].id == 0) 
-        {
-            alert('Debe seleccionar Marca');
-            e.focus(); 
-            return
+        if(isMoto!="915") 
+        {           
+            var e = document.getElementById("stacked-marca");
+            if(e.options[e.selectedIndex].id == 0) 
+            {
+                alert('Debe seleccionar Marca');
+                e.focus(); 
+                return
+            }    
+            text = text + '&MARCA=' + e.options[e.selectedIndex].id;
+                
+            var e = document.getElementById("stacked-modelo");
+            if(e.options[e.selectedIndex].id == 0) 
+            {
+                alert('Debe seleccionar Modelo');
+                e.focus(); 
+                return
+            }    
+            text = text + '&MODELO=' + e.options[e.selectedIndex].id;
         }    
-        text = text + '&MARCA=' + e.options[e.selectedIndex].id;
-            
-        var e = document.getElementById("stacked-modelo");
-        if(e.options[e.selectedIndex].id == 0) 
-        {
-            alert('Debe seleccionar Modelo');
-            e.focus(); 
-            return
-        }    
-        text = text + '&MODELO=' + e.options[e.selectedIndex].id;
             
         var e = document.getElementById("stacked-siniestro");
             text = text + '&SINIESTRO=' + e.value;
         
         var e = document.getElementById("stacked-perito");
-            text = text + '&PERITO=' + e.value;
+        if(e.value.trim() === "" && isMoto=="915") 
+            {
+                alert('Debe escribir el nombre del Perito');
+                e.focus(); 
+                return
+            }  
+        text = text + '&PERITO=' + e.value;
             
         var e = document.getElementById("stacked-valorperito");
-            text = text + '&VALORPERITO=' + e.value;            
+        if(e.value.trim() === "" && isMoto=="915") 
+            {
+                alert('Debe escribir el valor');
+                e.focus(); 
+                return
+            } 
+        text = text + '&VALORPERITO=' + e.value;            
         
         if (document.getElementById('lateral_chk').checked == 0 &&
-            document.getElementById('trasero_chk').checked  == 0 ){
+            document.getElementById('trasero_chk').checked  == 0  &&
+            isMoto!="915"){
                 alert('Debe seleccionar elementos de lateral o trasero');
                 return
         }
@@ -597,7 +615,18 @@ bfHTML = """
         var e = document.getElementById("stacked-clase");
         var bfClase = e.options[e.selectedIndex].id;
         
-        runClase(bfClase);
+        if (bfClase =="915")
+           {
+           var e = document.getElementById("stacked-marca");
+           e.selectedIndex = 0;
+           var e = document.getElementById("stacked-modelo");
+           e.selectedIndex = 0;
+           
+           setTimeout(() => {document.getElementById("stacked-perito").focus();}, 100);
+           }
+        else    
+           runClase(bfClase);
+
     }
     function runClase(bfClase) {
        let xhr = new XMLHttpRequest();
