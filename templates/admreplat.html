@@ -115,14 +115,6 @@
                         <input type="text" id="stacked-Lat_Puerta_Trasera" style="min-width:343px;" value="{{Lat_Puerta_Trasera_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
                     <div class="pure-control-group">
-                        <label for="stacked-Lat_Puerta_Panel_Del" style="color:#005993;text-align:left;">{{Lat_Puerta_Panel_Del}}</label>
-                        <input type="text" id="stacked-Lat_Puerta_Panel_Del" style="min-width:343px;" value="{{Lat_Puerta_Panel_Del_Val}}" onblur="validarCampoDecimal(this)"/>
-                    </div>
-                    <div class="pure-control-group">
-                        <label for="stacked-Lat_Puerta_Panel_Tras" style="color:#005993;text-align:left;">{{Lat_Puerta_Panel_Tras}}</label>
-                        <input type="text" id="stacked-Lat_Puerta_Panel_Tras" style="min-width:343px;" value="{{Lat_Puerta_Panel_Tras_Val}}" onblur="validarCampoDecimal(this)"/>
-                    </div>
-                    <div class="pure-control-group">
                         <label for="stacked-Lat_Zocalo" style="color:#005993;text-align:left;">{{Lat_Zocalo}}</label>
                         <input type="text" id="stacked-Lat_Zocalo" style="min-width:343px;" value="{{Lat_Zocalo_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
@@ -216,12 +208,6 @@
 
         var e = document.getElementById("stacked-Lat_Puerta_Trasera");
         text = text + '&Lat_Puerta_Trasera=' + e.value;
-
-        var e = document.getElementById("stacked-Lat_Puerta_Panel_Del");
-        text = text + '&Lat_Puerta_Panel_Del=' + e.value;
-        
-        var e = document.getElementById("stacked-Lat_Puerta_Panel_Tras");
-        text = text + '&Lat_Puerta_Panel_Tras=' + e.value;
 
         var e = document.getElementById("stacked-Lat_Zocalo");
         text = text + '&Lat_Zocalo=' + e.value;
