@@ -97,8 +97,8 @@ dfMANIJA = pd.read_csv('./data/PuertaManijaSedanValueMin.csv',sep=';',encoding='
                                 'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
                                 'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
 #DBVALUES
-engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-#engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+#engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
 conn = engine.connect()
 result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
 for row in result:
@@ -138,8 +138,8 @@ async def modelo(CLASE:int=901, MARCA:int=0):
 @app.get("/consulta", response_class=HTMLResponse)
 async def consulta():
     #DBVALUES
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
     for row in result:
@@ -152,8 +152,8 @@ async def consulta():
     conn.close()
     engine.dispose()    
 
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text('SELECT stname,flvalue FROM admvalueslat;'))
     for row in result:
@@ -167,25 +167,23 @@ async def consulta():
         if row[0] == 'Lat_Moldura_Pta_Tras':  param.bfLat_Moldura_Pta_Tras  = float(row[1])
         if row[0] == 'Lat_Puerta_Delantera':  param.bfLat_Puerta_Delantera  = float(row[1])
         if row[0] == 'Lat_Puerta_Trasera':    param.bfLat_Puerta_Trasera    = float(row[1])
-        if row[0] == 'Lat_Puerta_Panel_Del':  param.bfLat_Puerta_Panel_Del  = float(row[1])
-        if row[0] == 'Lat_Puerta_Panel_Tras': param.bfLat_Puerta_Panel_Tras = float(row[1])
         if row[0] == 'Lat_Zocalo':            param.bfLat_Zocalo            = float(row[1])
     conn.close()
     engine.dispose()  
     
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text('SELECT * FROM admvaluestra;'))
     for row in result:
         if row[0] == 'Baul_Porton': param.bfBaul_Porton = float(row[1])
-        if row[0] == 'Faro_Ext':    param.bfFaro_Ext    = float(row[1])
-        if row[0] == 'Faro_Int':    param.bfFaro_Int    = float(row[1])
+        if row[0] == 'Faro_Ext'   : param.bfFaro_Ext    = float(row[1])
+        if row[0] == 'Faro_Int'   : param.bfFaro_Int    = float(row[1])
         if row[0] == 'Guardabarro': param.bfGuardabarro = float(row[1])
-        if row[0] == 'Luneta':      param.bfLuneta      = float(row[1])
-        if row[0] == 'Moldura':     param.bfMoldura     = float(row[1])
-        if row[0] == 'Panel_Cola':  param.bfPanel_Cola  = float(row[1])
-        if row[0] == 'Paragolpe':   param.bfParagolpe   = float(row[1])
+        if row[0] == 'Luneta'     : param.bfLuneta      = float(row[1])
+        if row[0] == 'Moldura'    : param.bfMoldura     = float(row[1])
+        if row[0] == 'Panel_Cola' : param.bfPanel_Cola  = float(row[1])
+        if row[0] == 'Paragolpe'  : param.bfParagolpe   = float(row[1])
     conn.close()
     engine.dispose()
         
@@ -195,8 +193,8 @@ async def consulta():
 async def adminValues():
     #DBVALUES
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
         for row in result:
@@ -230,8 +228,8 @@ async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:
     #DBVALUES
     bfMsg = "Valores grabados satisfactoriamente" 
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
+       #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+       engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvalue SET flValue =' + str(TERCERO).replace(',','.') + ' WHERE stName=\'Tercero\''))
        result = conn.execute(text('UPDATE admvalue SET flValue =' + str(ASEGURADO).replace(',','.') + ' WHERE stName=\'Asegurado\''))
@@ -260,13 +258,11 @@ async def admreplat(request: Request):
                "Lat_Moldura_Pta_Tras":"Moldura Puerta Trasera","Lat_Moldura_Pta_Tras_Val":0.0,
                "Lat_Puerta_Delantera":"Puerta Delantera","Lat_Puerta_Delantera_Val":0.0,
                "Lat_Puerta_Trasera":"Puerta Trasera","Lat_Puerta_Trasera_Val":0.0,
-               "Lat_Puerta_Panel_Del":"Puerta Panel Delantera","Lat_Puerta_Panel_Del_Val":0.0,
-               "Lat_Puerta_Panel_Tras":"Puerta Panel Trasera","Lat_Puerta_Panel_Tras_Val":0.0,
                "Lat_Zocalo":"Zocalo","Lat_Zocalo_Val":0.0,
                "MensajeRetorno":""}
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalueslat;'))
         for row in result:
@@ -280,8 +276,6 @@ async def admreplat(request: Request):
             if row[0] == 'Lat_Moldura_Pta_Tras' : context["Lat_Moldura_Pta_Tras_Val"] = float(row[1])
             if row[0] == 'Lat_Puerta_Delantera' : context["Lat_Puerta_Delantera_Val"] = float(row[1])
             if row[0] == 'Lat_Puerta_Trasera'   : context["Lat_Puerta_Trasera_Val"] = float(row[1])
-            if row[0] == 'Lat_Puerta_Panel_Del' : context["Lat_Puerta_Panel_Del_Val"] = float(row[1])
-            if row[0] == 'Lat_Puerta_Panel_Tras': context["Lat_Puerta_Panel_Tras_Val"] = float(row[1])
             if row[0] == 'Lat_Zocalo'           : context["Lat_Zocalo_Val"] = float(row[1])
         conn.close()
         engine.dispose()
@@ -294,13 +288,12 @@ async def admreplat(request: Request):
 async def admvalueslat(request: Request, Lat_Cristal_Delantero:str="",Lat_Cristal_Trasero:str="",\
                        Lat_Espejo_Electrico:str="",Lat_Espejo_Manual:str="",Lat_Manija_Pta_Del:str="",\
                        Lat_Manija_Pta_Tras:str="",Lat_Moldura_Pta_Del:str="",Lat_Moldura_Pta_Tras:str="",\
-                       Lat_Puerta_Delantera:str="",Lat_Puerta_Trasera:str="",Lat_Puerta_Panel_Del:str="" ,\
-                       Lat_Puerta_Panel_Tras:str="",Lat_Zocalo:str=""):
+                       Lat_Puerta_Delantera:str="",Lat_Puerta_Trasera:str="",Lat_Zocalo:str=""):
     
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+       #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+       engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
        conn = engine.connect()
 
        result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName="Lat_Cristal_Delantero"'))
@@ -313,8 +306,6 @@ async def admvalueslat(request: Request, Lat_Cristal_Delantero:str="",Lat_Crista
        result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Moldura_Pta_Tras).replace(',','.') + ' WHERE stName="Lat_Moldura_Pta_Tras"'))
        result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Puerta_Delantera).replace(',','.') + ' WHERE stName="Lat_Puerta_Delantera"'))
        result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Puerta_Trasera).replace(',','.') + ' WHERE stName="Lat_Puerta_Trasera"'))
-       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Puerta_Panel_Del).replace(',','.') + ' WHERE stName="Lat_Puerta_Panel_Del"'))
-       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Puerta_Panel_Tras).replace(',','.') + ' WHERE stName="Lat_Puerta_Panel_Tras"'))
        result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Zocalo).replace(',','.') + ' WHERE stName="Lat_Zocalo"'))
 
        if conn.in_transaction(): conn.commit()
@@ -340,19 +331,19 @@ async def admreptra(request: Request):
                }
     
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluestra;'))
         for row in result:
-            if row[0] == 'Baul_Porton' : context["Baul_Porton_Val"] = float(row[1])
-            if row[0] == 'Faro_Ext'    : context["Faro_Ext_Val"] = float(row[1])
-            if row[0] == 'Faro_Int'    : context["Faro_Int_Val"] = float(row[1])
-            if row[0] == 'Guardabarro' : context["Guardabarro_Val"] = float(row[1])
-            if row[0] == 'Luneta'      : context["Luneta_Val"] = float(row[1])
-            if row[0] == 'Moldura'     : context["Moldura_Val"] = float(row[1])
-            if row[0] == 'Panel_Cola'  : context["Panel_Cola_Val"] = float(row[1])
-            if row[0] == 'Paragolpe'   : context["Paragolpe_Val"] = float(row[1])
+            if row[0] == 'Baul_Porton': context["Baul_Porton_Val"]= float(row[1])
+            if row[0] == 'Faro_Ext'   : context["Faro_Ext_Val"]   = float(row[1])
+            if row[0] == 'Faro_Int'   : context["Faro_Int_Val"]   = float(row[1])
+            if row[0] == 'Guardabarro': context["Guardabarro_Val"]= float(row[1])
+            if row[0] == 'Luneta'     : context["Luneta_Val"]     = float(row[1])
+            if row[0] == 'Moldura'    : context["Moldura_Val"]    = float(row[1])
+            if row[0] == 'Panel_Cola' : context["Panel_Cola_Val"] = float(row[1])
+            if row[0] == 'Paragolpe'  : context["Paragolpe_Val"]  = float(row[1])
         conn.close()
         engine.dispose()
     except Exception as e:
@@ -361,13 +352,12 @@ async def admreptra(request: Request):
     return templates.TemplateResponse("admreptra.html", context)
 
 @app.post("/admvaluestra", response_class=PlainTextResponse)
-async def admvaluestra(Baul_Porton:str="" ,Faro_Ext:str="" ,Faro_Int:str="",\
-                       Guardabarro:str="" ,Luneta:str=""   ,Moldura:str="",\
-                       Panel_Cola:str=""  ,Paragolpe:str="" ):
+async def admvaluestra(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Guardabarro:str="",Luneta:str="",\
+                      Moldura:str="",Panel_Cola:str="",Paragolpe:str=""):
     bfMsg = "Valores grabados satisfactoriamente" 
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
+       #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+       engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
        conn = engine.connect()
        
        result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName="Baul_Porton"'))
@@ -390,8 +380,8 @@ async def admvaluestra(Baul_Porton:str="" ,Faro_Ext:str="" ,Faro_Int:str="",\
 @app.get("/dbCreateLog", response_class=HTMLResponse)
 async def dbCreateLog():
     bfValue = "bfHTMLdbCreateLog finalizado satisfactoriamente"
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
         conn.execute(text('''CREATE TABLE  IF NOT EXISTS 'logpresupuestosV1' (
@@ -403,7 +393,7 @@ async def dbCreateLog():
                             'marca'	             INTEGER NOT NULL,
                             'modelo'	         INTEGER NOT NULL,
                             'siniestro'	         TEXT DEFAULT ' ',
-                            'lateral'	         TEXT DEFAULT ' ',
+                            'lateralr'	         TEXT DEFAULT ' ',
                             'trasero'	         TEXT DEFAULT ' ',
                             'ltReparaPintura'	 REAL DEFAULT 0,
                             'ltReponeElemento'	 REAL DEFAULT 0,
@@ -443,8 +433,8 @@ async def dbCreateLog():
 @app.get("/dbCreateAdminValue", response_class=HTMLResponse)
 async def dbcreateAdminValue():
     bfValue = "dbCreateAdminValue finalizado satisfactoriamente"
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
         conn.execute(text('''CREATE TABLE IF NOT EXISTS 'admvalue' (
@@ -465,8 +455,8 @@ async def dbcreateAdminValue():
 @app.get("/dbDropAdminValue", response_class=HTMLResponse)
 async def dbDropAdminValue():
     bfValue = "dbDropAdminValue finalizado satisfactoriamente"
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
         conn.execute(text('''DROP TABLE admvalue;'''))
@@ -480,16 +470,16 @@ async def dbDropAdminValue():
 @app.get("/dbInsertAdminValue", response_class=HTMLResponse)
 async def dbInsertAdminValue():
     bfValue = "dbInsertAdminValue finalizado satisfactoriamente"
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
-        result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('Asegurado',1);'''))
-        result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('Tercero',0.8);'''))
-        result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('MObra',18250);'''))
-        result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('MOMinimo',9250);'''))
-        result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('Pintura',22500);'''))
-        result = conn.execute(text('''INSERT INTO admvalue (stName, flValue) VALUES ('Ajuste',1);'''))
+        result = conn.execute(text('''INSERT INTO admvalue (stname, flvalue) VALUES ('Asegurado',1);'''))
+        result = conn.execute(text('''INSERT INTO admvalue (stname, flvalue) VALUES ('Tercero',0.8);'''))
+        result = conn.execute(text('''INSERT INTO admvalue (stname, flvalue) VALUES ('MObra',18250);'''))
+        result = conn.execute(text('''INSERT INTO admvalue (stname, flvalue) VALUES ('MOMinimo',9250);'''))
+        result = conn.execute(text('''INSERT INTO admvalue (stname, flvalue) VALUES ('Pintura',22500);'''))
+        result = conn.execute(text('''INSERT INTO admvalue (stname, flvalue) VALUES ('Ajuste',1);'''))
         if conn.in_transaction(): conn.commit()
     except exc.SQLAlchemyError as e:
         bfValue = "dbInsertAdminValue Error: "+str(e)          
@@ -500,8 +490,8 @@ async def dbInsertAdminValue():
 @app.get("/dbreadAdmin", response_class=PlainTextResponse)
 async def dbreadAdmin():
     lsResult = []
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
         result = conn.execute(text('''SELECT stname,flvalue FROM admvalue;'''))
@@ -527,8 +517,8 @@ async def dbRead(request: Request):
                "reparatrasero":'',"cambiatrasero":'',
                "reparalateral":'',"cambialateral":''}
     
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
         result = conn.execute(text('''SELECT * FROM logpresupuestosV1;'''))
@@ -700,6 +690,11 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     flTraValorReponeMoldura=0
     flTraValorReponeFaroExt=0
     flTraValorReponeFaroInt=0
+    
+    if CLASE == "915":
+        isWrited = fnWriteLogBrief(CLIENTE,CLASE,'','',SINIESTRO,PERITO,VALORPERITO,'','','')
+        bfTmp = "Costo sugerido&nbsp$&nbsp" + VALORPERITO
+        return bfTmp
     
     #ToDo: Agregar si no es numerico mensaje de error    
     if CLASE.isdigit(): iCLASE = int(CLASE)
@@ -1115,7 +1110,20 @@ def fnHasPorton(iClaseLc, iMarcaLc, iModeloLc):
     blPorton = False
     if len(dfPorton.loc[(dfPorton['COD_CLASE']==int(iClaseLc))&(dfPorton['COD_MARCA']==int(iMarcaLc))&(dfPorton['COD_MODELO']==int(iModeloLc))])!=0:
         blPorton = True
-    return blPorton    
+    return blPorton  
+
+def fnIsOld(inCOD_MARCA,inCOD_MODELO,dfData):
+    blOld = False
+    dfOld = dfData.loc[(dfData['COD_MARCA'] == inCOD_MARCA) & (dfData['COD_MODELO'] == inCOD_MODELO)]['VIEJO']
+  
+    if len(dfOld) == 0: 
+        blOld = False
+    else:
+        blOld = dfData.loc[(dfData['COD_MARCA'] == inCOD_MARCA) & (dfData['COD_MODELO'] == inCOD_MODELO)]['VIEJO'].iloc[0]
+    
+    if blOld!=True and blOld!=False: blOld = False
+    
+    return blOld
 
 def fnReparaTrasero(inSEG,inCOD_CLASE,lsRepara):
     inCOD_PARTE = 2
@@ -1146,29 +1154,40 @@ def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
     inCOD_PARTE = 2
     lsReponeAve = []
     flAverage = 0
+   
+    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfVALOR_REPUESTO_MO_Unif)
       
     for index, item in enumerate(lsRepone):
         bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & 
                                         (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']    == inCOD_CLASE)  & 
-                                        (dfVALOR_REPUESTO_MO_Unif['COD_MARCA']    == inCOD_MARCA)  & 
-                                        (dfVALOR_REPUESTO_MO_Unif['COD_MODELO']   == inCOD_MODELO) &          
+                                        (dfVALOR_REPUESTO_MO_Unif['COD_MARCA']    == inCOD_MARCA)  &
+                                        (dfVALOR_REPUESTO_MO_Unif['COD_MODELO']   == inCOD_MODELO) &
                                         (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  &
-                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                                                                                    [['PRECIO_MEAN']] 
+                                        (dfVALOR_REPUESTO_MO_Unif['VIEJO']        == isOld)        & 
+                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']] 
+        
         flAverage = np.round(bfID_ELEM['PRECIO_MEAN'],2)
 
         if len(flAverage) == 0:
             bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & 
                                             (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']    == inCOD_CLASE)  & 
                                             (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  &
-                        (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                                                                                        [['PRECIO_MEAN']] 
+                                            (dfVALOR_REPUESTO_MO_Unif['VIEJO']        == isOld)        &
+                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']] 
             
             flMean = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)   
             flAverage = pd.Series([flMean])
             
             if pd.isna(flAverage.iloc[0]):
-                flAverage.iloc[0] = 0
+                if item=="BAULPORTON"     :flAverage.iloc[0]=param.bfBaul_Porton
+                elif item=="FAROEXT"      :flAverage.iloc[0]=param.bfFaro_Ext
+                elif item=="FAROINT"      :flAverage.iloc[0]=param.bfFaro_Int
+                elif item=="LUNETA"       :flAverage.iloc[0]=param.bfLuneta
+                elif item=="MOLDURA"      :flAverage.iloc[0]=param.bfMoldura
+                elif item=="PANELCOLACOMP":flAverage.iloc[0]=param.bfPanel_Cola
+                elif item=="PANELCOLASUP" :flAverage.iloc[0]=param.bfPanel_Sup
+                elif item=="PARAGOLPE"    :flAverage.iloc[0]=param.bfParagolpe
+                else: flAverage.iloc[0] = 0
         
         if len(flAverage) == 0: flAverage = [0]
 
@@ -1218,14 +1237,18 @@ def fnMolduraTrasero(inCOD_MARCA,inCOD_MODELO):
     lsVersion = ['1','2','3'] 
     lsMoldCtro = []
     
+    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfMOLDURA)
+
     dfMOLD_CTRO = dfMOLDURA.loc[(dfMOLDURA['COD_MARCA']  == inCOD_MARCA)  & 
                                 (dfMOLDURA['COD_MODELO'] == inCOD_MODELO) &
                                 (dfMOLDURA['COD_PARTE']  == inCOD_PARTE)  &
+                                (dfMOLDURA['VIEJO']      == isOld)        & 
                                 (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, moldCtro))))]\
                                 .sort_values(['VALOR'], ascending=[False])
     if len(dfMOLD_CTRO)==0:
         dfMOLD_CTRO = dfMOLDURA.loc[(dfMOLDURA['COD_MARCA'] == inCOD_MARCA) & 
                                     (dfMOLDURA['COD_PARTE'] == inCOD_PARTE) &
+                                    (dfMOLDURA['VIEJO']      == isOld)      & 
                                     (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, moldCtro))))]\
                                     .sort_values(['VALOR'], ascending=[False])
 
@@ -1234,6 +1257,9 @@ def fnMolduraTrasero(inCOD_MARCA,inCOD_MODELO):
     if len(dfTmp)!=0: 
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
         lsMoldCtro.append(flValue.round(2))
+    else:
+        flValue = param.bfMoldura + param.bfMOMinimo
+        lsMoldCtro.append(flValue.round(2))   
 
     return lsMoldCtro
 
@@ -1243,14 +1269,18 @@ def fnFaroExtTrasero(inCOD_MARCA,inCOD_MODELO):
     lsVersion = ['1','2','3','4','5','6'] 
     lsFaroExt = []
     
+    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfFARO)
+    
     dfFARO_EXT = dfFARO.loc[(dfFARO['COD_MARCA']  == inCOD_MARCA)  & 
                             (dfFARO['COD_MODELO'] == inCOD_MODELO) &
                             (dfFARO['COD_PARTE']  == inCOD_PARTE)  &
+                            (dfFARO['VIEJO']      == isOld)        &
                             (dfFARO['DESC_ELEM'].str.contains('|'.join(map(re.escape, faroDer))))]\
                             .sort_values(['VALOR'], ascending=[False])
     if len(dfFARO_EXT)==0:
             dfFARO_EXT = dfFARO.loc[(dfFARO['COD_MARCA'] == inCOD_MARCA) & 
                                     (dfFARO['COD_PARTE'] == inCOD_PARTE) &
+                                    (dfFARO['VIEJO']      == isOld)      &
                                     (dfFARO['DESC_ELEM'].str.contains('|'.join(map(re.escape, faroDer))))]\
                                     .sort_values(['VALOR'], ascending=[False])
 
@@ -1259,43 +1289,57 @@ def fnFaroExtTrasero(inCOD_MARCA,inCOD_MODELO):
     if len(dfTmp)!=0: 
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
         lsFaroExt.append(flValue.round(2))
+    else:
+        flValue = param.bfFaro_Ext + param.bfMOMinimo
+        lsFaroExt.append(flValue.round(2))   
     
     return lsFaroExt
 
 def fnFaroIntTrasero(inCOD_MARCA,inCOD_MODELO):    
     inCOD_PARTE = 2
     faroDer = ['FARO DER 1']
-    lsFaroExt = []
+    lsFaroInt = []
+    
+    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfFARO)
     
     dfFARO_INT = dfFARO.loc[(dfFARO['COD_MARCA']  == inCOD_MARCA)  & 
                             (dfFARO['COD_MODELO'] == inCOD_MODELO) &
                             (dfFARO['COD_PARTE']  == inCOD_PARTE)  &
+                            (dfFARO['VIEJO']      == isOld)        &
                             (dfFARO['DESC_ELEM'].str.contains('|'.join(map(re.escape, faroDer))))]\
                             .sort_values(['VALOR'], ascending=[False])
     if len(dfFARO_INT)==0:
             dfFARO_INT = dfFARO.loc[(dfFARO['COD_MARCA'] == inCOD_MARCA) & 
                                     (dfFARO['COD_PARTE'] == inCOD_PARTE) &
+                                    (dfFARO['VIEJO']     == isOld)       &
                                     (dfFARO['DESC_ELEM'].str.contains('|'.join(map(re.escape, faroDer))))]\
                                     .sort_values(['VALOR'], ascending=[False])
     
     if len(dfFARO_INT)!=0: 
         flValue = dfFARO_INT['VALOR'].mean() + param.bfMOMinimo
-        lsFaroExt.append(flValue.round(2))
+        lsFaroInt.append(flValue.round(2))
+    else:
+        flValue = param.bfFaro_Int + param.bfMOMinimo
+        lsFaroInt.append(flValue.round(2))   
     
-    return lsFaroExt
+    return lsFaroInt
 
 def fnEspejoLateralElec(inCOD_MARCA,inCOD_MODELO):
     espElec = ['ESPEJO ELECTRICO']
     lsVersion = ['1','2','3','4','5'] 
     lsMeanEsp = []
     
-    dfESPEJO_ELEC = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA) & 
+    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfESPEJO)
+    
+    dfESPEJO_ELEC = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA)   & 
                                  (dfESPEJO['COD_MODELO'] == inCOD_MODELO) &
+                                 (dfESPEJO['VIEJO']     == isOld)         &
                                  (dfESPEJO['DESC_ELEM'].str.contains('|'.join(map(re.escape, espElec))))]\
                                  .sort_values(['VALOR'], ascending=[False])
         
     if len(dfESPEJO_ELEC)==0:
         dfESPEJO_ELEC = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA) & 
+                                     (dfESPEJO['VIEJO']     == isOld)       &
                                      (dfESPEJO['DESC_ELEM'].str.contains('|'.join(map(re.escape, espElec))))]\
                                      .sort_values(['VALOR'], ascending=[False])
     
@@ -1303,6 +1347,9 @@ def fnEspejoLateralElec(inCOD_MARCA,inCOD_MODELO):
     
     if len(dfTmp)!=0: 
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
+        lsMeanEsp.append(flValue.round(2))   
+    else:
+        flValue = param.bfLat_Espejo_Electrico + param.bfMOMinimo
         lsMeanEsp.append(flValue.round(2))   
     
     return lsMeanEsp 
@@ -1312,19 +1359,27 @@ def fnEspejoLateralMan(inCOD_MARCA,inCOD_MODELO):
     lsVersion = ['1','2','3','4','5'] 
     lsMeanEsp = []
     
-    dfESPEJO_MAN = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA) & 
+    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfESPEJO)
+    
+    dfESPEJO_MAN = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA)   & 
                                 (dfESPEJO['COD_MODELO'] == inCOD_MODELO) &
+                                (dfESPEJO['VIEJO']     == isOld)         &
                                 (dfESPEJO['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMan))))]\
                                 .sort_values(['VALOR'], ascending=[False])
         
     if len(dfESPEJO_MAN)==0:
         dfESPEJO_MAN = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA) & 
+                                    (dfESPEJO['VIEJO']     == isOld)       &
                                     (dfESPEJO['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMan))))]\
                                     .sort_values(['VALOR'], ascending=[False])
     
     dfTmp = dfESPEJO_MAN.loc[~dfESPEJO_MAN['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
+    
     if len(dfTmp)!=0: 
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
+        lsMeanEsp.append(flValue.round(2))   
+    else:
+        flValue = param.bfLat_Espejo_Manual + param.bfMOMinimo
         lsMeanEsp.append(flValue.round(2))   
     
     return lsMeanEsp 
@@ -1334,13 +1389,17 @@ def fnManijaLateralDel(inCOD_MARCA,inCOD_MODELO):
     lsVersion = ['1','2','3','4','5'] 
     lsMeanMan = []
     
-    dfMANIJA_RST  = dfMANIJA.loc[(dfMANIJA['COD_MARCA'] == inCOD_MARCA) & 
+    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfMANIJA)
+    
+    dfMANIJA_RST  = dfMANIJA.loc[(dfMANIJA['COD_MARCA'] == inCOD_MARCA)   & 
                                  (dfMANIJA['COD_MODELO'] == inCOD_MODELO) &
+                                 (dfMANIJA['VIEJO']     == isOld)         &
                                  (dfMANIJA['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsManija))))]\
                                  .sort_values(['VALOR'], ascending=[False])
         
     if len(dfMANIJA_RST)==0:
         dfMANIJA_RST = dfMANIJA.loc[(dfMANIJA['COD_MARCA'] == inCOD_MARCA) & 
+                                    (dfMANIJA['VIEJO']     == isOld)       &
                                     (dfMANIJA['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsManija))))]\
                                     .sort_values(['VALOR'], ascending=[False])
    
@@ -1348,6 +1407,9 @@ def fnManijaLateralDel(inCOD_MARCA,inCOD_MODELO):
     
     if len(dfTmp)!=0: 
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
+        lsMeanMan.append(flValue.round(2))   
+    else:
+        flValue = param.bfLat_Manija_Pta_Del + param.bfMOMinimo
         lsMeanMan.append(flValue.round(2))   
 
     return lsMeanMan 
@@ -1357,13 +1419,17 @@ def fnManijaLateralTra(inCOD_MARCA,inCOD_MODELO):
     lsVersion = ['1','2','3','4','5'] 
     lsMeanMan = []
     
-    dfMANIJA_RST  = dfMANIJA.loc[(dfMANIJA['COD_MARCA'] == inCOD_MARCA) & 
+    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfMANIJA)
+    
+    dfMANIJA_RST  = dfMANIJA.loc[(dfMANIJA['COD_MARCA']  == inCOD_MARCA)  & 
                                  (dfMANIJA['COD_MODELO'] == inCOD_MODELO) &
+                                 (dfMANIJA['VIEJO']      == isOld)        &
                                  (dfMANIJA['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsManija))))]\
                                  .sort_values(['VALOR'], ascending=[False])
         
     if len(dfMANIJA_RST)==0:
         dfMANIJA_RST = dfMANIJA.loc[(dfMANIJA['COD_MARCA'] == inCOD_MARCA) & 
+                                    (dfMANIJA['VIEJO']      == isOld)      &
                                     (dfMANIJA['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsManija))))]\
                                     .sort_values(['VALOR'], ascending=[False])
    
@@ -1371,6 +1437,9 @@ def fnManijaLateralTra(inCOD_MARCA,inCOD_MODELO):
     
     if len(dfTmp)!=0: 
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
+        lsMeanMan.append(flValue.round(2))   
+    else:
+        flValue = param.bfLat_Manija_Pta_Tras + param.bfMOMinimo
         lsMeanMan.append(flValue.round(2))   
 
     return lsMeanMan 
@@ -1380,20 +1449,27 @@ def fnMolduraLateralDel(inCOD_MARCA,inCOD_MODELO):
     espMold = ['DEL MOLD']
     lsMeanMold = []
     
+    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfMOLDURA)
+    
     dfMOLD_LATERAL = dfMOLDURA.loc[(dfMOLDURA['COD_MARCA']  == inCOD_MARCA)  & 
                                    (dfMOLDURA['COD_MODELO'] == inCOD_MODELO) &
                                    (dfMOLDURA['COD_PARTE']  == inCOD_PARTE)  &
+                                   (dfMOLDURA['VIEJO']      == isOld)        &
                                    (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                    .sort_values(['VALOR'], ascending=[False])
     
     if len(dfMOLD_LATERAL)==0:
             dfMOLD_LATERAL = dfMOLDURA.loc[(dfMOLDURA['COD_MARCA'] == inCOD_MARCA)   & 
                                            (dfMOLDURA['COD_PARTE']  == inCOD_PARTE)  &
+                                           (dfMOLDURA['VIEJO']      == isOld)        &
                                            (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                            .sort_values(['VALOR'], ascending=[False])
 
     if len(dfMOLD_LATERAL)!=0: 
         flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
+        lsMeanMold.append(flValue.round(2))   
+    else:
+        flValue = param.bfLat_Moldura_Pta_Del + param.bfMOMinimo
         lsMeanMold.append(flValue.round(2))   
         
     return lsMeanMold
@@ -1403,22 +1479,29 @@ def fnMolduraLateralTra(inCOD_MARCA,inCOD_MODELO):
     espMold = ['TRAS MOLD']
     lsMeanMold = []
     
+    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfMOLDURA)
+    
     dfMOLD_LATERAL = dfMOLDURA.loc[(dfMOLDURA['COD_MARCA']  == inCOD_MARCA)  & 
                                    (dfMOLDURA['COD_MODELO'] == inCOD_MODELO) &
                                    (dfMOLDURA['COD_PARTE']  == inCOD_PARTE)  &
+                                   (dfMOLDURA['VIEJO']      == isOld)        &
                                    (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                    .sort_values(['VALOR'], ascending=[False])
     
     if len(dfMOLD_LATERAL)==0:
             dfMOLD_LATERAL = dfMOLDURA.loc[(dfMOLDURA['COD_MARCA'] == inCOD_MARCA)   & 
                                            (dfMOLDURA['COD_PARTE']  == inCOD_PARTE)  &
+                                           (dfMOLDURA['VIEJO']      == isOld)        &
                                            (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                            .sort_values(['VALOR'], ascending=[False])
                                            
     if len(dfMOLD_LATERAL)!=0: 
         flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
         lsMeanMold.append(flValue.round(2)) 
-        
+    else:
+        flValue = param.bfLat_Moldura_Pta_Tras + param.bfMOMinimo
+        lsMeanMold.append(flValue.round(2))   
+    
     return lsMeanMold
 
 def fnCristalLateralDel(inCOD_MARCA,inCOD_MODELO):
@@ -1426,20 +1509,27 @@ def fnCristalLateralDel(inCOD_MARCA,inCOD_MODELO):
     espMold = ['DEL CRISTAL']
     lsMeanMold = []
     
+    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfCRISTAL)
+    
     dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_MARCA']  == inCOD_MARCA)  & 
                                    (dfCRISTAL['COD_MODELO'] == inCOD_MODELO) &
                                    (dfCRISTAL['COD_PARTE']  == inCOD_PARTE)  &
+                                   (dfCRISTAL['VIEJO']      == isOld)        &
                                    (dfCRISTAL['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                    .sort_values(['VALOR'], ascending=[False])
     
     if len(dfMOLD_LATERAL)==0:
             dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_MARCA'] == inCOD_MARCA)   & 
                                            (dfCRISTAL['COD_PARTE']  == inCOD_PARTE)  &
+                                           (dfCRISTAL['VIEJO']      == isOld)        &
                                            (dfCRISTAL['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                            .sort_values(['VALOR'], ascending=[False])
 
     if len(dfMOLD_LATERAL)!=0: 
         flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
+        lsMeanMold.append(flValue.round(2))   
+    else:
+        flValue = param.bfLat_Cristal_Delantero + param.bfMOMinimo
         lsMeanMold.append(flValue.round(2))   
         
     return lsMeanMold
@@ -1449,21 +1539,28 @@ def fnCristalLateralTra(inCOD_MARCA,inCOD_MODELO):
     espMold = ['TRAS CRISTAL']
     lsMeanMold = []
     
+    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfCRISTAL)
+    
     dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_MARCA']  == inCOD_MARCA)  & 
                                    (dfCRISTAL['COD_MODELO'] == inCOD_MODELO) &
                                    (dfCRISTAL['COD_PARTE']  == inCOD_PARTE)  &
+                                   (dfCRISTAL['VIEJO']      == isOld)        &
                                    (dfCRISTAL['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                    .sort_values(['VALOR'], ascending=[False])
     
     if len(dfMOLD_LATERAL)==0:
             dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_MARCA'] == inCOD_MARCA)   & 
                                            (dfCRISTAL['COD_PARTE']  == inCOD_PARTE)  &
+                                           (dfCRISTAL['VIEJO']      == isOld)        &
                                            (dfCRISTAL['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                            .sort_values(['VALOR'], ascending=[False])
                                            
     if len(dfMOLD_LATERAL)!=0: 
         flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
         lsMeanMold.append(flValue.round(2)) 
+    else:
+        flValue = param.bfLat_Cristal_Trasero + param.bfMOMinimo
+        lsMeanMold.append(flValue.round(2))   
         
     return lsMeanMold
  
@@ -1496,14 +1593,16 @@ def fnCambiaLateral(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
     lsReponeAve = []
     flAverage = 0
     
+    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfVALOR_REPUESTO_MO_Unif)
+
     for index, item in enumerate(lsRepone):
         bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & 
                                         (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']    == inCOD_CLASE)  & 
                                         (dfVALOR_REPUESTO_MO_Unif['COD_MARCA']    == inCOD_MARCA)  & 
                                         (dfVALOR_REPUESTO_MO_Unif['COD_MODELO']   == inCOD_MODELO) &          
                                         (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  &
-                        (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                                                                                       [['PRECIO_MEAN']] 
+                                        (dfVALOR_REPUESTO_MO_Unif['VIEJO']        == isOld)        & 
+                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']] 
 
         flAverage = np.round(bfID_ELEM['PRECIO_MEAN'],2)
         
@@ -1511,14 +1610,27 @@ def fnCambiaLateral(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
             bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & 
                                             (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']    == inCOD_CLASE)  & 
                                             (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  &
-                        (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                                                                                        [['PRECIO_MEAN']] 
+                                            (dfVALOR_REPUESTO_MO_Unif['VIEJO']        == isOld)        &
+                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']] 
             
             flMean = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)   
             flAverage = pd.Series([flMean])
-            
+
             if pd.isna(flAverage.iloc[0]):
-                flAverage.iloc[0] = 0
+                if item=="CRISTAL_DEL"       :flAverage.iloc[0]=param.bfLat_Cristal_Delantero
+                elif item=="CRISTAL_TRA"     :flAverage.iloc[0]=param.bfLat_Cristal_Trasero
+                elif item=="ESPEJOELEC"      :flAverage.iloc[0]=param.bfLat_Espejo_Electrico
+                elif item=="ESPEJOMAN"       :flAverage.iloc[0]=param.bfLat_Espejo_Manual
+                elif item=="MANIJA_DEL"      :flAverage.iloc[0]=param.bfLat_Manija_Pta_Del
+                elif item=="MANIJA_TRA"      :flAverage.iloc[0]=param.bfLat_Manija_Pta_Tras
+                elif item=="MOLDURA_DEL"     :flAverage.iloc[0]=param.bfLat_Moldura_Pta_Del
+                elif item=="MOLDURA_TRA"     :flAverage.iloc[0]=param.bfLat_Moldura_Pta_Tras
+                elif item=="PUERTA_DEL"      :flAverage.iloc[0]=param.bfLat_Puerta_Delantera
+                elif item=="PUERTA_TRA"      :flAverage.iloc[0]=param.bfLat_Puerta_Trasera
+                elif item=="PUERTA_DEL_PANEL":flAverage.iloc[0]=param.bfLat_Puerta_Panel_Del
+                elif item=="PUERTA_TRA_PANEL":flAverage.iloc[0]=param.bfLat_Puerta_Panel_Tras
+                elif item=="ZOCALO"          :flAverage.iloc[0]=param.bfLat_Zocalo
+                else: flAverage.iloc[0] = 0
         
         if len(flAverage) == 0: flAverage = [0]
 
@@ -1611,8 +1723,26 @@ def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,T
                                                  trReponeMoldura,trReponeFaroExt,trReponeFaroInt,trTotal,Asegurado,
                                                  Tercero,MObra,Pintura,Ajuste) VALUES (''' + bfValues + ');'
     #try:
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    conn = engine.connect()
+    result = conn.execute(text(bfClause))
+    if conn.in_transaction(): conn.commit()
+    conn.close()
+    engine.dispose()
+    #except Exception as e:
+    #    bfWrite =False
+    return bfWrite
+
+def fnWriteLogBrief(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,TRASERO,lsValuesResultWrite):
+    bfWrite =True
+    ts = datetime.datetime.now().timestamp()
+  
+    bfValues = str(ts)+","+str(CLIENTE)+","+str(CLASE)+",'"+SINIESTRO+"','"+PERITO.replace(',','')+"','"+VALORPERITO+"'"
+    bfClause = '''INSERT INTO logpresupuestosV1 (timestamp,cliente,clase,siniestro,Perito,ValorPerito) VALUES (''' + bfValues + ');'
+    #try:
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text(bfClause))
     if conn.in_transaction(): conn.commit()
