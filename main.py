@@ -1256,10 +1256,10 @@ def fnMolduraTrasero(inCOD_MARCA,inCOD_MODELO):
         
     if len(dfTmp)!=0: 
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
-        lsMoldCtro.append(flValue.round(2))
+        lsMoldCtro.append(round(flValue,2))
     else:
         flValue = param.bfMoldura + param.bfMOMinimo
-        lsMoldCtro.append(flValue.round(2))   
+        lsMoldCtro.append(round(flValue,2))   
 
     return lsMoldCtro
 
@@ -1288,10 +1288,10 @@ def fnFaroExtTrasero(inCOD_MARCA,inCOD_MODELO):
     
     if len(dfTmp)!=0: 
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
-        lsFaroExt.append(flValue.round(2))
+        lsFaroExt.append(round(flValue,2))
     else:
         flValue = param.bfFaro_Ext + param.bfMOMinimo
-        lsFaroExt.append(flValue.round(2))   
+        lsFaroExt.append(round(flValue,2))   
     
     return lsFaroExt
 
@@ -1317,10 +1317,10 @@ def fnFaroIntTrasero(inCOD_MARCA,inCOD_MODELO):
     
     if len(dfFARO_INT)!=0: 
         flValue = dfFARO_INT['VALOR'].mean() + param.bfMOMinimo
-        lsFaroInt.append(flValue.round(2))
+        lsFaroInt.append(round(flValue,2))
     else:
         flValue = param.bfFaro_Int + param.bfMOMinimo
-        lsFaroInt.append(flValue.round(2))   
+        lsFaroInt.append(round(flValue,2))   
     
     return lsFaroInt
 
@@ -1347,10 +1347,10 @@ def fnEspejoLateralElec(inCOD_MARCA,inCOD_MODELO):
     
     if len(dfTmp)!=0: 
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
-        lsMeanEsp.append(flValue.round(2))   
+        lsMeanEsp.append(round(flValue,2))   
     else:
         flValue = param.bfLat_Espejo_Electrico + param.bfMOMinimo
-        lsMeanEsp.append(flValue.round(2))   
+        lsMeanEsp.append(round(flValue,2))   
     
     return lsMeanEsp 
 
@@ -1377,10 +1377,10 @@ def fnEspejoLateralMan(inCOD_MARCA,inCOD_MODELO):
     
     if len(dfTmp)!=0: 
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
-        lsMeanEsp.append(flValue.round(2))   
+        lsMeanEsp.append(round(flValue,2))   
     else:
         flValue = param.bfLat_Espejo_Manual + param.bfMOMinimo
-        lsMeanEsp.append(flValue.round(2))   
+        lsMeanEsp.append(round(flValue,2))   
     
     return lsMeanEsp 
 
@@ -1407,10 +1407,10 @@ def fnManijaLateralDel(inCOD_MARCA,inCOD_MODELO):
     
     if len(dfTmp)!=0: 
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
-        lsMeanMan.append(flValue.round(2))   
+        lsMeanMan.append(round(flValue,2))   
     else:
         flValue = param.bfLat_Manija_Pta_Del + param.bfMOMinimo
-        lsMeanMan.append(flValue.round(2))   
+        lsMeanMan.append(round(flValue,2))   
 
     return lsMeanMan 
 
@@ -1437,10 +1437,10 @@ def fnManijaLateralTra(inCOD_MARCA,inCOD_MODELO):
     
     if len(dfTmp)!=0: 
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
-        lsMeanMan.append(flValue.round(2))   
+        lsMeanMan.append(round(flValue,2))   
     else:
         flValue = param.bfLat_Manija_Pta_Tras + param.bfMOMinimo
-        lsMeanMan.append(flValue.round(2))   
+        lsMeanMan.append(round(flValue,2))   
 
     return lsMeanMan 
 
@@ -1467,10 +1467,10 @@ def fnMolduraLateralDel(inCOD_MARCA,inCOD_MODELO):
 
     if len(dfMOLD_LATERAL)!=0: 
         flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
-        lsMeanMold.append(flValue.round(2))   
+        lsMeanMold.append(round(flValue,2))   
     else:
         flValue = param.bfLat_Moldura_Pta_Del + param.bfMOMinimo
-        lsMeanMold.append(flValue.round(2))   
+        lsMeanMold.append(round(flValue,2))   
         
     return lsMeanMold
 
@@ -1497,10 +1497,10 @@ def fnMolduraLateralTra(inCOD_MARCA,inCOD_MODELO):
                                            
     if len(dfMOLD_LATERAL)!=0: 
         flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
-        lsMeanMold.append(flValue.round(2)) 
+        lsMeanMold.append(round(flValue,2)) 
     else:
         flValue = param.bfLat_Moldura_Pta_Tras + param.bfMOMinimo
-        lsMeanMold.append(flValue.round(2))   
+        lsMeanMold.append(round(flValue,2))   
     
     return lsMeanMold
 
@@ -1527,10 +1527,10 @@ def fnCristalLateralDel(inCOD_MARCA,inCOD_MODELO):
 
     if len(dfMOLD_LATERAL)!=0: 
         flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
-        lsMeanMold.append(flValue.round(2))   
+        lsMeanMold.append(round(flValue,2))   
     else:
         flValue = param.bfLat_Cristal_Delantero + param.bfMOMinimo
-        lsMeanMold.append(flValue.round(2))   
+        lsMeanMold.append(round(flValue,2))   
         
     return lsMeanMold
 
@@ -1557,10 +1557,10 @@ def fnCristalLateralTra(inCOD_MARCA,inCOD_MODELO):
                                            
     if len(dfMOLD_LATERAL)!=0: 
         flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
-        lsMeanMold.append(flValue.round(2)) 
+        lsMeanMold.append(round(flValue,2)) 
     else:
         flValue = param.bfLat_Cristal_Trasero + param.bfMOMinimo
-        lsMeanMold.append(flValue.round(2))   
+        lsMeanMold.append(round(flValue,2))   
         
     return lsMeanMold
  
