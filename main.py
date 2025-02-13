@@ -301,6 +301,46 @@ async def admreplat(request: Request):
     
     return templates.TemplateResponse("admreplat.html", context)
 
+@app.get("/admreplatag", response_class=HTMLResponse)
+async def admreplatag(request: Request):
+
+    context = {"request": request,
+               "Lat_Cristal_Delantero":"Cristal Delantero","Lat_Cristal_Delantero_Val":0.0,
+               "Lat_Cristal_Trasero":"Cristal Trasero","Lat_Cristal_Trasero_Val":0.0,
+               "Lat_Espejo_Electrico":"Espejo Eléctrico","Lat_Espejo_Eléctrico_Val":0.0,
+               "Lat_Espejo_Manual":"Espejo Manual","Lat_Espejo_Manual_Val":0.0,
+               "Lat_Manija_Pta_Del":"Manija Puerta Delantera","Lat_Manija_Pta_Del_Val":0.0,
+               "Lat_Manija_Pta_Tras":"Manija Puerta Trasera","Lat_Manija_Pta_Tras_Val":0.0,
+               "Lat_Moldura_Pta_Del":"Moldura Puerta Delantera","Lat_Moldura_Pta_Del_Val":0.0,
+               "Lat_Moldura_Pta_Tras":"Moldura Puerta Trasera","Lat_Moldura_Pta_Tras_Val":0.0,
+               "Lat_Puerta_Delantera":"Puerta Delantera","Lat_Puerta_Delantera_Val":0.0,
+               "Lat_Puerta_Trasera":"Puerta Trasera","Lat_Puerta_Trasera_Val":0.0,
+               "Lat_Zocalo":"Zocalo","Lat_Zocalo_Val":0.0,
+               "MensajeRetorno":""}
+    try:
+        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        conn = engine.connect()
+        result = conn.execute(text('SELECT stname,flvalue FROM admvalueslatal;'))
+        for row in result:
+            if row[0] == 'Lat_Cristal_Delantero': context["Lat_Cristal_Delantero_Val"] = float(row[1])
+            if row[0] == 'Lat_Cristal_Trasero'  : context["Lat_Cristal_Trasero_Val"] = float(row[1])
+            if row[0] == 'Lat_Espejo_Electrico' : context["Lat_Espejo_Electrico_Val"] = float(row[1])
+            if row[0] == 'Lat_Espejo_Manual'    : context["Lat_Espejo_Manual_Val"] = float(row[1])
+            if row[0] == 'Lat_Manija_Pta_Del'   : context["Lat_Manija_Pta_Del_Val"] = float(row[1])
+            if row[0] == 'Lat_Manija_Pta_Tras'  : context["Lat_Manija_Pta_Tras_Val"] = float(row[1])
+            if row[0] == 'Lat_Moldura_Pta_Del'  : context["Lat_Moldura_Pta_Del_Val"] = float(row[1])
+            if row[0] == 'Lat_Moldura_Pta_Tras' : context["Lat_Moldura_Pta_Tras_Val"] = float(row[1])
+            if row[0] == 'Lat_Puerta_Delantera' : context["Lat_Puerta_Delantera_Val"] = float(row[1])
+            if row[0] == 'Lat_Puerta_Trasera'   : context["Lat_Puerta_Trasera_Val"] = float(row[1])
+            if row[0] == 'Lat_Zocalo'           : context["Lat_Zocalo_Val"] = float(row[1])
+        conn.close()
+        engine.dispose()
+    except Exception as e:
+        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"  
+    
+    return templates.TemplateResponse("admreplatag.html", context)
+
 @app.post("/admvalueslat", response_class=PlainTextResponse)
 async def admvalueslat(request: Request, Lat_Cristal_Delantero:str="",Lat_Cristal_Trasero:str="",\
                        Lat_Espejo_Electrico:str="",Lat_Espejo_Manual:str="",Lat_Manija_Pta_Del:str="",\
@@ -368,8 +408,8 @@ async def admreptra(request: Request):
             
     return templates.TemplateResponse("admreptra.html", context)
 
-@app.get("/admreptraal", response_class=HTMLResponse)
-async def admreptraal(request: Request):
+@app.get("/admreptraag", response_class=HTMLResponse)
+async def admreptraag(request: Request):
     context = {"request": request,
                "Baul_Porton":"Baul Portón","Baul_Porton_Val":0.0,
                "Faro_Ext":"Faro Externo","Faro_Ext_Val":0.0,
@@ -401,8 +441,85 @@ async def admreptraal(request: Request):
     except Exception as e:
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador" 
             
-    return templates.TemplateResponse("admreptraar.html", context)
+    return templates.TemplateResponse("admreptraag.html", context)
 
+@app.get("/admrepdel", response_class=HTMLResponse)
+async def admrepdel(request: Request):
+    context = {"request": request,
+               "Paragolpe_Ctro":"Paragolpe Centro"      ,"Paragolpe_Ctro_Val":0.0,
+               "Paragolpe_Rejilla":"Paragolpe Rejilla"  ,"Paragolpe_Rejilla_Val":0.0,
+               "Paragolpe_Alma":"Paragolpe Alma"        ,"Paragolpe_Alma_Val":0.0,
+               "Rejilla_Radiador":"Rejilla Radiador"    ,"Rejilla_Radiador_Val":0.0,
+               "Frente":"Frente"                        ,"Frente_Val":0.0,
+               "Guardabarro":"Guardabarro"              ,"Guardabarro_Val":0.0,
+               "Faro":"Faro"                            ,"Faro_Val":0.0,
+               "Faro_Auxiliar":"Faro Auxiliar"          ,"Faro_Auxiliar_Val":0.0,
+               "Farito":"Farito"                        ,"Farito_Val":0.0,
+               "Capot":"Capot"                          ,"Capot_Val":0.0,
+               "Parabrisas":"Parabrisas"                ,"Parabrisas_Val":0.0,
+               "MensajeRetorno":""
+               }
+    try:
+        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        conn = engine.connect()
+        result = conn.execute(text('SELECT * FROM admvaluesdel;'))
+        for row in result:
+            if row[0] == 'Del_Paragolpe_Ctro'    : context["Paragolpe_Ctro_Val"]    = float(row[1])
+            if row[0] == 'Del_Paragolpe_Rejilla' : context["Paragolpe_Rejilla_Val"] = float(row[1])
+            if row[0] == 'Del_Paragolpe_Alma'    : context["Paragolpe_Alma_Val"]    = float(row[1])
+            if row[0] == 'Del_Rejilla_Radiador'  : context["Rejilla_Radiador_Val"]  = float(row[1])
+            if row[0] == 'Del_Frente'            : context["Frente_Val"]            = float(row[1])
+            if row[0] == 'Del_Guardabarro'       : context["Guardabarro_Val"]       = float(row[1])
+            if row[0] == 'Del_Faro'              : context["Faro_Val"]              = float(row[1])
+            if row[0] == 'Del_Faro_Auxiliar'     : context["Faro_Auxiliar_Val"]     = float(row[1])
+            if row[0] == 'Del_Farito'            : context["Farito_Val"]            = float(row[1])
+            if row[0] == 'Del_Capot'             : context["Capot_Val"]             = float(row[1])
+            if row[0] == 'Del_Parabrisas'        : context["Parabrisas_Val"]        = float(row[1])
+        conn.close()
+        engine.dispose()
+    except Exception as e:
+        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador" 
+    return templates.TemplateResponse("admrepdel.html", context)
+
+@app.get("/admrepdelag", response_class=HTMLResponse)
+async def admrepdelag(request: Request):
+    context = {"request": request,
+               "Paragolpe_Ctro":"Paragolpe Centro"      ,"Paragolpe_Ctro_Val":0.0,
+               "Paragolpe_Rejilla":"Paragolpe Rejilla"  ,"Paragolpe_Rejilla_Val":0.0,
+               "Paragolpe_Alma":"Paragolpe Alma"        ,"Paragolpe_Alma_Val":0.0,
+               "Rejilla_Radiador":"Rejilla Radiador"    ,"Rejilla_Radiador_Val":0.0,
+               "Frente":"Frente"                        ,"Frente_Val":0.0,
+               "Guardabarro":"Guardabarro"              ,"Guardabarro_Val":0.0,
+               "Faro":"Faro"                            ,"Faro_Val":0.0,
+               "Faro_Auxiliar":"Faro Auxiliar"          ,"Faro_Auxiliar_Val":0.0,
+               "Farito":"Farito"                        ,"Farito_Val":0.0,
+               "Capot":"Capot"                          ,"Capot_Val":0.0,
+               "Parabrisas":"Parabrisas"                ,"Parabrisas_Val":0.0,
+               "MensajeRetorno":""
+               }
+    try:
+        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        conn = engine.connect()
+        result = conn.execute(text('SELECT * FROM admvaluesdelal;'))
+        for row in result:
+            if row[0] == 'Del_Paragolpe_Ctro'    : context["Paragolpe_Ctro_Val"]    = float(row[1])
+            if row[0] == 'Del_Paragolpe_Rejilla' : context["Paragolpe_Rejilla_Val"] = float(row[1])
+            if row[0] == 'Del_Paragolpe_Alma'    : context["Paragolpe_Alma_Val"]    = float(row[1])
+            if row[0] == 'Del_Rejilla_Radiador'  : context["Rejilla_Radiador_Val"]  = float(row[1])
+            if row[0] == 'Del_Frente'            : context["Frente_Val"]            = float(row[1])
+            if row[0] == 'Del_Guardabarro'       : context["Guardabarro_Val"]       = float(row[1])
+            if row[0] == 'Del_Faro'              : context["Faro_Val"]              = float(row[1])
+            if row[0] == 'Del_Faro_Auxiliar'     : context["Faro_Auxiliar_Val"]     = float(row[1])
+            if row[0] == 'Del_Farito'            : context["Farito_Val"]            = float(row[1])
+            if row[0] == 'Del_Capot'             : context["Capot_Val"]             = float(row[1])
+            if row[0] == 'Del_Parabrisas'        : context["Parabrisas_Val"]        = float(row[1])
+        conn.close()
+        engine.dispose()
+    except Exception as e:
+        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador" 
+    return templates.TemplateResponse("admrepdelag.html", context)
 
 @app.post("/admvaluestra", response_class=PlainTextResponse)
 async def admvaluestra(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Guardabarro:str="",Luneta:str="",\

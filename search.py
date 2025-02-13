@@ -46,7 +46,7 @@ bfHTML = """
             <p class="vertical-text"
                 style="margin-left:auto;margin-right:auto;display:block;
                        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-                       color:#005993;text-align:left; font-size: 20px;">Cotizador</p>
+                       color:#005993;text-align:center; font-size: 25px;">Cotizador</p>
         </div> 
         <div class="pure-u-1 pure-u-md-7-24"> <!--<div class="pure-u-1 pure-u-md-3-5">-->
             <form class="pure-form pure-form-aligned">

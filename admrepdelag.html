@@ -1,5 +1,3 @@
-import param
-bfHTML = """
 <html>
   <head>
     <meta http-equiv="cache-control" content="max-age=0" />
@@ -23,9 +21,13 @@ bfHTML = """
     </style>
 </head>
 <body>
-    <div id="divContent" class="pure-g" style="text-align:center;"><div class="pure-u-*">&nbsp;</div></div>
+    <div id="divContent" class="pure-g" style="text-align:center;">
+        <div class="pure-u-*">
+            &nbsp;
+        </div>
+    </div>
     <div class="pure-g" style="padding-left:5px;">
-        <div class="pure-u-1 pure-u-md-7-24"> <!--<div class="pure-u-1 pure-u-md-1-5">-->
+        <div class="pure-u-1 pure-u-md-7-24">
             &nbsp;
         </div>
         <div class="pure-u-1 pure-u-md-7-24">
@@ -38,16 +40,16 @@ bfHTML = """
                     <li class="pure-menu-item">
                         <a href="#" id="btnHistorial" class="pure-menu-link">Historial</a>
                     </li>
-                    <li class="pure-menu-item pure-menu-selected">
+                    <li class="pure-menu-item">
                         <a href="#" id="btnParams" class="pure-menu-link">Params</a>
                     </li>
-                    <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+                    <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover pure-menu-selected">
                         <a href="#" id="menuLink1" class="pure-menu-link">Repuestos</a>
                         <ul class="pure-menu-children">
-                            <li class="pure-menu-item"></li>
+                            <li class="pure-menu-item pure-menu-selected">
                                 <a href="#" id="btnDelanteroag" class="pure-menu-link">Delantero GA</a>
                             </li>
-                            <li class="pure-menu-item"></li>
+                            <li class="pure-menu-item">
                                 <a href="#" id="btnDelantero" class="pure-menu-link">Delantero GM</a>
                             </li>
                             <li class="pure-menu-item">
@@ -67,43 +69,62 @@ bfHTML = """
                 </ul>
             </div>
         </div>
-    </div>      
+    </div>    
     <div class="pure-g" style="padding-left:5px;">
-        <div class="pure-u-1 pure-u-md-7-24"> <!--<div class="pure-u-1 pure-u-md-1-5">-->
-            <img src="./img/Pos_color_RGB.jpg" alt="logo" width="128" height="128"
-                 style="margin-left:auto;margin-right:auto;display:block;"/>
-            <p>&nbsp;</p>
-            <p class="vertical-text"
+        <div class="pure-u-1 pure-u-md-7-24"> 
+            <img src="./img/Pos_color_RGB.jpg" alt="logo" width="128" height="128" style="margin-left:auto;margin-right:auto;display:block;"/>
+             <p>&nbsp;</p>
+             <p class="vertical-text"
                 style="margin-left:auto;margin-right:auto;display:block;
                        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-                       color:#005993;text-align:center; font-size: 25px;" >Parámetros<br>Generales</p>             
+                       color:#005993;text-align:center; font-size: 25px;">Repuestos Delanteros<br>Gama Alta</p>
         </div> 
-        <div class="pure-u-1 pure-u-md-7-24"> <!--<div class="pure-u-1 pure-u-md-3-5">-->
+        <div class="pure-u-1 pure-u-md-7-24">
             <form class="pure-form pure-form-stacked">
                 <fieldset>
                     <div class="pure-control-group">
-                        <label for="stacked-Asegurado" style="color:#005993;text-align:left;">Asegurado</label>
-                        <input type="text" id="stacked-Asegurado" style="min-width:343px;" value="rplBfAsegurado" onblur="validarCampoDecimal(this)"/>
+                        <label for="stacked-Baul_Porton" style="color:#005993;text-align:left;">{{Paragolpe_Ctro}}</label>
+                        <input type="text" id="stacked-Baul_Porton" style="min-width:343px;" value="{{Paragolpe_Ctro_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
                     <div class="pure-control-group">
-                        <label for="stacked-AseguradoTercero" style="color:#005993;text-align:left;">Tercero</label>
-                        <input type="text" id="stacked-Tercero" style="min-width:343px;" value="rplBfTercero" onblur="validarCampoDecimal(this)"/>
+                        <label for="stacked-Faro_Ext" style="color:#005993;text-align:left;">{{Paragolpe_Rejilla}}</label>
+                        <input type="text" id="stacked-Faro_Ext" style="min-width:343px;" value="{{Paragolpe_Rejilla_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
                     <div class="pure-control-group">
-                        <label for="stacked-MObra" style="color:#005993;text-align:left;">Mano de Obra</label>
-                        <input type="text" id="stacked-MObra" style="min-width:343px;" value="rplBfMObra" onblur="validarCampoDecimal(this)"/>
+                        <label for="stacked-Faro_Int" style="color:#005993;text-align:left;">{{Paragolpe_Alma}}</label>
+                        <input type="text" id="stacked-Faro_Int" style="min-width:343px;" value="{{Paragolpe_Alma_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
                     <div class="pure-control-group">
-                        <label for="stacked-MOMinimo" style="color:#005993;text-align:left;">Mano de Obra Minimo</label>
-                        <input type="text" id="stacked-MOMinimo" style="min-width:343px;" value="rplBfMOMinimo" onblur="validarCampoDecimal(this)"/>
+                        <label for="stacked-Guardabarro" style="color:#005993;text-align:left;">{{Rejilla_Radiador}}</label>
+                        <input type="text" id="stacked-Guardabarro" style="min-width:343px;" value="{{Rejilla_Radiador_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
                     <div class="pure-control-group">
-                        <label for="stacked-Pintura" style="color:#005993;text-align:left;">Pintura</label>
-                        <input type="text" id="stacked-Pintura" style="min-width:343px;" value="rplBfPintura" onblur="validarCampoDecimal(this)"/>
+                        <label for="stacked-Luneta" style="color:#005993;text-align:left;">{{Frente}}</label>
+                        <input type="text" id="stacked-Luneta" style="min-width:343px;" value="{{Frente_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
                     <div class="pure-control-group">
-                        <label for="stacked-Ajuste" style="color:#005993;text-align:left;">Ajuste</label>
-                        <input type="text" id="stacked-Ajuste" style="min-width:343px;" value="rplBfAjuste" onblur="validarCampoDecimal(this)"/>
+                        <label for="stacked-Moldura" style="color:#005993;text-align:left;">{{Guardabarro}}</label>
+                        <input type="text" id="stacked-Moldura" style="min-width:343px;" value="{{Guardabarro_Val}}" onblur="validarCampoDecimal(this)"/>
+                    </div>
+                    <div class="pure-control-group">
+                        <label for="stacked-Panel_Cola" style="color:#005993;text-align:left;">{{Faro}}</label>
+                        <input type="text" id="stacked-Panel_Cola" style="min-width:343px;" value="{{Faro_Val}}" onblur="validarCampoDecimal(this)"/>
+                    </div>
+                    <div class="pure-control-group">
+                        <label for="stacked-Paragolpe" style="color:#005993;text-align:left;">{{Faro_Auxiliar}}</label>
+                        <input type="text" id="stacked-Paragolpe" style="min-width:343px;" value="{{Faro_Auxiliar_Val}}" onblur="validarCampoDecimal(this)"/>
+                    </div>
+                    <div class="pure-control-group">
+                        <label for="stacked-Paragolpe" style="color:#005993;text-align:left;">{{Farito}}</label>
+                        <input type="text" id="stacked-Paragolpe" style="min-width:343px;" value="{{Farito_Val}}" onblur="validarCampoDecimal(this)"/>
+                    </div>
+                    <div class="pure-control-group">
+                        <label for="stacked-Paragolpe" style="color:#005993;text-align:left;">{{Capot}}</label>
+                        <input type="text" id="stacked-Paragolpe" style="min-width:343px;" value="{{Capot_Val}}" onblur="validarCampoDecimal(this)"/>
+                    </div>
+                    <div class="pure-control-group">
+                        <label for="stacked-Paragolpe" style="color:#005993;text-align:left;">{{Parabrisas}}</label>
+                        <input type="text" id="stacked-Paragolpe" style="min-width:343px;" value="{{Parabrisas_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
                </fieldset>
                 <br style="display: block;content:'';margin-top:5;">
@@ -137,29 +158,37 @@ bfHTML = """
         window.location.href =  "/admvalue"; 
     });
     document.getElementById("btnDelantero").addEventListener("click", function(event) {
-        event.preventDefault();
-        window.location.href =  "/admrepdel";
+        event.preventDefault(); 
+        window.location.href =  "/admrepdel"; 
     });
     document.getElementById("btnDelanteroag").addEventListener("click", function(event) {
-        event.preventDefault();
-        window.location.href =  "/admrepdelag";
-    });
+        event.preventDefault(); 
+        window.location.href =  "/admrepdelag"; 
+    });    
     document.getElementById("btnLateral").addEventListener("click", function(event) {
-        event.preventDefault();
-        window.location.href =  "/admreplat";
+        event.preventDefault(); 
+        window.location.href =  "/admreplat"; 
     });
     document.getElementById("btnLateralag").addEventListener("click", function(event) {
-        event.preventDefault();
-        window.location.href =  "/admreplatag";
-    });
+        event.preventDefault(); 
+        window.location.href =  "/admreplatag"; 
+    });    
     document.getElementById("btnTrasero").addEventListener("click", function(event) {
-        event.preventDefault();
-        window.location.href =  "/admreptra";
+        event.preventDefault(); 
+        window.location.href =  "/admreptra"; 
     });
     document.getElementById("btnTraseroag").addEventListener("click", function(event) {
-        event.preventDefault();
-        window.location.href =  "/admreptraag";
-    });
+        event.preventDefault(); 
+        window.location.href =  "/admreptraag"; 
+    });    
+    function fnRtnConsulta(){  
+        var protocolo = window.location.protocol;
+        var hostname = window.location.hostname;
+        var puerto = window.location.port;
+        var direccionCompleta = protocolo + '//' + hostname;
+        if (puerto){direccionCompleta+=':'+puerto;}
+        window.location.href = direccionCompleta + '/consulta';
+    }
     function validarNumeroDecimal(cadena) {
         // Expresión regular para validar números decimales con hasta dos decimales
         const regexDecimal = /^[+-]?\d+([.,]\d{1,2})?$/;
@@ -177,30 +206,35 @@ bfHTML = """
         } 
     }
     function fnSaveData(){
-        var e = document.getElementById("stacked-Asegurado");
-        var text = 'ASEGURADO=' + e.value;
+        var e = document.getElementById("stacked-Baul_Porton");
+        var text = 'Baul_Porton=' + e.value;
         
-        var e = document.getElementById("stacked-Tercero");
-        text = text + '&TERCERO=' + e.value;
+        var e = document.getElementById("stacked-Faro_Ext");
+        text = text + '&Faro_Ext=' + e.value;
             
-        var e = document.getElementById("stacked-MObra");
-        text = text + '&MOBRA=' + e.value;
+        var e = document.getElementById("stacked-Faro_Int");
+        text = text + '&Faro_Int=' + e.value;
 
-        var e = document.getElementById("stacked-MOMinimo");
-        text = text + '&MOMINIMO=' + e.value;
+        var e = document.getElementById("stacked-Guardabarro");
+        text = text + '&Guardabarro=' + e.value;
 
-        var e = document.getElementById("stacked-Pintura");
-        text = text + '&PINTURA=' + e.value;
+        var e = document.getElementById("stacked-Luneta");
+        text = text + '&Luneta=' + e.value;
 
-        var e = document.getElementById("stacked-Ajuste");
-        text = text + '&AJUSTE=' + e.value;
+        var e = document.getElementById("stacked-Moldura");
+        text = text + '&Moldura=' + e.value;
+
+        var e = document.getElementById("stacked-Panel_Cola");
+        text = text + '&Panel_Cola=' + e.value;
+
+        var e = document.getElementById("stacked-Paragolpe");
+        text = text + '&Paragolpe=' + e.value;
         
-        sendSearch(text);
-
+        sendValuesTra(text);
     }
-    function sendSearch(bfSearch) {
+    function sendValuesTra(bfSearch) {
         let xhr = new XMLHttpRequest();
-        let url = "/admvaluesave?" + bfSearch;
+        let url = "/admvaluestra?" + bfSearch;
         xhr.open("POST", url, true);
         xhr.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
@@ -213,5 +247,3 @@ bfHTML = """
     } 
     </script>
  </html>    
-        
- """
