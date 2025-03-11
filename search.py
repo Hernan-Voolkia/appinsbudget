@@ -97,6 +97,101 @@ bfHTML = """
             <table class="pure-table pure-table-striped">
                 <thead>
                     <tr>
+                        <th style="min-width:105px;max-width:105px;background-color:#005993;color:#ffffff;"><input type="checkbox" id="frente_chk" onclick="return viewGrid(this,'frente');return false;"/>&nbsp;Frente&nbsp;&nbsp;</th>
+                        <th id="frente_repara" style="min-width:70px;max-width:70px;background-color:#005993;color:#ffffff;border-spacing:2px" colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                        <th id="frente_cambia" style="min-width:70px;max-width:70px;background-color:#005993;color:#ffffff;border-spacing:2px" colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody id="frente" style="display:none">
+                    <tr>
+                        <td height="10px" style="font-size:small;text-align:center;vertical-align:middle;background-color:#FFFFFF;color:#000000;padding-bottom:2px;padding-left:3px;padding-top:2px;padding-right:3px;">&nbsp;</td>
+                        <td height="10px" style="font-size:small;text-align:center;vertical-align:middle;background-color:#FFFFFF;color:#000000;padding-bottom:2px;padding-left:3px;padding-top:2px;padding-right:3px;">Cambia</td>
+                        <td height="10px" style="font-size:small;text-align:center;vertical-align:middle;background-color:#FFFFFF;color:#000000;padding-bottom:2px;padding-left:3px;padding-top:2px;padding-right:3px;">Repara</td>
+                        <td height="10px" style="font-size:small;text-align:center;vertical-align:middle;background-color:#FFFFFF;color:#000000;padding-bottom:2px;padding-left:3px;padding-top:2px;padding-right:3px;">Cambia</td>
+                        <td height="10px" style="font-size:small;text-align:center;vertical-align:middle;background-color:#FFFFFF;color:#000000;padding-bottom:2px;padding-left:3px;padding-top:2px;padding-right:3px;">Repara</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Capot</td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_CAM_DER_CAPOT"/></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_REP_DER_CAPOT"/></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Farito</td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_CAM_DER_FARITO"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_CAM_IZQ_FARITO"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                    <tr>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Faro</td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_CAM_DER_FARO"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_CAM_IZQ_FARO"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                    <tr>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Faro&nbsp;Auxiliar</td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_CAM_DER_FARO_AUXILIAR"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_CAM_IZQ_FARO_AUXILIAR"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                    <tr>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Frente</td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_CAM_DER_FRENTE"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_REP_DER_FRENTE"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                    <tr>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Guardabarro</td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_CAM_DER_GUARDABARROA"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_REP_DER_GUARDABARRO"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_CAM_IZQ_GUARDABARRO"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_REP_IZQ_GUARDABARRO"/</td>
+                    </tr>
+                    <tr>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:3px;padding-top:5px;">Parabrisas</td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_CAM_DER_PARABRISAS"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                    <tr>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:3px;padding-top:5px;">Paragolpe&nbsp;Alma</td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_CAM_DER_PARAGOLPE_ALMA"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_CAM_REP_PARAGOLPE_ALMA"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                    <tr>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Paragolpe&nbsp;Ctro</td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_CAM_DER_PARAGOLPE_CTRO"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_CAM_REP_PARAGOLPE_CTRO"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                    <tr>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Paragolpe&nbsp;Rejilla</td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_CAM_DER_PARAGOLPE_REJILLA"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                    <tr>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Rejilla&nbsp;Radiador</td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="FRT_REP_DER_REJILLA_RADIADOR"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="pure-table pure-table-striped">
+                <thead>
+                    <tr>
                         <th style="min-width:105px;max-width:105px;background-color:#005993;color:#ffffff;"><input type="checkbox" id="lateral_chk" onclick="return viewGrid(this,'lateral');return false;"/>&nbsp;Lateral&nbsp;&nbsp;</th>
                         <th id="lateral_repara" style="min-width:70px;max-width:70px;background-color:#005993;color:#ffffff;border-spacing:2px" colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
                         <th id="lateral_cambia" style="min-width:70px;max-width:70px;background-color:#005993;color:#ffffff;border-spacing:2px" colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
@@ -146,60 +241,60 @@ bfHTML = """
                         <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                     </tr>
                     <tr>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Manija Pta Tras</td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_MANIJA_TRA"/></td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_MANIJA_TRA"/></td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                    </tr>
-                    <tr>
-                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:3px;padding-top:5px;">Moldura Pta Del</td>
-                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_MOLDURA_DEL"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Manija Pta Tras</td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_MANIJA_TRA"/></td>
                         <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_MOLDURA_DEL"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_MANIJA_TRA"/></td>
                         <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                     </tr>
                     <tr>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:3px;padding-top:5px;">Moldura Pta Tras</td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_MOLDURA_TRA"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:3px;padding-top:5px;">Moldura Pta Del</td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_MOLDURA_DEL"/></td>
                         <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_MOLDURA_TRA"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_MOLDURA_DEL"/></td>
                         <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                     </tr>
                     <tr>
-                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Puerta Delantera</td>
-                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_PUERTA_DEL"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:3px;padding-top:5px;">Moldura Pta Tras</td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_MOLDURA_TRA"/></td>
                         <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_PUERTA_DEL"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_MOLDURA_TRA"/></td>
                         <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                     </tr>
                     <tr>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Puerta Trasera</td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_PUERTA_TRA"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Puerta Delantera</td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_PUERTA_DEL"/></td>
                         <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_PUERTA_TRA"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_PUERTA_DEL"/></td>
                         <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                     </tr>
                     <tr>
-                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Puerta Panel Del</td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Puerta Trasera</td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_PUERTA_TRA"/></td>
                         <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_DER_PUERTA_DEL_PANEL"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_PUERTA_TRA"/></td>
                         <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_IZQ_PUERTA_DEL_PANEL"/></td>
                     </tr>
                     <tr>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:5px;padding-right:3px;padding-bottom:3px;padding-top:5px;">Puerta Panel Tras</td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Puerta Panel Del</td>
                         <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_DER_PUERTA_TRA_PANEL"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_DER_PUERTA_DEL_PANEL"/></td>
                         <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_IZQ_PUERTA_TRA_PANEL"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_IZQ_PUERTA_DEL_PANEL"/></td>
                     </tr>
                     <tr>
-                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Zocalo</td>
-                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_ZOCALO" onclick="unCheckOps('LAT_CAM_DER_ZOCALO','LAT_REP_DER_ZOCALO')"/></td>
-                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_DER_ZOCALO" onclick="unCheckOps('LAT_REP_DER_ZOCALO','LAT_CAM_DER_ZOCALO')"/></td>
-                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_ZOCALO" onclick="unCheckOps('LAT_CAM_IZQ_ZOCALO','LAT_REP_IZQ_ZOCALO')"/></td>
-                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_IZQ_ZOCALO" onclick="unCheckOps('LAT_REP_IZQ_ZOCALO','LAT_CAM_IZQ_ZOCALO')"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:5px;padding-right:3px;padding-bottom:3px;padding-top:5px;">Puerta Panel Tras</td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_DER_PUERTA_TRA_PANEL"/></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_IZQ_PUERTA_TRA_PANEL"/></td>
+                    </tr>
+                    <tr>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Zocalo</td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_DER_ZOCALO" onclick="unCheckOps('LAT_CAM_DER_ZOCALO','LAT_REP_DER_ZOCALO')"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_DER_ZOCALO" onclick="unCheckOps('LAT_REP_DER_ZOCALO','LAT_CAM_DER_ZOCALO')"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_CAM_IZQ_ZOCALO" onclick="unCheckOps('LAT_CAM_IZQ_ZOCALO','LAT_REP_IZQ_ZOCALO')"/></td>
+                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="LAT_REP_IZQ_ZOCALO" onclick="unCheckOps('LAT_REP_IZQ_ZOCALO','LAT_CAM_IZQ_ZOCALO')"/></td>
                     </tr>
                 </tbody>
             </table>
@@ -220,7 +315,7 @@ bfHTML = """
                         <td height="10px" style="font-size:small;text-align:center;vertical-align:middle;background-color:#FFFFFF;color:#000000;padding-bottom:2px;padding-left:3px;padding-top:2px;padding-right:3px;">Repara</td>
                     </tr>
                     <tr>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Baul/Port&oacute;n</td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Baul/Port&oacute;n</td>
                         <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_BAUL" onclick="unCheckOps('TRA_CAM_DER_BAUL','TRA_REP_DER_BAUL')"/></td>
                         <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_DER_BAUL"  onclick="unCheckOps('TRA_REP_DER_BAUL','TRA_CAM_DER_BAUL')"/></td>
                         <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
@@ -234,46 +329,46 @@ bfHTML = """
                         <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                     </tr>
                     <tr>
-                        <td style="padding-left:5px;padding-right:5px;padding-bottom:3px;padding-top:3px;background-color:#FFFFFF;color:#000000;">Faro Int</td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_FARO_INT"/></td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_IZQ_FARO_INT"/></td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td style="padding-left:5px;padding-right:5px;padding-bottom:3px;padding-top:3px;background-color:#DEF3FF;color:#000000;">Faro Int</td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_FARO_INT"/></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_IZQ_FARO_INT"/></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                     </tr>
                     <tr>
-                        <td style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Guardabarro</td>
-                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_GUARDABARRO" onclick="unCheckOps('TRA_CAM_DER_GUARDABARRO','TRA_REP_DER_GUARDABARRO')"/></td>
-                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_DER_GUARDABARRO" onclick="unCheckOps('TRA_REP_DER_GUARDABARRO','TRA_CAM_DER_GUARDABARRO')"/></td>
-                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_IZQ_GUARDABARRO" onclick="unCheckOps('TRA_CAM_IZQ_GUARDABARRO','TRA_REP_IZQ_GUARDABARRO')"/></td>
-                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_IZQ_GUARDABARRO" onclick="unCheckOps('TRA_REP_IZQ_GUARDABARRO','TRA_CAM_IZQ_GUARDABARRO')"/></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Guardabarro</td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_GUARDABARRO" onclick="unCheckOps('TRA_CAM_DER_GUARDABARRO','TRA_REP_DER_GUARDABARRO')"/></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_DER_GUARDABARRO" onclick="unCheckOps('TRA_REP_DER_GUARDABARRO','TRA_CAM_DER_GUARDABARRO')"/></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_IZQ_GUARDABARRO" onclick="unCheckOps('TRA_CAM_IZQ_GUARDABARRO','TRA_REP_IZQ_GUARDABARRO')"/></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_IZQ_GUARDABARRO" onclick="unCheckOps('TRA_REP_IZQ_GUARDABARRO','TRA_CAM_IZQ_GUARDABARRO')"/></td>
                     </tr>
                     <tr>
-                        <td style="padding-left:5px;padding-right:5px;padding-bottom:3px;padding-top:3px;background-color:#FFFFFF;color:#000000;">Luneta</td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_LUNETA"/></td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
-                    </tr>
-                    <tr>
-                        <td class="pure-table-odd" style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Moldura</td>
-                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_MOLDURA"/></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-left:5px;padding-right:5px;padding-bottom:3px;padding-top:3px;">Luneta</td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_LUNETA"/></td>
                         <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                         <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                         <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                     </tr>
                     <tr>
-                        <td class="pure-table-odd" style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Panel Cola</td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_PANELCOLA" onclick="unCheckOps('TRA_CAM_DER_PANELCOLA','TRA_REP_DER_PANELCOLA')"/></td>
-                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_DER_PANELCOLA" onclick="unCheckOps('TRA_REP_DER_PANELCOLA','TRA_CAM_DER_PANELCOLA')"/></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Moldura</td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_MOLDURA"/></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                         <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                         <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                     </tr>
                     <tr>
-                        <td style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Paragolpe</td>
-                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_PARAGOLPE" onclick="unCheckOps('TRA_CAM_DER_PARAGOLPE','TRA_REP_DER_PARAGOLPE')"/></td>
-                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_DER_PARAGOLPE" onclick="unCheckOps('TRA_REP_DER_PARAGOLPE','TRA_CAM_DER_PARAGOLPE')"/></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Panel Cola</td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_PANELCOLA" onclick="unCheckOps('TRA_CAM_DER_PANELCOLA','TRA_REP_DER_PANELCOLA')"/></td>
+                        <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_DER_PANELCOLA" onclick="unCheckOps('TRA_REP_DER_PANELCOLA','TRA_CAM_DER_PANELCOLA')"/></td>
                         <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                         <td style="background-color:#DEF3FF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-left:3px;padding-right:3px;padding-bottom:5px;padding-top:5px;">Paragolpe</td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_CAM_DER_PARAGOLPE" onclick="unCheckOps('TRA_CAM_DER_PARAGOLPE','TRA_REP_DER_PARAGOLPE')"/></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"><input type="checkbox" id="TRA_REP_DER_PARAGOLPE" onclick="unCheckOps('TRA_REP_DER_PARAGOLPE','TRA_CAM_DER_PARAGOLPE')"/></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
+                        <td style="background-color:#FFFFFF;color:#000000;padding-bottom:5px;padding-top:5px;text-align:center;"></td>
                     </tr>
                 </tbody>
             </table>
@@ -311,13 +406,66 @@ bfHTML = """
             e.value = "";
         var e = document.getElementById("stacked-valorperito");
             e.value = "";        
+
+        var e = document.getElementById("frente_chk");
+            e.checked = false;    
+        var e = document.getElementById("frente_repara");    
+            e.innerText = "";
+        var e = document.getElementById("frente_cambia");
+            e.innerText = "";
+        
+        var e = document.getElementById("frente");
+            e.style.display = "none";      
+
+        var e = document.getElementById("FRT_CAM_DER_CAPOT");
+            e.checked = false;       
+        var e = document.getElementById("FRT_REP_DER_CAPOT");
+            e.checked = false;       
+        var e = document.getElementById("FRT_CAM_DER_FARITO");
+            e.checked = false;       
+        var e = document.getElementById("FRT_CAM_IZQ_FARITO");
+            e.checked = false;       
+        var e = document.getElementById("FRT_CAM_DER_FARO");
+            e.checked = false;       
+        var e = document.getElementById("FRT_CAM_IZQ_FARO");
+            e.checked = false;    
+        var e = document.getElementById("FRT_CAM_DER_FARO_AUXILIAR");
+            e.checked = false;                  
+        var e = document.getElementById("FRT_CAM_IZQ_FARO_AUXILIAR");
+            e.checked = false;  
+        var e = document.getElementById("FRT_CAM_DER_FRENTE");
+            e.checked = false;                   
+        var e = document.getElementById("FRT_REP_DER_FRENTE");
+            e.checked = false;  
+        var e = document.getElementById("FRT_CAM_DER_GUARDABARROA");
+            e.checked = false;                   
+        var e = document.getElementById("FRT_REP_DER_GUARDABARRO");
+            e.checked = false;  
+        var e = document.getElementById("FRT_CAM_IZQ_GUARDABARRO");
+            e.checked = false;  
+        var e = document.getElementById("FRT_REP_IZQ_GUARDABARRO");
+            e.checked = false;  
+        var e = document.getElementById("FRT_CAM_DER_PARABRISAS");
+            e.checked = false;  
+        var e = document.getElementById("FRT_CAM_DER_PARAGOLPE_ALMA");
+            e.checked = false;       
+        var e = document.getElementById("FRT_CAM_REP_PARAGOLPE_ALMA");
+            e.checked = false;       
+        var e = document.getElementById("FRT_CAM_DER_PARAGOLPE_CTRO");
+            e.checked = false;       
+        var e = document.getElementById("FRT_CAM_REP_PARAGOLPE_CTRO");
+            e.checked = false;       
+        var e = document.getElementById("FRT_CAM_DER_PARAGOLPE_REJILLA");
+            e.checked = false;       
+        var e = document.getElementById("FRT_REP_DER_REJILLA_RADIADOR");
+            e.checked = false;       
             
         var e = document.getElementById("lateral_chk");
             e.checked = false;    
         var e = document.getElementById("lateral_repara");    
-            e.checked = false; 
+            e.innerText = ""; 
         var e = document.getElementById("lateral_cambia");
-            e.checked = false; 
+            e.innerText = ""; 
         
         var e = document.getElementById("lateral");
             e.style.display = "none";      
@@ -489,11 +637,61 @@ bfHTML = """
         text = text + '&VALORPERITO=' + e.value;            
         
         if (document.getElementById('lateral_chk').checked == 0 &&
-            document.getElementById('trasero_chk').checked  == 0  &&
+            document.getElementById('trasero_chk').checked == 0  &&
+            document.getElementById('frente_chk').checked  == 0  &&
             isMoto!="915"){
                 alert('Debe seleccionar elementos de lateral o trasero');
                 return
         }
+        
+        if (document.getElementById('frente_chk').checked){
+            var e=(document.getElementById('FRT_CAM_DER_CAPOT').checked==true)?1:0;
+            var frente=e + '-'; 
+            e=(document.getElementById('FRT_REP_DER_CAPOT').checked==true)?1:0;
+            frente+= e + '-';
+            e=(document.getElementById('FRT_CAM_DER_FARITO').checked==true)?1:0;
+            frente+= e + '-';
+            e=(document.getElementById('FRT_CAM_IZQ_FARITO').checked==true)?1:0;
+            frente+= e + '-';
+            e=(document.getElementById('FRT_CAM_DER_FARO').checked==true)?1:0;
+            frente+= e + '-';
+            e=(document.getElementById('FRT_CAM_IZQ_FARO').checked==true)?1:0;
+            frente+= e + '-';
+            e=(document.getElementById('FRT_CAM_DER_FARO_AUXILIAR').checked==true)?1:0;
+            frente+= e + '-';
+            e=(document.getElementById('FRT_CAM_IZQ_FARO_AUXILIAR').checked==true)?1:0;
+            frente+= e + '-';
+            e=(document.getElementById('FRT_CAM_DER_FRENTE').checked==true)?1:0;
+            frente+= e + '-';
+            e=(document.getElementById('FRT_REP_DER_FRENTE').checked==true)?1:0;
+            frente+= e + '-';
+            e= (document.getElementById('FRT_CAM_DER_GUARDABARROA').checked==true)?1:0;
+            frente+= e + '-';
+            e=(document.getElementById('FRT_REP_DER_GUARDABARRO').checked==true)?1:0;
+            frente+= e + '-';
+            e= (document.getElementById('FRT_CAM_IZQ_GUARDABARRO').checked==true)?1:0;
+            frente+= e + '-';
+            e=(document.getElementById('FRT_REP_IZQ_GUARDABARRO').checked==true)?1:0;
+            frente+= e + '-';
+            e=(document.getElementById('FRT_CAM_DER_PARABRISAS').checked==true)?1:0;
+            frente+= e + '-';
+            e=(document.getElementById('FRT_CAM_DER_PARAGOLPE_ALMA').checked==true)?1:0;
+            frente+= e + '-';
+            e=(document.getElementById('FRT_CAM_REP_PARAGOLPE_ALMA').checked==true)?1:0;
+            frente+= e + '-';
+            e=(document.getElementById('FRT_CAM_DER_PARAGOLPE_CTRO').checked==true)?1:0;
+            frente+= e + '-';
+            e=(document.getElementById('FRT_CAM_REP_PARAGOLPE_CTRO').checked==true)?1:0;
+            frente+= e + '-';
+            e=(document.getElementById('FRT_CAM_DER_PARAGOLPE_REJILLA').checked==true)?1:0;
+            frente+= e + '-';
+            e=(document.getElementById('FRT_REP_DER_REJILLA_RADIADOR').checked==true)?1:0;
+            frente+= e;   
+            text = text + '&FRENTE=' + frente;  
+        }
+        else{
+            text = text + '&FRENTE=0';
+        } 
         if (document.getElementById('lateral_chk').checked){ 
             var e=(document.getElementById('LAT_CAM_DER_CRISTAL_DEL').checked==true)?1:0;
             var lateral=e + '-'; 

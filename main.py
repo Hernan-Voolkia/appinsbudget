@@ -42,6 +42,14 @@ dfSEGMENTO = pd.read_csv('./data/_dfSEGMENTACION_V1.csv',sep=';',encoding='utf-8
 dfVALOR_REPUESTO_MO_Unif = pd.read_csv('./data/_dfVALOR_REPUESTO_ALL_V7.csv',sep=';',encoding='utf-8',decimal='.',parse_dates = ['FECHA'],
                         dtype = {'SEG':'int8','COD_CLASE':'int16','COD_MARCA':'int8','COD_MODELO':'int8', 
                                  'COD_PARTE':'int8','DESC_ELEM':'str','PRECIO_MEAN':'float64','VIEJO':'bool'})
+#VALOR-MO-FRENTE
+dfVALOR_MO_UNIF_FRENTE = pd.read_csv('./data/_dfVALOR_REPARA_MO&PINT_FRENTEV7.csv',sep=';',encoding='utf-8',decimal='.',
+                        dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
+                                 'VALOR_MO_MEAN':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
+                                 'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
+                                 'RATIO_HS_PINT_STD':'float64','CANT_HS_PINT_STD':'float64',
+                                 'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_ST':'float64',
+                                 'ORIG_MAT_PINT_MEAN':'float64','ORIG_MAT_PINT_STD':'float64'})
 #VALOR-MO-TRASERO
 dfVALOR_MO_UNIF_TRASERO = pd.read_csv('./data/_dfVALOR_REPARA_MO&PINT_TRASEROV7.csv',sep=';',encoding='utf-8',decimal='.',
                         dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
@@ -58,6 +66,13 @@ dfVALOR_MO_UNIF_LATERAL = pd.read_csv('./data/_dfVALOR_REPARA_MO&PINT_LATERALV7.
                                  'RATIO_HS_PINT_STD':'float64','CANT_HS_PINT_STD':'float64',
                                  'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_ST':'float64',
                                  'ORIG_MAT_PINT_MEAN':'float64','ORIG_MAT_PINT_STD':'float64'})
+#VALRO-MO-PINT-FRENTE
+dfVALOR_REPUESTO_VALOR_MAT_FRENTE = pd.read_csv('./data/_dfVALOR_REPUESTO_MO&PINT_FRENTEV7.csv',sep=';',encoding='utf-8',decimal='.',
+                        dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
+                                 'VALOR_MO':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
+                                 'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
+                                 'RATIO_HS_PINT_MEAN':'float64','RATIO_HS_PINT_STD':'float64',
+                                 'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_STD':'float64'})
 #VALRO-MO-PINT-TRASERO
 dfVALOR_REPUESTO_VALOR_MAT_TRASERO = pd.read_csv('./data/_dfVALOR_REPUESTO_MO&PINT_TRASEROV7.csv',sep=';',encoding='utf-8',decimal='.',
                         dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
@@ -172,6 +187,44 @@ async def consulta():
     conn.close()
     engine.dispose()  
     
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    conn = engine.connect()
+    result = conn.execute(text('SELECT stname,flvalue FROM admvaluesdel;'))
+    for row in result:
+        if row[0] == 'Del_Paragolpe_Ctro'   : param.bfFrt_GM_Del_Paragolpe_Ctro    = float(row[1])
+        if row[0] == 'Del_Paragolpe_Rejilla': param.bfFrt_GM_Del_Paragolpe_Rejilla = float(row[1])
+        if row[0] == 'Del_Paragolpe_Alma'   : param.bfFrt_GM_Del_Paragolpe_Alma    = float(row[1])
+        if row[0] == 'Del_Rejilla_Radiador' : param.bfFrt_GM_Del_Rejilla_Radiador  = float(row[1])
+        if row[0] == 'Del_Frente'           : param.bfFrt_GM_Del_Frente            = float(row[1])
+        if row[0] == 'Del_Guardabarro'      : param.bfFrt_GM_Del_Guardabarro       = float(row[1])
+        if row[0] == 'Del_Faro'             : param.bfFrt_GM_Del_Faro              = float(row[1])
+        if row[0] == 'Del_Faro_Auxiliar'    : param.bfFrt_GM_Del_Faro_Auxiliar     = float(row[1])
+        if row[0] == 'Del_Farito'           : param.bfFrt_GM_Del_Farito            = float(row[1])
+        if row[0] == 'Del_Capot'            : param.bfFrt_GM_Del_Capot             = float(row[1])
+        if row[0] == 'Del_Parabrisas'       : param.bfFrt_GM_Del_Parabrisas        = float(row[1])
+    conn.close()
+    engine.dispose()  
+
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    conn = engine.connect()
+    result = conn.execute(text('SELECT stname,flvalue FROM admvaluesdelal;'))
+    for row in result:
+        if row[0] == 'Del_Paragolpe_Ctro'   : paramal.bfFrt_GA_Del_Paragolpe_Ctro    = float(row[1])
+        if row[0] == 'Del_Paragolpe_Rejilla': paramal.bfFrt_GA_Del_Paragolpe_Rejilla = float(row[1])
+        if row[0] == 'Del_Paragolpe_Alma'   : paramal.bfFrt_GA_Del_Paragolpe_Alma    = float(row[1])
+        if row[0] == 'Del_Rejilla_Radiador' : paramal.bfFrt_GA_Del_Rejilla_Radiador  = float(row[1])
+        if row[0] == 'Del_Frente'           : paramal.bfFrt_GA_Del_Frente            = float(row[1])
+        if row[0] == 'Del_Guardabarro'      : paramal.bfFrt_GA_Del_Guardabarro       = float(row[1])
+        if row[0] == 'Del_Faro'             : paramal.bfFrt_GA_Del_Faro              = float(row[1])
+        if row[0] == 'Del_Faro_Auxiliar'    : paramal.bfFrt_GA_Del_Faro_Auxiliar     = float(row[1])
+        if row[0] == 'Del_Farito'           : paramal.bfFrt_GA_Del_Farito            = float(row[1])
+        if row[0] == 'Del_Capot'            : paramal.bfFrt_GA_Del_Capot             = float(row[1])
+        if row[0] == 'Del_Parabrisas'       : paramal.bfFrt_GA_Del_Parabrisas        = float(row[1])
+    conn.close()
+    engine.dispose()  
+
     #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
     engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
@@ -814,9 +867,31 @@ def fnCmbLateral(input):
 @app.post("/search", response_class=PlainTextResponse)
     #Segmenta Input
 async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SINIESTRO:str="",\
-                      PERITO:str="",VALORPERITO:str="",LATERAL:str="",TRASERO:str=""):
+                      PERITO:str="",VALORPERITO:str="",FRENTE:str="",LATERAL:str="",TRASERO:str=""):
+    lsFrente  = FRENTE.split('-')
     lsLateral = LATERAL.split('-')
     lsTrasero = TRASERO.split('-')
+
+    ###FRENTE###
+    lsFrenteCambiaElems               = []
+    lsFrenteReparaElems               = []
+    lsFrenteFaritoElemsDel            = []
+    lsFrenteFaroElemsDel              = []
+    lsFrenteFaro_AuxiliarElemsDel     = []
+    lsFrenteParabrisasElemsDel        = []
+    lsFrenteParagolpe_RejillaElemsDel = []
+    lsFrenteRejilla_RadiadorElemsDel  = []
+    
+    flFrtValorReparaAve=0
+    flFrtValorReponeElem=0
+    flFrtValorReponePint=0
+    flFrtValorReponeMoAv=0
+    flFrtValorReponeFarito=0
+    flFrtValorReponeFaro=0 
+    flFrtValorReponeFaro_Auxiliar=0 
+    flFrtValorReponeParabrisas=0 
+    flFrtValorReponeParagolpe_Rejilla=0 
+    flFrtValorReponeRejilla_Radiador=0
     
     ###LATERAL###
     lsLateralCambiaElems = []
@@ -873,8 +948,101 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     #Deteccion de Segmento 
     iSEG = fnSegmento(iCLASE,iMARCA,iMODELO)
     #Output
+    flFrente=0
     flLateral=0
     flTrasero=0
+
+    if '1' in lsFrente:
+        lsFrenteCambiaElems,lsFrenteReparaElems,\
+        lsFrenteFaritoElemsDel,lsFrenteFaroElemsDel,\
+        lsFrenteFaro_AuxiliarElemsDel,lsFrenteParabrisasElemsDel,\
+        lsFrenteParagolpe_RejillaElemsDel,lsFrenteRejilla_RadiadorElemsDel=fnGetFrentelElems(lsFrente)  
+        
+        if len(lsFrenteReparaElems)>0:        
+            lsLatReparaAve=fnReparaFrente(iSEG,iCLASE,lsFrenteReparaElems)
+            if len(lsLatReparaAve) == 0: lsLatReparaAve.append(0)
+            flFrtValorReparaAve = np.round(sum(lsLatReparaAve),2)
+
+        if len(lsFrenteCambiaElems)>0:    
+            lsLatReponeAve=fnCambiaFrente(iSEG,iCLASE,iMARCA,iMODELO,lsFrenteCambiaElems)
+            if len(lsLatReponeAve) == 0: lsLatReponeAve.append(0)
+            flFrtValorReponeElem = np.round(sum(lsLatReponeAve),2)
+            
+            lsLatReponePintAve,lsLatReponeMoAv=fnCambiaPinturaFrente(iSEG,iCLASE,lsFrenteCambiaElems) 
+            if len(lsLatReponePintAve) == 0: lsLatReponePintAve.append(0)
+            flFrtValorReponePint = np.round(sum(lsLatReponePintAve),2)
+            
+            if len(lsLatReponeMoAv)  == 0: lsLatReponeMoAv.append(0)        
+            flFrtValorReponeMoAv = np.round(sum(lsLatReponeMoAv),2)
+        
+        cGAMAALTA = fnAltaGama(iCLASE,iMARCA,iMODELO)
+        
+        if len(lsFrenteFaritoElemsDel)>0:      
+            if cGAMAALTA: flFrtValorReponeFarito = paramal.bfFrt_GA_Del_Farito   
+            else:         flFrtValorReponeFarito = param.bfFrt_GM_Del_Farito
+
+        if len(lsFrenteFaroElemsDel)>0:        
+            if cGAMAALTA: flFrtValorReponeFaro = paramal.bfFrt_GA_Del_Faro   
+            else:         flFrtValorReponeFaro = param.bfFrt_GM_Del_Faro
+
+        if len(lsFrenteFaro_AuxiliarElemsDel)>0:        
+            if cGAMAALTA: flFrtValorReponeFaro_Auxiliar = paramal.bfFrt_GA_Del_Faro_Auxiliar   
+            else:         flFrtValorReponeFaro_Auxiliar = param.bfFrt_GM_Del_Faro_Auxiliar
+
+        if len(lsFrenteParabrisasElemsDel)>0:        
+            if cGAMAALTA: flFrtValorReponeParabrisas = paramal.bfFrt_GA_Del_Parabrisas   
+            else:         flFrtValorReponeParabrisas = param.bfFrt_GM_Del_Parabrisas
+
+        if len(lsFrenteParagolpe_RejillaElemsDel)>0:        
+            if cGAMAALTA: flFrtValorReponeParagolpe_Rejilla = paramal.bfFrt_GA_Del_Paragolpe_Rejilla  
+            else:         flFrtValorReponeParagolpe_Rejilla = param.bfFrt_GM_Del_Paragolpe_Rejilla
+
+        if len(lsFrenteRejilla_RadiadorElemsDel)>0:        
+            if cGAMAALTA: flFrtValorReponeRejilla_Radiador = paramal.bfFrt_GA_Del_Rejilla_Radiador   
+            else:         flFrtValorReponeRejilla_Radiador = param.bfFrt_GM_Del_Rejilla_Radiador
+        
+        flFrente=np.round(flFrtValorReparaAve+flFrtValorReponeElem+flFrtValorReponePint+flFrtValorReponeMoAv+\
+                           flFrtValorReponeFarito+flFrtValorReponeFaro+\
+                           flFrtValorReponeFaro_Auxiliar+flFrtValorReponeParabrisas+\
+                           flFrtValorReponeParagolpe_Rejilla+flFrtValorReponeRejilla_Radiador,2)        
+        
+        lsValuesResult.append(flFrtValorReparaAve)
+        lsValuesResult.append(flFrtValorReponeElem)
+        lsValuesResult.append(flFrtValorReponePint)
+        lsValuesResult.append(flFrtValorReponeMoAv)
+        lsValuesResult.append(flFrtValorReponeFarito)
+        lsValuesResult.append(flFrtValorReponeFaro)
+        lsValuesResult.append(flFrtValorReponeFaro_Auxiliar)
+        lsValuesResult.append(flFrtValorReponeParabrisas)
+        lsValuesResult.append(flFrtValorReponeParagolpe_Rejilla)
+        lsValuesResult.append(flFrtValorReponeRejilla_Radiador)
+        lsValuesResult.append(flFrente)        
+        
+        #print("_Frente Valores Promedio_______________")
+        #print(f"Repara y Pintura  = {flFrtValorReparaAve}")
+        #print(f"flFrtValorReponeElem={flFrtValorReponeElem}")
+        #print(f"flFrtValorReponePint={flFrtValorReponePint}")
+        #print(f"flFrtValorReponeMoAv={flFrtValorReponeMoAv}")
+        #print(f"flFrtValorReponeFarito={flFrtValorReponeFarito}")
+        #print(f"flFrtValorReponeFaro={flFrtValorReponeFaro}")
+        #print(f"flFrtValorReponeFaro_Auxiliar={flFrtValorReponeFaro_Auxiliar}")
+        #print(f"flFrtValorReponeParabrisas={flFrtValorReponeParabrisas}")
+        #print(f"flFrtValorReponeParagolpe_Rejilla={flFrtValorReponeParagolpe_Rejilla}")
+        #print(f"flFrtValorReponeRejilla_Radiador={flFrtValorReponeRejilla_Radiador}")
+    else:
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
+        lsValuesResult.append(0)
 
     if '1' in lsLateral:
         lsLateralCambiaElems,lsLateralReparaElems,\
@@ -1074,13 +1242,16 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     if len(lsLateralCambiaElems) + len(lsLateralReparaElems) + \
        len(lsTraseroCambiaElems) + len(lsTraseroReparaElems) == 1:
         # Agregar en lsValuesResult   
+        if flFrente != 0: 
+            flFrente = flFrente + param.bfMObra
         if flLateral != 0: 
-            flLateral = flLateral + param.bfMObra
+            flLateral = flLateral + param.bfMObra            
         if flTrasero != 0:     
             flTrasero = flTrasero + param.bfMObra
 
-    bfTmp = resumeDataBrief(CLIENTE,flLateral,flTrasero)
-
+    bfTmp = resumeDataBrief(CLIENTE,flFrente,flLateral,flTrasero)
+    print(bfTmp)
+    #Todo: Agregar el Log Frente
     isWrited = fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,TRASERO,lsValuesResult)
     
     return bfTmp
@@ -1101,6 +1272,88 @@ def fnSegmento(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO):
                            (dfSEGMENTO['COD_MODELO'] == inCOD_MODELO)]['SEG'].to_numpy() 
     if len(lsSEG)==0: return 0
     else: return lsSEG[0]
+
+def fnGetFrentelElems(lsFrenteLc):
+    lsFrenteElemsLc = ["CAPOT","FARITO","FARO","FARO_AUXILIAR","FRENTE","GUARDABARRO",
+                       "PARABRISA","PARAGOLPE_ALMA","PARAGOLPE_CTRO","PARAGOLPE_REJILLA","REJILLA_RADIADOR"]
+
+    lsFrenteCambiaVal         = []
+    lsFrenteReparaVal         = []
+    lsFrenteFarito            = []
+    lsFrenteFaro              = []
+    lsFrenteFaro_Auxiliar     = []
+    lsFrenteParabrisas        = []
+    lsFrenteParagolpe_Rejilla = []
+    lsFrenteRejilla_Radiador  = []
+
+    iPosCAPOT=0
+    iPosFARITO=1
+    iPosFARO=2
+    iPosFARO_AUXILIAR=3
+    iPosFRENTE=4
+    iPosGUARDABARRO=5
+    iPosPARABRISA=6
+    iPosPARAGOLPE_ALMA=7
+    iPosPARAGOLPE_CTRO=8
+    iPosPARAGOLPE_REJILLA=9
+    iPosREJILLA_RADIADOR=10
+
+    iPosCAPOTCambiaDer=0
+    iPosCAPOTReparaDer=1
+    iPosFARITOCambiaDer=2
+    iPosFARITOCambiaIzq=3
+    iPosFAROCambiaDer=4
+    iPosFAROCambiaIzq=5
+    iPosFARO_AUXILIARCambiaDer=6
+    iPosFARO_AUXILIARCambiaIzq=7    
+    iPosFRENTECambiaDer=8
+    iPosFRENTEReparaDer=9
+    iPosGUARDABARROCambiaDer=10
+    iPosGUARDABARROReparaDer=11
+    iPosGUARDABARROCambiaIzq=12
+    iPosGUARDABARROReparaIzq=13
+    iPosPARABRISACambiaDer=14
+    iPosPARAGOLPE_ALMACambiaDer=15
+    iPosPARAGOLPE_ALMAReparaDer=16
+    iPosPARAGOLPE_CTROCambiaDer=17
+    iPosPARAGOLPE_CTROReparaDer=18
+    iPosPARAGOLPE_REJILLACambiaDer=19
+    iPosREJILLA_RADIADIRCambiaDer=20
+    
+    lsFrenteCambiaVal.append(lsFrenteElemsLc[iPosCAPOT] if lsFrenteLc[iPosCAPOTCambiaDer]=="1" else "")
+    lsFrenteReparaVal.append(lsFrenteElemsLc[iPosCAPOT] if lsFrenteLc[iPosCAPOTReparaDer]=="1" else "")
+    lsFrenteCambiaVal.append(lsFrenteElemsLc[iPosFRENTE] if lsFrenteLc[iPosFRENTECambiaDer]=="1" else "")
+    lsFrenteReparaVal.append(lsFrenteElemsLc[iPosFRENTE] if lsFrenteLc[iPosFRENTEReparaDer]=="1" else "")
+    lsFrenteCambiaVal.append(lsFrenteElemsLc[iPosGUARDABARRO] if lsFrenteLc[iPosGUARDABARROCambiaDer]=="1" else "")
+    lsFrenteCambiaVal.append(lsFrenteElemsLc[iPosGUARDABARRO] if lsFrenteLc[iPosGUARDABARROCambiaIzq]=="1" else "")
+    lsFrenteReparaVal.append(lsFrenteElemsLc[iPosGUARDABARRO] if lsFrenteLc[iPosGUARDABARROReparaDer]=="1" else "")
+    lsFrenteReparaVal.append(lsFrenteElemsLc[iPosGUARDABARRO] if lsFrenteLc[iPosGUARDABARROReparaIzq]=="1" else "")
+    lsFrenteCambiaVal.append(lsFrenteElemsLc[iPosPARAGOLPE_ALMA] if lsFrenteLc[iPosPARAGOLPE_ALMACambiaDer]=="1" else "")
+    lsFrenteReparaVal.append(lsFrenteElemsLc[iPosPARAGOLPE_ALMA] if lsFrenteLc[iPosPARAGOLPE_ALMAReparaDer]=="1" else "")
+    lsFrenteCambiaVal.append(lsFrenteElemsLc[iPosPARAGOLPE_CTRO] if lsFrenteLc[iPosPARAGOLPE_CTROCambiaDer]=="1" else "")
+    lsFrenteReparaVal.append(lsFrenteElemsLc[iPosPARAGOLPE_CTRO] if lsFrenteLc[iPosPARAGOLPE_CTROReparaDer]=="1" else "")
+    lsFrenteFarito.append(lsFrenteElemsLc[iPosFARITO] if lsFrenteLc[iPosFARITOCambiaDer]=="1" else "")
+    lsFrenteFarito.append(lsFrenteElemsLc[iPosFARITO] if lsFrenteLc[iPosFARITOCambiaIzq]=="1" else "")
+    lsFrenteFaro.append(lsFrenteElemsLc[iPosFARO] if lsFrenteLc[iPosFAROCambiaDer]=="1" else "")
+    lsFrenteFaro.append(lsFrenteElemsLc[iPosFARO] if lsFrenteLc[iPosFAROCambiaIzq]=="1" else "")
+    lsFrenteFaro_Auxiliar.append(lsFrenteElemsLc[iPosFARO_AUXILIAR] if lsFrenteLc[iPosFARO_AUXILIARCambiaDer]=="1" else "")
+    lsFrenteFaro_Auxiliar.append(lsFrenteElemsLc[iPosFARO_AUXILIAR] if lsFrenteLc[iPosFARO_AUXILIARCambiaIzq]=="1" else "")
+    lsFrenteParabrisas.append(lsFrenteElemsLc[iPosPARABRISA] if lsFrenteLc[iPosPARABRISACambiaDer]=="1" else "")
+    lsFrenteParagolpe_Rejilla.append(lsFrenteElemsLc[iPosPARAGOLPE_REJILLA] if lsFrenteLc[iPosPARAGOLPE_REJILLACambiaDer]=="1" else "")
+    lsFrenteRejilla_Radiador.append(lsFrenteElemsLc[iPosREJILLA_RADIADOR] if lsFrenteLc[iPosREJILLA_RADIADIRCambiaDer]=="1" else "")
+    
+    lsFrenteCambiaVal         = [i for i in lsFrenteCambiaVal if i != ""]
+    lsFrenteReparaVal         = [i for i in lsFrenteReparaVal if i != ""]
+    lsFrenteFarito            = [i for i in lsFrenteFarito if i != ""]
+    lsFrenteFaro              = [i for i in lsFrenteFaro if i != ""]
+    lsFrenteFaro_Auxiliar     = [i for i in lsFrenteFaro_Auxiliar if i != ""]
+    lsFrenteParabrisas        = [i for i in lsFrenteParabrisas if i != ""]
+    lsFrenteParagolpe_Rejilla = [i for i in lsFrenteParagolpe_Rejilla if i != ""]
+    lsFrenteRejilla_Radiador  = [i for i in lsFrenteRejilla_Radiador if i != ""]
+    
+    return lsFrenteCambiaVal,lsFrenteReparaVal,lsFrenteFarito,lsFrenteFaro,lsFrenteFaro_Auxiliar,\
+           lsFrenteParabrisas,lsFrenteParagolpe_Rejilla,lsFrenteRejilla_Radiador
+    
     
 def fnGetLateralElems(lsLateralLc):
     lsLateralElemsLc = ["CRISTAL_DEL","CRISTAL_TRA","ESPEJOELEC","ESPEJOMAN","MANIJA_DEL","MANIJA_TRA",
@@ -1504,7 +1757,120 @@ def fnFaroIntTrasero(inCOD_MARCA,inCOD_MODELO):
         lsFaroInt.append(round(flValue,2))   
     
     return lsFaroInt
+#FRENTE#
+def fnReparaFrente(inSEG,inCOD_CLASE,lsRepara):
+    inCOD_PARTE = 1
+    lsReparaAve = []
+    flAverage = 0
+    for index, item in enumerate(lsRepara):
+        bfID_ELEM = dfVALOR_MO_UNIF_FRENTE.loc[(dfVALOR_MO_UNIF_FRENTE['SEG']==inSEG)&
+                                               (dfVALOR_MO_UNIF_FRENTE['COD_CLASE']==inCOD_CLASE)& 
+                                               (dfVALOR_MO_UNIF_FRENTE['COD_PARTE']==inCOD_PARTE)&
+                                (dfVALOR_MO_UNIF_FRENTE['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
+                                                        [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']] 
+                                                                      
+        flVALOR_MO_MEAN      = bfID_ELEM['VALOR_MO_MEAN']
+        flCANT_HS_PINT_MEAN  = bfID_ELEM['CANT_HS_PINT_MEAN'] 
 
+        flVALOR_MO_MEAN       = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2) #Todo: sacar 6350
+        flCANT_HS_PINT_MEAN   = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfMObra),2) #Todo: sacar 6350
+        
+        flAverage = np.round((flVALOR_MO_MEAN + flCANT_HS_PINT_MEAN + bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
+        lsReparaAve.append(flAverage) 
+        
+    for index, item in enumerate(lsReparaAve): lsReparaAve[index]=list(set(item))[0]     
+    
+    return lsReparaAve           
+
+def fnCambiaFrente(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
+    inCOD_PARTE = 1
+    lsReponeAve = []
+    flAverage = 0
+    
+    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfVALOR_REPUESTO_MO_Unif)
+
+    for index, item in enumerate(lsRepone):
+        bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & 
+                                        (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']    == inCOD_CLASE)  & 
+                                        (dfVALOR_REPUESTO_MO_Unif['COD_MARCA']    == inCOD_MARCA)  & 
+                                        (dfVALOR_REPUESTO_MO_Unif['COD_MODELO']   == inCOD_MODELO) &          
+                                        (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  &
+                                        (dfVALOR_REPUESTO_MO_Unif['VIEJO']        == isOld)        & 
+                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']] 
+
+        flAverage = np.round(bfID_ELEM['PRECIO_MEAN'],2)
+        
+        if len(flAverage) == 0:
+            bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & 
+                                            (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']    == inCOD_CLASE)  & 
+                                            (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  &
+                                            (dfVALOR_REPUESTO_MO_Unif['VIEJO']        == isOld)        &
+                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']] 
+            
+            flMean = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)   
+            flAverage = pd.Series([flMean])
+
+            if pd.isna(flAverage.iloc[0]):
+                if fnAltaGama(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO):
+                    if item  =="CAPOT"          :flAverage.iloc[0]=paramal.bfFrt_GA_Del_Capot
+                    elif item=="FRENTE"         :flAverage.iloc[0]=paramal.bfFrt_GA_Del_Frente
+                    elif item=="GUARDABARRO"    :flAverage.iloc[0]=paramal.bfFrt_GA_Del_Guardabarro
+                    elif item=="PARAGOLPE_ALMA" :flAverage.iloc[0]=paramal.bfFrt_GA_Del_Paragolpe_Alma
+                    elif item=="PARAGOLPE_CTRO" :flAverage.iloc[0]=paramal.bfFrt_GA_Del_Paragolpe_Ctro
+                    else: flAverage.iloc[0] = 0
+                else:    
+                    if item  =="CAPOT"          :flAverage.iloc[0]=param.bfFrt_GM_Del_Capot
+                    elif item=="FRENTE"         :flAverage.iloc[0]=param.bfFrt_GM_Del_Frente
+                    elif item=="GUARDABARRO"    :flAverage.iloc[0]=param.bfFrt_GM_Del_Guardabarro
+                    elif item=="PARAGOLPE_ALMA" :flAverage.iloc[0]=param.bfFrt_GM_Del_Paragolpe_Alma
+                    elif item=="PARAGOLPE_CTRO" :flAverage.iloc[0]=param.bfFrt_GM_Del_Paragolpe_Ctro
+                    else: flAverage.iloc[0] = 0
+        
+        if len(flAverage) == 0: flAverage = [0]
+
+        lsReponeAve.append(flAverage)
+        
+    for index, item in enumerate(lsReponeAve): lsReponeAve[index] = list(set(item))[0]     
+    
+    return lsReponeAve
+
+def fnCambiaPinturaFrente(inSEG,inCOD_CLASE,lsRepone):
+    inCOD_PARTE = 1
+    lsReponePintAve = []
+    lsReponeMoAv    = []
+    
+    flAverage = 0
+    flMoAv    = 0
+    
+    for index, item in enumerate(lsRepone):
+        bfID_ELEM = dfVALOR_REPUESTO_VALOR_MAT_FRENTE.loc[(dfVALOR_REPUESTO_VALOR_MAT_FRENTE['SEG']==inSEG) & 
+                                             (dfVALOR_REPUESTO_VALOR_MAT_FRENTE['COD_CLASE']==inCOD_CLASE) & 
+                                             (dfVALOR_REPUESTO_VALOR_MAT_FRENTE['COD_PARTE']==inCOD_PARTE) &
+                        (dfVALOR_REPUESTO_VALOR_MAT_FRENTE['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
+                                                             [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']] 
+        
+        flVALOR_MO_MEAN = bfID_ELEM['VALOR_MO_MEAN']
+        flVALOR_MO_MEAN = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2) #Todo: Para simplificar y no procesar todo
+        
+        flCANT_HS_PINT_MEAN = bfID_ELEM['CANT_HS_PINT_MEAN']
+        flCANT_HS_PINT_MEAN = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfPintura),2) #Todo: Para simplificar y no procesar todo
+
+        flAverage = np.round((flCANT_HS_PINT_MEAN+bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
+        
+        flMoAv  = np.round(flVALOR_MO_MEAN,2) 
+
+        if len(flAverage) == 0: flAverage = [0]
+        lsReponePintAve.append(flAverage) 
+        if len(flMoAv) == 0: flMoAv = [0]
+        lsReponeMoAv.append(flMoAv) 
+        
+    for index, item in enumerate(lsReponePintAve): lsReponePintAve[index] = list(set(item))[0]     
+    
+    for index, item in enumerate(lsReponeMoAv): lsReponeMoAv[index] = list(set(item))[0]      
+
+    return lsReponePintAve,lsReponeMoAv
+
+#LATERAL#
 def fnEspejoLateralElec(inCOD_MARCA,inCOD_MODELO):
     espElec = ['ESPEJO ELECTRICO']
     lsVersion = ['1','2','3','4','5'] 
@@ -1858,11 +2224,11 @@ def fnCambiaPinturaLateral(inSEG,inCOD_CLASE,lsRepone):
     return lsReponePintAve,lsReponeMoAv
 
 ##################################################
-def resumeDataBrief(intCLIENTE,fltLateral,fltTrasero):
+def resumeDataBrief(intCLIENTE,fltFrente,fltLateral,fltTrasero):
     intClientType = 2
     if intCLIENTE.isnumeric(): intClientType = int(intCLIENTE)
     
-    ftSum = (fltLateral + fltTrasero) * float(param.bfAjuste)
+    ftSum = (fltFrente + fltLateral + fltTrasero) * float(param.bfAjuste)
     
     if intClientType == 1: ftSum *= float(param.bfAsegurado)
     else                 : ftSum *= float(param.bfTercero)

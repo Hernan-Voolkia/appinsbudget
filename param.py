@@ -5,6 +5,18 @@ bfMObra = 18250
 bfMOMinimo = 9150
 bfPintura = 22500
 bfAjuste = 1
+#FrenteGM
+bfFrt_GM_Del_Paragolpe_Ctro = 1
+bfFrt_GM_Del_Paragolpe_Rejilla = 1
+bfFrt_GM_Del_Paragolpe_Alma = 1
+bfFrt_GM_Del_Rejilla_Radiador = 1
+bfFrt_GM_Del_Frente = 1
+bfFrt_GM_Del_Guardabarro = 1
+bfFrt_GM_Del_Faro = 1
+bfFrt_GM_Del_Faro_Auxiliar = 1
+bfFrt_GM_Del_Farito = 1
+bfFrt_GM_Del_Capot = 1
+bfFrt_GM_Del_Parabrisas = 1
 #Lateral
 bfLat_Cristal_Delantero = 1
 bfLat_Cristal_Trasero = 1
@@ -16,8 +28,6 @@ bfLat_Moldura_Pta_Del = 1
 bfLat_Moldura_Pta_Tras = 1
 bfLat_Puerta_Delantera = 1
 bfLat_Puerta_Trasera = 1
-bfLat_Puerta_Panel_Del = 1
-bfLat_Puerta_Panel_Tras = 1
 bfLat_Zocalo = 1
 #Trasero
 bfBaul_Porton = 1
@@ -27,4 +37,5 @@ bfGuardabarro = 1
 bfLuneta = 1
 bfMoldura = 1
 bfPanel_Cola = 1
+bfPanel_Sup = 1
 bfParagolpe = 1
