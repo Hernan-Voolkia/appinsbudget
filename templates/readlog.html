@@ -53,9 +53,12 @@
                 <li class="nav-item dropdown">
                     <a href="#" id="menuLink1" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Repuestos</a>
                     <ul class="dropdown-menu">
-                        <li><a href="#" id="btnDelantero" class="dropdown-item">Delantero</a></li>
-                        <li><a href="#" id="btnLateral" class="dropdown-item">Lateral</a></li>
-                        <li><a href="#" id="btnTrasero" class="dropdown-item">Trasero</a></li>
+                        <li><a href="#" id="btnDelanteroag" class="pure-menu-link">Delantero GA</a></li>
+                        <li><a href="#" id="btnDelantero" class="pure-menu-link">Delantero GM</a></li>
+                        <li><a href="#" id="btnLateralag" class="pure-menu-link">Lateral GA</a></li>
+                        <li><a href="#" id="btnLateral" class="pure-menu-link">Lateral GM</a></li>
+                        <li><a href="#" id="btnTraseroag" class="pure-menu-link">Trasero GA</a></li>
+                        <li><a href="#" id="btnTrasero" class="pure-menu-link">Trasero GM</a></li>
                     </ul>
                 </li>
             </ul>
@@ -209,13 +212,29 @@
         event.preventDefault(); 
         window.location.href =  "/admvalue"; 
     });
+    document.getElementById("btnDelantero").addEventListener("click", function(event) {
+        event.preventDefault();
+        window.location.href =  "/admrepdel";
+    });
+    document.getElementById("btnDelanteroag").addEventListener("click", function(event) {
+        event.preventDefault();
+        window.location.href =  "/admrepdelag";
+    });
     document.getElementById("btnLateral").addEventListener("click", function(event) {
-        event.preventDefault(); 
-        window.location.href =  "/admreplat"; 
+        event.preventDefault();
+        window.location.href =  "/admreplat";
+    });
+    document.getElementById("btnLateralag").addEventListener("click", function(event) {
+        event.preventDefault();
+        window.location.href =  "/admreplatag";
     });
     document.getElementById("btnTrasero").addEventListener("click", function(event) {
-        event.preventDefault(); 
-        window.location.href =  "/admreptra"; 
+        event.preventDefault();
+        window.location.href =  "/admreptra";
+    });
+    document.getElementById("btnTraseroag").addEventListener("click", function(event) {
+        event.preventDefault();
+        window.location.href =  "/admreptraag";
     });
 </script>
 </body>

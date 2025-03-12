@@ -52,10 +52,10 @@
                             <li class="pure-menu-item"></li>
                                 <a href="#" id="btnDelantero" class="pure-menu-link">Delantero GM</a>
                             </li>
-                            <li class="pure-menu-item">
+                            <li class="pure-menu-item pure-menu-selected">
                                 <a href="#" id="btnLateralag" class="pure-menu-link">Lateral GA</a>
                             </li>
-                            <li class="pure-menu-item pure-menu-selected">
+                            <li class="pure-menu-item">
                                 <a href="#" id="btnLateral" class="pure-menu-link">Lateral GM</a>
                             </li>
                             <li class="pure-menu-item">
@@ -78,7 +78,7 @@
              <p class="vertical-text"
                 style="margin-left:auto;margin-right:auto;display:block;
                        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-                       color:#005993;text-align:center; font-size: 25px;" >Repuestos Laterales<br>Gama Media</p>
+                       color:#005993;text-align:center; font-size: 25px;">Repuestos Laterales<br>Gama Alta</p>
         </div> 
         <div class="pure-u-1 pure-u-md-7-24"> <!--<div class="pure-u-1 pure-u-md-3-5">-->
             <form class="pure-form pure-form-stacked">
@@ -159,29 +159,29 @@
         window.location.href =  "/admvalue"; 
     });
     document.getElementById("btnDelantero").addEventListener("click", function(event) {
-        event.preventDefault();
-        window.location.href =  "/admrepdel";
+        event.preventDefault(); 
+        window.location.href =  "/admrepdel"; 
     });
     document.getElementById("btnDelanteroag").addEventListener("click", function(event) {
-        event.preventDefault();
-        window.location.href =  "/admrepdelag";
-    });
+        event.preventDefault(); 
+        window.location.href =  "/admrepdelag"; 
+    });    
     document.getElementById("btnLateral").addEventListener("click", function(event) {
-        event.preventDefault();
-        window.location.href =  "/admreplat";
+        event.preventDefault(); 
+        window.location.href =  "/admreplat"; 
     });
     document.getElementById("btnLateralag").addEventListener("click", function(event) {
-        event.preventDefault();
-        window.location.href =  "/admreplatag";
-    });
+        event.preventDefault(); 
+        window.location.href =  "/admreplatag"; 
+    });    
     document.getElementById("btnTrasero").addEventListener("click", function(event) {
-        event.preventDefault();
-        window.location.href =  "/admreptra";
+        event.preventDefault(); 
+        window.location.href =  "/admreptra"; 
     });
     document.getElementById("btnTraseroag").addEventListener("click", function(event) {
-        event.preventDefault();
-        window.location.href =  "/admreptraag";
-    });
+        event.preventDefault(); 
+        window.location.href =  "/admreptraag"; 
+    });    
     function fnRtnConsulta(){  
         var protocolo = window.location.protocol;
         var hostname = window.location.hostname;
