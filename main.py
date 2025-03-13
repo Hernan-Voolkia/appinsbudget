@@ -113,8 +113,8 @@ dfMANIJA = pd.read_csv('./data/PuertaManijaSedanValueMin.csv',sep=';',encoding='
                                 'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
                                 'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
 #DBVALUES
-engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-#engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+#engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
 conn = engine.connect()
 result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
 for row in result:
@@ -154,8 +154,8 @@ async def modelo(CLASE:int=901, MARCA:int=0):
 @app.get("/consulta", response_class=HTMLResponse)
 async def consulta():
     #DBVALUES
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
     for row in result:
@@ -168,8 +168,8 @@ async def consulta():
     conn.close()
     engine.dispose()    
 
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text('SELECT stname,flvalue FROM admvalueslat;'))
     for row in result:
@@ -187,8 +187,27 @@ async def consulta():
     conn.close()
     engine.dispose()  
     
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    conn = engine.connect()
+    result = conn.execute(text('SELECT stname,flvalue FROM admvalueslatal;'))
+    for row in result:
+        if row[0] == 'Lat_Cristal_Delantero': paramal.bfLat_Cristal_Delantero = float(row[1])
+        if row[0] == 'Lat_Cristal_Trasero':   paramal.bfLat_Cristal_Trasero   = float(row[1])
+        if row[0] == 'Lat_Espejo_Electrico':  paramal.bfLat_Espejo_Electrico  = float(row[1])
+        if row[0] == 'Lat_Espejo_Manual':     paramal.bfLat_Espejo_Manual     = float(row[1])
+        if row[0] == 'Lat_Manija_Pta_Del':    paramal.bfLat_Manija_Pta_Del    = float(row[1])
+        if row[0] == 'Lat_Manija_Pta_Tras':   paramal.bfLat_Manija_Pta_Tras   = float(row[1])
+        if row[0] == 'Lat_Moldura_Pta_Del':   paramal.bfLat_Moldura_Pta_Del   = float(row[1])
+        if row[0] == 'Lat_Moldura_Pta_Tras':  paramal.bfLat_Moldura_Pta_Tras  = float(row[1])
+        if row[0] == 'Lat_Puerta_Delantera':  paramal.bfLat_Puerta_Delantera  = float(row[1])
+        if row[0] == 'Lat_Puerta_Trasera':    paramal.bfLat_Puerta_Trasera    = float(row[1])
+        if row[0] == 'Lat_Zocalo':            paramal.bfLat_Zocalo            = float(row[1])
+    conn.close()
+    engine.dispose() 
+    
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text('SELECT stname,flvalue FROM admvaluesdel;'))
     for row in result:
@@ -206,8 +225,8 @@ async def consulta():
     conn.close()
     engine.dispose()  
 
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text('SELECT stname,flvalue FROM admvaluesdelal;'))
     for row in result:
@@ -225,8 +244,8 @@ async def consulta():
     conn.close()
     engine.dispose()  
 
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text('SELECT * FROM admvaluestra;'))
     for row in result:
@@ -241,10 +260,10 @@ async def consulta():
     conn.close()
     engine.dispose()
 
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
-    result = conn.execute(text('SELECT * FROM admvaluestra;'))
+    result = conn.execute(text('SELECT * FROM admvaluestraal;'))
     for row in result:
         if row[0] == 'Baul_Porton': paramal.bfBaul_Porton = float(row[1])
         if row[0] == 'Faro_Ext'   : paramal.bfFaro_Ext    = float(row[1])
@@ -263,8 +282,8 @@ async def consulta():
 async def adminValues():
     #DBVALUES
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
         for row in result:
@@ -298,8 +317,8 @@ async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:
     #DBVALUES
     bfMsg = "Valores grabados satisfactoriamente" 
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
+       #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+       engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvalue SET flValue =' + str(TERCERO).replace(',','.') + ' WHERE stName=\'Tercero\''))
        result = conn.execute(text('UPDATE admvalue SET flValue =' + str(ASEGURADO).replace(',','.') + ' WHERE stName=\'Asegurado\''))
@@ -331,8 +350,8 @@ async def admreplat(request: Request):
                "Lat_Zocalo":"Zocalo","Lat_Zocalo_Val":0.0,
                "MensajeRetorno":""}
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalueslat;'))
         for row in result:
@@ -371,8 +390,8 @@ async def admreplatag(request: Request):
                "Lat_Zocalo":"Zocalo","Lat_Zocalo_Val":0.0,
                "MensajeRetorno":""}
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalueslatal;'))
         for row in result:
@@ -402,8 +421,8 @@ async def admvalueslat(request: Request, Lat_Cristal_Delantero:str="",Lat_Crista
     
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+       #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+       engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
        conn = engine.connect()
 
        result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName="Lat_Cristal_Delantero"'))
@@ -439,10 +458,9 @@ async def admreptra(request: Request):
                "Paragolpe":"Paragolpe","Paragolpe_Val":0.0,
                "MensajeRetorno":""
                }
-    
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluestra;'))
         for row in result:
@@ -474,10 +492,9 @@ async def admreptraag(request: Request):
                "Paragolpe":"Paragolpe","Paragolpe_Val":0.0,
                "MensajeRetorno":""
                }
-    
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluestraal;'))
         for row in result:
@@ -513,8 +530,8 @@ async def admrepdel(request: Request):
                "MensajeRetorno":""
                }
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluesdel;'))
         for row in result:
@@ -552,8 +569,8 @@ async def admrepdelag(request: Request):
                "MensajeRetorno":""
                }
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluesdelal;'))
         for row in result:
@@ -579,8 +596,8 @@ async def admvaluestra(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Guarda
                       Moldura:str="",Panel_Cola:str="",Paragolpe:str=""):
     bfMsg = "Valores grabados satisfactoriamente" 
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
+       #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+       engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
        conn = engine.connect()
        
        result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName="Baul_Porton"'))
@@ -603,8 +620,8 @@ async def admvaluestra(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Guarda
 @app.get("/dbCreateLog", response_class=HTMLResponse)
 async def dbCreateLog():
     bfValue = "bfHTMLdbCreateLog finalizado satisfactoriamente"
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
         conn.execute(text('''CREATE TABLE  IF NOT EXISTS 'logpresupuestosV1' (
@@ -656,8 +673,8 @@ async def dbCreateLog():
 @app.get("/dbCreateAdminValue", response_class=HTMLResponse)
 async def dbcreateAdminValue():
     bfValue = "dbCreateAdminValue finalizado satisfactoriamente"
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
         conn.execute(text('''CREATE TABLE IF NOT EXISTS 'admvalue' (
@@ -678,8 +695,8 @@ async def dbcreateAdminValue():
 @app.get("/dbDropAdminValue", response_class=HTMLResponse)
 async def dbDropAdminValue():
     bfValue = "dbDropAdminValue finalizado satisfactoriamente"
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
         conn.execute(text('''DROP TABLE admvalue;'''))
@@ -693,8 +710,8 @@ async def dbDropAdminValue():
 @app.get("/dbInsertAdminValue", response_class=HTMLResponse)
 async def dbInsertAdminValue():
     bfValue = "dbInsertAdminValue finalizado satisfactoriamente"
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
         result = conn.execute(text('''INSERT INTO admvalue (stname, flvalue) VALUES ('Asegurado',1);'''))
@@ -713,8 +730,8 @@ async def dbInsertAdminValue():
 @app.get("/dbreadAdmin", response_class=PlainTextResponse)
 async def dbreadAdmin():
     lsResult = []
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
         result = conn.execute(text('''SELECT stname,flvalue FROM admvalue;'''))
@@ -740,8 +757,8 @@ async def dbRead(request: Request):
                "reparatrasero":'',"cambiatrasero":'',
                "reparalateral":'',"cambialateral":''}
     
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
         result = conn.execute(text('''SELECT * FROM logpresupuestosV1;'''))
@@ -871,7 +888,6 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     lsFrente  = FRENTE.split('-')
     lsLateral = LATERAL.split('-')
     lsTrasero = TRASERO.split('-')
-
     ###FRENTE###
     lsFrenteCambiaElems               = []
     lsFrenteReparaElems               = []
@@ -881,7 +897,6 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     lsFrenteParabrisasElemsDel        = []
     lsFrenteParagolpe_RejillaElemsDel = []
     lsFrenteRejilla_RadiadorElemsDel  = []
-    
     flFrtValorReparaAve=0
     flFrtValorReponeElem=0
     flFrtValorReponePint=0
@@ -892,7 +907,6 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     flFrtValorReponeParabrisas=0 
     flFrtValorReponeParagolpe_Rejilla=0 
     flFrtValorReponeRejilla_Radiador=0
-    
     ###LATERAL###
     lsLateralCambiaElems = []
     lsLateralReparaElems = []
@@ -904,7 +918,6 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     lsLateralManijaElemsTra= []
     lsLateralCristalElemDel= []
     lsLateralCristalElemTra= []
-    
     flLatValorReparaAve=0
     flLatValorReponeElem=0
     flLatValorReponePint=0
@@ -917,14 +930,12 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     flLatValorReponeManTra=0
     flLatValorReponeCriDel=0
     flLatValorReponeCriTra=0
-    
     ###TRASERO###
     lsTraseroCambiaElems = []
     lsTraseroReparaElems = []
     lsTraseroMolduraElems= []
     lsTraseroFaroExtElems= []
     lsTraseroFaroIntElems= []
-    
     ###RESULT###
     lsValuesResult = []
     
@@ -945,8 +956,9 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     if CLASE.isdigit(): iCLASE = int(CLASE)
     if MARCA.isdigit(): iMARCA = int(MARCA)
     if MODELO.isdigit():iMODELO= int(MODELO)
-    #Deteccion de Segmento 
+    #Deteccion de Segmento y Gama
     iSEG = fnSegmento(iCLASE,iMARCA,iMODELO)
+    isAlta = fnAltaGama(CLASE,MARCA,MODELO)
     #Output
     flFrente=0
     flLateral=0
@@ -964,7 +976,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
             flFrtValorReparaAve = np.round(sum(lsLatReparaAve),2)
 
         if len(lsFrenteCambiaElems)>0:    
-            lsLatReponeAve=fnCambiaFrente(iSEG,iCLASE,iMARCA,iMODELO,lsFrenteCambiaElems)
+            lsLatReponeAve=fnCambiaFrente(iSEG,iCLASE,iMARCA,iMODELO,lsFrenteCambiaElems,isAlta)
             if len(lsLatReponeAve) == 0: lsLatReponeAve.append(0)
             flFrtValorReponeElem = np.round(sum(lsLatReponeAve),2)
             
@@ -975,36 +987,33 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
             if len(lsLatReponeMoAv)  == 0: lsLatReponeMoAv.append(0)        
             flFrtValorReponeMoAv = np.round(sum(lsLatReponeMoAv),2)
         
-        cGAMAALTA = fnAltaGama(iCLASE,iMARCA,iMODELO)
-        
         if len(lsFrenteFaritoElemsDel)>0:      
-            if cGAMAALTA: flFrtValorReponeFarito = paramal.bfFrt_GA_Del_Farito   
-            else:         flFrtValorReponeFarito = param.bfFrt_GM_Del_Farito
+            if isAlta: flFrtValorReponeFarito = paramal.bfFrt_GA_Del_Farito   
+            else:      flFrtValorReponeFarito = param.bfFrt_GM_Del_Farito
 
         if len(lsFrenteFaroElemsDel)>0:        
-            if cGAMAALTA: flFrtValorReponeFaro = paramal.bfFrt_GA_Del_Faro   
-            else:         flFrtValorReponeFaro = param.bfFrt_GM_Del_Faro
+            if isAlta: flFrtValorReponeFaro = paramal.bfFrt_GA_Del_Faro   
+            else:      flFrtValorReponeFaro = param.bfFrt_GM_Del_Faro
 
         if len(lsFrenteFaro_AuxiliarElemsDel)>0:        
-            if cGAMAALTA: flFrtValorReponeFaro_Auxiliar = paramal.bfFrt_GA_Del_Faro_Auxiliar   
-            else:         flFrtValorReponeFaro_Auxiliar = param.bfFrt_GM_Del_Faro_Auxiliar
+            if isAlta: flFrtValorReponeFaro_Auxiliar = paramal.bfFrt_GA_Del_Faro_Auxiliar   
+            else:      flFrtValorReponeFaro_Auxiliar = param.bfFrt_GM_Del_Faro_Auxiliar
 
         if len(lsFrenteParabrisasElemsDel)>0:        
-            if cGAMAALTA: flFrtValorReponeParabrisas = paramal.bfFrt_GA_Del_Parabrisas   
-            else:         flFrtValorReponeParabrisas = param.bfFrt_GM_Del_Parabrisas
+            if isAlta: flFrtValorReponeParabrisas = paramal.bfFrt_GA_Del_Parabrisas   
+            else:      flFrtValorReponeParabrisas = param.bfFrt_GM_Del_Parabrisas
 
         if len(lsFrenteParagolpe_RejillaElemsDel)>0:        
-            if cGAMAALTA: flFrtValorReponeParagolpe_Rejilla = paramal.bfFrt_GA_Del_Paragolpe_Rejilla  
-            else:         flFrtValorReponeParagolpe_Rejilla = param.bfFrt_GM_Del_Paragolpe_Rejilla
+            if isAlta: flFrtValorReponeParagolpe_Rejilla = paramal.bfFrt_GA_Del_Paragolpe_Rejilla  
+            else:      flFrtValorReponeParagolpe_Rejilla = param.bfFrt_GM_Del_Paragolpe_Rejilla
 
         if len(lsFrenteRejilla_RadiadorElemsDel)>0:        
-            if cGAMAALTA: flFrtValorReponeRejilla_Radiador = paramal.bfFrt_GA_Del_Rejilla_Radiador   
-            else:         flFrtValorReponeRejilla_Radiador = param.bfFrt_GM_Del_Rejilla_Radiador
+            if isAlta: flFrtValorReponeRejilla_Radiador = paramal.bfFrt_GA_Del_Rejilla_Radiador   
+            else:      flFrtValorReponeRejilla_Radiador = param.bfFrt_GM_Del_Rejilla_Radiador
         
         flFrente=np.round(flFrtValorReparaAve+flFrtValorReponeElem+flFrtValorReponePint+flFrtValorReponeMoAv+\
-                           flFrtValorReponeFarito+flFrtValorReponeFaro+\
-                           flFrtValorReponeFaro_Auxiliar+flFrtValorReponeParabrisas+\
-                           flFrtValorReponeParagolpe_Rejilla+flFrtValorReponeRejilla_Radiador,2)        
+                          flFrtValorReponeFarito+flFrtValorReponeFaro+flFrtValorReponeFaro_Auxiliar+flFrtValorReponeParabrisas+\
+                          flFrtValorReponeParagolpe_Rejilla+flFrtValorReponeRejilla_Radiador,2)        
         
         lsValuesResult.append(flFrtValorReparaAve)
         lsValuesResult.append(flFrtValorReponeElem)
@@ -1017,18 +1026,6 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(flFrtValorReponeParagolpe_Rejilla)
         lsValuesResult.append(flFrtValorReponeRejilla_Radiador)
         lsValuesResult.append(flFrente)        
-        
-        #print("_Frente Valores Promedio_______________")
-        #print(f"Repara y Pintura  = {flFrtValorReparaAve}")
-        #print(f"flFrtValorReponeElem={flFrtValorReponeElem}")
-        #print(f"flFrtValorReponePint={flFrtValorReponePint}")
-        #print(f"flFrtValorReponeMoAv={flFrtValorReponeMoAv}")
-        #print(f"flFrtValorReponeFarito={flFrtValorReponeFarito}")
-        #print(f"flFrtValorReponeFaro={flFrtValorReponeFaro}")
-        #print(f"flFrtValorReponeFaro_Auxiliar={flFrtValorReponeFaro_Auxiliar}")
-        #print(f"flFrtValorReponeParabrisas={flFrtValorReponeParabrisas}")
-        #print(f"flFrtValorReponeParagolpe_Rejilla={flFrtValorReponeParagolpe_Rejilla}")
-        #print(f"flFrtValorReponeRejilla_Radiador={flFrtValorReponeRejilla_Radiador}")
     else:
         lsValuesResult.append(0)
         lsValuesResult.append(0)
@@ -1057,7 +1054,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
             flLatValorReparaAve = np.round(sum(lsLatReparaAve),2)
 
         if len(lsLateralCambiaElems)>0:
-            lsLatReponeAve=fnCambiaLateral(iSEG,iCLASE,iMARCA,iMODELO,lsLateralCambiaElems)
+            lsLatReponeAve=fnCambiaLateral(iSEG,iCLASE,iMARCA,iMODELO,lsLateralCambiaElems,isAlta)
             if len(lsLatReponeAve) == 0: lsLatReponeAve.append(0)
             flLatValorReponeElem = np.round(sum(lsLatReponeAve),2)
 
@@ -1068,57 +1065,56 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
             flLatValorReponeMoAv = np.round(sum(lsLatReponeMoAv),2)
 
         if len(lsLateralMolduraElemsDel)>0:
-            lsLatMeanMod = fnMolduraLateralDel(iMARCA,iMODELO)
+            lsLatMeanMod = fnMolduraLateralDel(iMARCA,iMODELO,isAlta)
             if len(lsLatMeanMod) == 0: lsLatMeanMod.append(0)   
             flLatValorReponeMolduraDel = np.round(lsLatMeanMod[0],2)
-            if len(lsLateralMolduraElemsDel)== 2: flLatValorReponeMolduraDel*=2 # Si se reponen las dos molduras
+            if len(lsLateralMolduraElemsDel)== 2: flLatValorReponeMolduraDel*=2
 
         if len(lsLateralMolduraElemsTra)>0:
-            lsLatMeanMod = fnMolduraLateralTra(iMARCA,iMODELO)
+            lsLatMeanMod = fnMolduraLateralTra(iMARCA,iMODELO,isAlta)
             if len(lsLatMeanMod) == 0: lsLatMeanMod.append(0) 
             flLatValorReponeMolduraTra = np.round(lsLatMeanMod[0],2) 
-            if len(lsLateralMolduraElemsTra)== 2: flLatValorReponeMolduraTra*=2 # Si se reponen las dos molduras
+            if len(lsLateralMolduraElemsTra)== 2: flLatValorReponeMolduraTra*=2
         
         if len(lsLateralEspejoElecElems)>0:
-            lsLatMeanEsp = fnEspejoLateralElec(iMARCA,iMODELO)
+            lsLatMeanEsp = fnEspejoLateralElec(iMARCA,iMODELO,isAlta)
             if len(lsLatMeanEsp) == 0: lsLatMeanEsp.append(0)    
             flLatValorReponeEspejoElec = np.round(lsLatMeanEsp[0],2)
-            if len(lsLateralEspejoElecElems) >1: flLatValorReponeEspejoElec*=2 # Si se reponen los dos espejos
+            if len(lsLateralEspejoElecElems) >1: flLatValorReponeEspejoElec*=2
 
         if len(lsLateralEspejoManElems)>0:
-            lsLatMeanEsp = fnEspejoLateralMan(iMARCA,iMODELO)
+            lsLatMeanEsp = fnEspejoLateralMan(iMARCA,iMODELO,isAlta)
             if len(lsLatMeanEsp) == 0: lsLatMeanEsp.append(0)    
             flLatValorReponeEspejoMan = np.round(lsLatMeanEsp[0],2)
-            if len(lsLateralEspejoManElems) >1: flLatValorReponeEspejoMan*=2 # Si se reponen los dos espejos
+            if len(lsLateralEspejoManElems) >1: flLatValorReponeEspejoMan*=2
 
         if len(lsLateralManijaElemsDel)>0:
-            lsLatMeanManDel = fnManijaLateralDel(iMARCA,iMODELO)
+            lsLatMeanManDel = fnManijaLateralDel(iMARCA,iMODELO,isAlta)
             if len(lsLatMeanManDel) == 0: lsLatMeanManDel.append(0)    
             flLatValorReponeManDel = np.round(lsLatMeanManDel[0],2)
-            if len(lsLateralManijaElemsDel) >1: flLatValorReponeManDel*=2 # Si se reponen los dos espejos
+            if len(lsLateralManijaElemsDel) >1: flLatValorReponeManDel*=2
 
         if len(lsLateralManijaElemsTra)>0:
-            lsLatMeanManTra = fnManijaLateralTra(iMARCA,iMODELO)
+            lsLatMeanManTra = fnManijaLateralTra(iMARCA,iMODELO,isAlta)
             if len(lsLatMeanManTra) == 0: lsLatMeanManTra.append(0)    
             flLatValorReponeManTra = np.round(lsLatMeanManTra[0],2)
-            if len(lsLateralManijaElemsTra) >1: flLatValorReponeManTra*=2 # Si se reponen los dos espejos
+            if len(lsLateralManijaElemsTra) >1: flLatValorReponeManTra*=2
 
         if len(lsLateralCristalElemDel)>0:
-            lsLatMeanCriDel = fnCristalLateralDel(iMARCA,iMODELO)
+            lsLatMeanCriDel = fnCristalLateralDel(iMARCA,iMODELO,isAlta)
             if len(lsLatMeanCriDel) == 0: lsLatMeanCriDel.append(0)    
             flLatValorReponeCriDel = np.round(lsLatMeanCriDel[0],2)
-            if len(lsLateralCristalElemDel) >1: flLatValorReponeCriDel*=2 # Si se reponen los dos espejos
+            if len(lsLateralCristalElemDel) >1: flLatValorReponeCriDel*=2
 
         if len(lsLateralCristalElemTra)>0:
-            lsLatMeanCriTra = fnCristalLateralTra(iMARCA,iMODELO)
+            lsLatMeanCriTra = fnCristalLateralTra(iMARCA,iMODELO,isAlta)
             if len(lsLatMeanCriTra) == 0: lsLatMeanCriTra.append(0)    
             flLatValorReponeCriTra = np.round(lsLatMeanCriTra[0],2)
-            if len(lsLateralCristalElemTra) >1: flLatValorReponeCriTra*=2 # Si se reponen los dos espejos
+            if len(lsLateralCristalElemTra) >1: flLatValorReponeCriTra*=2
 
         flLateral=np.round(flLatValorReparaAve+flLatValorReponeElem+flLatValorReponePint+flLatValorReponeMoAv+\
-                           flLatValorReponeEspejoElec+flLatValorReponeEspejoMan+\
-                           flLatValorReponeManDel+flLatValorReponeManTra+\
-                           flLatValorReponeMolduraDel+flLatValorReponeMolduraTra+\
+                           flLatValorReponeEspejoElec+flLatValorReponeEspejoMan+flLatValorReponeManDel+\
+                           flLatValorReponeManTra+flLatValorReponeMolduraDel+flLatValorReponeMolduraTra+\
                            flLatValorReponeCriDel+flLatValorReponeCriTra,2)
    
         lsValuesResult.append(flLatValorReparaAve)
@@ -1134,21 +1130,6 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(flLatValorReponeCriDel)
         lsValuesResult.append(flLatValorReponeCriTra)
         lsValuesResult.append(flLateral)
-
-        #print("_Lateral Valores Promedio_______________")
-        #print(f"Repara y Pintura  = {flLatValorReparaAve}")
-        #print(f"Repone Elem       = {flLatValorReponeElem}")
-        #print(f"Repone Pint       = {flLatValorReponePint}")
-        #print(f"Repone MO         = {flLatValorReponeMoAv}")
-        #print(f"Repone Espejo Ele = {flLatValorReponeEspejoElec}")
-        #print(f"Repone Espejo Man = {flLatValorReponeEspejoMan}")
-        #print(f"Repone Manija Del = {flLatValorReponeManDel}")
-        #print(f"Repone Manija Tra = {flLatValorReponeManTra}")
-        #print(f"Repone Moldura Del= {flLatValorReponeMolduraDel}")
-        #print(f"Repone Moldura Tra= {flLatValorReponeMolduraTra}")
-        #print(f"Repone Cristal Del= {flLatValorReponeCriDel}")
-        #print(f"Repone Cristal Tra= {flLatValorReponeCriTra}")
-        #print(f"Total             = {flLateral}")
     else:
         lsValuesResult.append(0)
         lsValuesResult.append(0)
@@ -1174,7 +1155,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
             flTraValorReparaAve = np.round(sum(lsTraReparaAve),2)
             
         if len(lsTraseroCambiaElems)>0:
-            lsTraReponeAve=fnCambiaTrasero(iSEG,iCLASE,iMARCA,iMODELO,lsTraseroCambiaElems) 
+            lsTraReponeAve=fnCambiaTrasero(iSEG,iCLASE,iMARCA,iMODELO,lsTraseroCambiaElems,isAlta) 
             if len(lsTraReponeAve)  == 0: lsTraReponeAve.append(0)
             flTraValorReponeElem = np.round(sum(lsTraReponeAve),2)
             
@@ -1191,21 +1172,21 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
                 flTraValorReponeElem = flTraValorReponeElem + param.bfMObra
         
         if len(lsTraseroMolduraElems)>0:
-            lsTraMeanMold=fnMolduraTrasero(iMARCA,iMODELO)      
+            lsTraMeanMold=fnMolduraTrasero(iMARCA,iMODELO,isAlta)      
             if len(lsTraMeanMold) == 0: lsTraMeanMold.append(0)
             flTraValorReponeMoldura  = np.round(lsTraMeanMold[-1],2)
 
         if len(lsTraseroFaroExtElems)>0:
-            lsTraMeanFExt=fnFaroExtTrasero(iMARCA,iMODELO)    
+            lsTraMeanFExt=fnFaroExtTrasero(iMARCA,iMODELO,isAlta)    
             if len(lsTraMeanFExt) == 0: lsTraMeanFExt.append(0)
             flTraValorReponeFaroExt  = np.round(lsTraMeanFExt[-1],2)
-            if len(lsTraseroFaroExtElems) >1: flTraValorReponeFaroExt*=2 # Si se reponen los dos faros
+            if len(lsTraseroFaroExtElems) >1: flTraValorReponeFaroExt*=2 
 
         if len(lsTraseroFaroIntElems)>0:
-            lsTraMeanFInt=fnFaroIntTrasero(iMARCA,iMODELO)    
+            lsTraMeanFInt=fnFaroIntTrasero(iMARCA,iMODELO,isAlta)    
             if len(lsTraMeanFInt) == 0: lsTraMeanFInt.append(0)
             flTraValorReponeFaroInt  = np.round(lsTraMeanFInt[-1],2)
-            if len(lsTraseroFaroIntElems) >1: flTraValorReponeFaroInt*=2 # Si se reponen los dos faros
+            if len(lsTraseroFaroIntElems) >1: flTraValorReponeFaroInt*=2
     
         flTrasero=np.round(flTraValorReparaAve+flTraValorReponeElem+flTraValorReponePint+\
                            flTraValorReponeMoAv+flTraValorReponeMoldura+\
@@ -1219,16 +1200,6 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(flTraValorReponeFaroExt)
         lsValuesResult.append(flTraValorReponeFaroInt)
         lsValuesResult.append(flTrasero)
-        
-        #print("_Trasero Valores Promedio_______________")
-        #print(f"Repara y Pintura = {flTraValorReparaAve}")
-        #print(f"Repone Elem     = {flTraValorReponeElem}")
-        #print(f"Repone Pint     = {flTraValorReponePint}")
-        #print(f"Repone MO       = {flTraValorReponeMoAv}")
-        #print(f"Repone Moldura  = {flTraValorReponeMoldura}")
-        #print(f"Repone Faro Ext = {flTraValorReponeFaroExt}")
-        #print(f"Repone Faro Int = {flTraValorReponeFaroInt}") 
-        #print(f"Total           = {flTrasero}")
     else:
         lsValuesResult.append(0)
         lsValuesResult.append(0)
@@ -1238,19 +1209,17 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(0)
         lsValuesResult.append(0)
         lsValuesResult.append(0)
-
-    if len(lsLateralCambiaElems) + len(lsLateralReparaElems) + \
+    
+    #ToDo: Seguir codigo
+    if len(lsFrenteCambiaElems) + len(lsFrenteReparaElems) +\
+       len(lsLateralCambiaElems) + len(lsLateralReparaElems) +\
        len(lsTraseroCambiaElems) + len(lsTraseroReparaElems) == 1:
         # Agregar en lsValuesResult   
-        if flFrente != 0: 
-            flFrente = flFrente + param.bfMObra
-        if flLateral != 0: 
-            flLateral = flLateral + param.bfMObra            
-        if flTrasero != 0:     
-            flTrasero = flTrasero + param.bfMObra
+        if flFrente  != 0: flFrente =  flFrente  + param.bfMObra
+        if flLateral != 0: flLateral = flLateral + param.bfMObra            
+        if flTrasero != 0: flTrasero = flTrasero + param.bfMObra
 
     bfTmp = resumeDataBrief(CLIENTE,flFrente,flLateral,flTrasero)
-    print(bfTmp)
     #Todo: Agregar el Log Frente
     isWrited = fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,TRASERO,lsValuesResult)
     
@@ -1261,10 +1230,8 @@ def decimal(obj):
     is_point = False
     decimals = []
     for get_float in str(obj):
-        if is_point:
-            decimals.append(get_float)
-        if get_float == ".":
-            is_point = True
+        if is_point:         decimals.append(get_float)
+        if get_float == ".": is_point = True
     return len(decimals)
 
 def fnSegmento(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO):
@@ -1573,7 +1540,7 @@ def fnReparaTrasero(inSEG,inCOD_CLASE,lsRepara):
 
     return lsReparaAve
 
-def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
+def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
     inCOD_PARTE = 2
     lsReponeAve = []
     flAverage = 0
@@ -1603,7 +1570,7 @@ def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
             
             #Alta Gama
             if pd.isna(flAverage.iloc[0]):
-                if fnAltaGama(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO):
+                if isAlta:
                     if item=="BAULPORTON"     :flAverage.iloc[0]=paramal.bfBaul_Porton
                     elif item=="FAROEXT"      :flAverage.iloc[0]=paramal.bfFaro_Ext
                     elif item=="FAROINT"      :flAverage.iloc[0]=paramal.bfFaro_Int
@@ -1666,7 +1633,7 @@ def fnCambiaPinturaTrasero(inSEG,inCOD_CLASE,lsRepone):
     
     return lsReponePintAve,lsReponeMoAv 
 
-def fnMolduraTrasero(inCOD_MARCA,inCOD_MODELO):    
+def fnMolduraTrasero(inCOD_MARCA,inCOD_MODELO,isAlta):    
     inCOD_PARTE = 2
     moldCtro = ['PARAGOLPE EMBELLEC / MOLD']
     lsVersion = ['1','2','3'] 
@@ -1693,12 +1660,13 @@ def fnMolduraTrasero(inCOD_MARCA,inCOD_MODELO):
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
         lsMoldCtro.append(round(flValue,2))
     else:
-        flValue = param.bfMoldura + param.bfMOMinimo
+        if isAlta: flValue = paramal.bfMoldura + param.bfMOMinimo
+        else:      flValue = param.bfMoldura   + param.bfMOMinimo
         lsMoldCtro.append(round(flValue,2))   
 
     return lsMoldCtro
 
-def fnFaroExtTrasero(inCOD_MARCA,inCOD_MODELO):    
+def fnFaroExtTrasero(inCOD_MARCA,inCOD_MODELO,isAlta):    
     inCOD_PARTE = 2
     faroDer = ['FARO DER']
     lsVersion = ['1','2','3','4','5','6'] 
@@ -1725,11 +1693,12 @@ def fnFaroExtTrasero(inCOD_MARCA,inCOD_MODELO):
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
         lsFaroExt.append(round(flValue,2))
     else:
-        flValue = param.bfFaro_Ext + param.bfMOMinimo
+        if isAlta: flValue = paramal.bfFaro_Ext + param.bfMOMinimo
+        else:      flValue = param.bfFaro_Ext   + param.bfMOMinimo
         lsFaroExt.append(round(flValue,2))
     return lsFaroExt
 
-def fnFaroIntTrasero(inCOD_MARCA,inCOD_MODELO):    
+def fnFaroIntTrasero(inCOD_MARCA,inCOD_MODELO,isAlta):    
     inCOD_PARTE = 2
     faroDer = ['FARO DER 1']
     lsFaroInt = []
@@ -1753,7 +1722,8 @@ def fnFaroIntTrasero(inCOD_MARCA,inCOD_MODELO):
         flValue = dfFARO_INT['VALOR'].mean() + param.bfMOMinimo
         lsFaroInt.append(round(flValue,2))
     else:
-        flValue = param.bfFaro_Int + param.bfMOMinimo
+        if isAlta: flValue = paramal.bfFaro_Int + param.bfMOMinimo
+        else:      flValue = param.bfFaro_Int + param.bfMOMinimo
         lsFaroInt.append(round(flValue,2))   
     
     return lsFaroInt
@@ -1778,11 +1748,12 @@ def fnReparaFrente(inSEG,inCOD_CLASE,lsRepara):
         flAverage = np.round((flVALOR_MO_MEAN + flCANT_HS_PINT_MEAN + bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
         lsReparaAve.append(flAverage) 
         
-    for index, item in enumerate(lsReparaAve): lsReparaAve[index]=list(set(item))[0]     
+    for index, item in enumerate(lsReparaAve): 
+        lsReparaAve[index]=list(set(item))[0]     
     
     return lsReparaAve           
 
-def fnCambiaFrente(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
+def fnCambiaFrente(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
     inCOD_PARTE = 1
     lsReponeAve = []
     flAverage = 0
@@ -1811,7 +1782,7 @@ def fnCambiaFrente(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
             flAverage = pd.Series([flMean])
 
             if pd.isna(flAverage.iloc[0]):
-                if fnAltaGama(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO):
+                if isAlta:
                     if item  =="CAPOT"          :flAverage.iloc[0]=paramal.bfFrt_GA_Del_Capot
                     elif item=="FRENTE"         :flAverage.iloc[0]=paramal.bfFrt_GA_Del_Frente
                     elif item=="GUARDABARRO"    :flAverage.iloc[0]=paramal.bfFrt_GA_Del_Guardabarro
@@ -1830,7 +1801,8 @@ def fnCambiaFrente(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
 
         lsReponeAve.append(flAverage)
         
-    for index, item in enumerate(lsReponeAve): lsReponeAve[index] = list(set(item))[0]     
+    for index, item in enumerate(lsReponeAve): 
+        lsReponeAve[index] = list(set(item))[0]     
     
     return lsReponeAve
 
@@ -1871,7 +1843,7 @@ def fnCambiaPinturaFrente(inSEG,inCOD_CLASE,lsRepone):
     return lsReponePintAve,lsReponeMoAv
 
 #LATERAL#
-def fnEspejoLateralElec(inCOD_MARCA,inCOD_MODELO):
+def fnEspejoLateralElec(inCOD_MARCA,inCOD_MODELO,isAlta):
     espElec = ['ESPEJO ELECTRICO']
     lsVersion = ['1','2','3','4','5'] 
     lsMeanEsp = []
@@ -1896,12 +1868,13 @@ def fnEspejoLateralElec(inCOD_MARCA,inCOD_MODELO):
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
         lsMeanEsp.append(round(flValue,2))   
     else:
-        flValue = param.bfLat_Espejo_Electrico + param.bfMOMinimo
+        if isAlta: flValue = paramal.bfLat_Espejo_Electrico + param.bfMOMinimo
+        else:      flValue = param.bfLat_Espejo_Electrico   + param.bfMOMinimo
         lsMeanEsp.append(round(flValue,2))   
     
     return lsMeanEsp 
 
-def fnEspejoLateralMan(inCOD_MARCA,inCOD_MODELO):
+def fnEspejoLateralMan(inCOD_MARCA,inCOD_MODELO,isAlta):
     espMan = ['ESPEJO MANUAL']
     lsVersion = ['1','2','3','4','5'] 
     lsMeanEsp = []
@@ -1926,12 +1899,13 @@ def fnEspejoLateralMan(inCOD_MARCA,inCOD_MODELO):
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
         lsMeanEsp.append(round(flValue,2))   
     else:
-        flValue = param.bfLat_Espejo_Manual + param.bfMOMinimo
+        if isAlta: flValue = paramal.bfLat_Espejo_Manual + param.bfMOMinimo
+        else:      flValue = param.bfLat_Espejo_Manual + param.bfMOMinimo
         lsMeanEsp.append(round(flValue,2))   
     
     return lsMeanEsp 
 
-def fnManijaLateralDel(inCOD_MARCA,inCOD_MODELO):
+def fnManijaLateralDel(inCOD_MARCA,inCOD_MODELO,isAlta):
     lsManija = ['DEL MANIJA']
     lsVersion = ['1','2','3','4','5'] 
     lsMeanMan = []
@@ -1956,12 +1930,13 @@ def fnManijaLateralDel(inCOD_MARCA,inCOD_MODELO):
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
         lsMeanMan.append(round(flValue,2))   
     else:
-        flValue = param.bfLat_Manija_Pta_Del + param.bfMOMinimo
+        if isAlta: flValue = paramal.bfLat_Manija_Pta_Del + param.bfMOMinimo
+        else:      flValue = param.bfLat_Manija_Pta_Del   + param.bfMOMinimo
         lsMeanMan.append(round(flValue,2))   
 
     return lsMeanMan 
 
-def fnManijaLateralTra(inCOD_MARCA,inCOD_MODELO):
+def fnManijaLateralTra(inCOD_MARCA,inCOD_MODELO,isAlta):
     lsManija = ['TRAS MANIJA']
     lsVersion = ['1','2','3','4','5'] 
     lsMeanMan = []
@@ -1986,12 +1961,13 @@ def fnManijaLateralTra(inCOD_MARCA,inCOD_MODELO):
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
         lsMeanMan.append(round(flValue,2))   
     else:
-        flValue = param.bfLat_Manija_Pta_Tras + param.bfMOMinimo
+        if isAlta: flValue = paramal.bfLat_Manija_Pta_Tras + param.bfMOMinimo
+        else:      flValue = param.bfLat_Manija_Pta_Tras   + param.bfMOMinimo
         lsMeanMan.append(round(flValue,2))   
 
     return lsMeanMan 
 
-def fnMolduraLateralDel(inCOD_MARCA,inCOD_MODELO):
+def fnMolduraLateralDel(inCOD_MARCA,inCOD_MODELO,isAlta):
     inCOD_PARTE = 3
     espMold = ['DEL MOLD']
     lsMeanMold = []
@@ -2016,12 +1992,13 @@ def fnMolduraLateralDel(inCOD_MARCA,inCOD_MODELO):
         flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
         lsMeanMold.append(round(flValue,2))   
     else:
-        flValue = param.bfLat_Moldura_Pta_Del + param.bfMOMinimo
+        if isAlta: flValue = paramal.bfLat_Moldura_Pta_Del + param.bfMOMinimo
+        else:      flValue = param.bfLat_Moldura_Pta_Del   + param.bfMOMinimo
         lsMeanMold.append(round(flValue,2))   
         
     return lsMeanMold
 
-def fnMolduraLateralTra(inCOD_MARCA,inCOD_MODELO):
+def fnMolduraLateralTra(inCOD_MARCA,inCOD_MODELO,isAlta):
     inCOD_PARTE = 3
     espMold = ['TRAS MOLD']
     lsMeanMold = []
@@ -2046,12 +2023,13 @@ def fnMolduraLateralTra(inCOD_MARCA,inCOD_MODELO):
         flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
         lsMeanMold.append(round(flValue,2)) 
     else:
-        flValue = param.bfLat_Moldura_Pta_Tras + param.bfMOMinimo
+        if isAlta: flValue = paramal.bfLat_Moldura_Pta_Tras + param.bfMOMinimo
+        else:      flValue = param.bfLat_Moldura_Pta_Tras + param.bfMOMinimo
         lsMeanMold.append(round(flValue,2))   
     
     return lsMeanMold
 
-def fnCristalLateralDel(inCOD_MARCA,inCOD_MODELO):
+def fnCristalLateralDel(inCOD_MARCA,inCOD_MODELO,isAlta):
     inCOD_PARTE = 3
     espMold = ['DEL CRISTAL']
     lsMeanMold = []
@@ -2076,12 +2054,13 @@ def fnCristalLateralDel(inCOD_MARCA,inCOD_MODELO):
         flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
         lsMeanMold.append(round(flValue,2))   
     else:
-        flValue = param.bfLat_Cristal_Delantero + param.bfMOMinimo
+        if isAlta: flValue = paramal.bfLat_Cristal_Delantero + param.bfMOMinimo
+        else:      flValue = param.bfLat_Cristal_Delantero + param.bfMOMinimo
         lsMeanMold.append(round(flValue,2))   
         
     return lsMeanMold
 
-def fnCristalLateralTra(inCOD_MARCA,inCOD_MODELO):
+def fnCristalLateralTra(inCOD_MARCA,inCOD_MODELO,isAlta):
     inCOD_PARTE = 3
     espMold = ['TRAS CRISTAL']
     lsMeanMold = []
@@ -2106,7 +2085,8 @@ def fnCristalLateralTra(inCOD_MARCA,inCOD_MODELO):
         flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
         lsMeanMold.append(round(flValue,2)) 
     else:
-        flValue = param.bfLat_Cristal_Trasero + param.bfMOMinimo
+        if isAlta: flValue = paramal.bfLat_Cristal_Trasero + param.bfMOMinimo
+        else:      flValue = param.bfLat_Cristal_Trasero + param.bfMOMinimo
         lsMeanMold.append(round(flValue,2))   
         
     return lsMeanMold
@@ -2135,7 +2115,7 @@ def fnReparaLateral(inSEG,inCOD_CLASE,lsRepara):
     
     return lsReparaAve           
 
-def fnCambiaLateral(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
+def fnCambiaLateral(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
     inCOD_PARTE = 3
     lsReponeAve = []
     flAverage = 0
@@ -2164,20 +2144,35 @@ def fnCambiaLateral(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone):
             flAverage = pd.Series([flMean])
 
             if pd.isna(flAverage.iloc[0]):
-                if item=="CRISTAL_DEL"       :flAverage.iloc[0]=param.bfLat_Cristal_Delantero
-                elif item=="CRISTAL_TRA"     :flAverage.iloc[0]=param.bfLat_Cristal_Trasero
-                elif item=="ESPEJOELEC"      :flAverage.iloc[0]=param.bfLat_Espejo_Electrico
-                elif item=="ESPEJOMAN"       :flAverage.iloc[0]=param.bfLat_Espejo_Manual
-                elif item=="MANIJA_DEL"      :flAverage.iloc[0]=param.bfLat_Manija_Pta_Del
-                elif item=="MANIJA_TRA"      :flAverage.iloc[0]=param.bfLat_Manija_Pta_Tras
-                elif item=="MOLDURA_DEL"     :flAverage.iloc[0]=param.bfLat_Moldura_Pta_Del
-                elif item=="MOLDURA_TRA"     :flAverage.iloc[0]=param.bfLat_Moldura_Pta_Tras
-                elif item=="PUERTA_DEL"      :flAverage.iloc[0]=param.bfLat_Puerta_Delantera
-                elif item=="PUERTA_TRA"      :flAverage.iloc[0]=param.bfLat_Puerta_Trasera
-                elif item=="PUERTA_DEL_PANEL":flAverage.iloc[0]=param.bfLat_Puerta_Panel_Del
-                elif item=="PUERTA_TRA_PANEL":flAverage.iloc[0]=param.bfLat_Puerta_Panel_Tras
-                elif item=="ZOCALO"          :flAverage.iloc[0]=param.bfLat_Zocalo
-                else: flAverage.iloc[0] = 0
+                if isAlta:
+                    if item=="CRISTAL_DEL"       :flAverage.iloc[0]=paramal.bfLat_Cristal_Delantero
+                    elif item=="CRISTAL_TRA"     :flAverage.iloc[0]=paramal.bfLat_Cristal_Trasero
+                    elif item=="ESPEJOELEC"      :flAverage.iloc[0]=paramal.bfLat_Espejo_Electrico
+                    elif item=="ESPEJOMAN"       :flAverage.iloc[0]=paramal.bfLat_Espejo_Manual
+                    elif item=="MANIJA_DEL"      :flAverage.iloc[0]=paramal.bfLat_Manija_Pta_Del
+                    elif item=="MANIJA_TRA"      :flAverage.iloc[0]=paramal.bfLat_Manija_Pta_Tras
+                    elif item=="MOLDURA_DEL"     :flAverage.iloc[0]=paramal.bfLat_Moldura_Pta_Del
+                    elif item=="MOLDURA_TRA"     :flAverage.iloc[0]=paramal.bfLat_Moldura_Pta_Tras
+                    elif item=="PUERTA_DEL"      :flAverage.iloc[0]=paramal.bfLat_Puerta_Delantera
+                    elif item=="PUERTA_TRA"      :flAverage.iloc[0]=paramal.bfLat_Puerta_Trasera
+                    elif item=="PUERTA_DEL_PANEL":flAverage.iloc[0]=paramal.bfLat_Puerta_Panel_Del
+                    elif item=="PUERTA_TRA_PANEL":flAverage.iloc[0]=paramal.bfLat_Puerta_Panel_Tras
+                    elif item=="ZOCALO"          :flAverage.iloc[0]=paramal.bfLat_Zocalo
+                    else: flAverage.iloc[0] = 0
+                else:
+                    if item=="CRISTAL_DEL"       :flAverage.iloc[0]=param.bfLat_Cristal_Delantero
+                    elif item=="CRISTAL_TRA"     :flAverage.iloc[0]=param.bfLat_Cristal_Trasero
+                    elif item=="ESPEJOELEC"      :flAverage.iloc[0]=param.bfLat_Espejo_Electrico
+                    elif item=="ESPEJOMAN"       :flAverage.iloc[0]=param.bfLat_Espejo_Manual
+                    elif item=="MANIJA_DEL"      :flAverage.iloc[0]=param.bfLat_Manija_Pta_Del
+                    elif item=="MANIJA_TRA"      :flAverage.iloc[0]=param.bfLat_Manija_Pta_Tras
+                    elif item=="MOLDURA_DEL"     :flAverage.iloc[0]=param.bfLat_Moldura_Pta_Del
+                    elif item=="MOLDURA_TRA"     :flAverage.iloc[0]=param.bfLat_Moldura_Pta_Tras
+                    elif item=="PUERTA_DEL"      :flAverage.iloc[0]=param.bfLat_Puerta_Delantera
+                    elif item=="PUERTA_TRA"      :flAverage.iloc[0]=param.bfLat_Puerta_Trasera
+                    elif item=="PUERTA_DEL_PANEL":flAverage.iloc[0]=param.bfLat_Puerta_Panel_Del
+                    elif item=="PUERTA_TRA_PANEL":flAverage.iloc[0]=param.bfLat_Puerta_Panel_Tras
+                    elif item=="ZOCALO"          :flAverage.iloc[0]=param.bfLat_Zocalo
         
         if len(flAverage) == 0: flAverage = [0]
 
@@ -2270,8 +2265,8 @@ def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,T
                                                  trReponeMoldura,trReponeFaroExt,trReponeFaroInt,trTotal,Asegurado,
                                                  Tercero,MObra,Pintura,Ajuste) VALUES (''' + bfValues + ');'
     #try:
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text(bfClause))
     if conn.in_transaction(): conn.commit()
@@ -2288,8 +2283,8 @@ def fnWriteLogBrief(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATE
     bfValues = str(ts)+","+str(CLIENTE)+","+str(CLASE)+",'"+SINIESTRO+"','"+PERITO.replace(',','')+"','"+VALORPERITO+"'"
     bfClause = '''INSERT INTO logpresupuestosV1 (timestamp,cliente,clase,siniestro,Perito,ValorPerito) VALUES (''' + bfValues + ');'
     #try:
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text(bfClause))
     if conn.in_transaction(): conn.commit()
@@ -2301,8 +2296,8 @@ def fnWriteLogBrief(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATE
 
 def fnAltaGama(CLASE,MARCA,MODELO):
     bAltaGama = False
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text("SELECT al FROM marcamodelo where clase=" + str(CLASE) + " and marca=" + str(MARCA) + " and modelo=" + str(MODELO) +";"))
     for row in result: 
