@@ -396,6 +396,7 @@ bfHTML = """
     <br style="display: block;content:'';margin-top:5;">    
    </body>
    <script>
+        document.getElementById("descargar").disabled = true;
         document.getElementById("descargar").addEventListener("click", function () {
             
             const seleccionadosFrente  = obtenerCheckeadosFrente("frente_chk", "#frente tr");
@@ -890,6 +891,7 @@ bfHTML = """
             if (this.readyState == 4 && this.status == 200) {
                 var e = document.getElementById("CostBrief");
                     e.innerHTML = this.responseText; 
+                    document.getElementById("descargar").disabled = false;
                     //e.disabled = false;
             }
         }
