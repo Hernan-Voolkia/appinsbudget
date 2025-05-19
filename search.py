@@ -1107,13 +1107,8 @@ bfHTML = """
         const spanExterior  = document.getElementById('CostBrief');
         valorLimpio = '';
         if (spanExterior ) {
-            //alert(spanExterior.innerText);
-            //const spanInterior = spanExterior.querySelector('#CostBrief');  
             const spanInterior = spanExterior.innerText;             
             if (spanInterior) {
-                alert(spanInterior);
-                //const textoCompleto = spanInterior.textContent;
-                //const valorNumerico = textoCompleto.split('$')[1]; 
                 const valorNumerico = spanInterior.split('$')[1]; 
                 valorLimpio = valorNumerico ? valorNumerico.trim() : ''; 
             }    
