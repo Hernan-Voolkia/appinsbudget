@@ -116,8 +116,8 @@ dfMANIJA = pd.read_csv('./data/PuertaManijaSedanValueMin.csv',sep=';',encoding='
 dfMOTO = pd.read_csv('./data/motos.csv',sep=';',encoding='utf-8',na_values=['NA', '?'], on_bad_lines='warn',
                      dtype={'CLASE':int,'MARCA':int,'MODELO':int,'DMARCA':str,'DMODELO':str}) 
 #DBVALUES
-#engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+#engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
 conn = engine.connect()
 result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
 for row in result:
@@ -165,8 +165,8 @@ async def modelo(CLASE:int=901, MARCA:int=0):
 @app.get("/consulta", response_class=HTMLResponse)
 async def consulta():
     #DBVALUES
-    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
     for row in result:
@@ -179,8 +179,8 @@ async def consulta():
     conn.close()
     engine.dispose()    
 
-    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text('SELECT stname,flvalue FROM admvalueslat;'))
     for row in result:
@@ -198,8 +198,8 @@ async def consulta():
     conn.close()
     engine.dispose()  
     
-    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text('SELECT stname,flvalue FROM admvalueslatal;'))
     for row in result:
@@ -217,8 +217,8 @@ async def consulta():
     conn.close()
     engine.dispose() 
     
-    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text('SELECT stname,flvalue FROM admvaluesdel;'))
     for row in result:
@@ -236,8 +236,8 @@ async def consulta():
     conn.close()
     engine.dispose()  
 
-    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text('SELECT stname,flvalue FROM admvaluesdelal;'))
     for row in result:
@@ -255,8 +255,8 @@ async def consulta():
     conn.close()
     engine.dispose()  
 
-    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text('SELECT * FROM admvaluestra;'))
     for row in result:
@@ -271,8 +271,8 @@ async def consulta():
     conn.close()
     engine.dispose()
 
-    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text('SELECT * FROM admvaluestraal;'))
     for row in result:
@@ -293,8 +293,8 @@ async def consulta():
 async def adminValues():
     #DBVALUES
     try:
-        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
         for row in result:
@@ -328,8 +328,8 @@ async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:
     #DBVALUES
     bfMsg = "Valores grabados satisfactoriamente" 
     try:
-       #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
+       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvalue SET flValue =' + str(TERCERO).replace(',','.') + ' WHERE stName=\'Tercero\''))
        result = conn.execute(text('UPDATE admvalue SET flValue =' + str(ASEGURADO).replace(',','.') + ' WHERE stName=\'Asegurado\''))
@@ -361,8 +361,8 @@ async def admreplat(request: Request):
                "Lat_Zocalo":"Zocalo","Lat_Zocalo_Val":0.0,
                "MensajeRetorno":""}
     try:
-        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalueslat;'))
         for row in result:
@@ -401,8 +401,8 @@ async def admreplatag(request: Request):
                "Lat_Zocalo":"Zocalo","Lat_Zocalo_Val":0.0,
                "MensajeRetorno":""}
     try:
-        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalueslatal;'))
         for row in result:
@@ -432,8 +432,8 @@ async def admvalueslat(request: Request, Lat_Cristal_Delantero:str="",Lat_Crista
     
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
        conn = engine.connect()
 
        result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName="Lat_Cristal_Delantero"'))
@@ -470,8 +470,8 @@ async def admreptra(request: Request):
                "MensajeRetorno":""
                }
     try:
-        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluestra;'))
         for row in result:
@@ -504,8 +504,8 @@ async def admreptraag(request: Request):
                "MensajeRetorno":""
                }
     try:
-        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluestraal;'))
         for row in result:
@@ -541,8 +541,8 @@ async def admrepdel(request: Request):
                "MensajeRetorno":""
                }
     try:
-        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluesdel;'))
         for row in result:
@@ -580,8 +580,8 @@ async def admrepdelag(request: Request):
                "MensajeRetorno":""
                }
     try:
-        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluesdelal;'))
         for row in result:
@@ -607,8 +607,8 @@ async def admvaluestra(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Guarda
                       Moldura:str="",Panel_Cola:str="",Paragolpe:str=""):
     bfMsg = "Valores grabados satisfactoriamente" 
     try:
-       #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
+       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
        conn = engine.connect()
        
        result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName="Baul_Porton"'))
@@ -631,8 +631,8 @@ async def admvaluestra(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Guarda
 @app.get("/dbCreateLog", response_class=HTMLResponse)
 async def dbCreateLog():
     bfValue = "bfHTMLdbCreateLog finalizado satisfactoriamente"
-    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
         conn.execute(text('''CREATE TABLE  IF NOT EXISTS 'logpresupuestosV1' (
@@ -684,8 +684,8 @@ async def dbCreateLog():
 @app.get("/dbCreateAdminValue", response_class=HTMLResponse)
 async def dbcreateAdminValue():
     bfValue = "dbCreateAdminValue finalizado satisfactoriamente"
-    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
         conn.execute(text('''CREATE TABLE IF NOT EXISTS 'admvalue' (
@@ -706,8 +706,8 @@ async def dbcreateAdminValue():
 @app.get("/dbDropAdminValue", response_class=HTMLResponse)
 async def dbDropAdminValue():
     bfValue = "dbDropAdminValue finalizado satisfactoriamente"
-    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
         conn.execute(text('''DROP TABLE admvalue;'''))
@@ -721,8 +721,8 @@ async def dbDropAdminValue():
 @app.get("/dbInsertAdminValue", response_class=HTMLResponse)
 async def dbInsertAdminValue():
     bfValue = "dbInsertAdminValue finalizado satisfactoriamente"
-    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
         result = conn.execute(text('''INSERT INTO admvalue (stname, flvalue) VALUES ('Asegurado',1);'''))
@@ -741,8 +741,8 @@ async def dbInsertAdminValue():
 @app.get("/dbreadAdmin", response_class=PlainTextResponse)
 async def dbreadAdmin():
     lsResult = []
-    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
         result = conn.execute(text('''SELECT stname,flvalue FROM admvalue;'''))
@@ -768,8 +768,8 @@ async def dbRead(request: Request):
                "reparatrasero":'',"cambiatrasero":'',
                "reparalateral":'',"cambialateral":''}
     
-    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     try:
         result = conn.execute(text('''SELECT * FROM logpresupuestosV1;'''))
@@ -2276,8 +2276,8 @@ def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,T
                                                  trReponeMoldura,trReponeFaroExt,trReponeFaroInt,trTotal,Asegurado,
                                                  Tercero,MObra,Pintura,Ajuste) VALUES (''' + bfValues + ');'
     #try:
-    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text(bfClause))
     if conn.in_transaction(): conn.commit()
@@ -2294,8 +2294,8 @@ def fnWriteLogBrief(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATE
     bfValues = str(ts)+","+str(CLIENTE)+","+str(CLASE)+",'"+SINIESTRO+"','"+PERITO.replace(',','')+"','"+VALORPERITO+"'"
     bfClause = '''INSERT INTO logpresupuestosV1 (timestamp,cliente,clase,siniestro,Perito,ValorPerito) VALUES (''' + bfValues + ');'
     #try:
-    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text(bfClause))
     if conn.in_transaction(): conn.commit()
@@ -2307,8 +2307,8 @@ def fnWriteLogBrief(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATE
 
 def fnAltaGama(CLASE,MARCA,MODELO):
     bAltaGama = False
-    #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
+    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text("SELECT al FROM marcamodelo where clase=" + str(CLASE) + " and marca=" + str(MARCA) + " and modelo=" + str(MODELO) +";"))
     for row in result: 
