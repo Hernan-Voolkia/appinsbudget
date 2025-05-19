@@ -69,7 +69,7 @@ bfHTML = """
                                 <option id=0></option>
                                 <option id=901>SEDAN</option>
                                 <option id=907>SUV</option>
-                                <option id=915>MOTO</option>
+                                <option id=908>MOTO</option>
                             </select>
                         </div>
                         <div class="pure-control-group">
@@ -396,12 +396,13 @@ bfHTML = """
     <br style="display: block;content:'';margin-top:5;">    
    </body>
    <script>
+   
         document.getElementById("descargar").disabled = true;
         document.getElementById("descargar").addEventListener("click", function () {
             
-            const seleccionadosFrente  = obtenerCheckeadosFrente("frente_chk", "#frente tr");
-            const seleccionadosLateral = obtenerCheckeadosFrente("lateral_chk", "#lateral tr");
-            const seleccionadosTrasero = obtenerCheckeadosFrente("trasero_chk", "#trasero tr");
+            const seleccionadosFrente  = obtenerCheckeados("frente_chk", "#frente tr");
+            const seleccionadosLateral = obtenerCheckeados("lateral_chk", "#lateral tr");
+            const seleccionadosTrasero = obtenerCheckeados("trasero_chk", "#trasero tr");
             
             let mensaje = '<h3>Elementos Incluidos en el Presupuesto</h3>';
             if (seleccionadosFrente.length > 0) {
@@ -427,19 +428,52 @@ bfHTML = """
             const tempDiv = document.createElement("div");
             tempDiv.innerHTML = formatoTXT;
             document.body.appendChild(tempDiv);
-           
-            html2canvas(tempDiv).then(canvas => {
+            
+            html2canvas(tempDiv).then( async canvas => {
+
                 const imgData = canvas.toDataURL('image/png');
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
-                doc.addImage(imgData, 'PNG', 10, 10);
+                
+                try {
+                    const imgLogo = await loadImageAsDataURL('./img/Pos_color_RGB.jpg');
+                    doc.addImage(imgLogo, 'PNG', 10, 5, 20, 20);
+                } catch (error) {
+                    console.error('Error cargando logo:', error);
+                }                
+
+                doc.addImage(imgData, 'PNG', 10, 25);
+                
+                try {
+                    const imgFirma = await loadImageAsDataURL('./img/firma.png');
+                    doc.addImage(imgFirma, 'PNG', 135, 80, 40, 40);
+                } catch (error) {
+                    console.error('Error cargando firma:', error);
+                }                
+              
                 doc.save(cDiaHora + '_presupuesto.pdf');
                 document.body.removeChild(tempDiv);
             });
 
         });
-
-    function obtenerCheckeadosFrente(cTableId, cTableBody) {
+    
+    function loadImageAsDataURL(url) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                resolve(canvas.toDataURL('image/png'));
+            };
+            img.onerror = reject;
+            img.src = url;
+        });
+    }
+    
+    function obtenerCheckeados(cTableId, cTableBody) {
         const chkTableId = document.getElementById(cTableId);
         if (!chkTableId.checked) {return [];}
 
@@ -681,7 +715,7 @@ bfHTML = """
         text = text + '&CLASE=' + e.options[e.selectedIndex].id;
         isMoto = e.options[e.selectedIndex].id;
             
-        if(isMoto!="915") 
+        if(isMoto!="908") 
         {           
             var e = document.getElementById("stacked-marca");
             if(e.options[e.selectedIndex].id == 0) 
@@ -706,7 +740,7 @@ bfHTML = """
             text = text + '&SINIESTRO=' + e.value;
         
         var e = document.getElementById("stacked-perito");
-        if(e.value.trim() === "" && isMoto=="915") 
+        if(e.value.trim() === "" && isMoto=="908") 
             {
                 alert('Debe escribir el nombre del Perito');
                 e.focus(); 
@@ -715,7 +749,7 @@ bfHTML = """
         text = text + '&PERITO=' + e.value;
             
         var e = document.getElementById("stacked-valorperito");
-        if(e.value.trim() === "" && isMoto=="915") 
+        if(e.value.trim() === "" && isMoto=="908") 
             {
                 alert('Debe escribir el valor');
                 e.focus(); 
@@ -726,161 +760,170 @@ bfHTML = """
         if (document.getElementById('lateral_chk').checked == 0 &&
             document.getElementById('trasero_chk').checked == 0  &&
             document.getElementById('frente_chk').checked  == 0  &&
-            isMoto!="915"){
-                alert('Debe seleccionar elementos de lateral o trasero');
+            isMoto!="908"){
+                alert('Debe seleccionar elementos de delantero, lateral o trasero');
                 return
         }
-        
-        if (document.getElementById('frente_chk').checked){
-            var e=(document.getElementById('FRT_CAM_DER_CAPOT').checked==true)?1:0;
-            var frente=e + '-'; 
-            e=(document.getElementById('FRT_REP_DER_CAPOT').checked==true)?1:0;
-            frente+= e + '-';
-            e=(document.getElementById('FRT_CAM_DER_FARITO').checked==true)?1:0;
-            frente+= e + '-';
-            e=(document.getElementById('FRT_CAM_IZQ_FARITO').checked==true)?1:0;
-            frente+= e + '-';
-            e=(document.getElementById('FRT_CAM_DER_FARO').checked==true)?1:0;
-            frente+= e + '-';
-            e=(document.getElementById('FRT_CAM_IZQ_FARO').checked==true)?1:0;
-            frente+= e + '-';
-            e=(document.getElementById('FRT_CAM_DER_FARO_AUXILIAR').checked==true)?1:0;
-            frente+= e + '-';
-            e=(document.getElementById('FRT_CAM_IZQ_FARO_AUXILIAR').checked==true)?1:0;
-            frente+= e + '-';
-            e=(document.getElementById('FRT_CAM_DER_FRENTE').checked==true)?1:0;
-            frente+= e + '-';
-            e=(document.getElementById('FRT_REP_DER_FRENTE').checked==true)?1:0;
-            frente+= e + '-';
-            e= (document.getElementById('FRT_CAM_DER_GUARDABARRO').checked==true)?1:0;
-            frente+= e + '-';
-            e=(document.getElementById('FRT_REP_DER_GUARDABARRO').checked==true)?1:0;
-            frente+= e + '-';
-            e= (document.getElementById('FRT_CAM_IZQ_GUARDABARRO').checked==true)?1:0;
-            frente+= e + '-';
-            e=(document.getElementById('FRT_REP_IZQ_GUARDABARRO').checked==true)?1:0;
-            frente+= e + '-';
-            e=(document.getElementById('FRT_CAM_DER_PARABRISAS').checked==true)?1:0;
-            frente+= e + '-';
-            e=(document.getElementById('FRT_CAM_DER_PARAGOLPE_ALMA').checked==true)?1:0;
-            frente+= e + '-';
-            e=(document.getElementById('FRT_CAM_REP_PARAGOLPE_ALMA').checked==true)?1:0;
-            frente+= e + '-';
-            e=(document.getElementById('FRT_CAM_DER_PARAGOLPE_CTRO').checked==true)?1:0;
-            frente+= e + '-';
-            e=(document.getElementById('FRT_REP_DER_PARAGOLPE_CTRO').checked==true)?1:0;
-            frente+= e + '-';
-            e=(document.getElementById('FRT_CAM_DER_PARAGOLPE_REJILLA').checked==true)?1:0;
-            frente+= e + '-';
-            e=(document.getElementById('FRT_CAM_DER_REJILLA_RADIADOR').checked==true)?1:0;
-            frente+= e;   
-            text = text + '&FRENTE=' + frente;  
+        if(isMoto!="908") 
+        { 
+            if (document.getElementById('frente_chk').checked){
+                var e=(document.getElementById('FRT_CAM_DER_CAPOT').checked==true)?1:0;
+                var frente=e + '-'; 
+                e=(document.getElementById('FRT_REP_DER_CAPOT').checked==true)?1:0;
+                frente+= e + '-';
+                e=(document.getElementById('FRT_CAM_DER_FARITO').checked==true)?1:0;
+                frente+= e + '-';
+                e=(document.getElementById('FRT_CAM_IZQ_FARITO').checked==true)?1:0;
+                frente+= e + '-';
+                e=(document.getElementById('FRT_CAM_DER_FARO').checked==true)?1:0;
+                frente+= e + '-';
+                e=(document.getElementById('FRT_CAM_IZQ_FARO').checked==true)?1:0;
+                frente+= e + '-';
+                e=(document.getElementById('FRT_CAM_DER_FARO_AUXILIAR').checked==true)?1:0;
+                frente+= e + '-';
+                e=(document.getElementById('FRT_CAM_IZQ_FARO_AUXILIAR').checked==true)?1:0;
+                frente+= e + '-';
+                e=(document.getElementById('FRT_CAM_DER_FRENTE').checked==true)?1:0;
+                frente+= e + '-';
+                e=(document.getElementById('FRT_REP_DER_FRENTE').checked==true)?1:0;
+                frente+= e + '-';
+                e= (document.getElementById('FRT_CAM_DER_GUARDABARRO').checked==true)?1:0;
+                frente+= e + '-';
+                e=(document.getElementById('FRT_REP_DER_GUARDABARRO').checked==true)?1:0;
+                frente+= e + '-';
+                e= (document.getElementById('FRT_CAM_IZQ_GUARDABARRO').checked==true)?1:0;
+                frente+= e + '-';
+                e=(document.getElementById('FRT_REP_IZQ_GUARDABARRO').checked==true)?1:0;
+                frente+= e + '-';
+                e=(document.getElementById('FRT_CAM_DER_PARABRISAS').checked==true)?1:0;
+                frente+= e + '-';
+                e=(document.getElementById('FRT_CAM_DER_PARAGOLPE_ALMA').checked==true)?1:0;
+                frente+= e + '-';
+                e=(document.getElementById('FRT_CAM_REP_PARAGOLPE_ALMA').checked==true)?1:0;
+                frente+= e + '-';
+                e=(document.getElementById('FRT_CAM_DER_PARAGOLPE_CTRO').checked==true)?1:0;
+                frente+= e + '-';
+                e=(document.getElementById('FRT_REP_DER_PARAGOLPE_CTRO').checked==true)?1:0;
+                frente+= e + '-';
+                e=(document.getElementById('FRT_CAM_DER_PARAGOLPE_REJILLA').checked==true)?1:0;
+                frente+= e + '-';
+                e=(document.getElementById('FRT_CAM_DER_REJILLA_RADIADOR').checked==true)?1:0;
+                frente+= e;   
+                text = text + '&FRENTE=' + frente;  
+            }
+            else{
+                text = text + '&FRENTE=0';
+            } 
+            if (document.getElementById('lateral_chk').checked){ 
+                var e=(document.getElementById('LAT_CAM_DER_CRISTAL_DEL').checked==true)?1:0;
+                var lateral=e + '-'; 
+                e=(document.getElementById('LAT_CAM_IZQ_CRISTAL_DEL').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_CAM_DER_CRISTAL_TRA').checked==true)?1:0;
+                lateral+= e + '-';  
+                e=(document.getElementById('LAT_CAM_IZQ_CRISTAL_TRA').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_CAM_DER_ESPEJO_ELEC').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_CAM_IZQ_ESPEJO_ELEC').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_CAM_IZQ_ESPEJO_MAN').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_CAM_DER_ESPEJO_MAN').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_CAM_DER_MANIJA_DEL').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_CAM_IZQ_MANIJA_DEL').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_CAM_DER_MANIJA_TRA').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_CAM_IZQ_MANIJA_TRA').checked==true)?1:0;
+                lateral+= e + '-';
+                e= (document.getElementById('LAT_CAM_DER_MOLDURA_DEL').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_CAM_IZQ_MOLDURA_DEL').checked==true)?1:0;
+                lateral+= e + '-';
+                e= (document.getElementById('LAT_CAM_DER_MOLDURA_TRA').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_CAM_IZQ_MOLDURA_TRA').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_CAM_DER_PUERTA_DEL').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_CAM_IZQ_PUERTA_DEL').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_CAM_DER_PUERTA_TRA').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_CAM_IZQ_PUERTA_TRA').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_REP_DER_PUERTA_DEL_PANEL').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_REP_IZQ_PUERTA_DEL_PANEL').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_REP_DER_PUERTA_TRA_PANEL').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_REP_IZQ_PUERTA_TRA_PANEL').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_CAM_DER_ZOCALO').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_REP_DER_ZOCALO').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_CAM_IZQ_ZOCALO').checked==true)?1:0;
+                lateral+= e + '-';
+                e=(document.getElementById('LAT_REP_IZQ_ZOCALO').checked==true)?1:0;
+                lateral+= e;   
+                text = text + '&LATERAL=' + lateral;                                                                        
+            }
+            else{
+                text = text + '&LATERAL=0';
+            }    
+            if (document.getElementById('trasero_chk').checked){ 
+                var e=(document.getElementById('TRA_CAM_DER_BAUL').checked==true)?1:0;
+                var trasero=e + '-';
+                e=(document.getElementById('TRA_REP_DER_BAUL').checked==true)?1:0;
+                trasero+=e + '-'; 
+                e=(document.getElementById('TRA_CAM_DER_FARO_EXT').checked==true)?1:0;
+                trasero+= e + '-';
+                e=(document.getElementById('TRA_CAM_IZQ_FARO_EXT').checked==true)?1:0;
+                trasero+= e + '-';
+                e=(document.getElementById('TRA_CAM_DER_FARO_INT').checked==true)?1:0;
+                trasero+= e + '-';
+                e=(document.getElementById('TRA_CAM_IZQ_FARO_INT').checked==true)?1:0;
+                trasero+= e + '-';
+                e=(document.getElementById('TRA_CAM_DER_GUARDABARRO').checked==true)?1:0;
+                trasero+= e + '-';
+                e=(document.getElementById('TRA_REP_DER_GUARDABARRO').checked==true)?1:0;
+                trasero+= e + '-';
+                e=(document.getElementById('TRA_CAM_IZQ_GUARDABARRO').checked==true)?1:0;
+                trasero+= e + '-';
+                e=(document.getElementById('TRA_REP_IZQ_GUARDABARRO').checked==true)?1:0;
+                trasero+= e + '-';
+                e=(document.getElementById('TRA_CAM_DER_LUNETA').checked==true)?1:0;
+                trasero+= e + '-';
+                e=(document.getElementById('TRA_CAM_DER_MOLDURA').checked==true)?1:0;
+                trasero+= e + '-';
+                e=(document.getElementById('TRA_CAM_DER_PANELCOLA').checked==true)?1:0;
+                trasero+= e + '-';
+                e=(document.getElementById('TRA_REP_DER_PANELCOLA').checked==true)?1:0;
+                trasero+= e + '-';
+                e=(document.getElementById('TRA_CAM_DER_PARAGOLPE').checked==true)?1:0;
+                trasero+= e + '-';
+                e=(document.getElementById('TRA_REP_DER_PARAGOLPE').checked==true)?1:0;
+                trasero+= e;
+                text = text + '&TRASERO=' + trasero;
+            }
+            else{
+                text = text + '&TRASERO=0';
+            }
+            sendSearch(text);
         }
-        else{
-            text = text + '&FRENTE=0';
-        } 
-        if (document.getElementById('lateral_chk').checked){ 
-            var e=(document.getElementById('LAT_CAM_DER_CRISTAL_DEL').checked==true)?1:0;
-            var lateral=e + '-'; 
-            e=(document.getElementById('LAT_CAM_IZQ_CRISTAL_DEL').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_DER_CRISTAL_TRA').checked==true)?1:0;
-            lateral+= e + '-';  
-            e=(document.getElementById('LAT_CAM_IZQ_CRISTAL_TRA').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_DER_ESPEJO_ELEC').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_IZQ_ESPEJO_ELEC').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_IZQ_ESPEJO_MAN').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_DER_ESPEJO_MAN').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_DER_MANIJA_DEL').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_IZQ_MANIJA_DEL').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_DER_MANIJA_TRA').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_IZQ_MANIJA_TRA').checked==true)?1:0;
-            lateral+= e + '-';
-            e= (document.getElementById('LAT_CAM_DER_MOLDURA_DEL').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_IZQ_MOLDURA_DEL').checked==true)?1:0;
-            lateral+= e + '-';
-            e= (document.getElementById('LAT_CAM_DER_MOLDURA_TRA').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_IZQ_MOLDURA_TRA').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_DER_PUERTA_DEL').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_IZQ_PUERTA_DEL').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_DER_PUERTA_TRA').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_IZQ_PUERTA_TRA').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_REP_DER_PUERTA_DEL_PANEL').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_REP_IZQ_PUERTA_DEL_PANEL').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_REP_DER_PUERTA_TRA_PANEL').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_REP_IZQ_PUERTA_TRA_PANEL').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_DER_ZOCALO').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_REP_DER_ZOCALO').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_CAM_IZQ_ZOCALO').checked==true)?1:0;
-            lateral+= e + '-';
-            e=(document.getElementById('LAT_REP_IZQ_ZOCALO').checked==true)?1:0;
-            lateral+= e;   
-            text = text + '&LATERAL=' + lateral;                                                                        
+        if(isMoto="908")
+        {
+            var e = document.getElementById("CostBrief");
+            var bfValor = document.getElementById("stacked-valorperito");
+            e.innerHTML = "Sugerido $ " + bfValor.value.trim(); 
+            document.getElementById("descargar").disabled = false;
         }
-        else{
-            text = text + '&LATERAL=0';
-        }    
-        if (document.getElementById('trasero_chk').checked){ 
-            var e=(document.getElementById('TRA_CAM_DER_BAUL').checked==true)?1:0;
-            var trasero=e + '-';
-            e=(document.getElementById('TRA_REP_DER_BAUL').checked==true)?1:0;
-            trasero+=e + '-'; 
-            e=(document.getElementById('TRA_CAM_DER_FARO_EXT').checked==true)?1:0;
-            trasero+= e + '-';
-            e=(document.getElementById('TRA_CAM_IZQ_FARO_EXT').checked==true)?1:0;
-            trasero+= e + '-';
-            e=(document.getElementById('TRA_CAM_DER_FARO_INT').checked==true)?1:0;
-            trasero+= e + '-';
-            e=(document.getElementById('TRA_CAM_IZQ_FARO_INT').checked==true)?1:0;
-            trasero+= e + '-';
-            e=(document.getElementById('TRA_CAM_DER_GUARDABARRO').checked==true)?1:0;
-            trasero+= e + '-';
-            e=(document.getElementById('TRA_REP_DER_GUARDABARRO').checked==true)?1:0;
-            trasero+= e + '-';
-            e=(document.getElementById('TRA_CAM_IZQ_GUARDABARRO').checked==true)?1:0;
-            trasero+= e + '-';
-            e=(document.getElementById('TRA_REP_IZQ_GUARDABARRO').checked==true)?1:0;
-            trasero+= e + '-';
-            e=(document.getElementById('TRA_CAM_DER_LUNETA').checked==true)?1:0;
-            trasero+= e + '-';
-            e=(document.getElementById('TRA_CAM_DER_MOLDURA').checked==true)?1:0;
-            trasero+= e + '-';
-            e=(document.getElementById('TRA_CAM_DER_PANELCOLA').checked==true)?1:0;
-            trasero+= e + '-';
-            e=(document.getElementById('TRA_REP_DER_PANELCOLA').checked==true)?1:0;
-            trasero+= e + '-';
-            e=(document.getElementById('TRA_CAM_DER_PARAGOLPE').checked==true)?1:0;
-            trasero+= e + '-';
-            e=(document.getElementById('TRA_REP_DER_PARAGOLPE').checked==true)?1:0;
-            trasero+= e;
-            text = text + '&TRASERO=' + trasero;
-        }
-        else{
-            text = text + '&TRASERO=0';
-        }
-        sendSearch(text);
-    }
+     }
     function sendSearch(bfSearch) {
         let xhr = new XMLHttpRequest();
         let url = "/search?" + bfSearch;
@@ -900,8 +943,13 @@ bfHTML = """
     function fnGetClase(){
         var e = document.getElementById("stacked-clase");
         var bfClase = e.options[e.selectedIndex].id;
+        var e = document.getElementById("stacked-marca");
+        e.selectedIndex = 0;
+        var e = document.getElementById("stacked-modelo");
+        e.selectedIndex = 0;
         
-        if (bfClase =="915")
+        /*
+        if (bfClase =="908")
            {
            var e = document.getElementById("stacked-marca");
            e.selectedIndex = 0;
@@ -911,8 +959,8 @@ bfHTML = """
            setTimeout(() => {document.getElementById("stacked-perito").focus();}, 100);
            }
         else    
-           runClase(bfClase);
-
+        */
+        runClase(bfClase);
     }
     function runClase(bfClase) {
        let xhr = new XMLHttpRequest();
@@ -1059,10 +1107,14 @@ bfHTML = """
         const spanExterior  = document.getElementById('CostBrief');
         valorLimpio = '';
         if (spanExterior ) {
-            const spanInterior = spanExterior.querySelector('#CostBrief'); 
+            //alert(spanExterior.innerText);
+            //const spanInterior = spanExterior.querySelector('#CostBrief');  
+            const spanInterior = spanExterior.innerText;             
             if (spanInterior) {
-                const textoCompleto = spanInterior.textContent;
-                const valorNumerico = textoCompleto.split('$')[1]; 
+                alert(spanInterior);
+                //const textoCompleto = spanInterior.textContent;
+                //const valorNumerico = textoCompleto.split('$')[1]; 
+                const valorNumerico = spanInterior.split('$')[1]; 
                 valorLimpio = valorNumerico ? valorNumerico.trim() : ''; 
             }    
         }    
