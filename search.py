@@ -691,6 +691,18 @@ bfHTML = """
         var e = document.getElementById("TRA_REP_DER_PARAGOLPE");
             e.checked = false;    
 
+        var e = document.getElementById("frente_chk");
+            e.checked = false;
+            e.disabled = false;
+        var e = document.getElementById("lateral_chk");
+            e.checked = false;
+            e.disabled = false;
+        var e = document.getElementById("trasero_chk");
+            e.checked = false;
+            e.disabled = false;
+        
+        document.getElementById("descargar").disabled = true;    
+
         var e = document.getElementById("CostBrief");
             e.innerHTML = '&nbsp;';
     }
@@ -715,26 +727,23 @@ bfHTML = """
         text = text + '&CLASE=' + e.options[e.selectedIndex].id;
         isMoto = e.options[e.selectedIndex].id;
             
-        if(isMoto!="908") 
-        {           
-            var e = document.getElementById("stacked-marca");
-            if(e.options[e.selectedIndex].id == 0) 
-            {
-                alert('Debe seleccionar Marca');
-                e.focus(); 
-                return
-            }    
-            text = text + '&MARCA=' + e.options[e.selectedIndex].id;
-                
-            var e = document.getElementById("stacked-modelo");
-            if(e.options[e.selectedIndex].id == 0) 
-            {
-                alert('Debe seleccionar Modelo');
-                e.focus(); 
-                return
-            }    
-            text = text + '&MODELO=' + e.options[e.selectedIndex].id;
+        var e = document.getElementById("stacked-marca");
+        if(e.options[e.selectedIndex].id == 0) 
+        {
+            alert('Debe seleccionar Marca');
+            e.focus(); 
+            return
         }    
+        text = text + '&MARCA=' + e.options[e.selectedIndex].id;
+                
+        var e = document.getElementById("stacked-modelo");
+        if(e.options[e.selectedIndex].id == 0) 
+        {
+            alert('Debe seleccionar Modelo');
+            e.focus(); 
+            return
+        }    
+        text = text + '&MODELO=' + e.options[e.selectedIndex].id;
             
         var e = document.getElementById("stacked-siniestro");
             text = text + '&SINIESTRO=' + e.value;
@@ -916,26 +925,20 @@ bfHTML = """
             }
             sendSearch(text);
         }
-        if(isMoto="908")
+        else if(isMoto=="908")
         {
-            var e = document.getElementById("CostBrief");
-            var bfValor = document.getElementById("stacked-valorperito");
-            e.innerHTML = "Sugerido $ " + bfValor.value.trim(); 
-            document.getElementById("descargar").disabled = false;
+            sendSearch(text);
         }
      }
     function sendSearch(bfSearch) {
         let xhr = new XMLHttpRequest();
         let url = "/search?" + bfSearch;
-        //var e = document.getElementById("HiddenData");
-        //    e.value = bfSearch;
         xhr.open("POST", url, true);
         xhr.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 var e = document.getElementById("CostBrief");
                     e.innerHTML = this.responseText; 
                     document.getElementById("descargar").disabled = false;
-                    //e.disabled = false;
             }
         }
         xhr.send();
@@ -947,19 +950,33 @@ bfHTML = """
         e.selectedIndex = 0;
         var e = document.getElementById("stacked-modelo");
         e.selectedIndex = 0;
-        
-        /*
-        if (bfClase =="908")
-           {
-           var e = document.getElementById("stacked-marca");
-           e.selectedIndex = 0;
-           var e = document.getElementById("stacked-modelo");
-           e.selectedIndex = 0;
-           
-           setTimeout(() => {document.getElementById("stacked-perito").focus();}, 100);
-           }
-        else    
-        */
+
+        const select = document.getElementById("stacked-clase");
+        const frenteCheckbox = document.getElementById("frente_chk");
+        const lateralCheckbox = document.getElementById("lateral_chk");
+        const traseroCheckbox = document.getElementById("trasero_chk");
+        const selectedId = select.options[select.selectedIndex].id;
+
+        if (selectedId === "908") {
+
+            var e = document.getElementById("lateral");
+            e.style.display = "none";               
+            frenteCheckbox.disabled = true;
+            frenteCheckbox.checked = false; 
+            var e = document.getElementById("trasero");
+            e.style.display = "none";   
+            lateralCheckbox.disabled = true;
+            lateralCheckbox.checked = false; 
+            var e = document.getElementById("frente");
+            e.style.display = "none";   
+            traseroCheckbox.disabled = true;
+            traseroCheckbox.checked = false; 
+        } else {
+            frenteCheckbox.disabled = false;
+            lateralCheckbox.disabled = false;
+            traseroCheckbox.disabled = false;
+        }
+
         runClase(bfClase);
     }
     function runClase(bfClase) {
@@ -1107,8 +1124,13 @@ bfHTML = """
         const spanExterior  = document.getElementById('CostBrief');
         valorLimpio = '';
         if (spanExterior ) {
+            //alert(spanExterior.innerText);
+            //const spanInterior = spanExterior.querySelector('#CostBrief');  
             const spanInterior = spanExterior.innerText;             
             if (spanInterior) {
+                //alert(spanInterior);
+                //const textoCompleto = spanInterior.textContent;
+                //const valorNumerico = textoCompleto.split('$')[1]; 
                 const valorNumerico = spanInterior.split('$')[1]; 
                 valorLimpio = valorNumerico ? valorNumerico.trim() : ''; 
             }    
