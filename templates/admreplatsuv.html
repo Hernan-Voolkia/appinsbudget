@@ -27,12 +27,12 @@
         </div>
     </div>
     <div class="pure-g" style="padding-left:5px;">
-        <div class="pure-u-1 pure-u-md-7-24">
+        <div class="pure-u-1 pure-u-md-7-24"> <!--<div class="pure-u-1 pure-u-md-1-5">-->
             &nbsp;
         </div>
         <div class="pure-u-1 pure-u-md-7-24">
             <div class="pure-menu pure-menu-horizontal">
-                <!--<a href="#" id="btnConsulta" class="pure-menu-link pure-menu-heading">Consulta</a>-->
+               <!-- <a href="#" id="btnConsulta" class="pure-menu-link pure-menu-heading">Consulta</a>-->
                 <ul class="pure-menu-list">
                     <li class="pure-menu-item">
                         <a href="#" id="btnConsulta" class="pure-menu-link">Consulta</a>
@@ -49,7 +49,7 @@
                             <li class="pure-menu-item"></li>
                                 <a href="#" id="btnDelanteroag" class="pure-menu-link">Auto Del. GA</a>
                             </li>
-                            <li class="pure-menu-item pure-menu-selected">
+                            <li class="pure-menu-item">
                                 <a href="#" id="btnDelantero" class="pure-menu-link">Auto Del. GM</a>
                             </li>
                             <li class="pure-menu-item">
@@ -73,7 +73,7 @@
                             <li class="pure-menu-item">
                                 <a href="#" id="btnLateralagsuv" class="pure-menu-link">SUV Lat. GA</a>
                             </li>
-                            <li class="pure-menu-item">
+                            <li class="pure-menu-item pure-menu-selected">
                                 <a href="#" id="btnLateralsuv" class="pure-menu-link">SUV Lat. GM</a>
                             </li>
                             <li class="pure-menu-item">
@@ -90,59 +90,60 @@
     </div>    
     <div class="pure-g" style="padding-left:5px;">
         <div class="pure-u-1 pure-u-md-7-24"> 
-            <img src="./img/Pos_color_RGB.jpg" alt="logo" width="128" height="128" style="margin-left:auto;margin-right:auto;display:block;"/>
+            <img src="./img/Pos_color_RGB.jpg" alt="logo" width="128" height="128"
+             style="margin-left:auto;margin-right:auto;display:block;"/>
              <p>&nbsp;</p>
              <p class="vertical-text"
                 style="margin-left:auto;margin-right:auto;display:block;
                        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-                       color:#005993;text-align:center; font-size: 25px;">Repuestos Delanteros<br>Gama Media</p>
+                       color:#005993;text-align:center; font-size: 25px;" >Repuestos Laterales<br>Gama Media</p>
         </div> 
-        <div class="pure-u-1 pure-u-md-7-24">
+        <div class="pure-u-1 pure-u-md-7-24"> <!--<div class="pure-u-1 pure-u-md-3-5">-->
             <form class="pure-form pure-form-stacked">
                 <fieldset>
                     <div class="pure-control-group">
-                        <label for="stacked-Paragolpe_Ctro" style="color:#005993;text-align:left;">{{Paragolpe_Ctro}}</label>
-                        <input type="text" id="stacked-Paragolpe_Ctro" style="min-width:343px;" value="{{Paragolpe_Ctro_Val}}" onblur="validarCampoDecimal(this)"/>
+                        <label for="stacked-Lat_Cristal_Delantero" style="color:#005993;text-align:left;">{{Lat_Cristal_Delantero}}</label>
+                        <input type="text" id="stacked-Lat_Cristal_Delantero" style="min-width:343px;" value="{{Lat_Cristal_Delantero_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
                     <div class="pure-control-group">
-                        <label for="stacked-Paragolpe_Rejilla" style="color:#005993;text-align:left;">{{Paragolpe_Rejilla}}</label>
-                        <input type="text" id="stacked-Paragolpe_Rejilla" style="min-width:343px;" value="{{Paragolpe_Rejilla_Val}}" onblur="validarCampoDecimal(this)"/>
+                        <label for="stacked-Lat_Cristal_Trasero" style="color:#005993;text-align:left;">{{Lat_Cristal_Trasero}}</label>
+                        <input type="text" id="stacked-Lat_Cristal_Trasero" style="min-width:343px;" value="{{Lat_Cristal_Trasero_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
                     <div class="pure-control-group">
-                        <label for="stacked-Paragolpe_Alma" style="color:#005993;text-align:left;">{{Paragolpe_Alma}}</label>
-                        <input type="text" id="stacked-Paragolpe_Alma" style="min-width:343px;" value="{{Paragolpe_Alma_Val}}" onblur="validarCampoDecimal(this)"/>
+                        <label for="stacked-Lat_Espejo_Eléctrico" style="color:#005993;text-align:left;">{{Lat_Espejo_Electrico}}</label>
+                        <input type="text" id="stacked-Lat_Espejo_Electrico" style="min-width:343px;" value="{{Lat_Espejo_Electrico_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
                     <div class="pure-control-group">
-                        <label for="stacked-Rejilla_Radiador" style="color:#005993;text-align:left;">{{Rejilla_Radiador}}</label>
-                        <input type="text" id="stacked-Rejilla_Radiador" style="min-width:343px;" value="{{Rejilla_Radiador_Val}}" onblur="validarCampoDecimal(this)"/>
+                        <label for="stacked-Lat_Espejo_Manual" style="color:#005993;text-align:left;">{{Lat_Espejo_Manual}}</label>
+                        <input type="text" id="stacked-Lat_Espejo_Manual" style="min-width:343px;" value="{{Lat_Espejo_Manual_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
                     <div class="pure-control-group">
-                        <label for="stacked-Frente" style="color:#005993;text-align:left;">{{Frente}}</label>
-                        <input type="text" id="stacked-Frente" style="min-width:343px;" value="{{Frente_Val}}" onblur="validarCampoDecimal(this)"/>
+                        <label for="stacked-Lat_Manija_Pta_Del" style="color:#005993;text-align:left;">{{Lat_Manija_Pta_Del}}</label>
+                        <input type="text" id="stacked-Lat_Manija_Pta_Del" style="min-width:343px;" value="{{Lat_Manija_Pta_Del_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
                     <div class="pure-control-group">
-                        <label for="stacked-Guardabarro" style="color:#005993;text-align:left;">{{Guardabarro}}</label>
-                        <input type="text" id="stacked-Guardabarro" style="min-width:343px;" value="{{Guardabarro_Val}}" onblur="validarCampoDecimal(this)"/>
+                        <label for="stacked-Lat_Manija_Pta_Tras" style="color:#005993;text-align:left;">{{Lat_Manija_Pta_Tras}}</label>
+                        <input type="text" id="stacked-Lat_Manija_Pta_Tras" style="min-width:343px;" value="{{Lat_Manija_Pta_Tras_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
                     <div class="pure-control-group">
-                        <label for="stacked-Faro" style="color:#005993;text-align:left;">{{Faro}}</label>
-                        <input type="text" id="stacked-Faro" style="min-width:343px;" value="{{Faro_Val}}" onblur="validarCampoDecimal(this)"/>
+                        <label for="stacked-Lat_Moldura_Pta_Del" style="color:#005993;text-align:left;">{{Lat_Moldura_Pta_Del}}</label>
+                        <input type="text" id="stacked-Lat_Moldura_Pta_Del" style="min-width:343px;" value="{{Lat_Moldura_Pta_Del_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
                     <div class="pure-control-group">
-                        <label for="stacked-Faro_Auxiliar" style="color:#005993;text-align:left;">{{Faro_Auxiliar}}</label>
-                        <input type="text" id="stacked-Faro_Auxiliar" style="min-width:343px;" value="{{Faro_Auxiliar_Val}}" onblur="validarCampoDecimal(this)"/>
+                        <label for="stacked-Lat_Moldura_Pta_Tras" style="color:#005993;text-align:left;">{{Lat_Moldura_Pta_Tras}}</label>
+                        <input type="text" id="stacked-Lat_Moldura_Pta_Tras" style="min-width:343px;" value="{{Lat_Moldura_Pta_Tras_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
                     <div class="pure-control-group">
-                        <label for="stacked-Farito" style="color:#005993;text-align:left;">{{Farito}}</label>
-                        <input type="text" id="stacked-Farito" style="min-width:343px;" value="{{Farito_Val}}" onblur="validarCampoDecimal(this)"/>
+                        <label for="stacked-Lat_Puerta_Delantera" style="color:#005993;text-align:left;">{{Lat_Puerta_Delantera}}</label>
+                        <input type="text" id="stacked-Lat_Puerta_Delantera" style="min-width:343px;" value="{{Lat_Puerta_Delantera_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
                     <div class="pure-control-group">
-                        <label for="stacked-Capot" style="color:#005993;text-align:left;">{{Capot}}</label>
-                        <input type="text" id="stacked-Capot" style="min-width:343px;" value="{{Capot_Val}}" onblur="validarCampoDecimal(this)"/>
+                        <label for="stacked-Lat_Puerta_Trasera" style="color:#005993;text-align:left;">{{Lat_Puerta_Trasera}}</label>
+                        <input type="text" id="stacked-Lat_Puerta_Trasera" style="min-width:343px;" value="{{Lat_Puerta_Trasera_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
                     <div class="pure-control-group">
-                        <label for="stacked-Parabrisas" style="color:#005993;text-align:left;">{{Parabrisas}}</label>
-                        <input type="text" id="stacked-Parabrisas" style="min-width:343px;" value="{{Parabrisas_Val}}" onblur="validarCampoDecimal(this)"/>
+                        <label for="stacked-Lat_Zocalo" style="color:#005993;text-align:left;">{{Lat_Zocalo}}</label>
+                        <input type="text" id="stacked-Lat_Zocalo" style="min-width:343px;" value="{{Lat_Zocalo_Val}}" onblur="validarCampoDecimal(this)"/>
                     </div>
                </fieldset>
                 <br style="display: block;content:'';margin-top:5;">
@@ -176,53 +177,29 @@
         window.location.href =  "/admvalue"; 
     });
     document.getElementById("btnDelantero").addEventListener("click", function(event) {
-        event.preventDefault(); 
-        window.location.href =  "/admrepdel"; 
-    });
-    document.getElementById("btnDelanterosuv").addEventListener("click", function(event) {
-        event.preventDefault(); 
-        window.location.href =  "/admrepdelsuv"; 
+        event.preventDefault();
+        window.location.href =  "/admrepdel";
     });
     document.getElementById("btnDelanteroag").addEventListener("click", function(event) {
-        event.preventDefault(); 
-        window.location.href =  "/admrepdelag"; 
-    });    
-    document.getElementById("btnDelanteroagsuv").addEventListener("click", function(event) {
-        event.preventDefault(); 
-        window.location.href =  "/admrepdelagsuv"; 
-    });    
-    document.getElementById("btnLateral").addEventListener("click", function(event) {
-        event.preventDefault(); 
-        window.location.href =  "/admreplat"; 
+        event.preventDefault();
+        window.location.href =  "/admrepdelag";
     });
-    document.getElementById("btnLateralsuv").addEventListener("click", function(event) {
-        event.preventDefault(); 
-        window.location.href =  "/admreplatsuv"; 
+    document.getElementById("btnLateral").addEventListener("click", function(event) {
+        event.preventDefault();
+        window.location.href =  "/admreplat";
     });
     document.getElementById("btnLateralag").addEventListener("click", function(event) {
-        event.preventDefault(); 
-        window.location.href =  "/admreplatag"; 
-    });    
-    document.getElementById("btnLateralagsuv").addEventListener("click", function(event) {
-        event.preventDefault(); 
-        window.location.href =  "/admreplatagsuv"; 
-    });    
-    document.getElementById("btnTrasero").addEventListener("click", function(event) {
-        event.preventDefault(); 
-        window.location.href =  "/admreptra"; 
+        event.preventDefault();
+        window.location.href =  "/admreplatag";
     });
-    document.getElementById("btnTraserosuv").addEventListener("click", function(event) {
-        event.preventDefault(); 
-        window.location.href =  "/admreptrasuv"; 
+    document.getElementById("btnTrasero").addEventListener("click", function(event) {
+        event.preventDefault();
+        window.location.href =  "/admreptra";
     });
     document.getElementById("btnTraseroag").addEventListener("click", function(event) {
-        event.preventDefault(); 
-        window.location.href =  "/admreptraag"; 
-    });    
-    document.getElementById("btnTraseroagsuv").addEventListener("click", function(event) {
-        event.preventDefault(); 
-        window.location.href =  "/admreptraagsuv"; 
-    });    
+        event.preventDefault();
+        window.location.href =  "/admreptraag";
+    });
     function fnRtnConsulta(){  
         var protocolo = window.location.protocol;
         var hostname = window.location.hostname;
@@ -232,10 +209,7 @@
         window.location.href = direccionCompleta + '/consulta';
     }
     function validarNumeroDecimal(cadena) {
-        // Expresión regular para validar números decimales con hasta dos decimales
         const regexDecimal = /^[+-]?\d+([.,]\d{1,2})?$/;
-            
-        // Testea la cadena con la expresión regular
         return regexDecimal.test(cadena);
     }
     function validarCampoDecimal(input) {
@@ -248,43 +222,43 @@
         } 
     }
     function fnSaveData(){
-        var e = document.getElementById("stacked-Paragolpe_Ctro");
-        var text = 'Paragolpe_Ctro=' + e.value;
-        
-        var e = document.getElementById("stacked-Paragolpe_Rejilla");
-        text = text + '&Paragolpe_Rejilla=' + e.value;
-            
-        var e = document.getElementById("stacked-Paragolpe_Alma");
-        text = text + '&Paragolpe_Alma=' + e.value;
+        var e = document.getElementById("stacked-Lat_Cristal_Delantero");
+        var text = 'Lat_Cristal_Delantero=' + e.value;
 
-        var e = document.getElementById("stacked-Rejilla_Radiador");
-        text = text + '&Rejilla_Radiador=' + e.value;
+        var e = document.getElementById("stacked-Lat_Cristal_Trasero");
+        text = text + '&Lat_Cristal_Trasero=' + e.value;
 
-        var e = document.getElementById("stacked-Frente");
-        text = text + '&Frente=' + e.value;
+        var e = document.getElementById("stacked-Lat_Espejo_Electrico");
+        text = text + '&Lat_Espejo_Electrico=' + e.value;
 
-        var e = document.getElementById("stacked-Guardabarro");
-        text = text + '&Guardabarro=' + e.value;
+        var e = document.getElementById("stacked-Lat_Espejo_Manual");
+        text = text + '&Lat_Espejo_Manual=' + e.value;
 
-        var e = document.getElementById("stacked-Faro");
-        text = text + '&Faro=' + e.value;
+        var e = document.getElementById("stacked-Lat_Manija_Pta_Del");
+        text = text + '&Lat_Manija_Pta_Del=' + e.value;
 
-        var e = document.getElementById("stacked-Faro_Auxiliar");
-        text = text + '&Faro_Auxiliar=' + e.value;
+        var e = document.getElementById("stacked-Lat_Manija_Pta_Tras");
+        text = text + '&Lat_Manija_Pta_Tras=' + e.value;
 
-        var e = document.getElementById("stacked-Farito");
-        text = text + '&Farito=' + e.value;
+        var e = document.getElementById("stacked-Lat_Moldura_Pta_Del");
+        text = text + '&Lat_Moldura_Pta_Del=' + e.value;
 
-        var e = document.getElementById("stacked-Capot");
-        text = text + '&Capot=' + e.value;
+        var e = document.getElementById("stacked-Lat_Moldura_Pta_Tras");
+        text = text + '&Lat_Moldura_Pta_Tras=' + e.value;
 
-        var e = document.getElementById("stacked-Parabrisas");
-        text = text + '&Faro_Parabrisas=' + e.value;
-        sendValuesTra(text);
+        var e = document.getElementById("stacked-Lat_Puerta_Delantera");
+        text = text + '&Lat_Puerta_Delantera=' + e.value;
+
+        var e = document.getElementById("stacked-Lat_Puerta_Trasera");
+        text = text + '&Lat_Puerta_Trasera=' + e.value;
+
+        var e = document.getElementById("stacked-Lat_Zocalo");
+        text = text + '&Lat_Zocalo=' + e.value;
+        sendValuesLat(text);
     }
-    function sendValuesTra(bfSearch) {
+    function sendValuesLat(bfSearch) {
         let xhr = new XMLHttpRequest();
-        let url = "/admvaluesdel?" + bfSearch;
+        let url = "/admvalueslatsuv?" + bfSearch;
         xhr.open("POST", url, true);
         xhr.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
