@@ -923,7 +923,7 @@ async def admrepdel(request: Request):
         #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
         engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
         conn = engine.connect()
-        result = conn.execute(text('SELECT * FROM admvaluesdelSUV;'))
+        result = conn.execute(text('SELECT * FROM admvaluesdelsuv;'))
         for row in result:
             if row[0] == 'Del_Paragolpe_Ctro'    : context["Paragolpe_Ctro_Val"]    = float(row[1])
             if row[0] == 'Del_Paragolpe_Rejilla' : context["Paragolpe_Rejilla_Val"] = float(row[1])
@@ -950,17 +950,17 @@ async def admvaluesdelsuv(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragol
        #engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
        engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
        conn = engine.connect()
-       result = conn.execute(text('UPDATE admvaluesdelSUV SET flValue =' + str(Paragolpe_Ctro).replace(',','.') + ' WHERE stName="Del_Paragolpe_Ctro"'))
-       result = conn.execute(text('UPDATE admvaluesdelSUV SET flValue =' + str(Paragolpe_Rejilla).replace(',','.') + ' WHERE stName="Del_Paragolpe_Rejilla"'))
-       result = conn.execute(text('UPDATE admvaluesdelSUV SET flValue =' + str(Paragolpe_Alma).replace(',','.') + ' WHERE stName="Del_Paragolpe_Alma"'))
-       result = conn.execute(text('UPDATE admvaluesdelSUV SET flValue =' + str(Rejilla_Radiador).replace(',','.') + ' WHERE stName="Del_Rejilla_Radiador"'))
-       result = conn.execute(text('UPDATE admvaluesdelSUV SET flValue =' + str(Frente).replace(',','.') + ' WHERE stName="Del_Frente"'))
-       result = conn.execute(text('UPDATE admvaluesdelSUV SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName="Del_Guardabarro"'))
-       result = conn.execute(text('UPDATE admvaluesdelSUV SET flValue =' + str(Faro).replace(',','.') + ' WHERE stName="Del_Faro"'))
-       result = conn.execute(text('UPDATE admvaluesdelSUV SET flValue =' + str(Faro_Auxiliar).replace(',','.') + ' WHERE stName="Del_Faro_Auxiliar"'))
-       result = conn.execute(text('UPDATE admvaluesdelSUV SET flValue =' + str(Farito).replace(',','.') + ' WHERE stName="Del_Farito"'))
-       result = conn.execute(text('UPDATE admvaluesdelSUV SET flValue =' + str(Capot).replace(',','.') + ' WHERE stName="Del_Capot"'))
-       result = conn.execute(text('UPDATE admvaluesdelSUV SET flValue =' + str(Faro_Parabrisas).replace(',','.') + ' WHERE stName="Del_Parabrisas"'))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Paragolpe_Ctro).replace(',','.') + ' WHERE stName="Del_Paragolpe_Ctro"'))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Paragolpe_Rejilla).replace(',','.') + ' WHERE stName="Del_Paragolpe_Rejilla"'))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Paragolpe_Alma).replace(',','.') + ' WHERE stName="Del_Paragolpe_Alma"'))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Rejilla_Radiador).replace(',','.') + ' WHERE stName="Del_Rejilla_Radiador"'))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Frente).replace(',','.') + ' WHERE stName="Del_Frente"'))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName="Del_Guardabarro"'))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Faro).replace(',','.') + ' WHERE stName="Del_Faro"'))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Faro_Auxiliar).replace(',','.') + ' WHERE stName="Del_Faro_Auxiliar"'))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Farito).replace(',','.') + ' WHERE stName="Del_Farito"'))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Capot).replace(',','.') + ' WHERE stName="Del_Capot"'))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Faro_Parabrisas).replace(',','.') + ' WHERE stName="Del_Parabrisas"'))
        if conn.in_transaction(): conn.commit()
        conn.close()
        engine.dispose()
@@ -2020,7 +2020,7 @@ def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
     lsReponeAve = []
     flAverage = 0
     
-    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfVALOR_REPUESTO_MO_Unif)
+    isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfVALOR_REPUESTO_MO_Unif)
       
     for index, item in enumerate(lsRepone):
         bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)       & (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']  == inCOD_CLASE)  & 
@@ -2211,7 +2211,7 @@ def fnCambiaFrente(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
     lsReponeAve = []
     flAverage = 0
     
-    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfVALOR_REPUESTO_MO_Unif)
+    isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfVALOR_REPUESTO_MO_Unif)
 
     for index, item in enumerate(lsRepone):
         bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']  == inCOD_CLASE)  & 
@@ -2299,7 +2299,7 @@ def fnEspejoLateralElec(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
     lsVersion = ['1','2','3','4','5'] 
     lsMeanEsp = []
     
-    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfESPEJO)
+    isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfESPEJO)
     
     dfESPEJO_ELEC = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA)   & 
                                  (dfESPEJO['COD_MODELO'] == inCOD_MODELO) &
@@ -2330,7 +2330,7 @@ def fnEspejoLateralMan(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
     lsVersion = ['1','2','3','4','5'] 
     lsMeanEsp = []
     
-    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfESPEJO)
+    isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfESPEJO)
     
     dfESPEJO_MAN = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA)   & 
                                 (dfESPEJO['COD_MODELO'] == inCOD_MODELO) &
@@ -2361,7 +2361,7 @@ def fnManijaLateralDel(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
     lsVersion = ['1','2','3','4','5'] 
     lsMeanMan = []
     
-    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfMANIJA)
+    isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfMANIJA)
     
     dfMANIJA_RST  = dfMANIJA.loc[(dfMANIJA['COD_MARCA'] == inCOD_MARCA)   & 
                                  (dfMANIJA['COD_MODELO'] == inCOD_MODELO) &
@@ -2392,7 +2392,7 @@ def fnManijaLateralTra(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
     lsVersion = ['1','2','3','4','5'] 
     lsMeanMan = []
     
-    isOld = fnIsOld(inCOD_MARCA,inCOD_MODELO,dfMANIJA)
+    isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfMANIJA)
     
     dfMANIJA_RST  = dfMANIJA.loc[(dfMANIJA['COD_MARCA']  == inCOD_MARCA)  & 
                                  (dfMANIJA['COD_MODELO'] == inCOD_MODELO) &
