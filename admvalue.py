@@ -45,22 +45,40 @@ bfHTML = """
                         <a href="#" id="menuLink1" class="pure-menu-link">Repuestos</a>
                         <ul class="pure-menu-children">
                             <li class="pure-menu-item"></li>
-                                <a href="#" id="btnDelanteroag" class="pure-menu-link">Delantero GA</a>
+                                <a href="#" id="btnDelanteroag" class="pure-menu-link">Auto Del. GA</a>
+                            </li>
+                            <li class="pure-menu-item pure-menu-selected">
+                                <a href="#" id="btnDelantero" class="pure-menu-link">Auto Del. GM</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnLateralag" class="pure-menu-link">Auto Lat. GA</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnLateral" class="pure-menu-link">Auto Lat. GM</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnTraseroag" class="pure-menu-link">Auto Tra. GA</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnTrasero" class="pure-menu-link">Auto Tra. GM</a>
                             </li>
                             <li class="pure-menu-item"></li>
-                                <a href="#" id="btnDelantero" class="pure-menu-link">Delantero GM</a>
+                                <a href="#" id="btnDelanteroagsuv" class="pure-menu-link">SUV Del. GA</a>
                             </li>
                             <li class="pure-menu-item">
-                                <a href="#" id="btnLateralag" class="pure-menu-link">Lateral GA</a>
+                                <a href="#" id="btnDelanterosuv" class="pure-menu-link">SUV Del. GM</a>
                             </li>
                             <li class="pure-menu-item">
-                                <a href="#" id="btnLateral" class="pure-menu-link">Lateral GM</a>
+                                <a href="#" id="btnLateralagsuv" class="pure-menu-link">SUV Lat. GA</a>
                             </li>
                             <li class="pure-menu-item">
-                                <a href="#" id="btnTraseroag" class="pure-menu-link">Trasero GA</a>
+                                <a href="#" id="btnLateralsuv" class="pure-menu-link">SUV Lat. GM</a>
                             </li>
                             <li class="pure-menu-item">
-                                <a href="#" id="btnTrasero" class="pure-menu-link">Trasero GM</a>
+                                <a href="#" id="btnTraseroagsuv" class="pure-menu-link">SUV Tra. GA</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnTraserosuv" class="pure-menu-link">SUV Tra. GM</a>
                             </li>
                         </ul>
                     </li>
@@ -137,29 +155,53 @@ bfHTML = """
         window.location.href =  "/admvalue"; 
     });
     document.getElementById("btnDelantero").addEventListener("click", function(event) {
-        event.preventDefault();
-        window.location.href =  "/admrepdel";
+        event.preventDefault(); 
+        window.location.href =  "/admrepdel"; 
+    });
+    document.getElementById("btnDelanterosuv").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admrepdelsuv"; 
     });
     document.getElementById("btnDelanteroag").addEventListener("click", function(event) {
-        event.preventDefault();
-        window.location.href =  "/admrepdelag";
-    });
+        event.preventDefault(); 
+        window.location.href =  "/admrepdelag"; 
+    });    
+    document.getElementById("btnDelanteroagsuv").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admrepdelagsuv"; 
+    });    
     document.getElementById("btnLateral").addEventListener("click", function(event) {
-        event.preventDefault();
-        window.location.href =  "/admreplat";
+        event.preventDefault(); 
+        window.location.href =  "/admreplat"; 
+    });
+    document.getElementById("btnLateralsuv").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admreplatsuv"; 
     });
     document.getElementById("btnLateralag").addEventListener("click", function(event) {
-        event.preventDefault();
-        window.location.href =  "/admreplatag";
-    });
+        event.preventDefault(); 
+        window.location.href =  "/admreplatag"; 
+    });    
+    document.getElementById("btnLateralagsuv").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admreplatagsuv"; 
+    });    
     document.getElementById("btnTrasero").addEventListener("click", function(event) {
-        event.preventDefault();
-        window.location.href =  "/admreptra";
+        event.preventDefault(); 
+        window.location.href =  "/admreptra"; 
+    });
+    document.getElementById("btnTraserosuv").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admreptrasuv"; 
     });
     document.getElementById("btnTraseroag").addEventListener("click", function(event) {
-        event.preventDefault();
-        window.location.href =  "/admreptraag";
-    });
+        event.preventDefault(); 
+        window.location.href =  "/admreptraag"; 
+    });    
+    document.getElementById("btnTraseroagsuv").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admreptraagsuv"; 
+    });    
     function validarNumeroDecimal(cadena) {
         // Expresión regular para validar números decimales con hasta dos decimales
         const regexDecimal = /^[+-]?\d+([.,]\d{1,2})?$/;
