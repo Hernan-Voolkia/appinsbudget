@@ -879,7 +879,7 @@ async def admrepdel(request: Request):
 #===========================================================
 @app.post("/admvaluesdel", response_class=PlainTextResponse)
 async def admvaluesdel(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragolpe_Alma:str="",Rejilla_Radiador:str="",Frente:str="",\
-                      Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Faro_Parabrisas:str=""):
+                      Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Parabrisas:str=""):
     bfMsg = "Valores grabados satisfactoriamente" 
     try:
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
@@ -895,7 +895,7 @@ async def admvaluesdel(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragolpe_
        result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Faro_Auxiliar).replace(',','.') + ' WHERE stName="Del_Faro_Auxiliar"'))
        result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Farito).replace(',','.') + ' WHERE stName="Del_Farito"'))
        result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Capot).replace(',','.') + ' WHERE stName="Del_Capot"'))
-       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Faro_Parabrisas).replace(',','.') + ' WHERE stName="Del_Parabrisas"'))
+       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Parabrisas).replace(',','.') + ' WHERE stName="Del_Parabrisas"'))
        if conn.in_transaction(): conn.commit()
        conn.close()
        engine.dispose()
@@ -944,7 +944,7 @@ async def admrepdel(request: Request):
 #===========================================================
 @app.post("/admvaluesdelsuv", response_class=PlainTextResponse)
 async def admvaluesdelsuv(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragolpe_Alma:str="",Rejilla_Radiador:str="",Frente:str="",\
-                          Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Faro_Parabrisas:str=""):
+                          Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Parabrisas:str=""):
     bfMsg = "Valores grabados satisfactoriamente" 
     try:
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
@@ -960,7 +960,7 @@ async def admvaluesdelsuv(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragol
        result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Faro_Auxiliar).replace(',','.') + ' WHERE stName="Del_Faro_Auxiliar"'))
        result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Farito).replace(',','.') + ' WHERE stName="Del_Farito"'))
        result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Capot).replace(',','.') + ' WHERE stName="Del_Capot"'))
-       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Faro_Parabrisas).replace(',','.') + ' WHERE stName="Del_Parabrisas"'))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Parabrisas).replace(',','.') + ' WHERE stName="Del_Parabrisas"'))
        if conn.in_transaction(): conn.commit()
        conn.close()
        engine.dispose()
@@ -1009,7 +1009,7 @@ async def admrepdelag(request: Request):
 #===========================================================
 @app.post("/admvaluesdelag", response_class=PlainTextResponse)
 async def admvaluesdelag(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragolpe_Alma:str="",Rejilla_Radiador:str="",Frente:str="",\
-                          Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Faro_Parabrisas:str=""):
+                          Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Parabrisas:str=""):
     bfMsg = "Valores grabados satisfactoriamente" 
     try:
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
@@ -1025,7 +1025,7 @@ async def admvaluesdelag(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragolp
        result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Faro_Auxiliar).replace(',','.') + ' WHERE stName="Del_Faro_Auxiliar"'))
        result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Farito).replace(',','.') + ' WHERE stName="Del_Farito"'))
        result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Capot).replace(',','.') + ' WHERE stName="Del_Capot"'))
-       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Faro_Parabrisas).replace(',','.') + ' WHERE stName="Del_Parabrisas"'))
+       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Parabrisas).replace(',','.') + ' WHERE stName="Del_Parabrisas"'))
        if conn.in_transaction(): conn.commit()
        conn.close()
        engine.dispose()
@@ -1074,7 +1074,7 @@ async def admrepdelagsuv(request: Request):
 #===============================================================
 @app.post("/admvaluesdelagsuv", response_class=PlainTextResponse)
 async def admvaluesdelagsuv(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragolpe_Alma:str="",Rejilla_Radiador:str="",Frente:str="",\
-                            Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Faro_Parabrisas:str=""):
+                            Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Parabrisas:str=""):
     bfMsg = "Valores grabados satisfactoriamente" 
     try:
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
@@ -1090,7 +1090,7 @@ async def admvaluesdelagsuv(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Parag
        result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Faro_Auxiliar).replace(',','.') + ' WHERE stName="Del_Faro_Auxiliar"'))
        result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Farito).replace(',','.') + ' WHERE stName="Del_Farito"'))
        result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Capot).replace(',','.') + ' WHERE stName="Del_Capot"'))
-       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Faro_Parabrisas).replace(',','.') + ' WHERE stName="Del_Parabrisas"'))
+       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Parabrisas).replace(',','.') + ' WHERE stName="Del_Parabrisas"'))
        if conn.in_transaction(): conn.commit()
        conn.close()
        engine.dispose()
