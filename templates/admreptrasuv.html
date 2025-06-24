@@ -264,7 +264,7 @@
     }
     function sendValuesTra(bfSearch) {
         let xhr = new XMLHttpRequest();
-        let url = "/admreptrasuv?" + bfSearch;
+        let url = "/admvaluestrasuv?" + bfSearch;
         xhr.open("POST", url, true);
         xhr.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
