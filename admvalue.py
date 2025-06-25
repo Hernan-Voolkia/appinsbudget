@@ -38,7 +38,7 @@ bfHTML = """
                     <li class="pure-menu-item">
                         <a href="#" id="btnHistorial" class="pure-menu-link">Historial</a>
                     </li>
-                    <li class="pure-menu-item pure-menu-selected">
+                    <li class="pure-menu-item">
                         <a href="#" id="btnParams" class="pure-menu-link">Params</a>
                     </li>
                     <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
