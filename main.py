@@ -40,7 +40,7 @@ dfSEGMENTO = pd.read_csv('./data/_dfSEGMENTACION_V1.csv',sep=';',encoding='utf-8
                          dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16','SEG':'int8'})
 #VALOR-REPUESTO
 dfVALOR_REPUESTO_MO_Unif = pd.read_csv('./data/_dfVALOR_REPUESTO_ALL_V7.csv',sep=';',encoding='utf-8',decimal='.',parse_dates = ['FECHA'],
-                        dtype = {'SEG':'int8','COD_CLASE':'int16','COD_MARCA':'int8','COD_MODELO':'int8', 
+                        dtype = {'SEG':'int8','COD_CLASE':'int16','COD_MARCA':'int8','COD_MODELO':'int8',
                                  'COD_PARTE':'int8','DESC_ELEM':'str','PRECIO_MEAN':'float64','VIEJO':'bool'})
 #VALOR-MO-FRENTE
 dfVALOR_MO_UNIF_FRENTE = pd.read_csv('./data/_dfVALOR_REPARA_MO&PINT_FRENTEV7.csv',sep=';',encoding='utf-8',decimal='.',
@@ -114,7 +114,7 @@ dfMANIJA = pd.read_csv('./data/PuertaManijaSedanValueMin.csv',sep=';',encoding='
                                 'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
 #MOTOS
 dfMOTO = pd.read_csv('./data/motos.csv',sep=';',encoding='utf-8',na_values=['NA', '?'], on_bad_lines='warn',
-                     dtype={'CLASE':int,'MARCA':int,'MODELO':int,'DMARCA':str,'DMODELO':str}) 
+                     dtype={'CLASE':int,'MARCA':int,'MODELO':int,'DMARCA':str,'DMODELO':str})
 #DBVALUES
 engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
 #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
@@ -156,8 +156,8 @@ async def modelo(CLASE:int=901, MARCA:int=0):
 
     dfModeloSearch = dfModeloSearch.sort_values(['MODELO'], ascending=[False])
     for index, row in dfModeloSearch.iterrows():
-        bfOptions += "<option id=" + str(row['MODELO']) + ">" + str(row['DMODELO']) + "</option>" 
-                
+        bfOptions += "<option id=" + str(row['MODELO']) + ">" + str(row['DMODELO']) + "</option>"
+
     return bfOptions
 
 @app.get("/consulta", response_class=HTMLResponse)
@@ -175,7 +175,7 @@ async def consulta():
         if row[0] == 'Ajuste':    param.bfAjuste    = float(row[1])
         if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
     conn.close()
-    engine.dispose()    
+    engine.dispose()
 
     engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
     #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
@@ -194,8 +194,8 @@ async def consulta():
         if row[0] == 'Lat_Puerta_Trasera':    param.bfLat_Puerta_Trasera    = float(row[1])
         if row[0] == 'Lat_Zocalo':            param.bfLat_Zocalo            = float(row[1])
     conn.close()
-    engine.dispose()  
-    
+    engine.dispose()
+
     engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
     #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
@@ -213,8 +213,8 @@ async def consulta():
         if row[0] == 'Lat_Puerta_Trasera':    paramal.bfLat_Puerta_Trasera    = float(row[1])
         if row[0] == 'Lat_Zocalo':            paramal.bfLat_Zocalo            = float(row[1])
     conn.close()
-    engine.dispose() 
-    
+    engine.dispose()
+
     engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
     #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
@@ -232,7 +232,7 @@ async def consulta():
         if row[0] == 'Del_Capot'            : param.bfFrt_GM_Del_Capot             = float(row[1])
         if row[0] == 'Del_Parabrisas'       : param.bfFrt_GM_Del_Parabrisas        = float(row[1])
     conn.close()
-    engine.dispose()  
+    engine.dispose()
 
     engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
     #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
@@ -251,7 +251,7 @@ async def consulta():
         if row[0] == 'Del_Capot'            : paramal.bfFrt_GA_Del_Capot             = float(row[1])
         if row[0] == 'Del_Parabrisas'       : paramal.bfFrt_GA_Del_Parabrisas        = float(row[1])
     conn.close()
-    engine.dispose()  
+    engine.dispose()
 
     engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
     #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
@@ -284,9 +284,9 @@ async def consulta():
         if row[0] == 'Paragolpe'  : paramal.bfParagolpe   = float(row[1])
     conn.close()
     engine.dispose()
-        
+
     return search.bfHTML
-############################################################## 
+##############################################################
 # Reporte de Valores de Valores Genericos
 ##############################################################
 @app.get("/admvalue", response_class=HTMLResponse)
@@ -313,7 +313,7 @@ async def adminValues():
         param.bfPintura = ""
         param.bfAjuste = ""
         param.bfAsegurado = ""
-    
+
     bfAdminValues = admvalue.bfHTML
     bfAdminValues = bfAdminValues.replace('rplBfAsegurado',str(param.bfAsegurado))
     bfAdminValues = bfAdminValues.replace('rplBfTercero',str(param.bfTercero))
@@ -325,7 +325,7 @@ async def adminValues():
 #==========================================================
 @app.post("/admvaluesave", response_class=PlainTextResponse)
 async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:str="",PINTURA:str="",AJUSTE:str=""):
-    bfMsg = "Valores grabados satisfactoriamente" 
+    bfMsg = "Valores grabados satisfactoriamente"
     try:
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
@@ -340,9 +340,9 @@ async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:
        conn.close()
        engine.dispose()
     except Exception as e:
-       bfMsg = "Se produjo un error al grabar: "+str(e)     
+       bfMsg = "Se produjo un error al grabar: "+str(e)
     return bfMsg
-############################################################## 
+##############################################################
 # Reporte de Valores de Partes Laterales
 ##############################################################
 @app.get("/admreplat", response_class=HTMLResponse)
@@ -380,7 +380,7 @@ async def admreplat(request: Request):
         conn.close()
         engine.dispose()
     except Exception as e:
-        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"  
+        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
     return templates.TemplateResponse("admreplat.html", context)
 #==========================================================
 @app.post("/admvalueslat", response_class=PlainTextResponse)
@@ -393,23 +393,22 @@ async def admvalueslat(request: Request, Lat_Cristal_Delantero:str="",Lat_Crista
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
        conn = engine.connect()
-       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName="Lat_Cristal_Delantero"'))
-       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Cristal_Trasero).replace(',','.') + ' WHERE stName="Lat_Cristal_Trasero"'))
-       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Espejo_Electrico).replace(',','.') + ' WHERE stName="Lat_Espejo_Electrico"'))
-       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Espejo_Manual).replace(',','.') + ' WHERE stName="Lat_Espejo_Manual"'))
-       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Manija_Pta_Del).replace(',','.') + ' WHERE stName="Lat_Manija_Pta_Del"'))
-       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Manija_Pta_Tras).replace(',','.') + ' WHERE stName="Lat_Manija_Pta_Tras"'))       
-       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Moldura_Pta_Del).replace(',','.') + ' WHERE stName="Lat_Moldura_Pta_Del"'))       
-       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Moldura_Pta_Tras).replace(',','.') + ' WHERE stName="Lat_Moldura_Pta_Tras"'))
-       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Puerta_Delantera).replace(',','.') + ' WHERE stName="Lat_Puerta_Delantera"'))
-       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Puerta_Trasera).replace(',','.') + ' WHERE stName="Lat_Puerta_Trasera"'))
-       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Zocalo).replace(',','.') + ' WHERE stName="Lat_Zocalo"'))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName==\'Lat_Cristal_Delantero=\''))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Cristal_Trasero).replace(',','.') + ' WHERE stName==\'Lat_Cristal_Trasero=\''))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Espejo_Electrico).replace(',','.') + ' WHERE stName==\'Lat_Espejo_Electrico=\''))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Espejo_Manual).replace(',','.') + ' WHERE stName==\'Lat_Espejo_Manual=\''))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Manija_Pta_Del).replace(',','.') + ' WHERE stName==\'Lat_Manija_Pta_Del=\''))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Manija_Pta_Tras).replace(',','.') + ' WHERE stName==\'Lat_Manija_Pta_Tras=\''))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Moldura_Pta_Del).replace(',','.') + ' WHERE stName==\'Lat_Moldura_Pta_Del=\''))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Moldura_Pta_Tras).replace(',','.') + ' WHERE stName==\'Lat_Moldura_Pta_Tras=\''))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Puerta_Trasera).replace(',','.') + ' WHERE stName==\'Lat_Puerta_Trasera\''))
+       result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Zocalo).replace(',','.') + ' WHERE stName=\'Lat_Zocalo\''))
        if conn.in_transaction(): conn.commit()
        conn.close()
        engine.dispose()
     except Exception as e:
-       bfMsg = "Se produjo un error al grabar, comuniquese con el administrador " + str(e)    
-    return bfMsg         
+       bfMsg = "Se produjo un error al grabar, comuniquese con el administrador " + str(e)
+    return bfMsg
 #####################################################
 @app.get("/admreplatsuv", response_class=HTMLResponse)
 async def admreplatsuv(request: Request):
@@ -446,7 +445,7 @@ async def admreplatsuv(request: Request):
         conn.close()
         engine.dispose()
     except Exception as e:
-        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"  
+        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
     return templates.TemplateResponse("admreplatsuv.html", context)
 #==========================================================
 @app.post("/admvalueslatsuv", response_class=PlainTextResponse)
@@ -459,23 +458,23 @@ async def admvalueslatsuv(request: Request, Lat_Cristal_Delantero:str="",Lat_Cri
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
        conn = engine.connect()
-       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName="Lat_Cristal_Delantero"'))
-       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Cristal_Trasero).replace(',','.') + ' WHERE stName="Lat_Cristal_Trasero"'))
-       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Espejo_Electrico).replace(',','.') + ' WHERE stName="Lat_Espejo_Electrico"'))
-       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Espejo_Manual).replace(',','.') + ' WHERE stName="Lat_Espejo_Manual"'))
-       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Manija_Pta_Del).replace(',','.') + ' WHERE stName="Lat_Manija_Pta_Del"'))
-       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Manija_Pta_Tras).replace(',','.') + ' WHERE stName="Lat_Manija_Pta_Tras"'))       
-       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Moldura_Pta_Del).replace(',','.') + ' WHERE stName="Lat_Moldura_Pta_Del"'))       
-       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Moldura_Pta_Tras).replace(',','.') + ' WHERE stName="Lat_Moldura_Pta_Tras"'))
-       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Puerta_Delantera).replace(',','.') + ' WHERE stName="Lat_Puerta_Delantera"'))
-       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Puerta_Trasera).replace(',','.') + ' WHERE stName="Lat_Puerta_Trasera"'))
-       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Zocalo).replace(',','.') + ' WHERE stName="Lat_Zocalo"'))
+       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName=\'Lat_Cristal_Delantero\''))
+       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Cristal_Trasero).replace(',','.') + ' WHERE stName=\'Lat_Cristal_Trasero\''))
+       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Espejo_Electrico).replace(',','.') + ' WHERE stName=\'Lat_Espejo_Electrico\''))
+       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Espejo_Manual).replace(',','.') + ' WHERE stName=\'Lat_Espejo_Manual\''))
+       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Manija_Pta_Del).replace(',','.') + ' WHERE stName=\'Lat_Manija_Pta_Del\''))
+       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Manija_Pta_Tras).replace(',','.') + ' WHERE stName=\'Lat_Manija_Pta_Tras\''))
+       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Moldura_Pta_Del).replace(',','.') + ' WHERE stName=\'Lat_Moldura_Pta_Del\''))
+       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Moldura_Pta_Tras).replace(',','.') + ' WHERE stName=\'Lat_Moldura_Pta_Tras\''))
+       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Puerta_Delantera).replace(',','.') + ' WHERE stName=\'Lat_Puerta_Delantera\''))
+       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Puerta_Trasera).replace(',','.') + ' WHERE stName=\'Lat_Puerta_Trasera\''))
+       result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Zocalo).replace(',','.') + ' WHERE stName=\'Lat_Zocalo\''))
        if conn.in_transaction(): conn.commit()
        conn.close()
        engine.dispose()
     except Exception as e:
-       bfMsg = "Se produjo un error al grabar, comuniquese con el administrador " + str(e)    
-    return bfMsg         
+       bfMsg = "Se produjo un error al grabar, comuniquese con el administrador " + str(e)
+    return bfMsg
 ####################################################
 @app.get("/admreplatag", response_class=HTMLResponse)
 async def admreplatag(request: Request):
@@ -512,7 +511,7 @@ async def admreplatag(request: Request):
         conn.close()
         engine.dispose()
     except Exception as e:
-        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"  
+        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
     return templates.TemplateResponse("admreplatag.html", context)
 #==========================================================
 @app.post("/admvalueslatag", response_class=PlainTextResponse)
@@ -525,23 +524,23 @@ async def admvalueslatag(request: Request, Lat_Cristal_Delantero:str="",Lat_Cris
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
        conn = engine.connect()
-       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName="Lat_Cristal_Delantero"'))
-       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Cristal_Trasero).replace(',','.') + ' WHERE stName="Lat_Cristal_Trasero"'))
-       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Espejo_Electrico).replace(',','.') + ' WHERE stName="Lat_Espejo_Electrico"'))
-       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Espejo_Manual).replace(',','.') + ' WHERE stName="Lat_Espejo_Manual"'))
-       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Manija_Pta_Del).replace(',','.') + ' WHERE stName="Lat_Manija_Pta_Del"'))
-       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Manija_Pta_Tras).replace(',','.') + ' WHERE stName="Lat_Manija_Pta_Tras"'))       
-       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Moldura_Pta_Del).replace(',','.') + ' WHERE stName="Lat_Moldura_Pta_Del"'))       
-       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Moldura_Pta_Tras).replace(',','.') + ' WHERE stName="Lat_Moldura_Pta_Tras"'))
-       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Puerta_Delantera).replace(',','.') + ' WHERE stName="Lat_Puerta_Delantera"'))
-       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Puerta_Trasera).replace(',','.') + ' WHERE stName="Lat_Puerta_Trasera"'))
-       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Zocalo).replace(',','.') + ' WHERE stName="Lat_Zocalo"'))
+       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName=\'Lat_Cristal_Delantero\''))
+       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Cristal_Trasero).replace(',','.') + ' WHERE stName=\'Lat_Cristal_Trasero\''))
+       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Espejo_Electrico).replace(',','.') + ' WHERE stName=\'Lat_Espejo_Electrico\''))
+       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Espejo_Manual).replace(',','.') + ' WHERE stName=\'Lat_Espejo_Manual\''))
+       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Manija_Pta_Del).replace(',','.') + ' WHERE stName=\'Lat_Manija_Pta_Del\''))
+       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Manija_Pta_Tras).replace(',','.') + ' WHERE stName=\'Lat_Manija_Pta_Tras\''))
+       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Moldura_Pta_Del).replace(',','.') + ' WHERE stName=\'Lat_Moldura_Pta_Del\''))
+       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Moldura_Pta_Tras).replace(',','.') + ' WHERE stName=\'Lat_Moldura_Pta_Tras\''))
+       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Puerta_Delantera).replace(',','.') + ' WHERE stName=\'Lat_Puerta_Delantera\''))
+       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Puerta_Trasera).replace(',','.') + ' WHERE stName=\'Lat_Puerta_Trasera\''))
+       result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Zocalo).replace(',','.') + ' WHERE stName=\'Lat_Zocalo\''))
        if conn.in_transaction(): conn.commit()
        conn.close()
        engine.dispose()
     except Exception as e:
-       bfMsg = "Se produjo un error al grabar, comuniquese con el administrador " + str(e)    
-    return bfMsg         
+       bfMsg = "Se produjo un error al grabar, comuniquese con el administrador " + str(e)
+    return bfMsg
 ########################################################
 @app.get("/admreplatagsuv", response_class=HTMLResponse)
 async def admreplatag(request: Request):
@@ -578,7 +577,7 @@ async def admreplatag(request: Request):
         conn.close()
         engine.dispose()
     except Exception as e:
-        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"  
+        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
     return templates.TemplateResponse("admreplatagsuv.html", context)
 #==========================================================
 @app.post("/admvalueslatagsuv", response_class=PlainTextResponse)
@@ -591,24 +590,24 @@ async def admvalueslatagsuv(request: Request, Lat_Cristal_Delantero:str="",Lat_C
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
        conn = engine.connect()
-       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName="Lat_Cristal_Delantero"'))
-       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Cristal_Trasero).replace(',','.') + ' WHERE stName="Lat_Cristal_Trasero"'))
-       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Espejo_Electrico).replace(',','.') + ' WHERE stName="Lat_Espejo_Electrico"'))
-       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Espejo_Manual).replace(',','.') + ' WHERE stName="Lat_Espejo_Manual"'))
-       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Manija_Pta_Del).replace(',','.') + ' WHERE stName="Lat_Manija_Pta_Del"'))
-       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Manija_Pta_Tras).replace(',','.') + ' WHERE stName="Lat_Manija_Pta_Tras"'))       
-       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Moldura_Pta_Del).replace(',','.') + ' WHERE stName="Lat_Moldura_Pta_Del"'))       
-       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Moldura_Pta_Tras).replace(',','.') + ' WHERE stName="Lat_Moldura_Pta_Tras"'))
-       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Puerta_Delantera).replace(',','.') + ' WHERE stName="Lat_Puerta_Delantera"'))
-       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Puerta_Trasera).replace(',','.') + ' WHERE stName="Lat_Puerta_Trasera"'))
-       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Zocalo).replace(',','.') + ' WHERE stName="Lat_Zocalo"'))
+       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName=\'Lat_Cristal_Delantero\''))
+       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Cristal_Trasero).replace(',','.') + ' WHERE stName=\'Lat_Cristal_Trasero\''))
+       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Espejo_Electrico).replace(',','.') + ' WHERE stName=\'Lat_Espejo_Electrico\''))
+       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Espejo_Manual).replace(',','.') + ' WHERE stName=\'Lat_Espejo_Manual\''))
+       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Manija_Pta_Del).replace(',','.') + ' WHERE stName=\'Lat_Manija_Pta_Del\''))
+       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Manija_Pta_Tras).replace(',','.') + ' WHERE stName=\'Lat_Manija_Pta_Tras\''))
+       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Moldura_Pta_Del).replace(',','.') + ' WHERE stName=\'Lat_Moldura_Pta_Del\''))
+       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Moldura_Pta_Tras).replace(',','.') + ' WHERE stName=\'Lat_Moldura_Pta_Tras\''))
+       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Puerta_Delantera).replace(',','.') + ' WHERE stName=\'Lat_Puerta_Delantera\''))
+       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Puerta_Trasera).replace(',','.') + ' WHERE stName=\'Lat_Puerta_Trasera\''))
+       result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Zocalo).replace(',','.') + ' WHERE stName=\'Lat_Zocalo\''))
        if conn.in_transaction(): conn.commit()
        conn.close()
        engine.dispose()
     except Exception as e:
-       bfMsg = "Se produjo un error al grabar, comuniquese con el administrador " + str(e)    
+       bfMsg = "Se produjo un error al grabar, comuniquese con el administrador " + str(e)
     return bfMsg
-############################################################## 
+##############################################################
 # Reporte de Valores de Partes Traseras
 ##############################################################
 @app.get("/admreptra", response_class=HTMLResponse)
@@ -641,31 +640,31 @@ async def admreptra(request: Request):
         conn.close()
         engine.dispose()
     except Exception as e:
-        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador" 
-            
+        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
+
     return templates.TemplateResponse("admreptra.html", context)
 #===========================================================
 @app.post("/admvaluestra", response_class=PlainTextResponse)
 async def admvaluestra(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Guardabarro:str="",Luneta:str="",\
                       Moldura:str="",Panel_Cola:str="",Paragolpe:str=""):
-    bfMsg = "Valores grabados satisfactoriamente" 
+    bfMsg = "Valores grabados satisfactoriamente"
     try:
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
        conn = engine.connect()
-       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName="Baul_Porton"'))
-       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Faro_Ext).replace(',','.') + ' WHERE stName="Faro_Ext"'))
-       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Faro_Int).replace(',','.') + ' WHERE stName="Faro_Int"'))
-       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName="Guardabarro"'))
-       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Luneta).replace(',','.') + ' WHERE stName="Luneta"'))
-       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Moldura).replace(',','.') + ' WHERE stName="Moldura"'))
-       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Panel_Cola).replace(',','.') + ' WHERE stName="Panel_Cola"'))
-       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Paragolpe).replace(',','.') + ' WHERE stName="Paragolpe"'))
+       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName=\'Baul_Porton\''))
+       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Faro_Ext).replace(',','.') + ' WHERE stName=\'Faro_Ext\''))
+       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Faro_Int).replace(',','.') + ' WHERE stName=\'Faro_Int\''))
+       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName=\'Guardabarro\''))
+       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Luneta).replace(',','.') + ' WHERE stName=\'Luneta\''))
+       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Moldura).replace(',','.') + ' WHERE stName=\'Moldura\''))
+       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Panel_Cola).replace(',','.') + ' WHERE stName=\'Panel_Cola\''))
+       result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Paragolpe).replace(',','.') + ' WHERE stName=\'Paragolpe\''))
        if conn.in_transaction(): conn.commit()
        conn.close()
        engine.dispose()
     except Exception as e:
-       bfMsg = "Se produjo un error al grabar: "+str(e)     
+       bfMsg = "Se produjo un error al grabar: "+str(e)
     return bfMsg
 ######################################################
 @app.get("/admreptrasuv", response_class=HTMLResponse)
@@ -698,30 +697,30 @@ async def admreptrasuv(request: Request):
         conn.close()
         engine.dispose()
     except Exception as e:
-        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador" 
+        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
     return templates.TemplateResponse("admreptrasuv.html", context)
 #=============================================================
 @app.post("/admvaluestrasuv", response_class=PlainTextResponse)
 async def admvaluestrasuv(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Guardabarro:str="",Luneta:str="",\
                           Moldura:str="",Panel_Cola:str="",Paragolpe:str=""):
-    bfMsg = "Valores grabados satisfactoriamente" 
+    bfMsg = "Valores grabados satisfactoriamente"
     try:
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
        conn = engine.connect()
-       result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName="Baul_Porton"'))
-       result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Faro_Ext).replace(',','.') + ' WHERE stName="Faro_Ext"'))
-       result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Faro_Int).replace(',','.') + ' WHERE stName="Faro_Int"'))
-       result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName="Guardabarro"'))
-       result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Luneta).replace(',','.') + ' WHERE stName="Luneta"'))
-       result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Moldura).replace(',','.') + ' WHERE stName="Moldura"'))
-       result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Panel_Cola).replace(',','.') + ' WHERE stName="Panel_Cola"'))
-       result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Paragolpe).replace(',','.') + ' WHERE stName="Paragolpe"'))
+       result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName=\'Baul_Porton\''))
+       result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Faro_Ext).replace(',','.') + ' WHERE stName=\'Faro_Ext\''))
+       result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Faro_Int).replace(',','.') + ' WHERE stName=\'Faro_Int\''))
+       result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName=\'Guardabarro\''))
+       result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Luneta).replace(',','.') + ' WHERE stName=\'Luneta\''))
+       result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Moldura).replace(',','.') + ' WHERE stName=\'Moldura\''))
+       result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Panel_Cola).replace(',','.') + ' WHERE stName=\'Panel_Cola\''))
+       result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Paragolpe).replace(',','.') + ' WHERE stName=\'Paragolpe\''))
        if conn.in_transaction(): conn.commit()
        conn.close()
        engine.dispose()
     except Exception as e:
-       bfMsg = "Se produjo un error al grabar: "+str(e)     
+       bfMsg = "Se produjo un error al grabar: "+str(e)
     return bfMsg
 #####################################################
 @app.get("/admreptraag", response_class=HTMLResponse)
@@ -754,30 +753,30 @@ async def admreptraag(request: Request):
         conn.close()
         engine.dispose()
     except Exception as e:
-        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador" 
+        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
     return templates.TemplateResponse("admreptraag.html", context)
 #==========================================================
 @app.post("/admvaluestraag", response_class=PlainTextResponse)
 async def admvaluestraag(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Guardabarro:str="",Luneta:str="",\
                          Moldura:str="",Panel_Cola:str="",Paragolpe:str=""):
-    bfMsg = "Valores grabados satisfactoriamente" 
+    bfMsg = "Valores grabados satisfactoriamente"
     try:
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
        conn = engine.connect()
-       result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName="Baul_Porton"'))
-       result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Faro_Ext).replace(',','.') + ' WHERE stName="Faro_Ext"'))
-       result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Faro_Int).replace(',','.') + ' WHERE stName="Faro_Int"'))
-       result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName="Guardabarro"'))
-       result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Luneta).replace(',','.') + ' WHERE stName="Luneta"'))
-       result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Moldura).replace(',','.') + ' WHERE stName="Moldura"'))
-       result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Panel_Cola).replace(',','.') + ' WHERE stName="Panel_Cola"'))
-       result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Paragolpe).replace(',','.') + ' WHERE stName="Paragolpe"'))
+       result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName=\'Baul_Porton\''))
+       result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Faro_Ext).replace(',','.') + ' WHERE stName=\'Faro_Ext\''))
+       result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Faro_Int).replace(',','.') + ' WHERE stName=\'Faro_Int\''))
+       result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName=\'Guardabarro\''))
+       result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Luneta).replace(',','.') + ' WHERE stName=\'Luneta\''))
+       result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Moldura).replace(',','.') + ' WHERE stName=\'Moldura\''))
+       result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Panel_Cola).replace(',','.') + ' WHERE stName=\'Panel_Cola\''))
+       result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Paragolpe).replace(',','.') + ' WHERE stName=\'Paragolpe\''))
        if conn.in_transaction(): conn.commit()
        conn.close()
        engine.dispose()
     except Exception as e:
-       bfMsg = "Se produjo un error al grabar: "+str(e)     
+       bfMsg = "Se produjo un error al grabar: "+str(e)
     return bfMsg
 #######################################################
 @app.get("/admreptraagsuv", response_class=HTMLResponse)
@@ -810,30 +809,30 @@ async def admreptraagsuv(request: Request):
         conn.close()
         engine.dispose()
     except Exception as e:
-        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador" 
+        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
     return templates.TemplateResponse("admreptraagsuv.html", context)
 #=============================================================
 @app.post("/admvaluestraagsuv", response_class=PlainTextResponse)
 async def admvaluestraagsuv(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Guardabarro:str="",Luneta:str="",\
                          Moldura:str="",Panel_Cola:str="",Paragolpe:str=""):
-    bfMsg = "Valores grabados satisfactoriamente" 
+    bfMsg = "Valores grabados satisfactoriamente"
     try:
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
        conn = engine.connect()
-       result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName="Baul_Porton"'))
-       result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Faro_Ext).replace(',','.') + ' WHERE stName="Faro_Ext"'))
-       result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Faro_Int).replace(',','.') + ' WHERE stName="Faro_Int"'))
-       result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName="Guardabarro"'))
-       result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Luneta).replace(',','.') + ' WHERE stName="Luneta"'))
-       result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Moldura).replace(',','.') + ' WHERE stName="Moldura"'))
-       result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Panel_Cola).replace(',','.') + ' WHERE stName="Panel_Cola"'))
-       result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Paragolpe).replace(',','.') + ' WHERE stName="Paragolpe"'))
+       result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName=\'Baul_Porton\''))
+       result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Faro_Ext).replace(',','.') + ' WHERE stName=\'Faro_Ext\''))
+       result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Faro_Int).replace(',','.') + ' WHERE stName=\'Faro_Int\''))
+       result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName=\'Guardabarro\''))
+       result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Luneta).replace(',','.') + ' WHERE stName=\'Luneta\''))
+       result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Moldura).replace(',','.') + ' WHERE stName=\'Moldura\''))
+       result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Panel_Cola).replace(',','.') + ' WHERE stName=\'Panel_Cola\''))
+       result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Paragolpe).replace(',','.') + ' WHERE stName=\'Paragolpe\''))
        if conn.in_transaction(): conn.commit()
        conn.close()
        engine.dispose()
     except Exception as e:
-       bfMsg = "Se produjo un error al grabar: "+str(e)     
+       bfMsg = "Se produjo un error al grabar: "+str(e)
     return bfMsg
 ######################################################
 # Reporte de Valores de Partes Delanteras
@@ -874,33 +873,33 @@ async def admrepdel(request: Request):
         conn.close()
         engine.dispose()
     except Exception as e:
-        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador" 
+        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
     return templates.TemplateResponse("admrepdel.html", context)
 #===========================================================
 @app.post("/admvaluesdel", response_class=PlainTextResponse)
 async def admvaluesdel(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragolpe_Alma:str="",Rejilla_Radiador:str="",Frente:str="",\
                       Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Parabrisas:str=""):
-    bfMsg = "Valores grabados satisfactoriamente" 
+    bfMsg = "Valores grabados satisfactoriamente"
     try:
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
        conn = engine.connect()
-       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Paragolpe_Ctro).replace(',','.') + ' WHERE stName="Del_Paragolpe_Ctro"'))
-       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Paragolpe_Rejilla).replace(',','.') + ' WHERE stName="Del_Paragolpe_Rejilla"'))
-       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Paragolpe_Alma).replace(',','.') + ' WHERE stName="Del_Paragolpe_Alma"'))
-       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Rejilla_Radiador).replace(',','.') + ' WHERE stName="Del_Rejilla_Radiador"'))
-       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Frente).replace(',','.') + ' WHERE stName="Del_Frente"'))
-       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName="Del_Guardabarro"'))
-       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Faro).replace(',','.') + ' WHERE stName="Del_Faro"'))
-       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Faro_Auxiliar).replace(',','.') + ' WHERE stName="Del_Faro_Auxiliar"'))
-       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Farito).replace(',','.') + ' WHERE stName="Del_Farito"'))
-       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Capot).replace(',','.') + ' WHERE stName="Del_Capot"'))
-       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Parabrisas).replace(',','.') + ' WHERE stName="Del_Parabrisas"'))
+       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Paragolpe_Ctro).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Ctro\''))
+       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Paragolpe_Rejilla).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Rejilla\''))
+       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Paragolpe_Alma).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Alma\''))
+       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Rejilla_Radiador).replace(',','.') + ' WHERE stName=\'Del_Rejilla_Radiador\''))
+       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Frente).replace(',','.') + ' WHERE stName=\'Del_Frente\''))
+       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName=\'Del_Guardabarro\''))
+       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Faro).replace(',','.') + ' WHERE stName=\'Del_Faro\''))
+       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Faro_Auxiliar).replace(',','.') + ' WHERE stName=\'Del_Faro_Auxiliar\''))
+       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Farito).replace(',','.') + ' WHERE stName=\'Del_Farito\''))
+       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Capot).replace(',','.') + ' WHERE stName=\'Del_Capot\''))
+       result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Parabrisas).replace(',','.') + ' WHERE stName=\'Del_Parabrisas\''))
        if conn.in_transaction(): conn.commit()
        conn.close()
        engine.dispose()
     except Exception as e:
-       bfMsg = "Se produjo un error al grabar: "+str(e)     
+       bfMsg = "Se produjo un error al grabar: "+str(e)
     return bfMsg
 ######################################################
 @app.get("/admrepdelsuv", response_class=HTMLResponse)
@@ -939,33 +938,33 @@ async def admrepdel(request: Request):
         conn.close()
         engine.dispose()
     except Exception as e:
-        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador" 
+        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
     return templates.TemplateResponse("admrepdelsuv.html", context)
 #===========================================================
 @app.post("/admvaluesdelsuv", response_class=PlainTextResponse)
 async def admvaluesdelsuv(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragolpe_Alma:str="",Rejilla_Radiador:str="",Frente:str="",\
                           Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Parabrisas:str=""):
-    bfMsg = "Valores grabados satisfactoriamente" 
+    bfMsg = "Valores grabados satisfactoriamente"
     try:
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
        conn = engine.connect()
-       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Paragolpe_Ctro).replace(',','.') + ' WHERE stName="Del_Paragolpe_Ctro"'))
-       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Paragolpe_Rejilla).replace(',','.') + ' WHERE stName="Del_Paragolpe_Rejilla"'))
-       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Paragolpe_Alma).replace(',','.') + ' WHERE stName="Del_Paragolpe_Alma"'))
-       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Rejilla_Radiador).replace(',','.') + ' WHERE stName="Del_Rejilla_Radiador"'))
-       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Frente).replace(',','.') + ' WHERE stName="Del_Frente"'))
-       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName="Del_Guardabarro"'))
-       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Faro).replace(',','.') + ' WHERE stName="Del_Faro"'))
-       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Faro_Auxiliar).replace(',','.') + ' WHERE stName="Del_Faro_Auxiliar"'))
-       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Farito).replace(',','.') + ' WHERE stName="Del_Farito"'))
-       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Capot).replace(',','.') + ' WHERE stName="Del_Capot"'))
-       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Parabrisas).replace(',','.') + ' WHERE stName="Del_Parabrisas"'))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Paragolpe_Ctro).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Ctro\''))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Paragolpe_Rejilla).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Rejilla\''))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Paragolpe_Alma).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Alma\''))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Rejilla_Radiador).replace(',','.') + ' WHERE stName=\'Del_Rejilla_Radiador\''))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Frente).replace(',','.') + ' WHERE stName=\'Del_Frente\''))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName=\'Del_Guardabarro\''))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Faro).replace(',','.') + ' WHERE stName=\'Del_Faro\''))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Faro_Auxiliar).replace(',','.') + ' WHERE stName=\'Del_Faro_Auxiliar\''))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Farito).replace(',','.') + ' WHERE stName=\'Del_Farito\''))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Capot).replace(',','.') + ' WHERE stName=\'Del_Capot\''))
+       result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Parabrisas).replace(',','.') + ' WHERE stName=\'Del_Parabrisas\''))
        if conn.in_transaction(): conn.commit()
        conn.close()
        engine.dispose()
     except Exception as e:
-       bfMsg = "Se produjo un error al grabar: "+str(e)     
+       bfMsg = "Se produjo un error al grabar: "+str(e)
     return bfMsg
 #####################################################
 @app.get("/admrepdelag", response_class=HTMLResponse)
@@ -1004,33 +1003,33 @@ async def admrepdelag(request: Request):
         conn.close()
         engine.dispose()
     except Exception as e:
-        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador" 
+        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
     return templates.TemplateResponse("admrepdelag.html", context)
 #===========================================================
 @app.post("/admvaluesdelag", response_class=PlainTextResponse)
 async def admvaluesdelag(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragolpe_Alma:str="",Rejilla_Radiador:str="",Frente:str="",\
                           Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Parabrisas:str=""):
-    bfMsg = "Valores grabados satisfactoriamente" 
+    bfMsg = "Valores grabados satisfactoriamente"
     try:
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
        conn = engine.connect()
-       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Paragolpe_Ctro).replace(',','.') + ' WHERE stName="Del_Paragolpe_Ctro"'))
-       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Paragolpe_Rejilla).replace(',','.') + ' WHERE stName="Del_Paragolpe_Rejilla"'))
-       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Paragolpe_Alma).replace(',','.') + ' WHERE stName="Del_Paragolpe_Alma"'))
-       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Rejilla_Radiador).replace(',','.') + ' WHERE stName="Del_Rejilla_Radiador"'))
-       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Frente).replace(',','.') + ' WHERE stName="Del_Frente"'))
-       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName="Del_Guardabarro"'))
-       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Faro).replace(',','.') + ' WHERE stName="Del_Faro"'))
-       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Faro_Auxiliar).replace(',','.') + ' WHERE stName="Del_Faro_Auxiliar"'))
-       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Farito).replace(',','.') + ' WHERE stName="Del_Farito"'))
-       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Capot).replace(',','.') + ' WHERE stName="Del_Capot"'))
-       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Parabrisas).replace(',','.') + ' WHERE stName="Del_Parabrisas"'))
+       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Paragolpe_Ctro).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Ctro\''))
+       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Paragolpe_Rejilla).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Rejilla\''))
+       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Paragolpe_Alma).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Alma\''))
+       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Rejilla_Radiador).replace(',','.') + ' WHERE stName=\'Del_Rejilla_Radiador\''))
+       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Frente).replace(',','.') + ' WHERE stName=\'Del_Frente\''))
+       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName=\'Del_Guardabarro\''))
+       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Faro).replace(',','.') + ' WHERE stName=\'Del_Faro\''))
+       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Faro_Auxiliar).replace(',','.') + ' WHERE stName=\'Del_Faro_Auxiliar\''))
+       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Farito).replace(',','.') + ' WHERE stName=\'Del_Farito\''))
+       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Capot).replace(',','.') + ' WHERE stName=\'Del_Capot\''))
+       result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Parabrisas).replace(',','.') + ' WHERE stName=\'Del_Parabrisas\''))
        if conn.in_transaction(): conn.commit()
        conn.close()
        engine.dispose()
     except Exception as e:
-       bfMsg = "Se produjo un error al grabar: "+str(e)     
+       bfMsg = "Se produjo un error al grabar: "+str(e)
     return bfMsg
 #########################################################
 @app.get("/admrepdelagsuv", response_class=HTMLResponse)
@@ -1069,33 +1068,33 @@ async def admrepdelagsuv(request: Request):
         conn.close()
         engine.dispose()
     except Exception as e:
-        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador" 
+        context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
     return templates.TemplateResponse("admrepdelagsuv.html", context)
 #===============================================================
 @app.post("/admvaluesdelagsuv", response_class=PlainTextResponse)
 async def admvaluesdelagsuv(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragolpe_Alma:str="",Rejilla_Radiador:str="",Frente:str="",\
                             Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Parabrisas:str=""):
-    bfMsg = "Valores grabados satisfactoriamente" 
+    bfMsg = "Valores grabados satisfactoriamente"
     try:
        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
        conn = engine.connect()
-       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Paragolpe_Ctro).replace(',','.') + ' WHERE stName="Del_Paragolpe_Ctro"'))
-       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Paragolpe_Rejilla).replace(',','.') + ' WHERE stName="Del_Paragolpe_Rejilla"'))
-       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Paragolpe_Alma).replace(',','.') + ' WHERE stName="Del_Paragolpe_Alma"'))
-       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Rejilla_Radiador).replace(',','.') + ' WHERE stName="Del_Rejilla_Radiador"'))
-       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Frente).replace(',','.') + ' WHERE stName="Del_Frente"'))
-       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName="Del_Guardabarro"'))
-       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Faro).replace(',','.') + ' WHERE stName="Del_Faro"'))
-       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Faro_Auxiliar).replace(',','.') + ' WHERE stName="Del_Faro_Auxiliar"'))
-       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Farito).replace(',','.') + ' WHERE stName="Del_Farito"'))
-       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Capot).replace(',','.') + ' WHERE stName="Del_Capot"'))
-       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Parabrisas).replace(',','.') + ' WHERE stName="Del_Parabrisas"'))
+       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Paragolpe_Ctro).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Ctro\''))
+       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Paragolpe_Rejilla).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Rejilla\''))
+       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Paragolpe_Alma).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Alma\''))
+       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Rejilla_Radiador).replace(',','.') + ' WHERE stName=\'Del_Rejilla_Radiador\''))
+       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Frente).replace(',','.') + ' WHERE stName=\'Del_Frente\''))
+       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Guardabarro).replace(',','.') + ' WHERE stName=\'Del_Guardabarro\''))
+       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Faro).replace(',','.') + ' WHERE stName=\'Del_Faro\''))
+       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Faro_Auxiliar).replace(',','.') + ' WHERE stName=\'Del_Faro_Auxiliar\''))
+       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Farito).replace(',','.') + ' WHERE stName=\'Del_Farito\''))
+       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Capot).replace(',','.') + ' WHERE stName=\'Del_Capot\''))
+       result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Parabrisas).replace(',','.') + ' WHERE stName=\'Del_Parabrisas\''))
        if conn.in_transaction(): conn.commit()
        conn.close()
        engine.dispose()
     except Exception as e:
-       bfMsg = "Se produjo un error al grabar: "+str(e)     
+       bfMsg = "Se produjo un error al grabar: "+str(e)
     return bfMsg
 #########################################################
 
@@ -1147,7 +1146,7 @@ async def dbCreateLog():
                         ) '''))
         if conn.in_transaction(): conn.commit()
     except exc.SQLAlchemyError as e:
-        bfValue = "dbCreateAdminValue Error: "+str(e)     
+        bfValue = "dbCreateAdminValue Error: "+str(e)
     conn.close()
     engine.dispose()
     return dbstatus.bfHTMLdbCreateLog.replace('<<value>>',bfValue)
@@ -1169,7 +1168,7 @@ async def dbcreateAdminValue():
         #               flvalue REAL DEFAULT 0);
         if conn.in_transaction(): conn.commit()
     except exc.SQLAlchemyError as e:
-        bfValue = "dbCreateAdminValue Error: "+str(e)          
+        bfValue = "dbCreateAdminValue Error: "+str(e)
     conn.close()
     engine.dispose()
     return dbstatus.bfHTMLdbCreateAdminValue.replace('<<value>>',bfValue)
@@ -1184,7 +1183,7 @@ async def dbDropAdminValue():
         conn.execute(text('''DROP TABLE admvalue;'''))
         if conn.in_transaction(): conn.commit()
     except exc.SQLAlchemyError as e:
-        bfValue = "dbDropAdminValue Error: "+str(e)          
+        bfValue = "dbDropAdminValue Error: "+str(e)
     conn.close()
     engine.dispose()
     return dbstatus.bfHTMLdbCreateAdminValue.replace('<<value>>',bfValue)
@@ -1204,7 +1203,7 @@ async def dbInsertAdminValue():
         result = conn.execute(text('''INSERT INTO admvalue (stname, flvalue) VALUES ('Ajuste',1);'''))
         if conn.in_transaction(): conn.commit()
     except exc.SQLAlchemyError as e:
-        bfValue = "dbInsertAdminValue Error: "+str(e)          
+        bfValue = "dbInsertAdminValue Error: "+str(e)
     conn.close()
     engine.dispose()
     return dbstatus.bfHTMLdbCreateAdminValue.replace('<<value>>',bfValue)
@@ -1218,14 +1217,14 @@ async def dbreadAdmin():
     try:
         result = conn.execute(text('''SELECT stname,flvalue FROM admvalue;'''))
     except exc.SQLAlchemyError as e:
-        bfValue = "dbInsertAdminValue Error: "+str(e)       
-             
+        bfValue = "dbInsertAdminValue Error: "+str(e)
+
     for row in result:
-        lsResult.append(row)    
+        lsResult.append(row)
     conn.close()
     engine.dispose()
-    
-    return ";".join(str(x) for x in lsResult) 
+
+    return ";".join(str(x) for x in lsResult)
 
 @app.get("/dbread", response_class=HTMLResponse)
 async def dbRead(request: Request):
@@ -1238,7 +1237,7 @@ async def dbRead(request: Request):
     context = {"request": request,"result":'',"timestamp":'',
                "reparatrasero":'',"cambiatrasero":'',
                "reparalateral":'',"cambialateral":''}
-    
+
     engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
     #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
@@ -1255,13 +1254,13 @@ async def dbRead(request: Request):
     except exc.SQLAlchemyError as e:
         bfValue = 'dbInsertAdminValue Error: '+str(e)
     conn.close()
-    engine.dispose()    
+    engine.dispose()
     context["result"] = lsResult
-    context["restimestamp"] = lsTimeStamp    
+    context["restimestamp"] = lsTimeStamp
     context["reparatrasero"] = lsReparaTrasero
-    context["cambiatrasero"] = lsCambiaTrasero   
+    context["cambiatrasero"] = lsCambiaTrasero
     context["reparalateral"] = lsReparaLateral
-    context["cambialateral"] = lsCambiaLateral   
+    context["cambialateral"] = lsCambiaLateral
 
     return templates.TemplateResponse("readlog.html", context)
 
@@ -1384,10 +1383,10 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     flFrtValorReponePint=0
     flFrtValorReponeMoAv=0
     flFrtValorReponeFarito=0
-    flFrtValorReponeFaro=0 
-    flFrtValorReponeFaro_Auxiliar=0 
-    flFrtValorReponeParabrisas=0 
-    flFrtValorReponeParagolpe_Rejilla=0 
+    flFrtValorReponeFaro=0
+    flFrtValorReponeFaro_Auxiliar=0
+    flFrtValorReponeParabrisas=0
+    flFrtValorReponeParagolpe_Rejilla=0
     flFrtValorReponeRejilla_Radiador=0
     ###LATERAL###
     lsLateralCambiaElems = []
@@ -1404,10 +1403,10 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     flLatValorReponeElem=0
     flLatValorReponePint=0
     flLatValorReponeMoAv=0
-    flLatValorReponeEspejoElec=0 
-    flLatValorReponeEspejoMan=0 
-    flLatValorReponeMolduraDel=0 
-    flLatValorReponeMolduraTra=0 
+    flLatValorReponeEspejoElec=0
+    flLatValorReponeEspejoMan=0
+    flLatValorReponeMolduraDel=0
+    flLatValorReponeMolduraTra=0
     flLatValorReponeManDel=0
     flLatValorReponeManTra=0
     flLatValorReponeCriDel=0
@@ -1420,7 +1419,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     lsTraseroFaroIntElems= []
     ###RESULT###
     lsValuesResult = []
-    
+
     flTraValorReparaAve=0
     flTraValorReponeElem=0
     flTraValorReponePint=0
@@ -1428,13 +1427,13 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     flTraValorReponeMoldura=0
     flTraValorReponeFaroExt=0
     flTraValorReponeFaroInt=0
-    
+
     if CLASE == "908":
         isWrited = fnWriteLogBrief(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,'','','')
         bfTmp = "Sugerido&nbsp$&nbsp" + VALORPERITO
-        return bfTmp       
-    
-    #ToDo: Agregar si no es numerico mensaje de error    
+        return bfTmp
+
+    #ToDo: Agregar si no es numerico mensaje de error
     if CLASE.isdigit(): iCLASE = int(CLASE)
     if MARCA.isdigit(): iMARCA = int(MARCA)
     if MODELO.isdigit():iMODELO= int(MODELO)
@@ -1448,53 +1447,53 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
 
     if '1' in lsFrente:
         lsFrenteCambiaElems, lsFrenteReparaElems, lsFrenteFaritoElemsDel, lsFrenteFaroElemsDel, lsFrenteFaro_AuxiliarElemsDel,\
-        lsFrenteParabrisasElemsDel, lsFrenteParagolpe_RejillaElemsDel, lsFrenteRejilla_RadiadorElemsDel = fnGetFrentelElems(lsFrente)  
-        
-        if len(lsFrenteReparaElems)>0:        
+        lsFrenteParabrisasElemsDel, lsFrenteParagolpe_RejillaElemsDel, lsFrenteRejilla_RadiadorElemsDel = fnGetFrentelElems(lsFrente)
+
+        if len(lsFrenteReparaElems)>0:
             lsLatReparaAve=fnReparaFrente(iSEG,iCLASE,lsFrenteReparaElems)
             if len(lsLatReparaAve) == 0: lsLatReparaAve.append(0)
             flFrtValorReparaAve = np.round(sum(lsLatReparaAve),2)
 
-        if len(lsFrenteCambiaElems)>0:    
+        if len(lsFrenteCambiaElems)>0:
             lsLatReponeAve=fnCambiaFrente(iSEG,iCLASE,iMARCA,iMODELO,lsFrenteCambiaElems,isAlta)
             if len(lsLatReponeAve) == 0: lsLatReponeAve.append(0)
             flFrtValorReponeElem = np.round(sum(lsLatReponeAve),2)
-            
-            lsLatReponePintAve, lsLatReponeMoAv = fnCambiaPinturaFrente(iSEG,iCLASE,lsFrenteCambiaElems) 
+
+            lsLatReponePintAve, lsLatReponeMoAv = fnCambiaPinturaFrente(iSEG,iCLASE,lsFrenteCambiaElems)
             if len(lsLatReponePintAve) == 0: lsLatReponePintAve.append(0)
             flFrtValorReponePint = np.round(sum(lsLatReponePintAve),2)
-            
-            if len(lsLatReponeMoAv)  == 0: lsLatReponeMoAv.append(0)        
+
+            if len(lsLatReponeMoAv)  == 0: lsLatReponeMoAv.append(0)
             flFrtValorReponeMoAv = np.round(sum(lsLatReponeMoAv),2)
-        
-        if len(lsFrenteFaritoElemsDel)>0:      
-            if isAlta: flFrtValorReponeFarito = paramal.bfFrt_GA_Del_Farito   
+
+        if len(lsFrenteFaritoElemsDel)>0:
+            if isAlta: flFrtValorReponeFarito = paramal.bfFrt_GA_Del_Farito
             else:      flFrtValorReponeFarito = param.bfFrt_GM_Del_Farito
 
-        if len(lsFrenteFaroElemsDel)>0:        
-            if isAlta: flFrtValorReponeFaro = paramal.bfFrt_GA_Del_Faro   
+        if len(lsFrenteFaroElemsDel)>0:
+            if isAlta: flFrtValorReponeFaro = paramal.bfFrt_GA_Del_Faro
             else:      flFrtValorReponeFaro = param.bfFrt_GM_Del_Faro
 
-        if len(lsFrenteFaro_AuxiliarElemsDel)>0:        
-            if isAlta: flFrtValorReponeFaro_Auxiliar = paramal.bfFrt_GA_Del_Faro_Auxiliar   
+        if len(lsFrenteFaro_AuxiliarElemsDel)>0:
+            if isAlta: flFrtValorReponeFaro_Auxiliar = paramal.bfFrt_GA_Del_Faro_Auxiliar
             else:      flFrtValorReponeFaro_Auxiliar = param.bfFrt_GM_Del_Faro_Auxiliar
 
-        if len(lsFrenteParabrisasElemsDel)>0:        
-            if isAlta: flFrtValorReponeParabrisas = paramal.bfFrt_GA_Del_Parabrisas   
+        if len(lsFrenteParabrisasElemsDel)>0:
+            if isAlta: flFrtValorReponeParabrisas = paramal.bfFrt_GA_Del_Parabrisas
             else:      flFrtValorReponeParabrisas = param.bfFrt_GM_Del_Parabrisas
 
-        if len(lsFrenteParagolpe_RejillaElemsDel)>0:        
-            if isAlta: flFrtValorReponeParagolpe_Rejilla = paramal.bfFrt_GA_Del_Paragolpe_Rejilla  
+        if len(lsFrenteParagolpe_RejillaElemsDel)>0:
+            if isAlta: flFrtValorReponeParagolpe_Rejilla = paramal.bfFrt_GA_Del_Paragolpe_Rejilla
             else:      flFrtValorReponeParagolpe_Rejilla = param.bfFrt_GM_Del_Paragolpe_Rejilla
 
-        if len(lsFrenteRejilla_RadiadorElemsDel)>0:        
-            if isAlta: flFrtValorReponeRejilla_Radiador = paramal.bfFrt_GA_Del_Rejilla_Radiador   
+        if len(lsFrenteRejilla_RadiadorElemsDel)>0:
+            if isAlta: flFrtValorReponeRejilla_Radiador = paramal.bfFrt_GA_Del_Rejilla_Radiador
             else:      flFrtValorReponeRejilla_Radiador = param.bfFrt_GM_Del_Rejilla_Radiador
-        
+
         flFrente=np.round(flFrtValorReparaAve + flFrtValorReponeElem + flFrtValorReponePint + flFrtValorReponeMoAv+\
                           flFrtValorReponeFarito + flFrtValorReponeFaro + flFrtValorReponeFaro_Auxiliar + flFrtValorReponeParabrisas+\
-                          flFrtValorReponeParagolpe_Rejilla + flFrtValorReponeRejilla_Radiador,2)        
-        
+                          flFrtValorReponeParagolpe_Rejilla + flFrtValorReponeRejilla_Radiador,2)
+
         lsValuesResult.append(flFrtValorReparaAve)
         lsValuesResult.append(flFrtValorReponeElem)
         lsValuesResult.append(flFrtValorReponePint)
@@ -1505,7 +1504,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(flFrtValorReponeParabrisas)
         lsValuesResult.append(flFrtValorReponeParagolpe_Rejilla)
         lsValuesResult.append(flFrtValorReponeRejilla_Radiador)
-        lsValuesResult.append(flFrente)        
+        lsValuesResult.append(flFrente)
     else:
         lsValuesResult.append(0)
         lsValuesResult.append(0)
@@ -1535,57 +1534,57 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
             if len(lsLatReponeAve) == 0: lsLatReponeAve.append(0)
             flLatValorReponeElem = np.round(sum(lsLatReponeAve),2)
 
-            lsLatReponePintAve,lsLatReponeMoAv = fnCambiaPinturaLateral(iSEG,iCLASE,lsLateralCambiaElems) 
+            lsLatReponePintAve,lsLatReponeMoAv = fnCambiaPinturaLateral(iSEG,iCLASE,lsLateralCambiaElems)
             if len(lsLatReponePintAve) == 0: lsLatReponePintAve.append(0)
             flLatValorReponePint = np.round(sum(lsLatReponePintAve),2)
-            if len(lsLatReponeMoAv)  == 0: lsLatReponeMoAv.append(0)        
+            if len(lsLatReponeMoAv)  == 0: lsLatReponeMoAv.append(0)
             flLatValorReponeMoAv = np.round(sum(lsLatReponeMoAv),2)
 
         if len(lsLateralMolduraElemsDel)>0:
             lsLatMeanMod = fnMolduraLateralDel(iCLASE,iMARCA,iMODELO,isAlta)
-            if len(lsLatMeanMod) == 0: lsLatMeanMod.append(0)   
+            if len(lsLatMeanMod) == 0: lsLatMeanMod.append(0)
             flLatValorReponeMolduraDel = np.round(lsLatMeanMod[0],2)
             if len(lsLateralMolduraElemsDel)== 2: flLatValorReponeMolduraDel*=2
 
         if len(lsLateralMolduraElemsTra)>0:
             lsLatMeanMod = fnMolduraLateralTra(iCLASE,iMARCA,iMODELO,isAlta)
-            if len(lsLatMeanMod) == 0: lsLatMeanMod.append(0) 
-            flLatValorReponeMolduraTra = np.round(lsLatMeanMod[0],2) 
+            if len(lsLatMeanMod) == 0: lsLatMeanMod.append(0)
+            flLatValorReponeMolduraTra = np.round(lsLatMeanMod[0],2)
             if len(lsLateralMolduraElemsTra)== 2: flLatValorReponeMolduraTra*=2
-        
+
         if len(lsLateralEspejoElecElems)>0:
             lsLatMeanEsp = fnEspejoLateralElec(iCLASE,iMARCA,iMODELO,isAlta)
-            if len(lsLatMeanEsp) == 0: lsLatMeanEsp.append(0)    
+            if len(lsLatMeanEsp) == 0: lsLatMeanEsp.append(0)
             flLatValorReponeEspejoElec = np.round(lsLatMeanEsp[0],2)
             if len(lsLateralEspejoElecElems) >1: flLatValorReponeEspejoElec*=2
 
         if len(lsLateralEspejoManElems)>0:
             lsLatMeanEsp = fnEspejoLateralMan(iCLASE,iMARCA,iMODELO,isAlta)
-            if len(lsLatMeanEsp) == 0: lsLatMeanEsp.append(0)    
+            if len(lsLatMeanEsp) == 0: lsLatMeanEsp.append(0)
             flLatValorReponeEspejoMan = np.round(lsLatMeanEsp[0],2)
             if len(lsLateralEspejoManElems) >1: flLatValorReponeEspejoMan*=2
 
         if len(lsLateralManijaElemsDel)>0:
             lsLatMeanManDel = fnManijaLateralDel(iCLASE,iMARCA,iMODELO,isAlta)
-            if len(lsLatMeanManDel) == 0: lsLatMeanManDel.append(0)    
+            if len(lsLatMeanManDel) == 0: lsLatMeanManDel.append(0)
             flLatValorReponeManDel = np.round(lsLatMeanManDel[0],2)
             if len(lsLateralManijaElemsDel) >1: flLatValorReponeManDel*=2
 
         if len(lsLateralManijaElemsTra)>0:
             lsLatMeanManTra = fnManijaLateralTra(iCLASE,iMARCA,iMODELO,isAlta)
-            if len(lsLatMeanManTra) == 0: lsLatMeanManTra.append(0)    
+            if len(lsLatMeanManTra) == 0: lsLatMeanManTra.append(0)
             flLatValorReponeManTra = np.round(lsLatMeanManTra[0],2)
             if len(lsLateralManijaElemsTra) >1: flLatValorReponeManTra*=2
 
         if len(lsLateralCristalElemDel)>0:
             lsLatMeanCriDel = fnCristalLateralDel(iCLASE,iMARCA,iMODELO,isAlta)
-            if len(lsLatMeanCriDel) == 0: lsLatMeanCriDel.append(0)    
+            if len(lsLatMeanCriDel) == 0: lsLatMeanCriDel.append(0)
             flLatValorReponeCriDel = np.round(lsLatMeanCriDel[0],2)
             if len(lsLateralCristalElemDel) >1: flLatValorReponeCriDel*=2
 
         if len(lsLateralCristalElemTra)>0:
             lsLatMeanCriTra = fnCristalLateralTra(iCLASE,iMARCA,iMODELO,isAlta)
-            if len(lsLatMeanCriTra) == 0: lsLatMeanCriTra.append(0)    
+            if len(lsLatMeanCriTra) == 0: lsLatMeanCriTra.append(0)
             flLatValorReponeCriTra = np.round(lsLatMeanCriTra[0],2)
             if len(lsLateralCristalElemTra) >1: flLatValorReponeCriTra*=2
 
@@ -1593,7 +1592,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
                            flLatValorReponeEspejoElec+flLatValorReponeEspejoMan+flLatValorReponeManDel+\
                            flLatValorReponeManTra+flLatValorReponeMolduraDel+flLatValorReponeMolduraTra+\
                            flLatValorReponeCriDel+flLatValorReponeCriTra,2)
-   
+
         lsValuesResult.append(flLatValorReparaAve)
         lsValuesResult.append(flLatValorReponeElem)
         lsValuesResult.append(flLatValorReponePint)
@@ -1621,50 +1620,50 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(0)
         lsValuesResult.append(0)
         lsValuesResult.append(0)
-    
+
     if '1' in lsTrasero:
         lsTraseroCambiaElems,lsTraseroReparaElems,lsTraseroMolduraElems,\
         lsTraseroFaroExtElems,lsTraseroFaroIntElems= fnGetTraseroElems(CLASE,MARCA,MODELO,lsTrasero)
-        
+
         if len(lsTraseroReparaElems)>0:
             lsTraReparaAve=fnReparaTrasero(iSEG,iCLASE,lsTraseroReparaElems)
             if len(lsTraReparaAve) == 0: lsTraReparaAve.append(0)
             flTraValorReparaAve = np.round(sum(lsTraReparaAve),2)
-            
+
         if len(lsTraseroCambiaElems)>0:
-            lsTraReponeAve=fnCambiaTrasero(iSEG,iCLASE,iMARCA,iMODELO,lsTraseroCambiaElems,isAlta) 
+            lsTraReponeAve=fnCambiaTrasero(iSEG,iCLASE,iMARCA,iMODELO,lsTraseroCambiaElems,isAlta)
             if len(lsTraReponeAve)  == 0: lsTraReponeAve.append(0)
             flTraValorReponeElem = np.round(sum(lsTraReponeAve),2)
-            
-            lsTraReponePintAve,lsTraReponeMoAv = fnCambiaPinturaTrasero(iSEG,iCLASE,lsTraseroCambiaElems)                                                                 
+
+            lsTraReponePintAve,lsTraReponeMoAv = fnCambiaPinturaTrasero(iSEG,iCLASE,lsTraseroCambiaElems)
             if len(lsTraReponePintAve) == 0: lsTraReponePintAve.append(0)
-            flTraValorReponePint = np.round(sum(lsTraReponePintAve),2) 
-            if len(lsTraReponeMoAv)  == 0: lsTraReponeMoAv.append(0)             
+            flTraValorReponePint = np.round(sum(lsTraReponePintAve),2)
+            if len(lsTraReponeMoAv)  == 0: lsTraReponeMoAv.append(0)
             flTraValorReponeMoAv = np.round(sum(lsTraReponeMoAv),2)
-            
+
         if len(lsTraseroCambiaElems) + len(lsTraseroReparaElems) == 1:
-            if flTraValorReparaAve != 0: 
+            if flTraValorReparaAve != 0:
                 flTraValorReparaAve = flTraValorReparaAve + param.bfMObra
-            if flTraValorReponeElem != 0:     
+            if flTraValorReponeElem != 0:
                 flTraValorReponeElem = flTraValorReponeElem + param.bfMObra
-        
+
         if len(lsTraseroMolduraElems)>0:
-            lsTraMeanMold=fnMolduraTrasero(iCLASE,iMARCA,iMODELO,isAlta)      
+            lsTraMeanMold=fnMolduraTrasero(iCLASE,iMARCA,iMODELO,isAlta)
             if len(lsTraMeanMold) == 0: lsTraMeanMold.append(0)
             flTraValorReponeMoldura  = np.round(lsTraMeanMold[-1],2)
 
         if len(lsTraseroFaroExtElems)>0:
-            lsTraMeanFExt=fnFaroExtTrasero(iCLASE,iMARCA,iMODELO,isAlta)    
+            lsTraMeanFExt=fnFaroExtTrasero(iCLASE,iMARCA,iMODELO,isAlta)
             if len(lsTraMeanFExt) == 0: lsTraMeanFExt.append(0)
             flTraValorReponeFaroExt  = np.round(lsTraMeanFExt[-1],2)
-            if len(lsTraseroFaroExtElems) >1: flTraValorReponeFaroExt*=2 
+            if len(lsTraseroFaroExtElems) >1: flTraValorReponeFaroExt*=2
 
         if len(lsTraseroFaroIntElems)>0:
-            lsTraMeanFInt=fnFaroIntTrasero(iCLASE,iMARCA,iMODELO,isAlta)    
+            lsTraMeanFInt=fnFaroIntTrasero(iCLASE,iMARCA,iMODELO,isAlta)
             if len(lsTraMeanFInt) == 0: lsTraMeanFInt.append(0)
             flTraValorReponeFaroInt  = np.round(lsTraMeanFInt[-1],2)
             if len(lsTraseroFaroIntElems) >1: flTraValorReponeFaroInt*=2
-    
+
         flTrasero=np.round(flTraValorReparaAve + flTraValorReponeElem + flTraValorReponePint + flTraValorReponeMoAv+\
                            flTraValorReponeMoldura + flTraValorReponeFaroExt + flTraValorReponeFaroInt,2)
 
@@ -1685,20 +1684,20 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(0)
         lsValuesResult.append(0)
         lsValuesResult.append(0)
-    
+
     #ToDo: Seguir codigo
     if len(lsFrenteCambiaElems) + len(lsFrenteReparaElems) +\
        len(lsLateralCambiaElems) + len(lsLateralReparaElems) +\
        len(lsTraseroCambiaElems) + len(lsTraseroReparaElems) == 1:
-        # Agregar en lsValuesResult   
+        # Agregar en lsValuesResult
         if flFrente  != 0: flFrente =  flFrente  + param.bfMObra
-        if flLateral != 0: flLateral = flLateral + param.bfMObra            
+        if flLateral != 0: flLateral = flLateral + param.bfMObra
         if flTrasero != 0: flTrasero = flTrasero + param.bfMObra
 
     bfTmp = resumeDataBrief(CLIENTE,flFrente,flLateral,flTrasero)
     #Todo: Agregar el Log Frente
     isWrited = fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,TRASERO,lsValuesResult)
-    
+
     return bfTmp
 
 ###########################################################
@@ -1711,8 +1710,8 @@ def decimal(obj):
     return len(decimals)
 
 def fnSegmento(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO):
-    lsSEG = dfSEGMENTO.loc[(dfSEGMENTO['COD_CLASE'] == inCOD_CLASE) & (dfSEGMENTO['COD_MARCA'] == inCOD_MARCA) & 
-                           (dfSEGMENTO['COD_MODELO'] == inCOD_MODELO)]['SEG'].to_numpy() 
+    lsSEG = dfSEGMENTO.loc[(dfSEGMENTO['COD_CLASE'] == inCOD_CLASE) & (dfSEGMENTO['COD_MARCA'] == inCOD_MARCA) &
+                           (dfSEGMENTO['COD_MODELO'] == inCOD_MODELO)]['SEG'].to_numpy()
     if len(lsSEG)==0: return 0
     else: return lsSEG[0]
 
@@ -1748,7 +1747,7 @@ def fnGetFrentelElems(lsFrenteLc):
     iPosFAROCambiaDer=4
     iPosFAROCambiaIzq=5
     iPosFARO_AUXILIARCambiaDer=6
-    iPosFARO_AUXILIARCambiaIzq=7    
+    iPosFARO_AUXILIARCambiaIzq=7
     iPosFRENTECambiaDer=8
     iPosFRENTEReparaDer=9
     iPosGUARDABARROCambiaDer=10
@@ -1762,7 +1761,7 @@ def fnGetFrentelElems(lsFrenteLc):
     iPosPARAGOLPE_CTROReparaDer=18
     iPosPARAGOLPE_REJILLACambiaDer=19
     iPosREJILLA_RADIADIRCambiaDer=20
-    
+
     lsFrenteCambiaVal.append(lsFrenteElemsLc[iPosCAPOT] if lsFrenteLc[iPosCAPOTCambiaDer]=="1" else "")
     lsFrenteReparaVal.append(lsFrenteElemsLc[iPosCAPOT] if lsFrenteLc[iPosCAPOTReparaDer]=="1" else "")
     lsFrenteCambiaVal.append(lsFrenteElemsLc[iPosFRENTE] if lsFrenteLc[iPosFRENTECambiaDer]=="1" else "")
@@ -1784,7 +1783,7 @@ def fnGetFrentelElems(lsFrenteLc):
     lsFrenteParabrisas.append(lsFrenteElemsLc[iPosPARABRISA] if lsFrenteLc[iPosPARABRISACambiaDer]=="1" else "")
     lsFrenteParagolpe_Rejilla.append(lsFrenteElemsLc[iPosPARAGOLPE_REJILLA] if lsFrenteLc[iPosPARAGOLPE_REJILLACambiaDer]=="1" else "")
     lsFrenteRejilla_Radiador.append(lsFrenteElemsLc[iPosREJILLA_RADIADOR] if lsFrenteLc[iPosREJILLA_RADIADIRCambiaDer]=="1" else "")
-    
+
     lsFrenteCambiaVal         = [i for i in lsFrenteCambiaVal if i != ""]
     lsFrenteReparaVal         = [i for i in lsFrenteReparaVal if i != ""]
     lsFrenteFarito            = [i for i in lsFrenteFarito if i != ""]
@@ -1793,11 +1792,11 @@ def fnGetFrentelElems(lsFrenteLc):
     lsFrenteParabrisas        = [i for i in lsFrenteParabrisas if i != ""]
     lsFrenteParagolpe_Rejilla = [i for i in lsFrenteParagolpe_Rejilla if i != ""]
     lsFrenteRejilla_Radiador  = [i for i in lsFrenteRejilla_Radiador if i != ""]
-    
+
     return lsFrenteCambiaVal,lsFrenteReparaVal,lsFrenteFarito,lsFrenteFaro,lsFrenteFaro_Auxiliar,\
            lsFrenteParabrisas,lsFrenteParagolpe_Rejilla,lsFrenteRejilla_Radiador
-    
-    
+
+
 def fnGetLateralElems(lsLateralLc):
     lsLateralElemsLc = ["CRISTAL_DEL","CRISTAL_TRA","ESPEJOELEC","ESPEJOMAN","MANIJA_DEL","MANIJA_TRA",
                         "MOLDURA_DEL","MOLDURA_TRA","PUERTA_DEL","PUERTA_TRA","PUERTA_DEL_PANEL","PUERTA_TRA_PANEL",
@@ -1813,7 +1812,7 @@ def fnGetLateralElems(lsLateralLc):
     lsLateralManijaTra     = []
     lsLateralCristalDel    = []
     lsLateralCristalTra    = []
-    
+
     iPosCRISTAL_DEL=0
     iPosCRISTAL_TRA=1
     iPosESPEJOELEC=2
@@ -1827,7 +1826,7 @@ def fnGetLateralElems(lsLateralLc):
     iPosPUERTA_DEL_PANEL=10
     iPosPUERTA_TRA_PANEL=11
     iPosZOCALO=12
-    
+
     iPosCRISTAL_DELCambiaDer=0
     iPosCRISTAL_DELCambiaIzq=1
     iPosCRISTAL_TRACambiaDer=2
@@ -1856,7 +1855,7 @@ def fnGetLateralElems(lsLateralLc):
     iPosZOCALOReparaDer=25
     iPosZOCALOCambiaIzq=26
     iPosZOCALOReparaIzq=27
-    
+
     lsLateralCristalDel.append(lsLateralElemsLc[iPosCRISTAL_DEL] if lsLateralLc[iPosCRISTAL_DELCambiaDer]=="1" else "")
     lsLateralCristalDel.append(lsLateralElemsLc[iPosCRISTAL_DEL] if lsLateralLc[iPosCRISTAL_DELCambiaIzq]=="1" else "")
     lsLateralCristalTra.append(lsLateralElemsLc[iPosCRISTAL_TRA] if lsLateralLc[iPosCRISTAL_TRACambiaDer]=="1" else "")
@@ -1885,7 +1884,7 @@ def fnGetLateralElems(lsLateralLc):
     lsLateralReparaVal.append(lsLateralElemsLc[iPosZOCALO] if lsLateralLc[iPosZOCALOReparaDer]=="1" else "")
     lsLateralCambiaVal.append(lsLateralElemsLc[iPosZOCALO] if lsLateralLc[iPosZOCALOCambiaIzq]=="1" else "")
     lsLateralReparaVal.append(lsLateralElemsLc[iPosZOCALO] if lsLateralLc[iPosZOCALOReparaIzq]=="1" else "")
-    
+
     lsLateralCambiaVal     = [i for i in lsLateralCambiaVal if i != ""]
     lsLateralReparaVal     = [i for i in lsLateralReparaVal if i != ""]
     lsLateralMolduraDelVal = [i for i in lsLateralMolduraDelVal if i != ""]
@@ -1895,15 +1894,15 @@ def fnGetLateralElems(lsLateralLc):
     lsLateralManijaDel     = [i for i in lsLateralManijaDel if i != ""]
     lsLateralManijaTra     = [i for i in lsLateralManijaTra if i != ""]
     lsLateralCristalDel    = [i for i in lsLateralCristalDel if i != ""]
-    lsLateralCristalTra    = [i for i in lsLateralCristalTra if i != ""]    
-    
+    lsLateralCristalTra    = [i for i in lsLateralCristalTra if i != ""]
+
     return lsLateralCambiaVal,lsLateralReparaVal,\
            lsLateralMolduraDelVal,lsLateralMolduraTraVal,\
            lsLateralEspejoElecVal,lsLateralEspejoManVal,\
            lsLateralManijaDel,lsLateralManijaTra,\
-           lsLateralCristalDel,lsLateralCristalTra     
+           lsLateralCristalDel,lsLateralCristalTra
 
-def fnGetTraseroElems(iClaseLc, iMarcaLc, iModeloLc, lsTraseroLc):    
+def fnGetTraseroElems(iClaseLc, iMarcaLc, iModeloLc, lsTraseroLc):
     lsTraseroElemsLc = ['BAULPORTON','FAROEXT','FAROINT','GUARDABARRO','LUNETA','MOLDURA','PANELCOLACOMP','PARAGOLPE','PANELCOLASUP']
 
     lsTraseroCambiaVal  = []
@@ -1921,7 +1920,7 @@ def fnGetTraseroElems(iClaseLc, iMarcaLc, iModeloLc, lsTraseroLc):
     iPosPANELCOLACOMP=6
     iPosPARAGOLPE=7
     iPosPANELCOLASUP=8
-       
+
     iPosBAULPORTONCambiaDer=0
     iPosBAULPORTONReparaDer=1
     iPosFAROEXTCambiaDer=2
@@ -1938,7 +1937,7 @@ def fnGetTraseroElems(iClaseLc, iMarcaLc, iModeloLc, lsTraseroLc):
     iPosPANELCOLACOMPReparaDer=13
     iPosPARAGOLPECambiaDer=14
     iPosPARAGOLPEReparaDer=15
-    
+
     lsTraseroCambiaVal.append(lsTraseroElemsLc[iPosBAULPORTON] if lsTraseroLc[iPosBAULPORTONCambiaDer] == "1" else "")
     lsTraseroReparaVal.append(lsTraseroElemsLc[iPosBAULPORTON] if lsTraseroLc[iPosBAULPORTONReparaDer] == "1" else "")
     lsTraseroFaroExtVal.append(lsTraseroElemsLc[iPosFAROEXT] if lsTraseroLc[iPosFAROEXTCambiaDer] == "1" else "")
@@ -1955,7 +1954,7 @@ def fnGetTraseroElems(iClaseLc, iMarcaLc, iModeloLc, lsTraseroLc):
     lsTraseroReparaVal.append(lsTraseroElemsLc[iPosPANELCOLASUP] if lsTraseroLc[iPosPANELCOLACOMPReparaDer] == "1" else "")
     lsTraseroCambiaVal.append(lsTraseroElemsLc[iPosPARAGOLPE] if lsTraseroLc[iPosPARAGOLPECambiaDer] == "1" else "")
     lsTraseroReparaVal.append(lsTraseroElemsLc[iPosPARAGOLPE] if lsTraseroLc[iPosPARAGOLPEReparaDer] == "1" else "")
-    
+
     blPorton = fnHasPorton(iClaseLc, iMarcaLc, iModeloLc)
     if lsTraseroCambiaVal[iPosBAULPORTON]=="BAULPORTON":
         if blPorton==True: lsTraseroCambiaVal[iPosBAULPORTON]="PORTON"
@@ -1963,55 +1962,55 @@ def fnGetTraseroElems(iClaseLc, iMarcaLc, iModeloLc, lsTraseroLc):
     if lsTraseroReparaVal[iPosBAULPORTON]=="BAULPORTON":
         if blPorton==True: lsTraseroReparaVal[iPosBAULPORTON]="PORTON"
         else: lsTraseroReparaVal[iPosBAULPORTON]="BAUL"
-    
+
     lsTraseroCambiaVal  = [i for i in lsTraseroCambiaVal if i != ""]
     lsTraseroReparaVal  = [i for i in lsTraseroReparaVal if i != ""]
     lsTraseroMolduraVal = [i for i in lsTraseroMolduraVal if i != ""]
     lsTraseroFaroExtVal = [i for i in lsTraseroFaroExtVal if i != ""]
     lsTraseroFaroIntVal = [i for i in lsTraseroFaroIntVal if i != ""]
-     
-    return lsTraseroCambiaVal,lsTraseroReparaVal,lsTraseroMolduraVal,lsTraseroFaroExtVal,lsTraseroFaroIntVal 
-    
+
+    return lsTraseroCambiaVal,lsTraseroReparaVal,lsTraseroMolduraVal,lsTraseroFaroExtVal,lsTraseroFaroIntVal
+
 def fnHasPorton(iClaseLc, iMarcaLc, iModeloLc):
     blPorton = False
     if len(dfPorton.loc[(dfPorton['COD_CLASE']==int(iClaseLc))&(dfPorton['COD_MARCA']==int(iMarcaLc))&(dfPorton['COD_MODELO']==int(iModeloLc))])!=0:
         blPorton = True
-    return blPorton  
+    return blPorton
 
 def fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfData):
     blOld = False
     dfOld = dfData.loc[(dfData['COD_CLASE'] == inCOD_CLASE) & (dfData['COD_MARCA'] == inCOD_MARCA) & (dfData['COD_MODELO'] == inCOD_MODELO)]['VIEJO']
-  
-    if len(dfOld) == 0: 
+
+    if len(dfOld) == 0:
         blOld = False
     else:
         blOld = dfData.loc[(dfData['COD_CLASE'] == inCOD_CLASE) & (dfData['COD_MARCA'] == inCOD_MARCA) & (dfData['COD_MODELO'] == inCOD_MODELO)]['VIEJO'].iloc[0]
-    
+
     if blOld!=True and blOld!=False: blOld = False
-    
+
     return blOld
 #TRASERO
 def fnReparaTrasero(inSEG,inCOD_CLASE,lsRepara):
     inCOD_PARTE = 2
     lsReparaAve = []
     flAverage = 0
-   
+
     for index, item in enumerate(lsRepara):
-        bfID_ELEM = dfVALOR_MO_UNIF_TRASERO.loc[(dfVALOR_MO_UNIF_TRASERO['SEG'] == inSEG) & (dfVALOR_MO_UNIF_TRASERO['COD_CLASE'] == inCOD_CLASE) & 
+        bfID_ELEM = dfVALOR_MO_UNIF_TRASERO.loc[(dfVALOR_MO_UNIF_TRASERO['SEG'] == inSEG) & (dfVALOR_MO_UNIF_TRASERO['COD_CLASE'] == inCOD_CLASE) &
                                                 (dfVALOR_MO_UNIF_TRASERO['COD_PARTE'] == inCOD_PARTE) &
                         (dfVALOR_MO_UNIF_TRASERO['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                                                [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']] 
+                                                [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']]
 
         flVALOR_MO_MEAN     = bfID_ELEM['VALOR_MO_MEAN']
-        flCANT_HS_PINT_MEAN = bfID_ELEM['CANT_HS_PINT_MEAN'] 
+        flCANT_HS_PINT_MEAN = bfID_ELEM['CANT_HS_PINT_MEAN']
 
         flVALOR_MO_MEAN     = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2)       #Todo: Sacar
         flCANT_HS_PINT_MEAN = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfPintura),2) #Todo: Sacar
 
         flAverage=np.round((flVALOR_MO_MEAN + flCANT_HS_PINT_MEAN + bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-        lsReparaAve.append(flAverage) 
-    
-    for index, item in enumerate(lsReparaAve): lsReparaAve[index] = list(set(item))[0]     
+        lsReparaAve.append(flAverage)
+
+    for index, item in enumerate(lsReparaAve): lsReparaAve[index] = list(set(item))[0]
 
     return lsReparaAve
 
@@ -2019,25 +2018,25 @@ def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
     inCOD_PARTE = 2
     lsReponeAve = []
     flAverage = 0
-    
+
     isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfVALOR_REPUESTO_MO_Unif)
-      
+
     for index, item in enumerate(lsRepone):
-        bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)       & (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']  == inCOD_CLASE)  & 
+        bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)       & (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']  == inCOD_CLASE)  &
                                         (dfVALOR_REPUESTO_MO_Unif['COD_MARCA']    == inCOD_MARCA) & (dfVALOR_REPUESTO_MO_Unif['COD_MODELO'] == inCOD_MODELO) &
-                                        (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE) & (dfVALOR_REPUESTO_MO_Unif['VIEJO']      == isOld)        & 
-                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']] 
-        
+                                        (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE) & (dfVALOR_REPUESTO_MO_Unif['VIEJO']      == isOld)        &
+                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']]
+
         flAverage = np.round(bfID_ELEM['PRECIO_MEAN'],2)
 
         if len(flAverage) == 0:
-            bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)       & (dfVALOR_REPUESTO_MO_Unif['COD_CLASE'] == inCOD_CLASE) & 
+            bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)       & (dfVALOR_REPUESTO_MO_Unif['COD_CLASE'] == inCOD_CLASE) &
                                             (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE) & (dfVALOR_REPUESTO_MO_Unif['VIEJO']     == isOld)       &
-                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']] 
-            
-            flMean = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)   
+                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']]
+
+            flMean = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)
             flAverage = pd.Series([flMean])
-            
+
             #ALTA GAMA
             if pd.isna(flAverage.iloc[0]):
                 if isAlta:
@@ -2050,7 +2049,7 @@ def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
                     elif item=="PANELCOLASUP" :flAverage.iloc[0]=paramal.bfPanel_Sup
                     elif item=="PARAGOLPE"    :flAverage.iloc[0]=paramal.bfParagolpe
                     else: flAverage.iloc[0] = 0
-                else:    
+                else:
                     if item=="BAULPORTON"     :flAverage.iloc[0]=param.bfBaul_Porton
                     elif item=="FAROEXT"      :flAverage.iloc[0]=param.bfFaro_Ext
                     elif item=="FAROINT"      :flAverage.iloc[0]=param.bfFaro_Int
@@ -2060,14 +2059,14 @@ def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
                     elif item=="PANELCOLASUP" :flAverage.iloc[0]=param.bfPanel_Sup
                     elif item=="PARAGOLPE"    :flAverage.iloc[0]=param.bfParagolpe
                     else: flAverage.iloc[0] = 0
-        
+
         if len(flAverage) == 0: flAverage = [0]
 
         lsReponeAve.append(flAverage)
-    
-    for index, item in enumerate(lsReponeAve): lsReponeAve[index] = list(set(item))[0]     
-    
-    return lsReponeAve 
+
+    for index, item in enumerate(lsReponeAve): lsReponeAve[index] = list(set(item))[0]
+
+    return lsReponeAve
 
 def fnCambiaPinturaTrasero(inSEG,inCOD_CLASE,lsRepone):
     inCOD_PARTE = 2
@@ -2075,80 +2074,80 @@ def fnCambiaPinturaTrasero(inSEG,inCOD_CLASE,lsRepone):
     lsReponeMoAv=[]
     flAverage=0
     flMoAv=0
-    
+
     for index, item in enumerate(lsRepone):
-        bfID_ELEM = dfVALOR_REPUESTO_VALOR_MAT_TRASERO.loc[(dfVALOR_REPUESTO_VALOR_MAT_TRASERO['SEG']==inSEG) & 
+        bfID_ELEM = dfVALOR_REPUESTO_VALOR_MAT_TRASERO.loc[(dfVALOR_REPUESTO_VALOR_MAT_TRASERO['SEG']==inSEG) &
                     (dfVALOR_REPUESTO_VALOR_MAT_TRASERO['COD_CLASE']==inCOD_CLASE) & (dfVALOR_REPUESTO_VALOR_MAT_TRASERO['COD_PARTE']==inCOD_PARTE) &
                     (dfVALOR_REPUESTO_VALOR_MAT_TRASERO['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                        [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']] 
+                        [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']]
 
         flVALOR_MO_MEAN     = bfID_ELEM['VALOR_MO_MEAN']
-        flCANT_HS_PINT_MEAN = bfID_ELEM['CANT_HS_PINT_MEAN'] 
+        flCANT_HS_PINT_MEAN = bfID_ELEM['CANT_HS_PINT_MEAN']
 
         flVALOR_MO_MEAN     = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2)  #Todo: Sacar
         flCANT_HS_PINT_MEAN = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfPintura),2) #Todo: Sacar
 
         flAverage = np.round((flCANT_HS_PINT_MEAN + bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-        flMoAv    = np.round(flVALOR_MO_MEAN,2) 
-        
+        flMoAv    = np.round(flVALOR_MO_MEAN,2)
+
         if len(flAverage)==0:flAverage=[0]
         if len(flMoAv)==0:flMoAv=[0]
-                                  
-        lsReponePintAve.append(flAverage) 
-        lsReponeMoAv.append(flMoAv) 
 
-    for index, item in enumerate(lsReponePintAve): lsReponePintAve[index]=list(set(item))[0]     
-    for index, item in enumerate(lsReponeMoAv)   : lsReponeMoAv[index]=list(set(item))[0]      
-    
-    return lsReponePintAve,lsReponeMoAv 
+        lsReponePintAve.append(flAverage)
+        lsReponeMoAv.append(flMoAv)
 
-def fnMolduraTrasero(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):    
+    for index, item in enumerate(lsReponePintAve): lsReponePintAve[index]=list(set(item))[0]
+    for index, item in enumerate(lsReponeMoAv)   : lsReponeMoAv[index]=list(set(item))[0]
+
+    return lsReponePintAve,lsReponeMoAv
+
+def fnMolduraTrasero(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
     inCOD_PARTE = 2
     moldCtro = ['PARAGOLPE EMBELLEC / MOLD']
-    lsVersion = ['1','2','3'] 
+    lsVersion = ['1','2','3']
     lsMoldCtro = []
-    
+
     isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfMOLDURA)
 
-    dfMOLD_CTRO = dfMOLDURA.loc[(dfMOLDURA['COD_CLASE']  == inCOD_CLASE)  & (dfMOLDURA['COD_MARCA']  == inCOD_MARCA)  & 
-                                (dfMOLDURA['COD_MODELO'] == inCOD_MODELO) & (dfMOLDURA['COD_PARTE']  == inCOD_PARTE)  & (dfMOLDURA['VIEJO'] == isOld) & 
+    dfMOLD_CTRO = dfMOLDURA.loc[(dfMOLDURA['COD_CLASE']  == inCOD_CLASE)  & (dfMOLDURA['COD_MARCA']  == inCOD_MARCA)  &
+                                (dfMOLDURA['COD_MODELO'] == inCOD_MODELO) & (dfMOLDURA['COD_PARTE']  == inCOD_PARTE)  & (dfMOLDURA['VIEJO'] == isOld) &
                                 (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, moldCtro))))].sort_values(['VALOR'], ascending=[False])
     if len(dfMOLD_CTRO)==0:
-        dfMOLD_CTRO = dfMOLDURA.loc[(dfMOLDURA['COD_CLASE']  == inCOD_CLASE) & (dfMOLDURA['COD_MARCA'] == inCOD_MARCA) & 
-                                    (dfMOLDURA['COD_PARTE'] == inCOD_PARTE)  & (dfMOLDURA['VIEJO']     == isOld)       & 
+        dfMOLD_CTRO = dfMOLDURA.loc[(dfMOLDURA['COD_CLASE']  == inCOD_CLASE) & (dfMOLDURA['COD_MARCA'] == inCOD_MARCA) &
+                                    (dfMOLDURA['COD_PARTE'] == inCOD_PARTE)  & (dfMOLDURA['VIEJO']     == isOld)       &
                                     (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, moldCtro))))].sort_values(['VALOR'], ascending=[False])
 
     dfTmp = dfMOLD_CTRO.loc[~dfMOLD_CTRO['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-        
-    if len(dfTmp)!=0: 
+
+    if len(dfTmp)!=0:
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
         lsMoldCtro.append(round(flValue,2))
     else:
         if isAlta: flValue = paramal.bfMoldura + param.bfMOMinimo
         else:      flValue = param.bfMoldura   + param.bfMOMinimo
-        lsMoldCtro.append(round(flValue,2))   
+        lsMoldCtro.append(round(flValue,2))
 
     return lsMoldCtro
 
-def fnFaroExtTrasero(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):    
+def fnFaroExtTrasero(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
     inCOD_PARTE = 2
     faroDer = ['FARO DER']
-    lsVersion = ['1','2','3','4','5','6'] 
+    lsVersion = ['1','2','3','4','5','6']
     lsFaroExt = []
-    
+
     isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfFARO)
-    
+
     dfFARO_EXT = dfFARO.loc[(dfFARO['COD_MARCA']  == inCOD_CLASE)  & (dfFARO['COD_MARCA']  == inCOD_MARCA) &
                             (dfFARO['COD_MODELO'] == inCOD_MODELO) & (dfFARO['COD_PARTE']  == inCOD_PARTE) & (dfFARO['VIEJO'] == isOld) &
                             (dfFARO['DESC_ELEM'].str.contains('|'.join(map(re.escape, faroDer))))].sort_values(['VALOR'], ascending=[False])
     if len(dfFARO_EXT)==0:
-            dfFARO_EXT = dfFARO.loc[(dfFARO['COD_MARCA'] == inCOD_CLASE) & (dfFARO['COD_MARCA'] == inCOD_MARCA) & 
+            dfFARO_EXT = dfFARO.loc[(dfFARO['COD_MARCA'] == inCOD_CLASE) & (dfFARO['COD_MARCA'] == inCOD_MARCA) &
                                     (dfFARO['COD_PARTE'] == inCOD_PARTE) & (dfFARO['VIEJO']     == isOld)       &
                                     (dfFARO['DESC_ELEM'].str.contains('|'.join(map(re.escape, faroDer))))].sort_values(['VALOR'], ascending=[False])
 
     dfTmp = dfFARO_EXT.loc[~dfFARO_EXT['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-    
-    if len(dfTmp)!=0: 
+
+    if len(dfTmp)!=0:
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
         lsFaroExt.append(round(flValue,2))
     else:
@@ -2157,29 +2156,29 @@ def fnFaroExtTrasero(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
         lsFaroExt.append(round(flValue,2))
     return lsFaroExt
 
-def fnFaroIntTrasero(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):    
+def fnFaroIntTrasero(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
     inCOD_PARTE = 2
     faroDer = ['FARO DER 1']
     lsFaroInt = []
-    
+
     isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfFARO)
-    
-    dfFARO_INT = dfFARO.loc[(dfFARO['COD_MARCA']  == inCOD_CLASE)  & (dfFARO['COD_MARCA']  == inCOD_MARCA) & 
+
+    dfFARO_INT = dfFARO.loc[(dfFARO['COD_MARCA']  == inCOD_CLASE)  & (dfFARO['COD_MARCA']  == inCOD_MARCA) &
                             (dfFARO['COD_MODELO'] == inCOD_MODELO) & (dfFARO['COD_PARTE']  == inCOD_PARTE) & (dfFARO['VIEJO'] == isOld) &
                             (dfFARO['DESC_ELEM'].str.contains('|'.join(map(re.escape, faroDer))))].sort_values(['VALOR'], ascending=[False])
     if len(dfFARO_INT)==0:
-            dfFARO_INT = dfFARO.loc[(dfFARO['COD_MARCA']  == inCOD_CLASE) & (dfFARO['COD_MARCA'] == inCOD_MARCA) & 
+            dfFARO_INT = dfFARO.loc[(dfFARO['COD_MARCA']  == inCOD_CLASE) & (dfFARO['COD_MARCA'] == inCOD_MARCA) &
                                     (dfFARO['COD_PARTE'] == inCOD_PARTE)  & (dfFARO['VIEJO']     == isOld)       &
                                     (dfFARO['DESC_ELEM'].str.contains('|'.join(map(re.escape, faroDer))))].sort_values(['VALOR'], ascending=[False])
-    
-    if len(dfFARO_INT)!=0: 
+
+    if len(dfFARO_INT)!=0:
         flValue = dfFARO_INT['VALOR'].mean() + param.bfMOMinimo
         lsFaroInt.append(round(flValue,2))
     else:
         if isAlta: flValue = paramal.bfFaro_Int + param.bfMOMinimo
         else:      flValue = param.bfFaro_Int + param.bfMOMinimo
-        lsFaroInt.append(round(flValue,2))   
-    
+        lsFaroInt.append(round(flValue,2))
+
     return lsFaroInt
 #FRENTE#
 def fnReparaFrente(inSEG,inCOD_CLASE,lsRepara):
@@ -2187,47 +2186,47 @@ def fnReparaFrente(inSEG,inCOD_CLASE,lsRepara):
     lsReparaAve = []
     flAverage = 0
     for index, item in enumerate(lsRepara):
-        bfID_ELEM = dfVALOR_MO_UNIF_FRENTE.loc[(dfVALOR_MO_UNIF_FRENTE['SEG']==inSEG) & (dfVALOR_MO_UNIF_FRENTE['COD_CLASE']==inCOD_CLASE) & 
+        bfID_ELEM = dfVALOR_MO_UNIF_FRENTE.loc[(dfVALOR_MO_UNIF_FRENTE['SEG']==inSEG) & (dfVALOR_MO_UNIF_FRENTE['COD_CLASE']==inCOD_CLASE) &
                                                (dfVALOR_MO_UNIF_FRENTE['COD_PARTE']==inCOD_PARTE) &
                                 (dfVALOR_MO_UNIF_FRENTE['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                                                        [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']] 
-                                                                      
+                                                        [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']]
+
         flVALOR_MO_MEAN      = bfID_ELEM['VALOR_MO_MEAN']
-        flCANT_HS_PINT_MEAN  = bfID_ELEM['CANT_HS_PINT_MEAN'] 
+        flCANT_HS_PINT_MEAN  = bfID_ELEM['CANT_HS_PINT_MEAN']
 
         flVALOR_MO_MEAN       = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2) #Todo: sacar 6350
         flCANT_HS_PINT_MEAN   = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfMObra),2) #Todo: sacar 6350
-        
+
         flAverage = np.round((flVALOR_MO_MEAN + flCANT_HS_PINT_MEAN + bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-        lsReparaAve.append(flAverage) 
-        
-    for index, item in enumerate(lsReparaAve): 
-        lsReparaAve[index]=list(set(item))[0]     
-    
-    return lsReparaAve           
+        lsReparaAve.append(flAverage)
+
+    for index, item in enumerate(lsReparaAve):
+        lsReparaAve[index]=list(set(item))[0]
+
+    return lsReparaAve
 
 def fnCambiaFrente(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
     inCOD_PARTE = 1
     lsReponeAve = []
     flAverage = 0
-    
+
     isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfVALOR_REPUESTO_MO_Unif)
 
     for index, item in enumerate(lsRepone):
-        bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']  == inCOD_CLASE)  & 
-                                        (dfVALOR_REPUESTO_MO_Unif['COD_MARCA']    == inCOD_MARCA)  & (dfVALOR_REPUESTO_MO_Unif['COD_MODELO'] == inCOD_MODELO) &          
-                                        (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  & (dfVALOR_REPUESTO_MO_Unif['VIEJO']      == isOld)        & 
-                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']] 
+        bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']  == inCOD_CLASE)  &
+                                        (dfVALOR_REPUESTO_MO_Unif['COD_MARCA']    == inCOD_MARCA)  & (dfVALOR_REPUESTO_MO_Unif['COD_MODELO'] == inCOD_MODELO) &
+                                        (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  & (dfVALOR_REPUESTO_MO_Unif['VIEJO']      == isOld)        &
+                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']]
 
         flAverage = np.round(bfID_ELEM['PRECIO_MEAN'],2)
 
         if len(flAverage) == 0:
             print(inSEG, inCOD_CLASE, inCOD_PARTE, item, isOld)
-            bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & (dfVALOR_REPUESTO_MO_Unif['COD_CLASE'] == inCOD_CLASE) & 
+            bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & (dfVALOR_REPUESTO_MO_Unif['COD_CLASE'] == inCOD_CLASE) &
                                             (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  & (dfVALOR_REPUESTO_MO_Unif['VIEJO']     == isOld)       &
-                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']] 
-            
-            flMean = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)   
+                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']]
+
+            flMean = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)
             flAverage = pd.Series([flMean])
             print("flMean:", flMean, "item:", item, "isOld:", isOld)
 
@@ -2240,20 +2239,20 @@ def fnCambiaFrente(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
                     elif item=="PARAGOLPE_ALMA" :flAverage.iloc[0]=paramal.bfFrt_GA_Del_Paragolpe_Alma
                     elif item=="PARAGOLPE_CTRO" :flAverage.iloc[0]=paramal.bfFrt_GA_Del_Paragolpe_Ctro
                     else: flAverage.iloc[0] = 0
-                else:    
+                else:
                     if item  =="CAPOT"          :flAverage.iloc[0]=param.bfFrt_GM_Del_Capot
                     elif item=="FRENTE"         :flAverage.iloc[0]=param.bfFrt_GM_Del_Frente
                     elif item=="GUARDABARRO"    :flAverage.iloc[0]=param.bfFrt_GM_Del_Guardabarro
                     elif item=="PARAGOLPE_ALMA" :flAverage.iloc[0]=param.bfFrt_GM_Del_Paragolpe_Alma
                     elif item=="PARAGOLPE_CTRO" :flAverage.iloc[0]=param.bfFrt_GM_Del_Paragolpe_Ctro
                     else: flAverage.iloc[0] = 0
-        
+
         if len(flAverage) == 0: flAverage = [0]
 
         lsReponeAve.append(flAverage)
-        
-    for index, item in enumerate(lsReponeAve): 
-        lsReponeAve[index] = list(set(item))[0]     
+
+    for index, item in enumerate(lsReponeAve):
+        lsReponeAve[index] = list(set(item))[0]
 
     return lsReponeAve
 
@@ -2261,337 +2260,337 @@ def fnCambiaPinturaFrente(inSEG,inCOD_CLASE,lsRepone):
     inCOD_PARTE = 1
     lsReponePintAve = []
     lsReponeMoAv    = []
-    
+
     flAverage = 0
     flMoAv    = 0
-    
+
     for index, item in enumerate(lsRepone):
-        bfID_ELEM = dfVALOR_REPUESTO_VALOR_MAT_FRENTE.loc[(dfVALOR_REPUESTO_VALOR_MAT_FRENTE['SEG']==inSEG) & 
-                                             (dfVALOR_REPUESTO_VALOR_MAT_FRENTE['COD_CLASE']==inCOD_CLASE) & 
+        bfID_ELEM = dfVALOR_REPUESTO_VALOR_MAT_FRENTE.loc[(dfVALOR_REPUESTO_VALOR_MAT_FRENTE['SEG']==inSEG) &
+                                             (dfVALOR_REPUESTO_VALOR_MAT_FRENTE['COD_CLASE']==inCOD_CLASE) &
                                              (dfVALOR_REPUESTO_VALOR_MAT_FRENTE['COD_PARTE']==inCOD_PARTE) &
                         (dfVALOR_REPUESTO_VALOR_MAT_FRENTE['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                                                             [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']] 
-        
+                                                             [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']]
+
         flVALOR_MO_MEAN = bfID_ELEM['VALOR_MO_MEAN']
         flVALOR_MO_MEAN = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2) #Todo: Para simplificar y no procesar todo
-        
+
         flCANT_HS_PINT_MEAN = bfID_ELEM['CANT_HS_PINT_MEAN']
         flCANT_HS_PINT_MEAN = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfPintura),2) #Todo: Para simplificar y no procesar todo
 
         flAverage = np.round((flCANT_HS_PINT_MEAN+bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-        
-        flMoAv  = np.round(flVALOR_MO_MEAN,2) 
+
+        flMoAv  = np.round(flVALOR_MO_MEAN,2)
 
         if len(flAverage) == 0: flAverage = [0]
-        lsReponePintAve.append(flAverage) 
+        lsReponePintAve.append(flAverage)
         if len(flMoAv) == 0: flMoAv = [0]
-        lsReponeMoAv.append(flMoAv) 
-        
-    for index, item in enumerate(lsReponePintAve): lsReponePintAve[index] = list(set(item))[0]     
-    
-    for index, item in enumerate(lsReponeMoAv): lsReponeMoAv[index] = list(set(item))[0]      
+        lsReponeMoAv.append(flMoAv)
+
+    for index, item in enumerate(lsReponePintAve): lsReponePintAve[index] = list(set(item))[0]
+
+    for index, item in enumerate(lsReponeMoAv): lsReponeMoAv[index] = list(set(item))[0]
 
     return lsReponePintAve,lsReponeMoAv
 
 #LATERAL#
 def fnEspejoLateralElec(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
     espElec = ['ESPEJO ELECTRICO']
-    lsVersion = ['1','2','3','4','5'] 
+    lsVersion = ['1','2','3','4','5']
     lsMeanEsp = []
-    
+
     isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfESPEJO)
-    
-    dfESPEJO_ELEC = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA)   & 
+
+    dfESPEJO_ELEC = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA)   &
                                  (dfESPEJO['COD_MODELO'] == inCOD_MODELO) &
                                  (dfESPEJO['VIEJO']     == isOld)         &
                                  (dfESPEJO['DESC_ELEM'].str.contains('|'.join(map(re.escape, espElec))))]\
                                  .sort_values(['VALOR'], ascending=[False])
-        
+
     if len(dfESPEJO_ELEC)==0:
-        dfESPEJO_ELEC = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA) & 
+        dfESPEJO_ELEC = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA) &
                                      (dfESPEJO['VIEJO']     == isOld)       &
                                      (dfESPEJO['DESC_ELEM'].str.contains('|'.join(map(re.escape, espElec))))]\
                                      .sort_values(['VALOR'], ascending=[False])
-    
+
     dfTmp = dfESPEJO_ELEC.loc[~dfESPEJO_ELEC['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-    
-    if len(dfTmp)!=0: 
+
+    if len(dfTmp)!=0:
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
-        lsMeanEsp.append(round(flValue,2))   
+        lsMeanEsp.append(round(flValue,2))
     else:
         if isAlta: flValue = paramal.bfLat_Espejo_Electrico + param.bfMOMinimo
         else:      flValue = param.bfLat_Espejo_Electrico   + param.bfMOMinimo
-        lsMeanEsp.append(round(flValue,2))   
-    
-    return lsMeanEsp 
+        lsMeanEsp.append(round(flValue,2))
+
+    return lsMeanEsp
 
 def fnEspejoLateralMan(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
     espMan = ['ESPEJO MANUAL']
-    lsVersion = ['1','2','3','4','5'] 
+    lsVersion = ['1','2','3','4','5']
     lsMeanEsp = []
-    
+
     isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfESPEJO)
-    
-    dfESPEJO_MAN = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA)   & 
+
+    dfESPEJO_MAN = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA)   &
                                 (dfESPEJO['COD_MODELO'] == inCOD_MODELO) &
                                 (dfESPEJO['VIEJO']     == isOld)         &
                                 (dfESPEJO['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMan))))]\
                                 .sort_values(['VALOR'], ascending=[False])
-        
+
     if len(dfESPEJO_MAN)==0:
-        dfESPEJO_MAN = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA) & 
+        dfESPEJO_MAN = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA) &
                                     (dfESPEJO['VIEJO']     == isOld)       &
                                     (dfESPEJO['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMan))))]\
                                     .sort_values(['VALOR'], ascending=[False])
-    
+
     dfTmp = dfESPEJO_MAN.loc[~dfESPEJO_MAN['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-    
-    if len(dfTmp)!=0: 
+
+    if len(dfTmp)!=0:
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
-        lsMeanEsp.append(round(flValue,2))   
+        lsMeanEsp.append(round(flValue,2))
     else:
         if isAlta: flValue = paramal.bfLat_Espejo_Manual + param.bfMOMinimo
         else:      flValue = param.bfLat_Espejo_Manual + param.bfMOMinimo
-        lsMeanEsp.append(round(flValue,2))   
-    
-    return lsMeanEsp 
+        lsMeanEsp.append(round(flValue,2))
+
+    return lsMeanEsp
 
 def fnManijaLateralDel(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
     lsManija = ['DEL MANIJA']
-    lsVersion = ['1','2','3','4','5'] 
+    lsVersion = ['1','2','3','4','5']
     lsMeanMan = []
-    
+
     isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfMANIJA)
-    
-    dfMANIJA_RST  = dfMANIJA.loc[(dfMANIJA['COD_MARCA'] == inCOD_MARCA)   & 
+
+    dfMANIJA_RST  = dfMANIJA.loc[(dfMANIJA['COD_MARCA'] == inCOD_MARCA)   &
                                  (dfMANIJA['COD_MODELO'] == inCOD_MODELO) &
                                  (dfMANIJA['VIEJO']     == isOld)         &
                                  (dfMANIJA['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsManija))))]\
                                  .sort_values(['VALOR'], ascending=[False])
-        
+
     if len(dfMANIJA_RST)==0:
-        dfMANIJA_RST = dfMANIJA.loc[(dfMANIJA['COD_MARCA'] == inCOD_MARCA) & 
+        dfMANIJA_RST = dfMANIJA.loc[(dfMANIJA['COD_MARCA'] == inCOD_MARCA) &
                                     (dfMANIJA['VIEJO']     == isOld)       &
                                     (dfMANIJA['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsManija))))]\
                                     .sort_values(['VALOR'], ascending=[False])
-   
+
     dfTmp = dfMANIJA_RST.loc[~dfMANIJA_RST['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-    
-    if len(dfTmp)!=0: 
+
+    if len(dfTmp)!=0:
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
-        lsMeanMan.append(round(flValue,2))   
+        lsMeanMan.append(round(flValue,2))
     else:
         if isAlta: flValue = paramal.bfLat_Manija_Pta_Del + param.bfMOMinimo
         else:      flValue = param.bfLat_Manija_Pta_Del   + param.bfMOMinimo
-        lsMeanMan.append(round(flValue,2))   
+        lsMeanMan.append(round(flValue,2))
 
-    return lsMeanMan 
+    return lsMeanMan
 
 def fnManijaLateralTra(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
     lsManija = ['TRAS MANIJA']
-    lsVersion = ['1','2','3','4','5'] 
+    lsVersion = ['1','2','3','4','5']
     lsMeanMan = []
-    
+
     isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfMANIJA)
-    
-    dfMANIJA_RST  = dfMANIJA.loc[(dfMANIJA['COD_MARCA']  == inCOD_MARCA)  & 
+
+    dfMANIJA_RST  = dfMANIJA.loc[(dfMANIJA['COD_MARCA']  == inCOD_MARCA)  &
                                  (dfMANIJA['COD_MODELO'] == inCOD_MODELO) &
                                  (dfMANIJA['VIEJO']      == isOld)        &
                                  (dfMANIJA['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsManija))))]\
                                  .sort_values(['VALOR'], ascending=[False])
-        
+
     if len(dfMANIJA_RST)==0:
-        dfMANIJA_RST = dfMANIJA.loc[(dfMANIJA['COD_MARCA'] == inCOD_MARCA) & 
+        dfMANIJA_RST = dfMANIJA.loc[(dfMANIJA['COD_MARCA'] == inCOD_MARCA) &
                                     (dfMANIJA['VIEJO']      == isOld)      &
                                     (dfMANIJA['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsManija))))]\
                                     .sort_values(['VALOR'], ascending=[False])
-   
+
     dfTmp = dfMANIJA_RST.loc[~dfMANIJA_RST['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-    
-    if len(dfTmp)!=0: 
+
+    if len(dfTmp)!=0:
         flValue = dfTmp['VALOR'].mean() + param.bfMOMinimo
-        lsMeanMan.append(round(flValue,2))   
+        lsMeanMan.append(round(flValue,2))
     else:
         if isAlta: flValue = paramal.bfLat_Manija_Pta_Tras + param.bfMOMinimo
         else:      flValue = param.bfLat_Manija_Pta_Tras   + param.bfMOMinimo
-        lsMeanMan.append(round(flValue,2))   
+        lsMeanMan.append(round(flValue,2))
 
-    return lsMeanMan 
+    return lsMeanMan
 
 def fnMolduraLateralDel(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
     inCOD_PARTE = 3
     espMold = ['DEL MOLD']
     lsMeanMold = []
-    
+
     isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfMOLDURA)
-    
+
     dfMOLD_LATERAL = dfMOLDURA.loc[(dfMOLDURA['COD_CLASE']  == inCOD_CLASE)  & (dfMOLDURA['COD_MARCA']  == inCOD_MARCA) &
                                    (dfMOLDURA['COD_MODELO'] == inCOD_MODELO) & (dfMOLDURA['COD_PARTE']  == inCOD_PARTE) &
                                    (dfMOLDURA['VIEJO']      == isOld)        &
                                    (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                    .sort_values(['VALOR'], ascending=[False])
-    
+
     if len(dfMOLD_LATERAL)==0:
-            dfMOLD_LATERAL = dfMOLDURA.loc[(dfMOLDURA['COD_CLASE']  == inCOD_CLASE) & (dfMOLDURA['COD_MARCA'] == inCOD_MARCA) & 
+            dfMOLD_LATERAL = dfMOLDURA.loc[(dfMOLDURA['COD_CLASE']  == inCOD_CLASE) & (dfMOLDURA['COD_MARCA'] == inCOD_MARCA) &
                                            (dfMOLDURA['COD_PARTE']  == inCOD_PARTE) & (dfMOLDURA['VIEJO']     == isOld)       &
                                            (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                            .sort_values(['VALOR'], ascending=[False])
 
-    if len(dfMOLD_LATERAL)!=0: 
+    if len(dfMOLD_LATERAL)!=0:
         flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
-        lsMeanMold.append(round(flValue,2))   
+        lsMeanMold.append(round(flValue,2))
     else:
         if isAlta: flValue = paramal.bfLat_Moldura_Pta_Del + param.bfMOMinimo
         else:      flValue = param.bfLat_Moldura_Pta_Del   + param.bfMOMinimo
-        lsMeanMold.append(round(flValue,2))   
-        
+        lsMeanMold.append(round(flValue,2))
+
     return lsMeanMold
 
 def fnMolduraLateralTra(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
     inCOD_PARTE = 3
     espMold = ['TRAS MOLD']
     lsMeanMold = []
-    
+
     isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfMOLDURA)
-    
-    dfMOLD_LATERAL = dfMOLDURA.loc[(dfMOLDURA['COD_MARCA']  == inCOD_MARCA)  & 
+
+    dfMOLD_LATERAL = dfMOLDURA.loc[(dfMOLDURA['COD_MARCA']  == inCOD_MARCA)  &
                                    (dfMOLDURA['COD_MODELO'] == inCOD_MODELO) &
                                    (dfMOLDURA['COD_PARTE']  == inCOD_PARTE)  &
                                    (dfMOLDURA['VIEJO']      == isOld)        &
                                    (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                    .sort_values(['VALOR'], ascending=[False])
-    
+
     if len(dfMOLD_LATERAL)==0:
-            dfMOLD_LATERAL = dfMOLDURA.loc[(dfMOLDURA['COD_MARCA'] == inCOD_MARCA)   & 
+            dfMOLD_LATERAL = dfMOLDURA.loc[(dfMOLDURA['COD_MARCA'] == inCOD_MARCA)   &
                                            (dfMOLDURA['COD_PARTE']  == inCOD_PARTE)  &
                                            (dfMOLDURA['VIEJO']      == isOld)        &
                                            (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                            .sort_values(['VALOR'], ascending=[False])
-                                           
-    if len(dfMOLD_LATERAL)!=0: 
+
+    if len(dfMOLD_LATERAL)!=0:
         flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
-        lsMeanMold.append(round(flValue,2)) 
+        lsMeanMold.append(round(flValue,2))
     else:
         if isAlta: flValue = paramal.bfLat_Moldura_Pta_Tras + param.bfMOMinimo
         else:      flValue = param.bfLat_Moldura_Pta_Tras + param.bfMOMinimo
-        lsMeanMold.append(round(flValue,2))   
-    
+        lsMeanMold.append(round(flValue,2))
+
     return lsMeanMold
 
 def fnCristalLateralDel(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
     inCOD_PARTE = 3
     espMold = ['DEL CRISTAL']
     lsMeanMold = []
-    
+
     print("fnCristalLateralDel:", inCOD_MARCA, inCOD_MODELO, isAlta)
-    
+
     isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfCRISTAL)
-    
-    dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_MARCA']  == inCOD_MARCA)  & 
+
+    dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_MARCA']  == inCOD_MARCA)  &
                                    (dfCRISTAL['COD_MODELO'] == inCOD_MODELO) &
                                    (dfCRISTAL['COD_PARTE']  == inCOD_PARTE)  &
                                    (dfCRISTAL['VIEJO']      == isOld)        &
                                    (dfCRISTAL['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                    .sort_values(['VALOR'], ascending=[False])
-    
+
     if len(dfMOLD_LATERAL)==0:
-            dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_MARCA'] == inCOD_MARCA)   & 
+            dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_MARCA'] == inCOD_MARCA)   &
                                            (dfCRISTAL['COD_PARTE']  == inCOD_PARTE)  &
                                            (dfCRISTAL['VIEJO']      == isOld)        &
                                            (dfCRISTAL['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                            .sort_values(['VALOR'], ascending=[False])
 
-    if len(dfMOLD_LATERAL)!=0: 
+    if len(dfMOLD_LATERAL)!=0:
         flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
-        lsMeanMold.append(round(flValue,2))   
+        lsMeanMold.append(round(flValue,2))
     else:
         if isAlta: flValue = paramal.bfLat_Cristal_Delantero + param.bfMOMinimo
         else:      flValue = param.bfLat_Cristal_Delantero + param.bfMOMinimo
-        lsMeanMold.append(round(flValue,2))   
-        
+        lsMeanMold.append(round(flValue,2))
+
     return lsMeanMold
 
 def fnCristalLateralTra(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
     inCOD_PARTE = 3
     espMold = ['TRAS CRISTAL']
     lsMeanMold = []
-    
+
     isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfCRISTAL)
-    
-    dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_MARCA']  == inCOD_MARCA)  & 
+
+    dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_MARCA']  == inCOD_MARCA)  &
                                    (dfCRISTAL['COD_MODELO'] == inCOD_MODELO) &
                                    (dfCRISTAL['COD_PARTE']  == inCOD_PARTE)  &
                                    (dfCRISTAL['VIEJO']      == isOld)        &
                                    (dfCRISTAL['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                    .sort_values(['VALOR'], ascending=[False])
-    
+
     if len(dfMOLD_LATERAL)==0:
-            dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_MARCA'] == inCOD_MARCA)   & 
+            dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_MARCA'] == inCOD_MARCA)   &
                                            (dfCRISTAL['COD_PARTE']  == inCOD_PARTE)  &
                                            (dfCRISTAL['VIEJO']      == isOld)        &
                                            (dfCRISTAL['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))]\
                                            .sort_values(['VALOR'], ascending=[False])
-                                           
-    if len(dfMOLD_LATERAL)!=0: 
+
+    if len(dfMOLD_LATERAL)!=0:
         flValue = dfMOLD_LATERAL['VALOR'].mean() + param.bfMOMinimo
-        lsMeanMold.append(round(flValue,2)) 
+        lsMeanMold.append(round(flValue,2))
     else:
         if isAlta: flValue = paramal.bfLat_Cristal_Trasero + param.bfMOMinimo
         else:      flValue = param.bfLat_Cristal_Trasero + param.bfMOMinimo
-        lsMeanMold.append(round(flValue,2))   
-        
+        lsMeanMold.append(round(flValue,2))
+
     return lsMeanMold
- 
+
 def fnReparaLateral(inSEG,inCOD_CLASE,lsRepara):
     inCOD_PARTE = 3
     lsReparaAve = []
     flAverage = 0
     for index, item in enumerate(lsRepara):
         bfID_ELEM = dfVALOR_MO_UNIF_LATERAL.loc[(dfVALOR_MO_UNIF_LATERAL['SEG']==inSEG)&
-                                                (dfVALOR_MO_UNIF_LATERAL['COD_CLASE']==inCOD_CLASE)& 
+                                                (dfVALOR_MO_UNIF_LATERAL['COD_CLASE']==inCOD_CLASE)&
                                                 (dfVALOR_MO_UNIF_LATERAL['COD_PARTE']==inCOD_PARTE)&
                                 (dfVALOR_MO_UNIF_LATERAL['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                                                        [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']] 
-                                                                      
+                                                        [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']]
+
         flVALOR_MO_MEAN      = bfID_ELEM['VALOR_MO_MEAN']
-        flCANT_HS_PINT_MEAN  = bfID_ELEM['CANT_HS_PINT_MEAN'] 
+        flCANT_HS_PINT_MEAN  = bfID_ELEM['CANT_HS_PINT_MEAN']
 
         flVALOR_MO_MEAN       = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2) #Todo: sacar 6350
         flCANT_HS_PINT_MEAN   = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfMObra),2) #Todo: sacar 6350
-        
+
         flAverage = np.round((flVALOR_MO_MEAN + flCANT_HS_PINT_MEAN + bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-        lsReparaAve.append(flAverage) 
-        
-    for index, item in enumerate(lsReparaAve): lsReparaAve[index]=list(set(item))[0]     
-    
-    return lsReparaAve           
+        lsReparaAve.append(flAverage)
+
+    for index, item in enumerate(lsReparaAve): lsReparaAve[index]=list(set(item))[0]
+
+    return lsReparaAve
 
 def fnCambiaLateral(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
     inCOD_PARTE = 3
     lsReponeAve = []
     flAverage = 0
-    
+
     isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfVALOR_REPUESTO_MO_Unif)
 
     for index, item in enumerate(lsRepone):
-        bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & 
-                                        (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']    == inCOD_CLASE)  & 
-                                        (dfVALOR_REPUESTO_MO_Unif['COD_MARCA']    == inCOD_MARCA)  & 
-                                        (dfVALOR_REPUESTO_MO_Unif['COD_MODELO']   == inCOD_MODELO) &          
+        bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        &
+                                        (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']    == inCOD_CLASE)  &
+                                        (dfVALOR_REPUESTO_MO_Unif['COD_MARCA']    == inCOD_MARCA)  &
+                                        (dfVALOR_REPUESTO_MO_Unif['COD_MODELO']   == inCOD_MODELO) &
                                         (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  &
-                                        (dfVALOR_REPUESTO_MO_Unif['VIEJO']        == isOld)        & 
-                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']] 
+                                        (dfVALOR_REPUESTO_MO_Unif['VIEJO']        == isOld)        &
+                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']]
 
         flAverage = np.round(bfID_ELEM['PRECIO_MEAN'],2)
-        
+
         if len(flAverage) == 0:
-            bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & 
-                                            (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']    == inCOD_CLASE)  & 
+            bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        &
+                                            (dfVALOR_REPUESTO_MO_Unif['COD_CLASE']    == inCOD_CLASE)  &
                                             (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  &
                                             (dfVALOR_REPUESTO_MO_Unif['VIEJO']        == isOld)        &
-                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']] 
-            
-            flMean = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)   
+                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']]
+
+            flMean = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)
             flAverage = pd.Series([flMean])
 
             if pd.isna(flAverage.iloc[0]):
@@ -2624,48 +2623,48 @@ def fnCambiaLateral(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
                     elif item=="PUERTA_DEL_PANEL":flAverage.iloc[0]=param.bfLat_Puerta_Panel_Del
                     elif item=="PUERTA_TRA_PANEL":flAverage.iloc[0]=param.bfLat_Puerta_Panel_Tras
                     elif item=="ZOCALO"          :flAverage.iloc[0]=param.bfLat_Zocalo
-        
+
         if len(flAverage) == 0: flAverage = [0]
 
         lsReponeAve.append(flAverage)
-        
-    for index, item in enumerate(lsReponeAve): lsReponeAve[index] = list(set(item))[0]     
-    
+
+    for index, item in enumerate(lsReponeAve): lsReponeAve[index] = list(set(item))[0]
+
     return lsReponeAve
 
 def fnCambiaPinturaLateral(inSEG,inCOD_CLASE,lsRepone):
     inCOD_PARTE = 3
     lsReponePintAve = []
     lsReponeMoAv    = []
-    
+
     flAverage = 0
     flMoAv    = 0
-    
+
     for index, item in enumerate(lsRepone):
-        bfID_ELEM = dfVALOR_REPUESTO_VALOR_MAT_LATERAL.loc[(dfVALOR_REPUESTO_VALOR_MAT_LATERAL['SEG']==inSEG) & 
-                                             (dfVALOR_REPUESTO_VALOR_MAT_LATERAL['COD_CLASE']==inCOD_CLASE) & 
+        bfID_ELEM = dfVALOR_REPUESTO_VALOR_MAT_LATERAL.loc[(dfVALOR_REPUESTO_VALOR_MAT_LATERAL['SEG']==inSEG) &
+                                             (dfVALOR_REPUESTO_VALOR_MAT_LATERAL['COD_CLASE']==inCOD_CLASE) &
                                              (dfVALOR_REPUESTO_VALOR_MAT_LATERAL['COD_PARTE']==inCOD_PARTE) &
                         (dfVALOR_REPUESTO_VALOR_MAT_LATERAL['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                                                                                      [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']] 
-        
+                                                                                      [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']]
+
         flVALOR_MO_MEAN = bfID_ELEM['VALOR_MO_MEAN']
         flVALOR_MO_MEAN = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2) #Todo: Para simplificar y no procesar todo
-        
+
         flCANT_HS_PINT_MEAN = bfID_ELEM['CANT_HS_PINT_MEAN']
         flCANT_HS_PINT_MEAN = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfPintura),2) #Todo: Para simplificar y no procesar todo
 
         flAverage = np.round((flCANT_HS_PINT_MEAN+bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-        
-        flMoAv  = np.round(flVALOR_MO_MEAN,2) 
+
+        flMoAv  = np.round(flVALOR_MO_MEAN,2)
 
         if len(flAverage) == 0: flAverage = [0]
-        lsReponePintAve.append(flAverage) 
+        lsReponePintAve.append(flAverage)
         if len(flMoAv) == 0: flMoAv = [0]
-        lsReponeMoAv.append(flMoAv) 
-        
-    for index, item in enumerate(lsReponePintAve): lsReponePintAve[index] = list(set(item))[0]     
-    
-    for index, item in enumerate(lsReponeMoAv): lsReponeMoAv[index] = list(set(item))[0]      
+        lsReponeMoAv.append(flMoAv)
+
+    for index, item in enumerate(lsReponePintAve): lsReponePintAve[index] = list(set(item))[0]
+
+    for index, item in enumerate(lsReponeMoAv): lsReponeMoAv[index] = list(set(item))[0]
 
     return lsReponePintAve,lsReponeMoAv
 
@@ -2673,34 +2672,34 @@ def fnCambiaPinturaLateral(inSEG,inCOD_CLASE,lsRepone):
 def resumeDataBrief(intCLIENTE,fltFrente,fltLateral,fltTrasero):
     intClientType = 2
     if intCLIENTE.isnumeric(): intClientType = int(intCLIENTE)
-    
+
     ftSum = (fltFrente + fltLateral + fltTrasero) * float(param.bfAjuste)
-    
+
     if intClientType == 1: ftSum *= float(param.bfAsegurado)
     else                 : ftSum *= float(param.bfTercero)
-    
+
     txtValorTotal = "<span id=\"CostBrief\" class=\"pure-form-message-inline\" style=\"text-align:left;font-family:'helvetica neue';font-size:100%;color:rgb(170,27,23);\">Sugerido&nbsp$&nbsp{0:0.2f}".format(ftSum)+"</span>"
     return txtValorTotal
 
 def getMarcaDesc(bfCLASE,bfMARCA):
     bfTmp = ''
     idf = dfModelo.loc[(dfModelo['CLASE']==bfCLASE)  & (dfModelo['MARCA']==bfMARCA)]
-    bfTmp = idf.iloc[0]['DMARCA'] 
+    bfTmp = idf.iloc[0]['DMARCA']
     return bfTmp
 
-def getModeloDesc(bfCLASE,bfMARCA,bfMODELO):    
+def getModeloDesc(bfCLASE,bfMARCA,bfMODELO):
     bfTmp = ''
     idf = dfModelo.loc[(dfModelo['CLASE']==bfCLASE) & (dfModelo['MARCA']==bfMARCA) & (dfModelo['MODELO']==bfMODELO)]
-    bfTmp = idf.iloc[0]['DMODELO']  
+    bfTmp = idf.iloc[0]['DMODELO']
     return bfTmp
 
 
 def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,TRASERO,lsValuesResultWrite):
     bfWrite =True
     ts = datetime.datetime.now().timestamp()
-  
+
     bfValues = str(ts)+","+str(CLIENTE)+","+str(CLASE)+","+str(MARCA)+","+str(MODELO)+",'"+SINIESTRO+"','"+PERITO.replace(',','')+"','"+VALORPERITO+"','"+LATERAL+"','"+TRASERO+"',"
-    
+
     bfValues += str(lsValuesResultWrite[0])+","+str(lsValuesResultWrite[1])+","+str(lsValuesResultWrite[2])+","+str(lsValuesResultWrite[3])+","\
             +str(lsValuesResultWrite[4])+","+str(lsValuesResultWrite[5])+","+str(lsValuesResultWrite[6])+","+str(lsValuesResultWrite[7])+","\
             +str(lsValuesResultWrite[8])+","+str(lsValuesResultWrite[9])+","+str(lsValuesResultWrite[10])+","+str(lsValuesResultWrite[11])+","\
@@ -2730,7 +2729,7 @@ def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,T
 def fnWriteLogBrief(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,TRASERO,lsValuesResultWrite):
     bfWrite =True
     ts = datetime.datetime.now().timestamp()
-  
+
     bfValues = str(ts)+","+str(CLIENTE)+","+str(CLASE)+","+str(MARCA)+","+str(MODELO)+",'"+SINIESTRO+"','"+PERITO.replace(',','')+"','"+VALORPERITO+"'"
     print(bfValues)
     bfClause = '''INSERT INTO logpresupuestosV1 (timestamp,cliente,clase,marca,modelo,siniestro,Perito,ValorPerito) VALUES (''' + bfValues + ');'
@@ -2752,7 +2751,7 @@ def fnAltaGama(CLASE,MARCA,MODELO):
     #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
     conn = engine.connect()
     result = conn.execute(text("SELECT al FROM marcamodelo where clase=" + str(CLASE) + " and marca=" + str(MARCA) + " and modelo=" + str(MODELO) +";"))
-    for row in result: 
+    for row in result:
         if row[0] == 1: bAltaGama = True
     conn.close()
     engine.dispose()
