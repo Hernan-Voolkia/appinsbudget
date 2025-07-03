@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 import sqlalchemy as db
 from sqlalchemy import text, exc
+import logging
 
 import param
 import paramal
@@ -22,110 +23,174 @@ import dbstatus
 warnings.filterwarnings("ignore")
 np.set_printoptions(suppress=True)
 
-df = pd.read_csv('./data/dfBaseCleanSumV1.csv',sep=';',encoding='utf-8',decimal='.',
-                 dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
-                          'COD_PARTE':'int8','NRO_PRESU':'int32','ID_ELEM':'int32','VALOR_MO':'float64',
-                          'VALOR_REPUESTO':'float64','CANT_HS_PINT':'float64','VALOR_MAT_PINT':'float64',})
+LOG_FILE_NAME = 'log.csv'
+logging.basicConfig(level=logging.INFO,format='%(asctime)s - %(levelname)s - %(message)s',filename=LOG_FILE_NAME,filemode='a')
+logger = logging.getLogger(__name__)
+
 #MARCA-MODELO
-dfModelo = pd.read_csv('./data/ClaseMarcaModelo.csv',sep=';',encoding='latin-1',decimal='.',
-                       dtype={'CLASE':'int16','MARCA':'int16','MODELO':'int16','DMARCA':'object','DMODELO':'object'})
+try:
+    dfModelo = pd.read_csv('./data/ClaseMarcaModelo.csv',sep=';',encoding='latin-1',decimal='.',
+                        dtype={'CLASE':'int16','MARCA':'int16','MODELO':'int16','DMARCA':'object','DMODELO':'object'})
+except FileNotFoundError:
+    logger.error(f"Error: ClaseMarcaModelo.csv no fue encontrado.")
 #MARCA-MODELO-NUEVO
-dfModeloNuevo = pd.read_csv('./data/ClaseMarcaModeloNuevosRed.csv',sep=';',encoding='latin-1',decimal='.',
-                           dtype={'CLASE':'int16','MARCA':'int16','MODELO':'int16'})
+try:
+    dfModeloNuevo = pd.read_csv('./data/ClaseMarcaModeloNuevosRed.csv',sep=';',encoding='latin-1',decimal='.',
+                            dtype={'CLASE':'int16','MARCA':'int16','MODELO':'int16'})
+except FileNotFoundError:
+    logger.error(f"Error: ClaseMarcaModeloNuevosRed.csv no fue encontrado.")
 #PORTON
-dfPorton = pd.read_csv('./data/dfPortonV2.csv',sep=';',encoding='utf-8',decimal='.',
-                       dtype = {'COD_CLASE':'int16','COD_MARCA':'int8','COD_MODELO':'int8'})
+try:
+    dfPorton = pd.read_csv('./data/dfPortonV2.csv',sep=';',encoding='utf-8',decimal='.',
+                        dtype = {'COD_CLASE':'int16','COD_MARCA':'int8','COD_MODELO':'int8'})
+except FileNotFoundError:
+    logger.error(f"Error: dfPortonV2.csv no fue encontrado.")
 #SEGMENTOS
-dfSEGMENTO = pd.read_csv('./data/_dfSEGMENTACION_V1.csv',sep=';',encoding='utf-8',decimal='.',
-                         dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16','SEG':'int8'})
+try:
+    dfSEGMENTO = pd.read_csv('./data/_dfSEGMENTACION_V1.csv',sep=';',encoding='utf-8',decimal='.',
+                            dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16','SEG':'int8'})
+except FileNotFoundError:
+    logger.error(f"Error: _dfSEGMENTACION_V1.csv no fue encontrado.")
 #VALOR-REPUESTO
-dfVALOR_REPUESTO_MO_Unif = pd.read_csv('./data/_dfVALOR_REPUESTO_ALL_V7.csv',sep=';',encoding='utf-8',decimal='.',parse_dates = ['FECHA'],
-                        dtype = {'SEG':'int8','COD_CLASE':'int16','COD_MARCA':'int8','COD_MODELO':'int8',
-                                 'COD_PARTE':'int8','DESC_ELEM':'str','PRECIO_MEAN':'float64','VIEJO':'bool'})
+try:
+    dfVALOR_REPUESTO_MO_Unif = pd.read_csv('./data/_dfVALOR_REPUESTO_ALL_V7.csv',sep=';',encoding='utf-8',decimal='.',parse_dates = ['FECHA'],
+                            dtype = {'SEG':'int8','COD_CLASE':'int16','COD_MARCA':'int8','COD_MODELO':'int8',
+                                    'COD_PARTE':'int8','DESC_ELEM':'str','PRECIO_MEAN':'float64','VIEJO':'bool'})
+except FileNotFoundError:
+    logger.error(f"Error: _dfVALOR_REPUESTO_ALL_V7.csv no fue encontrado.")
 #VALOR-MO-FRENTE
-dfVALOR_MO_UNIF_FRENTE = pd.read_csv('./data/_dfVALOR_REPARA_MO&PINT_FRENTEV7.csv',sep=';',encoding='utf-8',decimal='.',
-                        dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
-                                 'VALOR_MO_MEAN':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
-                                 'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
-                                 'RATIO_HS_PINT_STD':'float64','CANT_HS_PINT_STD':'float64',
-                                 'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_ST':'float64',
-                                 'ORIG_MAT_PINT_MEAN':'float64','ORIG_MAT_PINT_STD':'float64'})
+try:
+    dfVALOR_MO_UNIF_FRENTE = pd.read_csv('./data/_dfVALOR_REPARA_MO&PINT_FRENTEV7.csv',sep=';',encoding='utf-8',decimal='.',
+                            dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
+                                    'VALOR_MO_MEAN':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
+                                    'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
+                                    'RATIO_HS_PINT_STD':'float64','CANT_HS_PINT_STD':'float64',
+                                    'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_ST':'float64',
+                                    'ORIG_MAT_PINT_MEAN':'float64','ORIG_MAT_PINT_STD':'float64'})
+except FileNotFoundError:
+    logger.error(f"Error: _dfVALOR_REPARA_MO&PINT_FRENTEV7.csv no fue encontrado.")
 #VALOR-MO-TRASERO
-dfVALOR_MO_UNIF_TRASERO = pd.read_csv('./data/_dfVALOR_REPARA_MO&PINT_TRASEROV7.csv',sep=';',encoding='utf-8',decimal='.',
-                        dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
-                                 'VALOR_MO_MEAN':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
-                                 'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
-                                 'RATIO_HS_PINT_STD':'float64','CANT_HS_PINT_STD':'float64',
-                                 'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_ST':'float64',
-                                 'ORIG_MAT_PINT_MEAN':'float64','ORIG_MAT_PINT_STD':'float64'})
+try:
+    dfVALOR_MO_UNIF_TRASERO = pd.read_csv('./data/_dfVALOR_REPARA_MO&PINT_TRASEROV7.csv',sep=';',encoding='utf-8',decimal='.',
+                            dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
+                                    'VALOR_MO_MEAN':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
+                                    'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
+                                    'RATIO_HS_PINT_STD':'float64','CANT_HS_PINT_STD':'float64',
+                                    'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_ST':'float64',
+                                    'ORIG_MAT_PINT_MEAN':'float64','ORIG_MAT_PINT_STD':'float64'})
+except FileNotFoundError:
+    logger.error(f"Error: _dfVALOR_REPARA_MO&PINT_TRASEROV7.csv no fue encontrado.")
 #VALOR-MO-LATERAL
-dfVALOR_MO_UNIF_LATERAL = pd.read_csv('./data/_dfVALOR_REPARA_MO&PINT_LATERALV7.csv',sep=';',encoding='utf-8',decimal='.',
-                        dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
-                                 'VALOR_MO_MEAN':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
-                                 'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
-                                 'RATIO_HS_PINT_STD':'float64','CANT_HS_PINT_STD':'float64',
-                                 'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_ST':'float64',
-                                 'ORIG_MAT_PINT_MEAN':'float64','ORIG_MAT_PINT_STD':'float64'})
+try:
+    dfVALOR_MO_UNIF_LATERAL = pd.read_csv('./data/_dfVALOR_REPARA_MO&PINT_LATERALV7.csv',sep=';',encoding='utf-8',decimal='.',
+                            dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
+                                    'VALOR_MO_MEAN':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
+                                    'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
+                                    'RATIO_HS_PINT_STD':'float64','CANT_HS_PINT_STD':'float64',
+                                    'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_ST':'float64',
+                                    'ORIG_MAT_PINT_MEAN':'float64','ORIG_MAT_PINT_STD':'float64'})
+except FileNotFoundError:
+    logger.error(f"Error: _dfVALOR_REPARA_MO&PINT_LATERALV7.csv no fue encontrado.")
 #VALRO-MO-PINT-FRENTE
-dfVALOR_REPUESTO_VALOR_MAT_FRENTE = pd.read_csv('./data/_dfVALOR_REPUESTO_MO&PINT_FRENTEV7.csv',sep=';',encoding='utf-8',decimal='.',
-                        dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
-                                 'VALOR_MO':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
-                                 'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
-                                 'RATIO_HS_PINT_MEAN':'float64','RATIO_HS_PINT_STD':'float64',
-                                 'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_STD':'float64'})
+try:
+    dfVALOR_REPUESTO_VALOR_MAT_FRENTE = pd.read_csv('./data/_dfVALOR_REPUESTO_MO&PINT_FRENTEV7.csv',sep=';',encoding='utf-8',decimal='.',
+                            dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
+                                    'VALOR_MO':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
+                                    'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
+                                    'RATIO_HS_PINT_MEAN':'float64','RATIO_HS_PINT_STD':'float64',
+                                    'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_STD':'float64'})
+except FileNotFoundError:
+    logger.error(f"Error: _dfVALOR_REPUESTO_MO&PINT_FRENTEV7.csv no fue encontrado.")
 #VALRO-MO-PINT-TRASERO
-dfVALOR_REPUESTO_VALOR_MAT_TRASERO = pd.read_csv('./data/_dfVALOR_REPUESTO_MO&PINT_TRASEROV7.csv',sep=';',encoding='utf-8',decimal='.',
-                        dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
-                                 'VALOR_MO':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
-                                 'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
-                                 'RATIO_HS_PINT_MEAN':'float64','RATIO_HS_PINT_STD':'float64',
-                                 'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_STD':'float64'})
+try:
+    dfVALOR_REPUESTO_VALOR_MAT_TRASERO = pd.read_csv('./data/_dfVALOR_REPUESTO_MO&PINT_TRASEROV7.csv',sep=';',encoding='utf-8',decimal='.',
+                            dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
+                                    'VALOR_MO':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
+                                    'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
+                                    'RATIO_HS_PINT_MEAN':'float64','RATIO_HS_PINT_STD':'float64',
+                                    'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_STD':'float64'})
+except FileNotFoundError:
+    logger.error(f"Error: _dfVALOR_REPUESTO_MO&PINT_TRASEROV7.csv no fue encontrado.")
 #VALRO-MO-PINT-LATERAL
-dfVALOR_REPUESTO_VALOR_MAT_LATERAL = pd.read_csv('./data/_dfVALOR_REPUESTO_MO&PINT_LATERALV7.csv',sep=';',encoding='utf-8',decimal='.',
-                        dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
-                                 'VALOR_MO':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
-                                 'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
-                                 'RATIO_HS_PINT_MEAN':'float64','RATIO_HS_PINT_STD':'float64',
-                                 'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_STD':'float64'})
+try:
+    dfVALOR_REPUESTO_VALOR_MAT_LATERAL = pd.read_csv('./data/_dfVALOR_REPUESTO_MO&PINT_LATERALV7.csv',sep=';',encoding='utf-8',decimal='.',
+                            dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
+                                    'VALOR_MO':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
+                                    'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
+                                    'RATIO_HS_PINT_MEAN':'float64','RATIO_HS_PINT_STD':'float64',
+                                    'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_STD':'float64'})
+except FileNotFoundError:
+    logger.error(f"Error: _dfVALOR_REPUESTO_MO&PINT_LATERALV7.csv no fue encontrado.")
 #MOLDURAS
-dfMOLDURA = pd.read_csv('./data/MolduraSedanValueMin.csv',sep=';',encoding='utf-8',decimal='.',
-                        dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
-                                 'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
-                                 'COD_ELEM':'int64','VALOR':'float64','VIEJO':'bool'})
+try:
+    dfMOLDURA = pd.read_csv('./data/MolduraValueMin.csv',sep=';',encoding='utf-8',decimal='.',
+                            dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
+                                    'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
+                                    'COD_ELEM':'int64','VALOR':'float64','VIEJO':'bool'})
+except FileNotFoundError:
+    logger.error(f"Error: MolduraValueMin.csv no fue encontrado.")
 #ESPEJO
-dfESPEJO = pd.read_csv('./data/PuertaEspejoSedanValueMin.csv',sep=';',encoding='utf-8',decimal='.',
-                        dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
-                                 'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
-                                 'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
+try:
+    dfESPEJO = pd.read_csv('./data/PuertaEspejoValueMin.csv',sep=';',encoding='utf-8',decimal='.',
+                            dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
+                                    'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
+                                    'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
+except FileNotFoundError:
+    logger.error(f"Error: PuertaEspejoValueMin.csv no fue encontrado.")
 #FARO
-dfFARO = pd.read_csv('./data/FaroOnlySedanValueMin.csv',sep=';',encoding='utf-8',decimal='.',
-                     dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
-                              'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
-                              'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
-#CRISTAL
-dfCRISTAL = pd.read_csv('./data/PuertaCristalSedanValueMin.csv',sep=';',encoding='utf-8',decimal='.',
+try:
+    dfFARO = pd.read_csv('./data/FaroOnlyValueMin.csv',sep=';',encoding='utf-8',decimal='.',
                         dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
-                                 'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
-                                 'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
-#MANIJA
-dfMANIJA = pd.read_csv('./data/PuertaManijaSedanValueMin.csv',sep=';',encoding='utf-8',decimal='.',
-                       dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
                                 'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
                                 'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
+except FileNotFoundError:
+    logger.error(f"Error: FaroOnlyValueMin.csv no fue encontrado.")
+#CRISTAL
+try:
+    dfCRISTAL = pd.read_csv('./data/PuertaCristalValueMin.csv',sep=';',encoding='utf-8',decimal='.',
+                            dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
+                                    'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
+                                    'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
+except FileNotFoundError:
+    logger.error(f"Error: PuertaCristalValueMin.csv no fue encontrado.")
+#MANIJA
+try:
+    dfMANIJA = pd.read_csv('./data/PuertaManijaValueMin.csv',sep=';',encoding='utf-8',decimal='.',
+                        dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
+                                    'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
+                                    'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
+except FileNotFoundError:
+    logger.error(f"Error: PuertaManijaValueMin.csv no fue encontrado.")
 #MOTOS
-dfMOTO = pd.read_csv('./data/motos.csv',sep=';',encoding='utf-8',na_values=['NA', '?'], on_bad_lines='warn',
-                     dtype={'CLASE':int,'MARCA':int,'MODELO':int,'DMARCA':str,'DMODELO':str})
+try:
+    dfMOTO = pd.read_csv('./data/motos.csv',sep=';',encoding='utf-8',na_values=['NA', '?'], on_bad_lines='warn',
+                        dtype={'CLASE':int,'MARCA':int,'MODELO':int,'DMARCA':str,'DMODELO':str})
+except FileNotFoundError:
+    logger.error(f"Error: motos.csv no fue encontrado.")
 #DBVALUES
-engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-#engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+cEnv = ""
+try:
+    with open('.env', 'r') as file: 
+        cEnv=file.read().strip()
+        logger.info(f"ENV: {cEnv}")
+except FileNotFoundError:
+    logger.error(f"Error: .env no fue encontrado.")
+except Exception as e:
+    logger.error(f"Error: .env", exc_info=True)
+
+if cEnv == 'PROD':
+    cDBConnValue = 'postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb'
+else:    
+    cDBConnValue = 'sqlite:///appinsbudget.sqlite3'
+engine = db.create_engine(cDBConnValue)
 conn = engine.connect()
 result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
 for row in result:
-    if row[0] == 'Tercero': param.bfTercero = float(row[1])
-    if row[0] == 'MObra': param.bfMObra = float(row[1])
-    if row[0] == 'MOMinimo': param.bfMOMinimo = float(row[1])
-    if row[0] == 'Pintura': param.bfPintura = float(row[1])
-    if row[0] == 'Ajuste': param.bfAjuste = float(row[1])
+    if row[0] == 'Tercero'  : param.bfTercero   = float(row[1])
+    if row[0] == 'MObra'    : param.bfMObra     = float(row[1])
+    if row[0] == 'MOMinimo' : param.bfMOMinimo  = float(row[1])
+    if row[0] == 'Pintura'  : param.bfPintura   = float(row[1])
+    if row[0] == 'Ajuste'   : param.bfAjuste    = float(row[1])
     if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
 conn.close()
 engine.dispose()
@@ -137,6 +202,11 @@ templates = Jinja2Templates(directory="templates")
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
     return index.bfHTML
+
+@app.get("/log", response_class=PlainTextResponse)
+async def log(iLines:int=1):
+    bfLog = leer_ultimas_lineas_log(iLines)
+    return "Lines:" + str(iLines) + str(bfLog)
 
 @app.post("/vh", response_class=PlainTextResponse)
 async def modelo(CLASE  : int = 0):
@@ -163,8 +233,8 @@ async def modelo(CLASE:int=901, MARCA:int=0):
 @app.get("/consulta", response_class=HTMLResponse)
 async def consulta():
     #DBVALUES
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    
+    engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
     result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
     for row in result:
@@ -177,8 +247,8 @@ async def consulta():
     conn.close()
     engine.dispose()
 
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    
+    engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
     result = conn.execute(text('SELECT stname,flvalue FROM admvalueslat;'))
     for row in result:
@@ -196,8 +266,8 @@ async def consulta():
     conn.close()
     engine.dispose()
 
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    
+    engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
     result = conn.execute(text('SELECT stname,flvalue FROM admvalueslatal;'))
     for row in result:
@@ -215,8 +285,8 @@ async def consulta():
     conn.close()
     engine.dispose()
 
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    
+    engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
     result = conn.execute(text('SELECT stname,flvalue FROM admvaluesdel;'))
     for row in result:
@@ -234,8 +304,8 @@ async def consulta():
     conn.close()
     engine.dispose()
 
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    
+    engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
     result = conn.execute(text('SELECT stname,flvalue FROM admvaluesdelal;'))
     for row in result:
@@ -253,8 +323,8 @@ async def consulta():
     conn.close()
     engine.dispose()
 
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    
+    engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
     result = conn.execute(text('SELECT * FROM admvaluestra;'))
     for row in result:
@@ -269,8 +339,8 @@ async def consulta():
     conn.close()
     engine.dispose()
 
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    
+    engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
     result = conn.execute(text('SELECT * FROM admvaluestraal;'))
     for row in result:
@@ -293,8 +363,8 @@ async def consulta():
 async def adminValues():
     #DBVALUES
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        
+        engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
         for row in result:
@@ -313,6 +383,7 @@ async def adminValues():
         param.bfPintura = ""
         param.bfAjuste = ""
         param.bfAsegurado = ""
+        logger.error(f"Error: no se puedo acceder a admvalue.")
 
     bfAdminValues = admvalue.bfHTML
     bfAdminValues = bfAdminValues.replace('rplBfAsegurado',str(param.bfAsegurado))
@@ -327,8 +398,8 @@ async def adminValues():
 async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:str="",PINTURA:str="",AJUSTE:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
+       
+       engine = db.create_engine(cDBConnValue);
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvalue SET flValue =' + str(TERCERO).replace(',','.') + ' WHERE stName=\'Tercero\''))
        result = conn.execute(text('UPDATE admvalue SET flValue =' + str(ASEGURADO).replace(',','.') + ' WHERE stName=\'Asegurado\''))
@@ -341,6 +412,7 @@ async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:
        engine.dispose()
     except Exception as e:
        bfMsg = "Se produjo un error al grabar: "+str(e)
+       logger.error(f"Error: admvalue - "+str(e))
     return bfMsg
 ##############################################################
 # Reporte de Valores de Partes Laterales
@@ -361,8 +433,8 @@ async def admreplat(request: Request):
                "Lat_Zocalo":"Zocalo","Lat_Zocalo_Val":0.0,
                "MensajeRetorno":""}
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        
+        engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalueslat;'))
         for row in result:
@@ -381,6 +453,7 @@ async def admreplat(request: Request):
         engine.dispose()
     except Exception as e:
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
+        logger.error(f"Error: "+str(e))
     return templates.TemplateResponse("admreplat.html", context)
 #==========================================================
 @app.post("/admvalueslat", response_class=PlainTextResponse)
@@ -390,8 +463,8 @@ async def admvalueslat(request: Request, Lat_Cristal_Delantero:str="",Lat_Crista
                        Lat_Puerta_Delantera:str="",Lat_Puerta_Trasera:str="",Lat_Zocalo:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+       
+       engine = db.create_engine(cDBConnValue)
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName=\'Lat_Cristal_Delantero\''))
        result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Cristal_Trasero).replace(',','.') + ' WHERE stName=\'Lat_Cristal_Trasero\''))
@@ -408,6 +481,7 @@ async def admvalueslat(request: Request, Lat_Cristal_Delantero:str="",Lat_Crista
        engine.dispose()
     except Exception as e:
        bfMsg = "Se produjo un error al grabar, comuniquese con el administrador " + str(e)
+       logger.error(f"Error: "+str(e))
     return bfMsg
 #####################################################
 @app.get("/admreplatsuv", response_class=HTMLResponse)
@@ -426,8 +500,8 @@ async def admreplatsuv(request: Request):
                "Lat_Zocalo":"Zocalo","Lat_Zocalo_Val":0.0,
                "MensajeRetorno":""}
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        
+        engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalueslatsuv;'))
         for row in result:
@@ -446,6 +520,7 @@ async def admreplatsuv(request: Request):
         engine.dispose()
     except Exception as e:
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
+        logger.error(f"Error: "+str(e))
     return templates.TemplateResponse("admreplatsuv.html", context)
 #==========================================================
 @app.post("/admvalueslatsuv", response_class=PlainTextResponse)
@@ -455,8 +530,8 @@ async def admvalueslatsuv(request: Request, Lat_Cristal_Delantero:str="",Lat_Cri
                          Lat_Puerta_Delantera:str="",Lat_Puerta_Trasera:str="",Lat_Zocalo:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+       
+       engine = db.create_engine(cDBConnValue)
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName=\'Lat_Cristal_Delantero\''))
        result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Cristal_Trasero).replace(',','.') + ' WHERE stName=\'Lat_Cristal_Trasero\''))
@@ -474,6 +549,7 @@ async def admvalueslatsuv(request: Request, Lat_Cristal_Delantero:str="",Lat_Cri
        engine.dispose()
     except Exception as e:
        bfMsg = "Se produjo un error al grabar, comuniquese con el administrador " + str(e)
+       logger.error(f"Error: "+str(e))
     return bfMsg
 ####################################################
 @app.get("/admreplatag", response_class=HTMLResponse)
@@ -492,8 +568,8 @@ async def admreplatag(request: Request):
                "Lat_Zocalo":"Zocalo","Lat_Zocalo_Val":0.0,
                "MensajeRetorno":""}
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        
+        engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalueslatal;'))
         for row in result:
@@ -512,6 +588,7 @@ async def admreplatag(request: Request):
         engine.dispose()
     except Exception as e:
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
+        logger.error(f"Error: "+str(e))
     return templates.TemplateResponse("admreplatag.html", context)
 #==========================================================
 @app.post("/admvalueslatag", response_class=PlainTextResponse)
@@ -521,8 +598,8 @@ async def admvalueslatag(request: Request, Lat_Cristal_Delantero:str="",Lat_Cris
                          Lat_Puerta_Delantera:str="",Lat_Puerta_Trasera:str="",Lat_Zocalo:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+       
+       engine = db.create_engine(cDBConnValue)
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName=\'Lat_Cristal_Delantero\''))
        result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Cristal_Trasero).replace(',','.') + ' WHERE stName=\'Lat_Cristal_Trasero\''))
@@ -540,6 +617,7 @@ async def admvalueslatag(request: Request, Lat_Cristal_Delantero:str="",Lat_Cris
        engine.dispose()
     except Exception as e:
        bfMsg = "Se produjo un error al grabar, comuniquese con el administrador " + str(e)
+       logger.error(f"Error: "+str(e))
     return bfMsg
 ########################################################
 @app.get("/admreplatagsuv", response_class=HTMLResponse)
@@ -558,8 +636,8 @@ async def admreplatag(request: Request):
                "Lat_Zocalo":"Zocalo","Lat_Zocalo_Val":0.0,
                "MensajeRetorno":""}
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        
+        engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalueslatalsuv;'))
         for row in result:
@@ -578,6 +656,7 @@ async def admreplatag(request: Request):
         engine.dispose()
     except Exception as e:
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
+        logger.error(f"Error: "+str(e))
     return templates.TemplateResponse("admreplatagsuv.html", context)
 #==========================================================
 @app.post("/admvalueslatagsuv", response_class=PlainTextResponse)
@@ -587,8 +666,8 @@ async def admvalueslatagsuv(request: Request, Lat_Cristal_Delantero:str="",Lat_C
                            Lat_Puerta_Delantera:str="",Lat_Puerta_Trasera:str="",Lat_Zocalo:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+       
+       engine = db.create_engine(cDBConnValue)
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName=\'Lat_Cristal_Delantero\''))
        result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Cristal_Trasero).replace(',','.') + ' WHERE stName=\'Lat_Cristal_Trasero\''))
@@ -606,6 +685,7 @@ async def admvalueslatagsuv(request: Request, Lat_Cristal_Delantero:str="",Lat_C
        engine.dispose()
     except Exception as e:
        bfMsg = "Se produjo un error al grabar, comuniquese con el administrador " + str(e)
+       logger.error(f"Error: "+str(e))
     return bfMsg
 ##############################################################
 # Reporte de Valores de Partes Traseras
@@ -624,8 +704,8 @@ async def admreptra(request: Request):
                "MensajeRetorno":""
                }
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        
+        engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluestra;'))
         for row in result:
@@ -641,6 +721,7 @@ async def admreptra(request: Request):
         engine.dispose()
     except Exception as e:
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
+        logger.error(f"Error: "+str(e))
 
     return templates.TemplateResponse("admreptra.html", context)
 #===========================================================
@@ -649,8 +730,8 @@ async def admvaluestra(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Guarda
                       Moldura:str="",Panel_Cola:str="",Paragolpe:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
+       
+       engine = db.create_engine(cDBConnValue);
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName=\'Baul_Porton\''))
        result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Faro_Ext).replace(',','.') + ' WHERE stName=\'Faro_Ext\''))
@@ -665,6 +746,7 @@ async def admvaluestra(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Guarda
        engine.dispose()
     except Exception as e:
        bfMsg = "Se produjo un error al grabar: "+str(e)
+       logger.error(f"Error: "+str(e))
     return bfMsg
 ######################################################
 @app.get("/admreptrasuv", response_class=HTMLResponse)
@@ -681,8 +763,8 @@ async def admreptrasuv(request: Request):
                "MensajeRetorno":""
                }
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        
+        engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluestrasuv;'))
         for row in result:
@@ -698,6 +780,7 @@ async def admreptrasuv(request: Request):
         engine.dispose()
     except Exception as e:
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
+        logger.error(f"Error: "+str(e))
     return templates.TemplateResponse("admreptrasuv.html", context)
 #=============================================================
 @app.post("/admvaluestrasuv", response_class=PlainTextResponse)
@@ -705,8 +788,8 @@ async def admvaluestrasuv(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Gua
                           Moldura:str="",Panel_Cola:str="",Paragolpe:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
+       
+       engine = db.create_engine(cDBConnValue);
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName=\'Baul_Porton\''))
        result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Faro_Ext).replace(',','.') + ' WHERE stName=\'Faro_Ext\''))
@@ -721,6 +804,7 @@ async def admvaluestrasuv(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Gua
        engine.dispose()
     except Exception as e:
        bfMsg = "Se produjo un error al grabar: "+str(e)
+       logger.error(f"Error: "+str(e))
     return bfMsg
 #####################################################
 @app.get("/admreptraag", response_class=HTMLResponse)
@@ -737,8 +821,8 @@ async def admreptraag(request: Request):
                "MensajeRetorno":""
                }
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        
+        engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluestraal;'))
         for row in result:
@@ -754,6 +838,7 @@ async def admreptraag(request: Request):
         engine.dispose()
     except Exception as e:
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
+        logger.error(f"Error: "+str(e))
     return templates.TemplateResponse("admreptraag.html", context)
 #==========================================================
 @app.post("/admvaluestraag", response_class=PlainTextResponse)
@@ -761,8 +846,8 @@ async def admvaluestraag(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Guar
                          Moldura:str="",Panel_Cola:str="",Paragolpe:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
+       
+       engine = db.create_engine(cDBConnValue);
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName=\'Baul_Porton\''))
        result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Faro_Ext).replace(',','.') + ' WHERE stName=\'Faro_Ext\''))
@@ -777,6 +862,7 @@ async def admvaluestraag(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Guar
        engine.dispose()
     except Exception as e:
        bfMsg = "Se produjo un error al grabar: "+str(e)
+       logger.error(f"Error: "+str(e))
     return bfMsg
 #######################################################
 @app.get("/admreptraagsuv", response_class=HTMLResponse)
@@ -793,8 +879,8 @@ async def admreptraagsuv(request: Request):
                "MensajeRetorno":""
                }
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        
+        engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluestraalsuv;'))
         for row in result:
@@ -810,6 +896,7 @@ async def admreptraagsuv(request: Request):
         engine.dispose()
     except Exception as e:
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
+        logger.error(f"Error: "+str(e))
     return templates.TemplateResponse("admreptraagsuv.html", context)
 #=============================================================
 @app.post("/admvaluestraagsuv", response_class=PlainTextResponse)
@@ -817,8 +904,8 @@ async def admvaluestraagsuv(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",G
                          Moldura:str="",Panel_Cola:str="",Paragolpe:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
+       
+       engine = db.create_engine(cDBConnValue);
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName=\'Baul_Porton\''))
        result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Faro_Ext).replace(',','.') + ' WHERE stName=\'Faro_Ext\''))
@@ -833,6 +920,7 @@ async def admvaluestraagsuv(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",G
        engine.dispose()
     except Exception as e:
        bfMsg = "Se produjo un error al grabar: "+str(e)
+       logger.error(f"Error: "+str(e))
     return bfMsg
 ######################################################
 # Reporte de Valores de Partes Delanteras
@@ -854,8 +942,8 @@ async def admrepdel(request: Request):
                "MensajeRetorno":""
                }
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        
+        engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluesdel;'))
         for row in result:
@@ -874,6 +962,7 @@ async def admrepdel(request: Request):
         engine.dispose()
     except Exception as e:
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
+        logger.error(f"Error: "+str(e))
     return templates.TemplateResponse("admrepdel.html", context)
 #===========================================================
 @app.post("/admvaluesdel", response_class=PlainTextResponse)
@@ -881,8 +970,8 @@ async def admvaluesdel(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragolpe_
                       Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Parabrisas:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
+       
+       engine = db.create_engine(cDBConnValue);
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Paragolpe_Ctro).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Ctro\''))
        result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Paragolpe_Rejilla).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Rejilla\''))
@@ -900,6 +989,7 @@ async def admvaluesdel(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragolpe_
        engine.dispose()
     except Exception as e:
        bfMsg = "Se produjo un error al grabar: "+str(e)
+       logger.error(f"Error: "+str(e))
     return bfMsg
 ######################################################
 @app.get("/admrepdelsuv", response_class=HTMLResponse)
@@ -919,8 +1009,8 @@ async def admrepdel(request: Request):
                "MensajeRetorno":""
                }
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        
+        engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluesdelsuv;'))
         for row in result:
@@ -939,6 +1029,7 @@ async def admrepdel(request: Request):
         engine.dispose()
     except Exception as e:
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
+        logger.error(f"Error: "+str(e))
     return templates.TemplateResponse("admrepdelsuv.html", context)
 #===========================================================
 @app.post("/admvaluesdelsuv", response_class=PlainTextResponse)
@@ -946,8 +1037,8 @@ async def admvaluesdelsuv(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragol
                           Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Parabrisas:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
+       
+       engine = db.create_engine(cDBConnValue);
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Paragolpe_Ctro).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Ctro\''))
        result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Paragolpe_Rejilla).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Rejilla\''))
@@ -965,6 +1056,7 @@ async def admvaluesdelsuv(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragol
        engine.dispose()
     except Exception as e:
        bfMsg = "Se produjo un error al grabar: "+str(e)
+       logger.error(f"Error: "+str(e))
     return bfMsg
 #####################################################
 @app.get("/admrepdelag", response_class=HTMLResponse)
@@ -984,8 +1076,8 @@ async def admrepdelag(request: Request):
                "MensajeRetorno":""
                }
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        
+        engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluesdelal;'))
         for row in result:
@@ -1004,6 +1096,7 @@ async def admrepdelag(request: Request):
         engine.dispose()
     except Exception as e:
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
+        logger.error(f"Error: "+str(e))
     return templates.TemplateResponse("admrepdelag.html", context)
 #===========================================================
 @app.post("/admvaluesdelag", response_class=PlainTextResponse)
@@ -1011,8 +1104,8 @@ async def admvaluesdelag(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragolp
                           Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Parabrisas:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
+       
+       engine = db.create_engine(cDBConnValue);
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Paragolpe_Ctro).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Ctro\''))
        result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Paragolpe_Rejilla).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Rejilla\''))
@@ -1030,6 +1123,7 @@ async def admvaluesdelag(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragolp
        engine.dispose()
     except Exception as e:
        bfMsg = "Se produjo un error al grabar: "+str(e)
+       logger.error(f"Error: "+str(e))
     return bfMsg
 #########################################################
 @app.get("/admrepdelagsuv", response_class=HTMLResponse)
@@ -1049,8 +1143,8 @@ async def admrepdelagsuv(request: Request):
                "MensajeRetorno":""
                }
     try:
-        engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-        #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+        
+        engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluesdelalsuv;'))
         for row in result:
@@ -1069,6 +1163,7 @@ async def admrepdelagsuv(request: Request):
         engine.dispose()
     except Exception as e:
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
+        logger.error(f"Error: "+str(e))
     return templates.TemplateResponse("admrepdelagsuv.html", context)
 #===============================================================
 @app.post("/admvaluesdelagsuv", response_class=PlainTextResponse)
@@ -1076,8 +1171,8 @@ async def admvaluesdelagsuv(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Parag
                             Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Parabrisas:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-       #engine = db.create_engine('sqlite:///appinsbudget.sqlite3');
+       
+       engine = db.create_engine(cDBConnValue);
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Paragolpe_Ctro).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Ctro\''))
        result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Paragolpe_Rejilla).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Rejilla\''))
@@ -1095,137 +1190,9 @@ async def admvaluesdelagsuv(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Parag
        engine.dispose()
     except Exception as e:
        bfMsg = "Se produjo un error al grabar: "+str(e)
+       logger.error(f"Error: "+str(e))
     return bfMsg
 #########################################################
-
-@app.get("/dbCreateLog", response_class=HTMLResponse)
-async def dbCreateLog():
-    bfValue = "bfHTMLdbCreateLog finalizado satisfactoriamente"
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
-    conn = engine.connect()
-    try:
-        conn.execute(text('''CREATE TABLE  IF NOT EXISTS 'logpresupuestosV1' (
-                            'id'	             INTEGER NOT NULL UNIQUE,
-                            'timestamp'	         TEXT DEFAULT ' ',
-                            'user'	             TEXT NOT NULL DEFAULT ' ',
-                            'cliente'	         INTEGER NOT NULL,
-                            'clase'	             INTEGER NOT NULL,
-                            'marca'	             INTEGER NOT NULL,
-                            'modelo'	         INTEGER NOT NULL,
-                            'siniestro'	         TEXT DEFAULT ' ',
-                            'lateralr'	         TEXT DEFAULT ' ',
-                            'trasero'	         TEXT DEFAULT ' ',
-                            'ltReparaPintura'	 REAL DEFAULT 0,
-                            'ltReponeElemento'	 REAL DEFAULT 0,
-                            'ltReponePintura'	 REAL DEFAULT 0,
-                            'ltReponeManoObra'	 REAL DEFAULT 0,
-                            'ltReponeEspejoEle'	 REAL DEFAULT 0,
-                            'ltReponeEspejoMan'	 REAL DEFAULT 0,
-                            'ltReponeManijaDel'	 REAL DEFAULT 0,
-                            'ltReponeManijaTra'	 REAL DEFAULT 0,
-                            'ltReponeMolduraDel' REAL DEFAULT 0,
-                            'ltReponeMolduraTra' REAL DEFAULT 0,
-                            'ltReponeCristalDel' REAL DEFAULT 0,
-                            'ltReponeCristalTra' REAL DEFAULT 0,
-                            'ltTotal'	         REAL DEFAULT 0,
-                            'trReparaPintura'	 REAL DEFAULT 0,
-                            'trReponeElemento'	 REAL DEFAULT 0,
-                            'trReponePintura'	 REAL DEFAULT 0,
-                            'trReponeManoObra'	 REAL DEFAULT 0,
-                            'trReponeMoldura'	 REAL DEFAULT 0,
-                            'trReponeFaroExt'	 REAL DEFAULT 0,
-                            'trReponeFaroInt'	 REAL DEFAULT 0,
-                            'trTotal'	         REAL DEFAULT 0,
-                            'Asegurado'	         REAL DEFAULT 0,
-                            'Tercero'	         REAL DEFAULT 0,
-                            'MObra'	             REAL DEFAULT 0,
-                            'Pintura'	         REAL DEFAULT 0,
-                            'Ajuste'	         REAL DEFAULT 0,
-                            PRIMARY KEY('id' AUTOINCREMENT)
-                        ) '''))
-        if conn.in_transaction(): conn.commit()
-    except exc.SQLAlchemyError as e:
-        bfValue = "dbCreateAdminValue Error: "+str(e)
-    conn.close()
-    engine.dispose()
-    return dbstatus.bfHTMLdbCreateLog.replace('<<value>>',bfValue)
-
-@app.get("/dbCreateAdminValue", response_class=HTMLResponse)
-async def dbcreateAdminValue():
-    bfValue = "dbCreateAdminValue finalizado satisfactoriamente"
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
-    conn = engine.connect()
-    try:
-        conn.execute(text('''CREATE TABLE IF NOT EXISTS 'admvalue' (
-                              'stName'  TEXT NOT NULL UNIQUE,
-                              'flValue' REAL DEFAULT 0,
-                               PRIMARY KEY('stName')
-                          ) '''))
-        #CREATE TABLE admvalue (id SERIAL PRIMARY KEY,
-        #               stname TEXT DEFAULT ' ',
-        #               flvalue REAL DEFAULT 0);
-        if conn.in_transaction(): conn.commit()
-    except exc.SQLAlchemyError as e:
-        bfValue = "dbCreateAdminValue Error: "+str(e)
-    conn.close()
-    engine.dispose()
-    return dbstatus.bfHTMLdbCreateAdminValue.replace('<<value>>',bfValue)
-
-@app.get("/dbDropAdminValue", response_class=HTMLResponse)
-async def dbDropAdminValue():
-    bfValue = "dbDropAdminValue finalizado satisfactoriamente"
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
-    conn = engine.connect()
-    try:
-        conn.execute(text('''DROP TABLE admvalue;'''))
-        if conn.in_transaction(): conn.commit()
-    except exc.SQLAlchemyError as e:
-        bfValue = "dbDropAdminValue Error: "+str(e)
-    conn.close()
-    engine.dispose()
-    return dbstatus.bfHTMLdbCreateAdminValue.replace('<<value>>',bfValue)
-
-@app.get("/dbInsertAdminValue", response_class=HTMLResponse)
-async def dbInsertAdminValue():
-    bfValue = "dbInsertAdminValue finalizado satisfactoriamente"
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
-    conn = engine.connect()
-    try:
-        result = conn.execute(text('''INSERT INTO admvalue (stname, flvalue) VALUES ('Asegurado',1);'''))
-        result = conn.execute(text('''INSERT INTO admvalue (stname, flvalue) VALUES ('Tercero',0.8);'''))
-        result = conn.execute(text('''INSERT INTO admvalue (stname, flvalue) VALUES ('MObra',18250);'''))
-        result = conn.execute(text('''INSERT INTO admvalue (stname, flvalue) VALUES ('MOMinimo',9250);'''))
-        result = conn.execute(text('''INSERT INTO admvalue (stname, flvalue) VALUES ('Pintura',22500);'''))
-        result = conn.execute(text('''INSERT INTO admvalue (stname, flvalue) VALUES ('Ajuste',1);'''))
-        if conn.in_transaction(): conn.commit()
-    except exc.SQLAlchemyError as e:
-        bfValue = "dbInsertAdminValue Error: "+str(e)
-    conn.close()
-    engine.dispose()
-    return dbstatus.bfHTMLdbCreateAdminValue.replace('<<value>>',bfValue)
-
-@app.get("/dbreadAdmin", response_class=PlainTextResponse)
-async def dbreadAdmin():
-    lsResult = []
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
-    conn = engine.connect()
-    try:
-        result = conn.execute(text('''SELECT stname,flvalue FROM admvalue;'''))
-    except exc.SQLAlchemyError as e:
-        bfValue = "dbInsertAdminValue Error: "+str(e)
-
-    for row in result:
-        lsResult.append(row)
-    conn.close()
-    engine.dispose()
-
-    return ";".join(str(x) for x in lsResult)
-
 @app.get("/dbread", response_class=HTMLResponse)
 async def dbRead(request: Request):
     lsResult = []
@@ -1238,8 +1205,8 @@ async def dbRead(request: Request):
                "reparatrasero":'',"cambiatrasero":'',
                "reparalateral":'',"cambialateral":''}
 
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    
+    engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
     try:
         result = conn.execute(text('''SELECT * FROM logpresupuestosV1;'''))
@@ -1253,6 +1220,7 @@ async def dbRead(request: Request):
 
     except exc.SQLAlchemyError as e:
         bfValue = 'dbInsertAdminValue Error: '+str(e)
+        logger.error(f"Error: "+str(e))
     conn.close()
     engine.dispose()
     context["result"] = lsResult
@@ -2482,8 +2450,6 @@ def fnCristalLateralDel(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
     espMold = ['DEL CRISTAL']
     lsMeanMold = []
 
-    print("fnCristalLateralDel:", inCOD_MARCA, inCOD_MODELO, isAlta)
-
     isOld = fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfCRISTAL)
 
     dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_MARCA']  == inCOD_MARCA)  &
@@ -2681,19 +2647,6 @@ def resumeDataBrief(intCLIENTE,fltFrente,fltLateral,fltTrasero):
     txtValorTotal = "<span id=\"CostBrief\" class=\"pure-form-message-inline\" style=\"text-align:left;font-family:'helvetica neue';font-size:100%;color:rgb(170,27,23);\">Sugerido&nbsp$&nbsp{0:0.2f}".format(ftSum)+"</span>"
     return txtValorTotal
 
-def getMarcaDesc(bfCLASE,bfMARCA):
-    bfTmp = ''
-    idf = dfModelo.loc[(dfModelo['CLASE']==bfCLASE)  & (dfModelo['MARCA']==bfMARCA)]
-    bfTmp = idf.iloc[0]['DMARCA']
-    return bfTmp
-
-def getModeloDesc(bfCLASE,bfMARCA,bfMODELO):
-    bfTmp = ''
-    idf = dfModelo.loc[(dfModelo['CLASE']==bfCLASE) & (dfModelo['MARCA']==bfMARCA) & (dfModelo['MODELO']==bfMODELO)]
-    bfTmp = idf.iloc[0]['DMODELO']
-    return bfTmp
-
-
 def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,TRASERO,lsValuesResultWrite):
     bfWrite =True
     ts = datetime.datetime.now().timestamp()
@@ -2714,16 +2667,16 @@ def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,T
                                                  ltTotal,trReparaPintura,trReponeElemento,trReponePintura,trReponeManoObra,
                                                  trReponeMoldura,trReponeFaroExt,trReponeFaroInt,trTotal,Asegurado,
                                                  Tercero,MObra,Pintura,Ajuste) VALUES (''' + bfValues + ');'
-    #try:
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
-    conn = engine.connect()
-    result = conn.execute(text(bfClause))
-    if conn.in_transaction(): conn.commit()
-    conn.close()
-    engine.dispose()
-    #except Exception as e:
-    #    bfWrite =False
+    try:
+        engine = db.create_engine(cDBConnValue)
+        conn = engine.connect()
+        result = conn.execute(text(bfClause))
+        if conn.in_transaction(): conn.commit()
+        conn.close()
+        engine.dispose()
+    except Exception as e:
+        bfWrite =False
+        logger.error(f"Error: "+str(e))
     return bfWrite
 
 def fnWriteLogBrief(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,TRASERO,lsValuesResultWrite):
@@ -2733,22 +2686,22 @@ def fnWriteLogBrief(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATE
     bfValues = str(ts)+","+str(CLIENTE)+","+str(CLASE)+","+str(MARCA)+","+str(MODELO)+",'"+SINIESTRO+"','"+PERITO.replace(',','')+"','"+VALORPERITO+"'"
     print(bfValues)
     bfClause = '''INSERT INTO logpresupuestosV1 (timestamp,cliente,clase,marca,modelo,siniestro,Perito,ValorPerito) VALUES (''' + bfValues + ');'
-    #try:
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
-    conn = engine.connect()
-    result = conn.execute(text(bfClause))
-    if conn.in_transaction(): conn.commit()
-    conn.close()
-    engine.dispose()
-    #except Exception as e:
-    #    bfWrite =False
+    try:
+        engine = db.create_engine(cDBConnValue)
+        conn = engine.connect()
+        result = conn.execute(text(bfClause))
+        if conn.in_transaction(): conn.commit()
+        conn.close()
+        engine.dispose()
+    except Exception as e:
+        bfWrite =False
+        logger.error(f"Error: "+str(e))
     return bfWrite
 
 def fnAltaGama(CLASE,MARCA,MODELO):
     bAltaGama = False
-    engine = db.create_engine('postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb')
-    #engine = db.create_engine('sqlite:///appinsbudget.sqlite3')
+    
+    engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
     result = conn.execute(text("SELECT al FROM marcamodelo where clase=" + str(CLASE) + " and marca=" + str(MARCA) + " and modelo=" + str(MODELO) +";"))
     for row in result:
@@ -2756,3 +2709,13 @@ def fnAltaGama(CLASE,MARCA,MODELO):
     conn.close()
     engine.dispose()
     return bAltaGama
+
+def leer_ultimas_lineas_log(num_lineas=1):
+    try:
+        with open(LOG_FILE_NAME, 'r') as f:
+            lines = f.readlines()
+            ultimas_lineas = lines[-num_lineas:]
+            return [line.strip() for line in ultimas_lineas] 
+    except Exception as e:
+        logger.error(f"Error: LOG_FILE_NAME {e}", exc_info=True)
+        return []
