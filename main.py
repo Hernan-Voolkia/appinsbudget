@@ -14,6 +14,8 @@ import logging
 
 import param
 import paramal
+import paramsuv
+import paramsuval
 import search
 import marca
 import index
@@ -232,8 +234,7 @@ async def modelo(CLASE:int=901, MARCA:int=0):
 
 @app.get("/consulta", response_class=HTMLResponse)
 async def consulta():
-    #DBVALUES
-    
+    #TODO: Cargar todas las tablas nuevas con valores de repuetos promedio
     engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
     result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
@@ -246,7 +247,6 @@ async def consulta():
         if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
     conn.close()
     engine.dispose()
-
     
     engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
@@ -266,7 +266,24 @@ async def consulta():
     conn.close()
     engine.dispose()
 
-    
+    engine = db.create_engine(cDBConnValue)
+    conn = engine.connect()
+    result = conn.execute(text('SELECT stname,flvalue FROM admvalueslatSUV;'))
+    for row in result:
+        if row[0] == 'Lat_Cristal_Delantero': paramsuv.bfLat_Cristal_Delantero = float(row[1])
+        if row[0] == 'Lat_Cristal_Trasero':   paramsuv.bfLat_Cristal_Trasero   = float(row[1])
+        if row[0] == 'Lat_Espejo_Electrico':  paramsuv.bfLat_Espejo_Electrico  = float(row[1])
+        if row[0] == 'Lat_Espejo_Manual':     paramsuv.bfLat_Espejo_Manual     = float(row[1])
+        if row[0] == 'Lat_Manija_Pta_Del':    paramsuv.bfLat_Manija_Pta_Del    = float(row[1])
+        if row[0] == 'Lat_Manija_Pta_Tras':   paramsuv.bfLat_Manija_Pta_Tras   = float(row[1])
+        if row[0] == 'Lat_Moldura_Pta_Del':   paramsuv.bfLat_Moldura_Pta_Del   = float(row[1])
+        if row[0] == 'Lat_Moldura_Pta_Tras':  paramsuv.bfLat_Moldura_Pta_Tras  = float(row[1])
+        if row[0] == 'Lat_Puerta_Delantera':  paramsuv.bfLat_Puerta_Delantera  = float(row[1])
+        if row[0] == 'Lat_Puerta_Trasera':    paramsuv.bfLat_Puerta_Trasera    = float(row[1])
+        if row[0] == 'Lat_Zocalo':            paramsuv.bfLat_Zocalo            = float(row[1])
+    conn.close()
+    engine.dispose()
+
     engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
     result = conn.execute(text('SELECT stname,flvalue FROM admvalueslatal;'))
@@ -285,6 +302,23 @@ async def consulta():
     conn.close()
     engine.dispose()
 
+    engine = db.create_engine(cDBConnValue)
+    conn = engine.connect()
+    result = conn.execute(text('SELECT stname,flvalue FROM admvalueslatalSUV;'))
+    for row in result:
+        if row[0] == 'Lat_Cristal_Delantero': paramsuval.bfLat_Cristal_Delantero = float(row[1])
+        if row[0] == 'Lat_Cristal_Trasero':   paramsuval.bfLat_Cristal_Trasero   = float(row[1])
+        if row[0] == 'Lat_Espejo_Electrico':  paramsuval.bfLat_Espejo_Electrico  = float(row[1])
+        if row[0] == 'Lat_Espejo_Manual':     paramsuval.bfLat_Espejo_Manual     = float(row[1])
+        if row[0] == 'Lat_Manija_Pta_Del':    paramsuval.bfLat_Manija_Pta_Del    = float(row[1])
+        if row[0] == 'Lat_Manija_Pta_Tras':   paramsuval.bfLat_Manija_Pta_Tras   = float(row[1])
+        if row[0] == 'Lat_Moldura_Pta_Del':   paramsuval.bfLat_Moldura_Pta_Del   = float(row[1])
+        if row[0] == 'Lat_Moldura_Pta_Tras':  paramsuval.bfLat_Moldura_Pta_Tras  = float(row[1])
+        if row[0] == 'Lat_Puerta_Delantera':  paramsuval.bfLat_Puerta_Delantera  = float(row[1])
+        if row[0] == 'Lat_Puerta_Trasera':    paramsuval.bfLat_Puerta_Trasera    = float(row[1])
+        if row[0] == 'Lat_Zocalo':            paramsuval.bfLat_Zocalo            = float(row[1])
+    conn.close()
+    engine.dispose()
     
     engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
@@ -304,6 +338,23 @@ async def consulta():
     conn.close()
     engine.dispose()
 
+    engine = db.create_engine(cDBConnValue)
+    conn = engine.connect()
+    result = conn.execute(text('SELECT stname,flvalue FROM admvaluesdelSUV;'))
+    for row in result:
+        if row[0] == 'Del_Paragolpe_Ctro'   : paramsuv.bfFrt_GM_Del_Paragolpe_Ctro    = float(row[1])
+        if row[0] == 'Del_Paragolpe_Rejilla': paramsuv.bfFrt_GM_Del_Paragolpe_Rejilla = float(row[1])
+        if row[0] == 'Del_Paragolpe_Alma'   : paramsuv.bfFrt_GM_Del_Paragolpe_Alma    = float(row[1])
+        if row[0] == 'Del_Rejilla_Radiador' : paramsuv.bfFrt_GM_Del_Rejilla_Radiador  = float(row[1])
+        if row[0] == 'Del_Frente'           : paramsuv.bfFrt_GM_Del_Frente            = float(row[1])
+        if row[0] == 'Del_Guardabarro'      : paramsuv.bfFrt_GM_Del_Guardabarro       = float(row[1])
+        if row[0] == 'Del_Faro'             : paramsuv.bfFrt_GM_Del_Faro              = float(row[1])
+        if row[0] == 'Del_Faro_Auxiliar'    : paramsuv.bfFrt_GM_Del_Faro_Auxiliar     = float(row[1])
+        if row[0] == 'Del_Farito'           : paramsuv.bfFrt_GM_Del_Farito            = float(row[1])
+        if row[0] == 'Del_Capot'            : paramsuv.bfFrt_GM_Del_Capot             = float(row[1])
+        if row[0] == 'Del_Parabrisas'       : paramsuv.bfFrt_GM_Del_Parabrisas        = float(row[1])
+    conn.close()
+    engine.dispose()
     
     engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
@@ -323,6 +374,23 @@ async def consulta():
     conn.close()
     engine.dispose()
 
+    engine = db.create_engine(cDBConnValue)
+    conn = engine.connect()
+    result = conn.execute(text('SELECT stname,flvalue FROM admvaluesdelalSUV;'))
+    for row in result:
+        if row[0] == 'Del_Paragolpe_Ctro'   : paramsuval.bfFrt_GA_Del_Paragolpe_Ctro    = float(row[1])
+        if row[0] == 'Del_Paragolpe_Rejilla': paramsuval.bfFrt_GA_Del_Paragolpe_Rejilla = float(row[1])
+        if row[0] == 'Del_Paragolpe_Alma'   : paramsuval.bfFrt_GA_Del_Paragolpe_Alma    = float(row[1])
+        if row[0] == 'Del_Rejilla_Radiador' : paramsuval.bfFrt_GA_Del_Rejilla_Radiador  = float(row[1])
+        if row[0] == 'Del_Frente'           : paramsuval.bfFrt_GA_Del_Frente            = float(row[1])
+        if row[0] == 'Del_Guardabarro'      : paramsuval.bfFrt_GA_Del_Guardabarro       = float(row[1])
+        if row[0] == 'Del_Faro'             : paramsuval.bfFrt_GA_Del_Faro              = float(row[1])
+        if row[0] == 'Del_Faro_Auxiliar'    : paramsuval.bfFrt_GA_Del_Faro_Auxiliar     = float(row[1])
+        if row[0] == 'Del_Farito'           : paramsuval.bfFrt_GA_Del_Farito            = float(row[1])
+        if row[0] == 'Del_Capot'            : paramsuval.bfFrt_GA_Del_Capot             = float(row[1])
+        if row[0] == 'Del_Parabrisas'       : paramsuval.bfFrt_GA_Del_Parabrisas        = float(row[1])
+    conn.close()
+    engine.dispose()
     
     engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
@@ -339,19 +407,33 @@ async def consulta():
     conn.close()
     engine.dispose()
 
+    engine = db.create_engine(cDBConnValue)
+    conn = engine.connect()
+    result = conn.execute(text('SELECT * FROM admvaluestraSUV;'))
+    for row in result:
+        if row[0] == 'Baul_Porton': paramsuv.bfBaul_Porton = float(row[1])
+        if row[0] == 'Faro_Ext'   : paramsuv.bfFaro_Ext    = float(row[1])
+        if row[0] == 'Faro_Int'   : paramsuv.bfFaro_Int    = float(row[1])
+        if row[0] == 'Guardabarro': paramsuv.bfGuardabarro = float(row[1])
+        if row[0] == 'Luneta'     : paramsuv.bfLuneta      = float(row[1])
+        if row[0] == 'Moldura'    : paramsuv.bfMoldura     = float(row[1])
+        if row[0] == 'Panel_Cola' : paramsuv.bfPanel_Cola  = float(row[1])
+        if row[0] == 'Paragolpe'  : paramsuv.bfParagolpe   = float(row[1])
+    conn.close()
+    engine.dispose()
     
     engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
-    result = conn.execute(text('SELECT * FROM admvaluestraal;'))
+    result = conn.execute(text('SELECT * FROM admvaluestraalSUV;'))
     for row in result:
-        if row[0] == 'Baul_Porton': paramal.bfBaul_Porton = float(row[1])
-        if row[0] == 'Faro_Ext'   : paramal.bfFaro_Ext    = float(row[1])
-        if row[0] == 'Faro_Int'   : paramal.bfFaro_Int    = float(row[1])
-        if row[0] == 'Guardabarro': paramal.bfGuardabarro = float(row[1])
-        if row[0] == 'Luneta'     : paramal.bfLuneta      = float(row[1])
-        if row[0] == 'Moldura'    : paramal.bfMoldura     = float(row[1])
-        if row[0] == 'Panel_Cola' : paramal.bfPanel_Cola  = float(row[1])
-        if row[0] == 'Paragolpe'  : paramal.bfParagolpe   = float(row[1])
+        if row[0] == 'Baul_Porton': paramsuval.bfBaul_Porton = float(row[1])
+        if row[0] == 'Faro_Ext'   : paramsuval.bfFaro_Ext    = float(row[1])
+        if row[0] == 'Faro_Int'   : paramsuval.bfFaro_Int    = float(row[1])
+        if row[0] == 'Guardabarro': paramsuval.bfGuardabarro = float(row[1])
+        if row[0] == 'Luneta'     : paramsuval.bfLuneta      = float(row[1])
+        if row[0] == 'Moldura'    : paramsuval.bfMoldura     = float(row[1])
+        if row[0] == 'Panel_Cola' : paramsuval.bfPanel_Cola  = float(row[1])
+        if row[0] == 'Paragolpe'  : paramsuval.bfParagolpe   = float(row[1])
     conn.close()
     engine.dispose()
 
@@ -363,7 +445,6 @@ async def consulta():
 async def adminValues():
     #DBVALUES
     try:
-        
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
@@ -398,7 +479,6 @@ async def adminValues():
 async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:str="",PINTURA:str="",AJUSTE:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       
        engine = db.create_engine(cDBConnValue);
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvalue SET flValue =' + str(TERCERO).replace(',','.') + ' WHERE stName=\'Tercero\''))
@@ -433,7 +513,6 @@ async def admreplat(request: Request):
                "Lat_Zocalo":"Zocalo","Lat_Zocalo_Val":0.0,
                "MensajeRetorno":""}
     try:
-        
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalueslat;'))
@@ -463,7 +542,6 @@ async def admvalueslat(request: Request, Lat_Cristal_Delantero:str="",Lat_Crista
                        Lat_Puerta_Delantera:str="",Lat_Puerta_Trasera:str="",Lat_Zocalo:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       
        engine = db.create_engine(cDBConnValue)
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvalueslat SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName=\'Lat_Cristal_Delantero\''))
@@ -500,7 +578,6 @@ async def admreplatsuv(request: Request):
                "Lat_Zocalo":"Zocalo","Lat_Zocalo_Val":0.0,
                "MensajeRetorno":""}
     try:
-        
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalueslatsuv;'))
@@ -530,7 +607,6 @@ async def admvalueslatsuv(request: Request, Lat_Cristal_Delantero:str="",Lat_Cri
                          Lat_Puerta_Delantera:str="",Lat_Puerta_Trasera:str="",Lat_Zocalo:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       
        engine = db.create_engine(cDBConnValue)
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvalueslatsuv SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName=\'Lat_Cristal_Delantero\''))
@@ -568,7 +644,6 @@ async def admreplatag(request: Request):
                "Lat_Zocalo":"Zocalo","Lat_Zocalo_Val":0.0,
                "MensajeRetorno":""}
     try:
-        
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalueslatal;'))
@@ -598,7 +673,6 @@ async def admvalueslatag(request: Request, Lat_Cristal_Delantero:str="",Lat_Cris
                          Lat_Puerta_Delantera:str="",Lat_Puerta_Trasera:str="",Lat_Zocalo:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       
        engine = db.create_engine(cDBConnValue)
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvalueslatal SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName=\'Lat_Cristal_Delantero\''))
@@ -636,7 +710,6 @@ async def admreplatag(request: Request):
                "Lat_Zocalo":"Zocalo","Lat_Zocalo_Val":0.0,
                "MensajeRetorno":""}
     try:
-        
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalueslatalsuv;'))
@@ -666,7 +739,6 @@ async def admvalueslatagsuv(request: Request, Lat_Cristal_Delantero:str="",Lat_C
                            Lat_Puerta_Delantera:str="",Lat_Puerta_Trasera:str="",Lat_Zocalo:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       
        engine = db.create_engine(cDBConnValue)
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvalueslatalsuv SET flValue =' + str(Lat_Cristal_Delantero).replace(',','.') + ' WHERE stName=\'Lat_Cristal_Delantero\''))
@@ -704,7 +776,6 @@ async def admreptra(request: Request):
                "MensajeRetorno":""
                }
     try:
-        
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluestra;'))
@@ -730,7 +801,6 @@ async def admvaluestra(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Guarda
                       Moldura:str="",Panel_Cola:str="",Paragolpe:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       
        engine = db.create_engine(cDBConnValue);
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvaluestra SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName=\'Baul_Porton\''))
@@ -763,7 +833,6 @@ async def admreptrasuv(request: Request):
                "MensajeRetorno":""
                }
     try:
-        
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluestrasuv;'))
@@ -788,7 +857,6 @@ async def admvaluestrasuv(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Gua
                           Moldura:str="",Panel_Cola:str="",Paragolpe:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       
        engine = db.create_engine(cDBConnValue);
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvaluestrasuv SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName=\'Baul_Porton\''))
@@ -821,7 +889,6 @@ async def admreptraag(request: Request):
                "MensajeRetorno":""
                }
     try:
-        
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluestraal;'))
@@ -846,7 +913,6 @@ async def admvaluestraag(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",Guar
                          Moldura:str="",Panel_Cola:str="",Paragolpe:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       
        engine = db.create_engine(cDBConnValue);
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvaluestraal SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName=\'Baul_Porton\''))
@@ -879,7 +945,6 @@ async def admreptraagsuv(request: Request):
                "MensajeRetorno":""
                }
     try:
-        
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluestraalsuv;'))
@@ -904,7 +969,6 @@ async def admvaluestraagsuv(Baul_Porton:str="",Faro_Ext:str="",Faro_Int:str="",G
                          Moldura:str="",Panel_Cola:str="",Paragolpe:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       
        engine = db.create_engine(cDBConnValue);
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvaluestraalsuv SET flValue =' + str(Baul_Porton).replace(',','.') + ' WHERE stName=\'Baul_Porton\''))
@@ -942,7 +1006,6 @@ async def admrepdel(request: Request):
                "MensajeRetorno":""
                }
     try:
-        
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluesdel;'))
@@ -970,7 +1033,6 @@ async def admvaluesdel(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragolpe_
                       Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Parabrisas:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       
        engine = db.create_engine(cDBConnValue);
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvaluesdel SET flValue =' + str(Paragolpe_Ctro).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Ctro\''))
@@ -1009,7 +1071,6 @@ async def admrepdel(request: Request):
                "MensajeRetorno":""
                }
     try:
-        
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluesdelsuv;'))
@@ -1037,7 +1098,6 @@ async def admvaluesdelsuv(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragol
                           Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Parabrisas:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       
        engine = db.create_engine(cDBConnValue);
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvaluesdelsuv SET flValue =' + str(Paragolpe_Ctro).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Ctro\''))
@@ -1076,7 +1136,6 @@ async def admrepdelag(request: Request):
                "MensajeRetorno":""
                }
     try:
-        
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluesdelal;'))
@@ -1104,7 +1163,6 @@ async def admvaluesdelag(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Paragolp
                           Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Parabrisas:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       
        engine = db.create_engine(cDBConnValue);
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvaluesdelal SET flValue =' + str(Paragolpe_Ctro).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Ctro\''))
@@ -1143,7 +1201,6 @@ async def admrepdelagsuv(request: Request):
                "MensajeRetorno":""
                }
     try:
-        
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
         result = conn.execute(text('SELECT * FROM admvaluesdelalsuv;'))
@@ -1171,7 +1228,6 @@ async def admvaluesdelagsuv(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Parag
                             Guardabarro:str="",Faro:str="",Faro_Auxiliar:str="",Farito:str="",Capot:str="",Parabrisas:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
-       
        engine = db.create_engine(cDBConnValue);
        conn = engine.connect()
        result = conn.execute(text('UPDATE admvaluesdelalsuv SET flValue =' + str(Paragolpe_Ctro).replace(',','.') + ' WHERE stName=\'Del_Paragolpe_Ctro\''))
@@ -1204,7 +1260,6 @@ async def dbRead(request: Request):
     context = {"request": request,"result":'',"timestamp":'',
                "reparatrasero":'',"cambiatrasero":'',
                "reparalateral":'',"cambialateral":''}
-
     
     engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
@@ -1665,9 +1720,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     bfTmp = resumeDataBrief(CLIENTE,flFrente,flLateral,flTrasero)
     #Todo: Agregar el Log Frente
     isWrited = fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,TRASERO,lsValuesResult)
-
     return bfTmp
-
 ###########################################################
 def decimal(obj):
     is_point = False
@@ -2186,9 +2239,37 @@ def fnCambiaFrente(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
                                         (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  & (dfVALOR_REPUESTO_MO_Unif['VIEJO']      == isOld)        &
                     (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']]
 
-        flAverage = np.round(bfID_ELEM['PRECIO_MEAN'],2)
+        flMean = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)
+        flAverage = pd.Series([flMean])
 
-        if len(flAverage) == 0:
+        if len(flAverage) != 0: 
+            print("Media para:", item)
+            flAverageMD = 0
+            if isAlta:
+                if item  =="CAPOT"          :flAverageMD=paramal.bfFrt_GA_Del_Capot
+                elif item=="FRENTE"         :flAverageMD=paramal.bfFrt_GA_Del_Frente
+                elif item=="GUARDABARRO"    :flAverageMD=paramal.bfFrt_GA_Del_Guardabarro
+                elif item=="PARAGOLPE_ALMA" :flAverageMD=paramal.bfFrt_GA_Del_Paragolpe_Alma
+                elif item=="PARAGOLPE_CTRO" :flAverageMD=paramal.bfFrt_GA_Del_Paragolpe_Ctro
+                else: flAverageMD=0
+            else:
+                if item  =="CAPOT"          :flAverageMD=param.bfFrt_GM_Del_Capot
+                elif item=="FRENTE"         :flAverageMD=param.bfFrt_GM_Del_Frente
+                elif item=="GUARDABARRO"    :flAverageMD=param.bfFrt_GM_Del_Guardabarro
+                elif item=="PARAGOLPE_ALMA" :flAverageMD=param.bfFrt_GM_Del_Paragolpe_Alma
+                elif item=="PARAGOLPE_CTRO" :flAverageMD=param.bfFrt_GM_Del_Paragolpe_Ctro
+                else: flAverageMD=0
+            
+            print("=====")
+            print(flAverage.iloc[0])
+            print(flAverageMD)
+            isLess20 = (0.8 * flAverageMD <= flAverage.iloc[0] <= 1.2 * flAverageMD)
+            print(isLess20)
+            if not isLess20: flAverage.iloc[0] = flAverageMD
+            print(flAverage.iloc[0])    
+            print("=====") 
+        
+        elif len(flAverage) == 0:
             print(inSEG, inCOD_CLASE, inCOD_PARTE, item, isOld)
             bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['SEG'] == inSEG)        & (dfVALOR_REPUESTO_MO_Unif['COD_CLASE'] == inCOD_CLASE) &
                                             (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']    == inCOD_PARTE)  & (dfVALOR_REPUESTO_MO_Unif['VIEJO']     == isOld)       &
