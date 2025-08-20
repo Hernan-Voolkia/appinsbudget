@@ -174,7 +174,7 @@ cEnv = ""
 try:
     with open('.env', 'r') as file: 
         cEnv=file.read().strip()
-        logger.info(f"ENV: {cEnv}")
+        #logger.info(f"ENV: {cEnv}")
 except FileNotFoundError:
     logger.error(f"Error: .env no fue encontrado.")
 except Exception as e:
@@ -1251,12 +1251,14 @@ async def admvaluesdelagsuv(Paragolpe_Ctro:str="",Paragolpe_Rejilla:str="",Parag
 #########################################################
 @app.get("/dbread", response_class=HTMLResponse)
 async def dbRead(request: Request):
-    lsResult = []
-    lsTimeStamp = []
+    lsResult        = []
+    lsTimeStamp     = []
     lsReparaTrasero = []
     lsCambiaTrasero = []
     lsReparaLateral = []
     lsCambiaLateral = []
+    lsReparaFrente  = []
+    lsCambiaFrente  = []
     context = {"request": request,"result":'',"timestamp":'',
                "reparatrasero":'',"cambiatrasero":'',
                "reparalateral":'',"cambialateral":''}
@@ -1272,6 +1274,8 @@ async def dbRead(request: Request):
             lsCambiaTrasero.append(fnCmbTrasero(record.trasero))
             lsReparaLateral.append(fnRepLateral(record.lateralr))
             lsCambiaLateral.append(fnCmbLateral(record.lateralr))
+            #lsReparaFrente.append(fnRepLateral(record.frente))
+            #lsCambiaFrente.append(fnCmbLateral(record.frente))
 
     except exc.SQLAlchemyError as e:
         bfValue = 'dbInsertAdminValue Error: '+str(e)
@@ -1279,11 +1283,13 @@ async def dbRead(request: Request):
     conn.close()
     engine.dispose()
     context["result"] = lsResult
-    context["restimestamp"] = lsTimeStamp
+    context["restimestamp"]  = lsTimeStamp
     context["reparatrasero"] = lsReparaTrasero
     context["cambiatrasero"] = lsCambiaTrasero
     context["reparalateral"] = lsReparaLateral
     context["cambialateral"] = lsCambiaLateral
+    #context["reparafrente"]  = lsReparaFrente
+    #context["cambiafrente"]  = lsCambiaFrente
 
     return templates.TemplateResponse("readlog.html", context)
 
@@ -1452,7 +1458,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     flTraValorReponeFaroInt=0
 
     if CLASE == "908":
-        isWrited = fnWriteLogBrief(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,'','','')
+        isWrited = fnWriteLogBrief(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO)
         bfTmp = "Sugerido&nbsp$&nbsp" + VALORPERITO
         return bfTmp
 
@@ -1468,6 +1474,9 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     flLateral=0
     flTrasero=0
 
+    
+    logger.info(f"Nada: {lsValuesResult}")
+    
     if '1' in lsFrente:
         lsFrenteCambiaElems, lsFrenteReparaElems, lsFrenteFaritoElemsDel, lsFrenteFaroElemsDel, lsFrenteFaro_AuxiliarElemsDel,\
         lsFrenteParabrisasElemsDel, lsFrenteParagolpe_RejillaElemsDel, lsFrenteRejilla_RadiadorElemsDel = fnGetFrentelElems(lsFrente)
@@ -1540,9 +1549,9 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(0)
         lsValuesResult.append(0)
         lsValuesResult.append(0)
-        lsValuesResult.append(0)
-        lsValuesResult.append(0)
 
+    logger.info(f"Frente: {lsValuesResult}")
+    
     if '1' in lsLateral:
         lsLateralCambiaElems,lsLateralReparaElems, lsLateralMolduraElemsDel,lsLateralMolduraElemsTra, lsLateralEspejoElecElems,lsLateralEspejoManElems,\
         lsLateralManijaElemsDel,lsLateralManijaElemsTra, lsLateralCristalElemDel, lsLateralCristalElemTra = fnGetLateralElems(lsLateral)
@@ -1644,6 +1653,8 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(0)
         lsValuesResult.append(0)
 
+    logger.info(f"lateral: {lsValuesResult}")
+
     if '1' in lsTrasero:
         lsTraseroCambiaElems,lsTraseroReparaElems,lsTraseroMolduraElems,\
         lsTraseroFaroExtElems,lsTraseroFaroIntElems= fnGetTraseroElems(CLASE,MARCA,MODELO,lsTrasero)
@@ -1708,6 +1719,8 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(0)
         lsValuesResult.append(0)
 
+    logger.info(f"Trasero: {lsValuesResult}")
+    
     #ToDo: Seguir codigo
     if len(lsFrenteCambiaElems) + len(lsFrenteReparaElems) +\
        len(lsLateralCambiaElems) + len(lsLateralReparaElems) +\
@@ -1719,7 +1732,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
 
     bfTmp = resumeDataBrief(CLIENTE,flFrente,flLateral,flTrasero)
     #Todo: Agregar el Log Frente
-    isWrited = fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,TRASERO,lsValuesResult)
+    isWrited = fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,FRENTE,LATERAL,TRASERO,lsValuesResult)
     return bfTmp
 ###########################################################
 def decimal(obj):
@@ -2728,26 +2741,34 @@ def resumeDataBrief(intCLIENTE,fltFrente,fltLateral,fltTrasero):
     txtValorTotal = "<span id=\"CostBrief\" class=\"pure-form-message-inline\" style=\"text-align:left;font-family:'helvetica neue';font-size:100%;color:rgb(170,27,23);\">Sugerido&nbsp$&nbsp{0:0.2f}".format(ftSum)+"</span>"
     return txtValorTotal
 
-def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,TRASERO,lsValuesResultWrite):
+def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,FRENTE,LATERAL,TRASERO,lsValuesResultWrite):
+    logger.info (f"lsValuesResultWrite: {lsValuesResultWrite}")
     bfWrite =True
     ts = datetime.datetime.now().timestamp()
 
-    bfValues = str(ts)+","+str(CLIENTE)+","+str(CLASE)+","+str(MARCA)+","+str(MODELO)+",'"+SINIESTRO+"','"+PERITO.replace(',','')+"','"+VALORPERITO+"','"+LATERAL+"','"+TRASERO+"',"
+    bfValues = str(ts)+","+str(CLIENTE)+","+str(CLASE)+","+str(MARCA)+","+str(MODELO)+",'"+SINIESTRO+"','"+PERITO.replace(',','')+"','"+VALORPERITO+"','"+FRENTE+"','"+LATERAL+"','"+TRASERO+"',"
 
-    bfValues += str(lsValuesResultWrite[0])+","+str(lsValuesResultWrite[1])+","+str(lsValuesResultWrite[2])+","+str(lsValuesResultWrite[3])+","\
-            +str(lsValuesResultWrite[4])+","+str(lsValuesResultWrite[5])+","+str(lsValuesResultWrite[6])+","+str(lsValuesResultWrite[7])+","\
-            +str(lsValuesResultWrite[8])+","+str(lsValuesResultWrite[9])+","+str(lsValuesResultWrite[10])+","+str(lsValuesResultWrite[11])+","\
-            +str(lsValuesResultWrite[12])+","+str(lsValuesResultWrite[13])+","+str(lsValuesResultWrite[14])+","+str(lsValuesResultWrite[15])+","\
-            +str(lsValuesResultWrite[16])+","+str(lsValuesResultWrite[17])+","+str(lsValuesResultWrite[18])+","+str(lsValuesResultWrite[19])+","+str(lsValuesResultWrite[20])+","
+    bfValues += str(lsValuesResultWrite[0])+","+ str(lsValuesResultWrite[1])+","+ str(lsValuesResultWrite[2])+","+ str(lsValuesResultWrite[3])+","\
+             +  str(lsValuesResultWrite[4])+","+ str(lsValuesResultWrite[5])+","+ str(lsValuesResultWrite[6])+","+ str(lsValuesResultWrite[7])+","\
+             +  str(lsValuesResultWrite[8])+","+ str(lsValuesResultWrite[9])+","+ str(lsValuesResultWrite[10])+","+str(lsValuesResultWrite[11])+","\
+             +  str(lsValuesResultWrite[12])+","+str(lsValuesResultWrite[13])+","+str(lsValuesResultWrite[14])+","+str(lsValuesResultWrite[15])+","\
+             +  str(lsValuesResultWrite[16])+","+str(lsValuesResultWrite[17])+","+str(lsValuesResultWrite[18])+","+str(lsValuesResultWrite[19])+","\
+             +  str(lsValuesResultWrite[20])+","+str(lsValuesResultWrite[21])+","+str(lsValuesResultWrite[22])+","+str(lsValuesResultWrite[23])+","\
+             +  str(lsValuesResultWrite[24])+","+str(lsValuesResultWrite[25])+","+str(lsValuesResultWrite[26])+","+str(lsValuesResultWrite[27])+","\
+             +  str(lsValuesResultWrite[28])+","+str(lsValuesResultWrite[29])+","+str(lsValuesResultWrite[30])+","+str(lsValuesResultWrite[31])+","
+             
     bfValues += str(param.bfAsegurado)+","+str(param.bfTercero)+","+str(param.bfMObra)+","+str(param.bfPintura)+","+str(param.bfAjuste)
 
-    bfClause = '''INSERT INTO logpresupuestosV1 (timestamp,cliente,clase,marca,modelo,siniestro,Perito,ValorPerito,lateralr,trasero,
-                                                 ltReparaPintura,ltReponeElemento,ltReponePintura,ltReponeManoObra,
-                                                 ltReponeEspejoEle,ltReponeEspejoMan,ltReponeManijaDel,ltReponeManijaTra,
-                                                 ltReponeMolduraDel,ltReponeMolduraTra,ltReponeCristalDel,ltReponeCristalTra,
-                                                 ltTotal,trReparaPintura,trReponeElemento,trReponePintura,trReponeManoObra,
-                                                 trReponeMoldura,trReponeFaroExt,trReponeFaroInt,trTotal,Asegurado,
-                                                 Tercero,MObra,Pintura,Ajuste) VALUES (''' + bfValues + ');'
+    bfClause = '''INSERT INTO logpresupuestosV1 (timestamp,cliente,clase,marca,modelo,siniestro,Perito,ValorPerito,frente,lateralr,trasero,
+                                                 frReparaPintura,frReponeElemento,frReponePintura,frReponeManoObra,frReponeFarito,frReponeFaro,
+                                                 frReponeFaro_Auxiliar,frReponeParabrisas,frReponeParagolpe_Rejilla,frReponeRejilla_Radiador,frTotal,
+                                                 ltReparaPintura,ltReponeElemento,ltReponePintura,ltReponeManoObra,ltReponeEspejoEle,
+                                                 ltReponeEspejoMan,ltReponeManijaDel,ltReponeManijaTra,ltReponeMolduraDel,ltReponeMolduraTra,
+                                                 ltReponeCristalDel,ltReponeCristalTra,ltTotal,
+                                                 trReparaPintura,trReponeElemento,trReponePintura,trReponeManoObra,
+                                                 trReponeMoldura,trReponeFaroExt,trReponeFaroInt,trTotal,
+                                                 Asegurado,Tercero,MObra,Pintura,Ajuste) VALUES (''' + bfValues + ');'
+    logger.info (f"bfClause: {bfClause}")
     try:
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
@@ -2760,7 +2781,7 @@ def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,T
         logger.error(f"Error: "+str(e))
     return bfWrite
 
-def fnWriteLogBrief(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,LATERAL,TRASERO,lsValuesResultWrite):
+def fnWriteLogBrief(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO):    
     bfWrite =True
     ts = datetime.datetime.now().timestamp()
 
