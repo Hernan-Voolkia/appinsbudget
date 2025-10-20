@@ -1,0 +1,441 @@
+<html>
+  <head>
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link id="favicon" rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <link href='http://fonts.cdnfonts.com/css/helvetica-neue-9' rel='stylesheet' type='text/css'>
+    <title>App Presupuesto</title>
+    <style>
+        body {background-color:rgb(255,255,255);}
+        label {text-align:right;font-family:'helvetica neue';font-size: 100%;}
+        .vertical-text {
+            writing-mode: vertical-rl; /* Texto vertical de derecha a izquierda */
+            transform: rotate(180deg); /* Opcional: rota 180 grados para cambiar la dirección */
+        }
+        .combo-container {
+            border: none; 
+            padding: 10px;
+        }
+        .combo-container fieldset{
+            border: 1px solid rgb(0,89,147); /* Define un borde sólido de 2px de color negro */
+            padding: 10px;           /* Añade un espacio interior para que los elementos no queden pegados al borde */
+            border-radius: 10px;      /* Redondea las esquinas del recuadro */
+            margin-top: 1px;        /* Añade un pequeño margen superior */
+        }
+        .combo-container legend {
+            padding: 0 10px;           /* Espacio a los lados del texto */
+            margin-left: 10px;         /* Empuja el texto un poco a la derecha */
+            font-weight: bold;
+            color: rgb(0,89,147);            /* Mismo color que el borde y las etiquetas */
+            width: auto;               /* Necesario para que el fondo no se extienda */
+        }
+
+        .center-container {
+            border: none; 
+            padding: 10px;
+        }
+        .center-container fieldset {
+            border: 1px solid rgb(0,89,147); /* Borde azul */
+            border-radius: 10px;       /* Esquinas redondeadas */
+            padding: 10px;             /* Espacio interior */
+            margin-top: 1px;        /* Reducimos el padding superior para acomodar la leyenda */
+        }
+        
+        /* Estilos para la leyenda (el título del recuadro) */
+        .center-container legend {
+            padding: 0 10px;           /* Espacio a los lados del texto */
+            margin-left: 10px;         /* Empuja el texto un poco a la derecha */
+            font-weight: bold;
+            color: rgb(0,89,147);            /* Mismo color que el borde y las etiquetas */
+            width: auto;               /* Necesario para que el fondo no se extienda */
+        }
+        .pure-control-group input {
+            width: 100%;
+            box-sizing: border-box;
+        }                
+
+        .pintura-container {
+            border: none; 
+            padding: 10px;
+        }
+        .pintura-container fieldset {
+            border: 1px solid rgb(0,89,147); /* Borde azul */
+            border-radius: 10px;       /* Esquinas redondeadas */
+            padding: 10px;             /* Espacio interior */
+            margin-top: 1px;        /* Reducimos el padding superior para acomodar la leyenda */
+        }
+        
+        /* Estilos para la leyenda (el título del recuadro) */
+        .pintura-container legend {
+            padding: 0 10px;           /* Espacio a los lados del texto */
+            margin-left: 10px;         /* Empuja el texto un poco a la derecha */
+            font-weight: bold;
+            color: rgb(0,89,147);            /* Mismo color que el borde y las etiquetas */
+            width: auto;               /* Necesario para que el fondo no se extienda */
+        }
+
+    </style>
+</head>
+<body>
+    <div id="divContent" class="pure-g" style="text-align:center;">
+        <div class="pure-u-*">
+            &nbsp;
+        </div>
+    </div>
+    <div class="pure-g" style="padding-left:5px;">
+        <div class="pure-u-1 pure-u-md-7-24">
+            &nbsp;
+        </div>
+        <div class="pure-u-1 pure-u-md-7-24">
+            <div class="pure-menu pure-menu-horizontal">
+                <!--<a href="#" id="btnConsulta" class="pure-menu-link pure-menu-heading">Consulta</a>-->
+                <ul class="pure-menu-list">
+                    <li class="pure-menu-item">
+                        <a href="#" id="btnConsulta" class="pure-menu-link">Consulta</a>
+                    </li>
+                    <li class="pure-menu-item">
+                        <a href="#" id="btnHistorial" class="pure-menu-link">Historial</a>
+                    </li>
+                    <li class="pure-menu-item">
+                        <a href="#" id="btnParams" class="pure-menu-link">Params</a>
+                    </li>
+                    <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover pure-menu-selected">
+                        <a href="#" id="menuLink1" class="pure-menu-link">Repuestos</a>
+                        <ul class="pure-menu-children">
+                            <li class="pure-menu-item"></li>
+                                <a href="#" id="btnDelanteroag" class="pure-menu-link">Auto Del. GA</a>
+                            </li>
+                            <li class="pure-menu-item pure-menu-selected">
+                                <a href="#" id="btnDelantero" class="pure-menu-link">Auto Del. GM</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnLateralag" class="pure-menu-link">Auto Lat. GA</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnLateral" class="pure-menu-link">Auto Lat. GM</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnTraseroag" class="pure-menu-link">Auto Tra. GA</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnTrasero" class="pure-menu-link">Auto Tra. GM</a>
+                            </li>
+                            <li class="pure-menu-item"></li>
+                                <a href="#" id="btnDelanteroagsuv" class="pure-menu-link">SUV Del. GA</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnDelanterosuv" class="pure-menu-link">SUV Del. GM</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnLateralagsuv" class="pure-menu-link">SUV Lat. GA</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnLateralsuv" class="pure-menu-link">SUV Lat. GM</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnTraseroagsuv" class="pure-menu-link">SUV Tra. GA</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnTraserosuv" class="pure-menu-link">SUV Tra. GM</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>    
+    <div class="pure-g" style="padding-left:5px;">
+        <div class="pure-u-1 pure-u-md-7-24"> 
+            <img src="./img/Pos_color_RGB.jpg" alt="logo" width="128" height="128" style="margin-left:auto;margin-right:auto;display:block;"/>
+             <p>&nbsp;</p>
+             <p class="vertical-text"
+                style="margin-left:auto;margin-right:auto;display:block;
+                       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                       color:#005993;text-align:center; font-size: 25px;">Ratio Repuestos<br>Delanteros</p>
+        </div> 
+        <div class="pure-u-1 pure-u-md-7-24">
+            <form class="pure-form pure-form-stacked">
+                <div class="combo-container">
+                    <fieldset>
+
+                        <legend>Busqueda</legend>
+                        <div class="pure-control-group">
+                            <label for="clase" style="color:#005993;text-align:left;">Clase</label>
+                            <select id="clase" style="min-width:343px;">
+                                <option value=0 selected></option>
+                                <option value=901>Auto</option>
+                                <option value=907>SUV</option>
+                            </select>
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="segmento" style="color:#005993;text-align:left;">Segmento</label>
+                            <select id="segmento" style="min-width:343px;">
+                                <option value=9 selected></option>
+                                <option value=0>0</option>
+                                <option value=1>1</option>
+                                <option value=2>2</option>
+                                <option value=3>3</option>
+                            </select>
+                        </div> 
+                </fieldset>   
+                    </div> 
+                 
+                <div class="center-container">
+                    <fieldset>
+                        <legend>Mano de Obra</legend>         
+                        <div class="pure-control-group">
+                            <label for="Capot_Ratio" style="color:#005993;text-align:left;">Capot</label>
+                            <input type="text" id="Capot_Ratio" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="Guardabarro_Ratio" style="color:#005993;text-align:left;">Guardabarro</label>
+                            <input type="text" id="Guardabarro_Ratio" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="Frente_Ratio" style="color:#005993;text-align:left;">Frente</label>
+                            <input type="text" id="Frente_Ratio" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                        </div>  
+                        <div class="pure-control-group">
+                            <label for="Paragolpe_Alma_Ratio" style="color:#005993;text-align:left;">Paragolpe Alma</label>
+                            <input type="text" id="Paragolpe_Alma_Ratio" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="Paragolpe_Ctro_Ratio" style="color:#005993;text-align:left;">Paragolpe Ctro</label>
+                            <input type="text" id="Paragolpe_Ctro_Ratio" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                        </div>
+                    </fieldset>
+                </div>                 
+
+                <div class="pintura-container">
+                    <fieldset>
+                        <legend>Pintura</legend>         
+                        <div class="pure-control-group">
+                            <label for="Capot_Ratio_PT" style="color:#005993;text-align:left;">Capot</label>
+                            <input type="text" id="Capot_Ratio_PT" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="Guardabarro_Ratio_PT" style="color:#005993;text-align:left;">Guardabarro</label>
+                            <input type="text" id="Guardabarro_Ratio_PT" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="Frente_Ratio_PT" style="color:#005993;text-align:left;">Frente</label>
+                            <input type="text" id="Frente_Ratio_PT" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                        </div>  
+                        <div class="pure-control-group">
+                            <label for="Paragolpe_Alma_Ratio_PT" style="color:#005993;text-align:left;">Paragolpe Alma</label>
+                            <input type="text" id="Paragolpe_Alma_Ratio_PT" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                        </div>
+                        <div class="pure-control-group">
+                            <label for="Paragolpe_Ctro_Ratio_PT" style="color:#005993;text-align:left;">Paragolpe Ctro</label>
+                            <input type="text" id="Paragolpe_Ctro_Ratio_PT" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                        </div>
+                    </fieldset>
+                </div>                 
+
+                <br style="display: block;content:'';margin-top:5;">
+                <span id="CostBrief" class="pure-form-message-inline" style="padding-left:3px;text-align:left;font-family:'helvetica neue';font-size:100%;color:rgb(170,27,23);">&nbsp;&nbsp;</span>
+            </form>
+        </div> 
+    </div>     
+    <div class="pure-g" style="padding-left:5px;">
+        <div class="pure-u-1 pure-u-md-7-24">
+        </div> 
+        <div class="pure-u-1 pure-u-md-7-24">
+            <div class="pure-controls" style="padding-left:3px;">
+                <button style="background-color:#005993;color:#ffffff;" class="pure-button pure-button-primary" onclick="fnSaveData()">&nbsp;&nbsp;&nbsp;Grabar&nbsp;&nbsp;&nbsp;</button>
+            </div>
+        </div>
+        <div class="pure-u-1 pure-u-md-7-24"></div>
+    </div> 
+    <br style="display: block;content:'';margin-top:5;">    
+   </body>
+   <script>
+    document.getElementById("btnConsulta").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/consulta"; 
+    });
+    document.getElementById("btnHistorial").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/dbread"; 
+    });
+    document.getElementById("btnParams").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admvalue"; 
+    });
+    document.getElementById("btnDelantero").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admrepdel"; 
+    });
+    document.getElementById("btnDelanterosuv").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admrepdelsuv"; 
+    });
+    document.getElementById("btnDelanteroag").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admrepdelag"; 
+    });    
+    document.getElementById("btnDelanteroagsuv").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admrepdelagsuv"; 
+    });    
+    document.getElementById("btnLateral").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admreplat"; 
+    });
+    document.getElementById("btnLateralsuv").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admreplatsuv"; 
+    });
+    document.getElementById("btnLateralag").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admreplatag"; 
+    });    
+    document.getElementById("btnLateralagsuv").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admreplatagsuv"; 
+    });    
+    document.getElementById("btnTrasero").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admreptra"; 
+    });
+    document.getElementById("btnTraserosuv").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admreptrasuv"; 
+    });
+    document.getElementById("btnTraseroag").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admreptraag"; 
+    });    
+    document.getElementById("btnTraseroagsuv").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admreptraagsuv"; 
+    }); 
+    
+    const selectClase = document.getElementById('clase');
+    const selectSegmento = document.getElementById('segmento');
+
+    function verificarCombos() {
+        const idClaseSeleccionado = selectClase.value;
+        const idSegmentoSeleccionado = selectSegmento.value;
+
+        if (idClaseSeleccionado !== "0" && idSegmentoSeleccionado !== "9") {
+            fnSendData();
+        } 
+    }
+
+    selectClase.addEventListener('change', verificarCombos);
+    selectSegmento.addEventListener('change', verificarCombos);
+
+    function fnSendData(){
+        var e = document.getElementById("clase");
+        var text = 'Clase=' + e.value;
+
+        var e = document.getElementById("segmento");
+        text = text + '&Segmento=' + e.value;
+            
+        sendData(text);
+    }
+    async function sendData(bfSearch) {
+        let url = "/admrdelsel?" + bfSearch;
+            try {
+                const response = await fetch(url, { method: 'POST' });
+                if (!response.ok) {
+                    throw new Error(`Error en la respuesta del servidor: ${response.status} ${response.statusText}`);
+                }
+                const data = await response.json();
+                document.getElementById("Capot_Ratio").value = (data.CAPOT || {}).flMO || '';
+                document.getElementById("Guardabarro_Ratio").value = (data.GUARDABARRO || {}).flMO || '';
+                document.getElementById("Frente_Ratio").value = (data.FRENTE || {}).flMO || '';
+                document.getElementById("Paragolpe_Alma_Ratio").value = (data.PARAGOLPE_ALMA || {}).flMO || '';
+                document.getElementById("Paragolpe_Ctro_Ratio").value = (data.PARAGOLPE_CTRO || {}).flMO || '';
+
+                document.getElementById("Capot_Ratio_PT").value = (data.CAPOT || {}).flPT || '';
+                document.getElementById("Guardabarro_Ratio_PT").value = (data.GUARDABARRO || {}).flPT || '';
+                document.getElementById("Frente_Ratio_PT").value = (data.FRENTE || {}).flPT || '';
+                document.getElementById("Paragolpe_Alma_Ratio_PT").value = (data.PARAGOLPE_ALMA || {}).flPT || '';
+                document.getElementById("Paragolpe_Ctro_Ratio_PT").value = (data.PARAGOLPE_CTRO || {}).flPT || '';
+
+            } catch (error) {
+                console.error("Error al obtener los datos:", error);
+            }
+        }
+
+    function fnRtnConsulta(){  
+        var protocolo = window.location.protocol;
+        var hostname = window.location.hostname;
+        var puerto = window.location.port;
+        var direccionCompleta = protocolo + '//' + hostname;
+        if (puerto){direccionCompleta+=':'+puerto;}
+        window.location.href = direccionCompleta + '/consulta';
+    }
+    function validarNumeroDecimal(cadena) {
+        // Expresión regular para validar números decimales con hasta dos decimales
+        const regexDecimal = /^[+-]?\d+([.,]\d{1,2})?$/;
+            
+        // Testea la cadena con la expresión regular
+        return regexDecimal.test(cadena);
+    }
+    function validarCampoDecimal(input) {
+        const valor = input.value;
+        const esValido = validarNumeroDecimal(valor);
+
+        if (!esValido) {
+            alert("Número decimal inválido. Debe tener hasta dos decimales y usar punto o coma como separador");
+            input.value = "";
+        } 
+    }
+    function fnSaveData(){
+        var e = document.getElementById("stacked-Paragolpe_Ctro");
+        var text = 'Paragolpe_Ctro=' + e.value;
+        
+        var e = document.getElementById("stacked-Paragolpe_Rejilla");
+        text = text + '&Paragolpe_Rejilla=' + e.value;
+            
+        var e = document.getElementById("stacked-Paragolpe_Alma");
+        text = text + '&Paragolpe_Alma=' + e.value;
+
+        var e = document.getElementById("stacked-Rejilla_Radiador");
+        text = text + '&Rejilla_Radiador=' + e.value;
+
+        var e = document.getElementById("stacked-Frente");
+        text = text + '&Frente=' + e.value;
+
+        var e = document.getElementById("stacked-Guardabarro");
+        text = text + '&Guardabarro=' + e.value;
+
+        var e = document.getElementById("stacked-Faro");
+        text = text + '&Faro=' + e.value;
+
+        var e = document.getElementById("stacked-Faro_Auxiliar");
+        text = text + '&Faro_Auxiliar=' + e.value;
+
+        var e = document.getElementById("stacked-Farito");
+        text = text + '&Farito=' + e.value;
+
+        var e = document.getElementById("stacked-Capot");
+        text = text + '&Capot=' + e.value;
+
+        var e = document.getElementById("stacked-Parabrisas");
+        text = text + '&Parabrisas=' + e.value;
+        sendValuesTra(text);
+    }
+    function sendValuesTra(bfSearch) {
+        let xhr = new XMLHttpRequest();
+        let url = "/admvaluesdel?" + bfSearch;
+        xhr.open("POST", url, true);
+        xhr.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var e = document.getElementById("CostBrief");
+                    e.innerHTML = this.responseText; 
+            }
+        }
+        xhr.send();
+    } 
+    </script>
+ </html>    
