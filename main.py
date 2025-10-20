@@ -516,38 +516,6 @@ async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:
 ##############################################################
 @app.get("/admdelratio", response_class=HTMLResponse)
 async def admDelRatio(request: Request):
-    #DBVALUES
-    '''
-    try:
-        engine = db.create_engine(cDBConnValue)
-        conn = engine.connect()
-        result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
-        for row in result:
-            if row[0] == 'Tercero'  : param.bfTercero   = float(row[1])
-            if row[0] == 'MObra'    : param.bfMObra     = float(row[1])
-            if row[0] == 'MOMinimo' : param.bfMOMinimo  = float(row[1])
-            if row[0] == 'Pintura'  : param.bfPintura   = float(row[1])
-            if row[0] == 'Ajuste'   : param.bfAjuste    = float(row[1])
-            if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
-        conn.close()
-        engine.dispose()
-    except Exception as e:
-        param.bfTercero = ""
-        param.bfMObra = ""
-        param.bfMOMinimo = ""
-        param.bfPintura = ""
-        param.bfAjuste = ""
-        param.bfAsegurado = ""
-        logger.error(f"Error: no se puedo acceder a admvalue.")
-
-    bfAdminValues = admvalue.bfHTML
-    bfAdminValues = bfAdminValues.replace('rplBfAsegurado',str(param.bfAsegurado))
-    bfAdminValues = bfAdminValues.replace('rplBfTercero',str(param.bfTercero))
-    bfAdminValues = bfAdminValues.replace('rplBfMObra',str(param.bfMObra))
-    bfAdminValues = bfAdminValues.replace('rplBfMOMinimo',str(param.bfMOMinimo))
-    bfAdminValues = bfAdminValues.replace('rplBfPintura',str(param.bfPintura))
-    bfAdminValues = bfAdminValues.replace('rplBfAjuste',str(param.bfAjuste))
-    '''
     context = {"request": request,
                "Capot_Ratio": "",
                "Guardabarro_Ratio":"",
@@ -608,24 +576,161 @@ async def admrdelsel(Clase: int, Segmento: int):
             engine.dispose()
             logger.debug("Engine de base de datos dispuesto.")
 #==========================================================
-@app.post("/admdelratiosave", response_class=PlainTextResponse)
-async def admDelRatioSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:str="",PINTURA:str="",AJUSTE:str=""):
+@app.post("/admrdelsave", response_class=PlainTextResponse)
+async def admRDelSave(clase:str="",segmento:str="",Capot_Ratio:str="",Guardabarro_Ratio:str="",Frente_Ratio:str="",Paragolpe_Alma_Ratio:str="",Paragolpe_Ctro_Ratio:str="",Capot_Ratio_PT:str="",Guardabarro_Ratio_PT:str="",Frente_Ratio_PT:str="",Paragolpe_Alma_Ratio_PT:str="",Paragolpe_Ctro_Ratio_PT:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
-    try:
-       engine = db.create_engine(cDBConnValue);
-       conn = engine.connect()
-       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(TERCERO).replace(',','.') + ' WHERE stName=\'Tercero\''))
-       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(ASEGURADO).replace(',','.') + ' WHERE stName=\'Asegurado\''))
-       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(MOBRA).replace(',','.') + ' WHERE stName=\'MObra\''))
-       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(MOMINIMO).replace(',','.') + ' WHERE stName=\'MOMinimo\''))
-       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(PINTURA).replace(',','.') + ' WHERE stName=\'Pintura\''))
-       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(AJUSTE).replace(',','.') + ' WHERE stName=\'Ajuste\''))
-       if conn.in_transaction(): conn.commit()
-       conn.close()
-       engine.dispose()
-    except Exception as e:
-       bfMsg = "Se produjo un error al grabar: "+str(e)
-       logger.error(f"Error: admvalue - "+str(e))
+    engine = db.create_engine(cDBConnValue)
+    with engine.begin() as conn:
+        try:
+            p_seg   = int(segmento) if segmento else 0
+            p_clase = int(clase)    if clase else 0
+            ###CAPOT M.O.###
+            sql_capot = text(
+                """
+                UPDATE admrdel 
+                SET flMO = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """
+            )
+            conn.execute(sql_capot, {
+                "flmo": float(Capot_Ratio.replace(',', '.')) if Capot_Ratio else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "CAPOT"
+            })
+            ###GUARDABARRO M.O.###
+            sql_guardabarro = text(
+                """
+                UPDATE admrdel 
+                SET flMO = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """
+            )
+            conn.execute(sql_guardabarro, {
+                "flmo": float(Guardabarro_Ratio.replace(',', '.')) if Guardabarro_Ratio else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "GUARDABARRO" 
+            })
+            ###FRENTE M.O.###
+            sql_frente = text(
+                """
+                UPDATE admrdel 
+                SET flMO = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """
+            )
+            conn.execute(sql_frente, {
+                "flmo": float(Frente_Ratio.replace(',', '.')) if Frente_Ratio else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "FRENTE" 
+            })
+            ###PARAGOLPE_ALMA M.O.###
+            sql_frente = text(
+                """
+                UPDATE admrdel 
+                SET flMO = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """
+            )
+            conn.execute(sql_frente, {
+                "flmo": float(Paragolpe_Alma_Ratio.replace(',', '.')) if Paragolpe_Alma_Ratio else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "PARAGOLPE_ALMA" 
+            })
+            ###PARAGOLPE_CTRO M.O.###
+            sql_frente = text(
+                """
+                UPDATE admrdel 
+                SET flMO = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """
+            )
+            conn.execute(sql_frente, {
+                "flmo": float(Paragolpe_Ctro_Ratio.replace(',', '.')) if Paragolpe_Ctro_Ratio else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "PARAGOLPE_CTRO" 
+            })
+            ###CAPOT PINTURA###
+            sql_capot = text(
+                """
+                UPDATE admrdel 
+                SET flPT = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """
+            )
+            conn.execute(sql_capot, {
+                "flpt": float(Capot_Ratio_PT.replace(',', '.')) if Capot_Ratio_PT else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "CAPOT"
+            })
+            ###GUARDABARRO PINTURA###
+            sql_guardabarro = text(
+                """
+                UPDATE admrdel 
+                SET flPT = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """
+            )
+            conn.execute(sql_guardabarro, {
+                "flpt": float(Guardabarro_Ratio_PT.replace(',', '.')) if Guardabarro_Ratio_PT else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "GUARDABARRO" 
+            })
+            ###FRENTE PINTURA###
+            sql_frente = text(
+                """
+                UPDATE admrdel 
+                SET flPT = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """
+            )
+            conn.execute(sql_frente, {
+                "flpt": float(Frente_Ratio_PT.replace(',', '.')) if Frente_Ratio_PT else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "FRENTE" 
+            })
+            ###PARAGOLPE_ALMA PINTURA###
+            sql_frente = text(
+                """
+                UPDATE admrdel 
+                SET flPT = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """
+            )
+            conn.execute(sql_frente, {
+                "flpt": float(Paragolpe_Alma_Ratio_PT.replace(',', '.')) if Paragolpe_Alma_Ratio_PT else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "PARAGOLPE_ALMA" 
+            })
+            ###PARAGOLPE_CTRO PINTURA###
+            sql_frente = text(
+                """
+                UPDATE admrdel 
+                SET flPT = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """
+            )
+            conn.execute(sql_frente, {
+                "flpt": float(Paragolpe_Ctro_Ratio_PT.replace(',', '.')) if Paragolpe_Ctro_Ratio_PT else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "PARAGOLPE_CTRO" 
+            })
+
+        except ValueError as e:
+            bfMsg = f"Error: Uno de los valores no es un número válido. {e}"
+        except Exception as e:
+            bfMsg =f"Error de base de datos: {e}"
+            raise    
+       
     return bfMsg
 ##############################################################
 # Reporte de Ratios Lateral
