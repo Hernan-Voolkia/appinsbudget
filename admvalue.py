@@ -38,8 +38,27 @@ bfHTML = """
                     <li class="pure-menu-item">
                         <a href="#" id="btnHistorial" class="pure-menu-link">Historial</a>
                     </li>
-                    <li class="pure-menu-item">
+                    <!--
+                    <li class="pure-menu-item pure-menu-selected">
                         <a href="#" id="btnParams" class="pure-menu-link">Params</a>
+                    </li>
+                    -->
+                    <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover pure-menu-selected">
+                        <a href="#" id="menuLink1" class="pure-menu-link">Params</a>
+                        <ul class="pure-menu-children">
+                            <li class="pure-menu-item pure-menu-selected">
+                                <a href="#" id="btnParams" class="pure-menu-link">Generales</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnDelRatio" class="pure-menu-link">Delantero</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnLatRatio" class="pure-menu-link">Lateral</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnTraRatio" class="pure-menu-link">Trasero</a>
+                            </li>
+                        </ul>
                     </li>
                     <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
                         <a href="#" id="menuLink1" class="pure-menu-link">Repuestos</a>
@@ -47,7 +66,7 @@ bfHTML = """
                             <li class="pure-menu-item"></li>
                                 <a href="#" id="btnDelanteroag" class="pure-menu-link">Auto Del. GA</a>
                             </li>
-                            <li class="pure-menu-item pure-menu-selected">
+                            <li class="pure-menu-item">
                                 <a href="#" id="btnDelantero" class="pure-menu-link">Auto Del. GM</a>
                             </li>
                             <li class="pure-menu-item">
@@ -154,6 +173,19 @@ bfHTML = """
         event.preventDefault(); 
         window.location.href =  "/admvalue"; 
     });
+    document.getElementById("btnDelRatio").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admdelratio"; 
+    });
+    document.getElementById("btnLatRatio").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admlatratio"; 
+    });
+    document.getElementById("btnTraRatio").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admtraratio"; 
+    });
+    
     document.getElementById("btnDelantero").addEventListener("click", function(event) {
         event.preventDefault(); 
         window.location.href =  "/admrepdel"; 
