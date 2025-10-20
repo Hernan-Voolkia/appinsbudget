@@ -1,5 +1,5 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, PlainTextResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -396,7 +396,7 @@ async def consulta():
     
     engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
-    result = conn.execute(text('SELECT * FROM admvaluestra;'))
+    result = conn.execute(text('SELECT stname,flvalue FROM admvaluestra;'))
     for row in result:
         if row[0] == 'Baul_Porton': param.bfBaul_Porton = float(row[1])
         if row[0] == 'Faro_Ext'   : param.bfFaro_Ext    = float(row[1])
@@ -411,7 +411,7 @@ async def consulta():
 
     engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
-    result = conn.execute(text('SELECT * FROM admvaluestraal;'))
+    result = conn.execute(text('SELECT stname,flvalue FROM admvaluestraal;'))
     for row in result:
         if row[0] == 'Baul_Porton': paramal.bfBaul_Porton = float(row[1])
         if row[0] == 'Faro_Ext'   : paramal.bfFaro_Ext    = float(row[1])
@@ -426,7 +426,7 @@ async def consulta():
 
     engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
-    result = conn.execute(text('SELECT * FROM admvaluestraSUV;'))
+    result = conn.execute(text('SELECT stname,flvalue FROM admvaluestraSUV;'))
     for row in result:
         if row[0] == 'Baul_Porton': paramsuv.bfBaul_Porton = float(row[1])
         if row[0] == 'Faro_Ext'   : paramsuv.bfFaro_Ext    = float(row[1])
@@ -441,7 +441,7 @@ async def consulta():
     
     engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
-    result = conn.execute(text('SELECT * FROM admvaluestraalSUV;'))
+    result = conn.execute(text('SELECT stname,flvalue FROM admvaluestraalSUV;'))
     for row in result:
         if row[0] == 'Baul_Porton': paramsuval.bfBaul_Porton = float(row[1])
         if row[0] == 'Faro_Ext'   : paramsuval.bfFaro_Ext    = float(row[1])
@@ -466,11 +466,11 @@ async def adminValues():
         conn = engine.connect()
         result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
         for row in result:
-            if row[0] == 'Tercero': param.bfTercero = float(row[1])
-            if row[0] == 'MObra': param.bfMObra = float(row[1])
-            if row[0] == 'MOMinimo': param.bfMOMinimo = float(row[1])
-            if row[0] == 'Pintura': param.bfPintura = float(row[1])
-            if row[0] == 'Ajuste': param.bfAjuste = float(row[1])
+            if row[0] == 'Tercero'  : param.bfTercero   = float(row[1])
+            if row[0] == 'MObra'    : param.bfMObra     = float(row[1])
+            if row[0] == 'MOMinimo' : param.bfMOMinimo  = float(row[1])
+            if row[0] == 'Pintura'  : param.bfPintura   = float(row[1])
+            if row[0] == 'Ajuste'   : param.bfAjuste    = float(row[1])
             if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
         conn.close()
         engine.dispose()
@@ -494,6 +494,234 @@ async def adminValues():
 #==========================================================
 @app.post("/admvaluesave", response_class=PlainTextResponse)
 async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:str="",PINTURA:str="",AJUSTE:str=""):
+    bfMsg = "Valores grabados satisfactoriamente"
+    try:
+       engine = db.create_engine(cDBConnValue);
+       conn = engine.connect()
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(TERCERO).replace(',','.') + ' WHERE stName=\'Tercero\''))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(ASEGURADO).replace(',','.') + ' WHERE stName=\'Asegurado\''))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(MOBRA).replace(',','.') + ' WHERE stName=\'MObra\''))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(MOMINIMO).replace(',','.') + ' WHERE stName=\'MOMinimo\''))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(PINTURA).replace(',','.') + ' WHERE stName=\'Pintura\''))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(AJUSTE).replace(',','.') + ' WHERE stName=\'Ajuste\''))
+       if conn.in_transaction(): conn.commit()
+       conn.close()
+       engine.dispose()
+    except Exception as e:
+       bfMsg = "Se produjo un error al grabar: "+str(e)
+       logger.error(f"Error: admvalue - "+str(e))
+    return bfMsg
+##############################################################
+# Reporte de Ratios Delantero
+##############################################################
+@app.get("/admdelratio", response_class=HTMLResponse)
+async def admDelRatio(request: Request):
+    #DBVALUES
+    '''
+    try:
+        engine = db.create_engine(cDBConnValue)
+        conn = engine.connect()
+        result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
+        for row in result:
+            if row[0] == 'Tercero'  : param.bfTercero   = float(row[1])
+            if row[0] == 'MObra'    : param.bfMObra     = float(row[1])
+            if row[0] == 'MOMinimo' : param.bfMOMinimo  = float(row[1])
+            if row[0] == 'Pintura'  : param.bfPintura   = float(row[1])
+            if row[0] == 'Ajuste'   : param.bfAjuste    = float(row[1])
+            if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
+        conn.close()
+        engine.dispose()
+    except Exception as e:
+        param.bfTercero = ""
+        param.bfMObra = ""
+        param.bfMOMinimo = ""
+        param.bfPintura = ""
+        param.bfAjuste = ""
+        param.bfAsegurado = ""
+        logger.error(f"Error: no se puedo acceder a admvalue.")
+
+    bfAdminValues = admvalue.bfHTML
+    bfAdminValues = bfAdminValues.replace('rplBfAsegurado',str(param.bfAsegurado))
+    bfAdminValues = bfAdminValues.replace('rplBfTercero',str(param.bfTercero))
+    bfAdminValues = bfAdminValues.replace('rplBfMObra',str(param.bfMObra))
+    bfAdminValues = bfAdminValues.replace('rplBfMOMinimo',str(param.bfMOMinimo))
+    bfAdminValues = bfAdminValues.replace('rplBfPintura',str(param.bfPintura))
+    bfAdminValues = bfAdminValues.replace('rplBfAjuste',str(param.bfAjuste))
+    '''
+    context = {"request": request,
+               "Capot_Ratio": "",
+               "Guardabarro_Ratio":"",
+               "Frente_Ratio":"",
+               "Paragolpe_Alma_Ratio":"",
+               "Paragolpe_Ctro_Ratio":"",
+              }
+    return templates.TemplateResponse("admrdel.html", context)
+
+@app.post("/admrdelsel", response_class=HTMLResponse)
+async def admrdelsel(Clase: int, Segmento: int):
+    parametros_dict = {"seg": "","clase": "","stName": "","flMO": "","flPT": ""}
+    ratios_from_db = {}
+    conn = None  
+    engine = None 
+    try:
+        engine = db.create_engine(cDBConnValue)
+        conn = engine.connect()
+        query = text("SELECT stname, flMO, flPT FROM admrdel WHERE clase = :clase AND seg = :seg")
+        result = conn.execute(query, {"clase": Clase, "seg": Segmento})
+        
+        for row in result:
+            stname = row.stName
+            
+            try:
+                flmo_val = float(row.flMO)
+            except (ValueError, TypeError):
+                flmo_val = 0.0
+                logger.warning(f"Valor 'flMO' no válido para '{stname}'. Usando 0.0.")
+
+            try:
+                flpt_val = float(row.flPT)
+            except (ValueError, TypeError):
+                flpt_val = 0.0
+                logger.warning(f"Valor 'flPT' no válido para '{stname}'. Usando 0.0.")
+
+            ratios_from_db[stname] = {
+                "flMO": flmo_val,
+                "flPT": flpt_val
+            } 
+                   
+        if not ratios_from_db:
+            logger.error(f"No se encontraron valores en la tabla admvalue para clase={Clase} y seg={Segmento}.")
+        
+        return JSONResponse(content=ratios_from_db)
+
+    except Exception as e:
+        logger.error(f"Error al acceder a la base de datos 'admvalue': {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500, 
+            detail="Error interno del servidor al consultar los valores."
+        )
+    finally:
+        if conn:
+            conn.close()
+            logger.debug("Conexión a la base de datos cerrada.")
+        if engine:
+            engine.dispose()
+            logger.debug("Engine de base de datos dispuesto.")
+#==========================================================
+@app.post("/admdelratiosave", response_class=PlainTextResponse)
+async def admDelRatioSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:str="",PINTURA:str="",AJUSTE:str=""):
+    bfMsg = "Valores grabados satisfactoriamente"
+    try:
+       engine = db.create_engine(cDBConnValue);
+       conn = engine.connect()
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(TERCERO).replace(',','.') + ' WHERE stName=\'Tercero\''))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(ASEGURADO).replace(',','.') + ' WHERE stName=\'Asegurado\''))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(MOBRA).replace(',','.') + ' WHERE stName=\'MObra\''))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(MOMINIMO).replace(',','.') + ' WHERE stName=\'MOMinimo\''))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(PINTURA).replace(',','.') + ' WHERE stName=\'Pintura\''))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(AJUSTE).replace(',','.') + ' WHERE stName=\'Ajuste\''))
+       if conn.in_transaction(): conn.commit()
+       conn.close()
+       engine.dispose()
+    except Exception as e:
+       bfMsg = "Se produjo un error al grabar: "+str(e)
+       logger.error(f"Error: admvalue - "+str(e))
+    return bfMsg
+##############################################################
+# Reporte de Ratios Lateral
+##############################################################
+@app.get("/admlatratio", response_class=HTMLResponse)
+async def admLatRatio(request: Request):
+    #DBVALUES
+    try:
+        engine = db.create_engine(cDBConnValue)
+        conn = engine.connect()
+        result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
+        for row in result:
+            if row[0] == 'Tercero'  : param.bfTercero   = float(row[1])
+            if row[0] == 'MObra'    : param.bfMObra     = float(row[1])
+            if row[0] == 'MOMinimo' : param.bfMOMinimo  = float(row[1])
+            if row[0] == 'Pintura'  : param.bfPintura   = float(row[1])
+            if row[0] == 'Ajuste'   : param.bfAjuste    = float(row[1])
+            if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
+        conn.close()
+        engine.dispose()
+    except Exception as e:
+        param.bfTercero = ""
+        param.bfMObra = ""
+        param.bfMOMinimo = ""
+        param.bfPintura = ""
+        param.bfAjuste = ""
+        param.bfAsegurado = ""
+        logger.error(f"Error: no se puedo acceder a admvalue.")
+
+    bfAdminValues = admvalue.bfHTML
+    bfAdminValues = bfAdminValues.replace('rplBfAsegurado',str(param.bfAsegurado))
+    bfAdminValues = bfAdminValues.replace('rplBfTercero',str(param.bfTercero))
+    bfAdminValues = bfAdminValues.replace('rplBfMObra',str(param.bfMObra))
+    bfAdminValues = bfAdminValues.replace('rplBfMOMinimo',str(param.bfMOMinimo))
+    bfAdminValues = bfAdminValues.replace('rplBfPintura',str(param.bfPintura))
+    bfAdminValues = bfAdminValues.replace('rplBfAjuste',str(param.bfAjuste))
+    return bfAdminValues
+#==========================================================
+@app.post("/admlatratiosave", response_class=PlainTextResponse)
+async def admLatRatioSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:str="",PINTURA:str="",AJUSTE:str=""):
+    bfMsg = "Valores grabados satisfactoriamente"
+    try:
+       engine = db.create_engine(cDBConnValue);
+       conn = engine.connect()
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(TERCERO).replace(',','.') + ' WHERE stName=\'Tercero\''))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(ASEGURADO).replace(',','.') + ' WHERE stName=\'Asegurado\''))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(MOBRA).replace(',','.') + ' WHERE stName=\'MObra\''))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(MOMINIMO).replace(',','.') + ' WHERE stName=\'MOMinimo\''))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(PINTURA).replace(',','.') + ' WHERE stName=\'Pintura\''))
+       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(AJUSTE).replace(',','.') + ' WHERE stName=\'Ajuste\''))
+       if conn.in_transaction(): conn.commit()
+       conn.close()
+       engine.dispose()
+    except Exception as e:
+       bfMsg = "Se produjo un error al grabar: "+str(e)
+       logger.error(f"Error: admvalue - "+str(e))
+    return bfMsg
+##############################################################
+# Reporte de Ratios Trasero
+##############################################################
+@app.get("/admtraratio", response_class=HTMLResponse)
+async def admTraRatio(request: Request):
+    #DBVALUES
+    try:
+        engine = db.create_engine(cDBConnValue)
+        conn = engine.connect()
+        result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
+        for row in result:
+            if row[0] == 'Tercero'  : param.bfTercero   = float(row[1])
+            if row[0] == 'MObra'    : param.bfMObra     = float(row[1])
+            if row[0] == 'MOMinimo' : param.bfMOMinimo  = float(row[1])
+            if row[0] == 'Pintura'  : param.bfPintura   = float(row[1])
+            if row[0] == 'Ajuste'   : param.bfAjuste    = float(row[1])
+            if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
+        conn.close()
+        engine.dispose()
+    except Exception as e:
+        param.bfTercero = ""
+        param.bfMObra = ""
+        param.bfMOMinimo = ""
+        param.bfPintura = ""
+        param.bfAjuste = ""
+        param.bfAsegurado = ""
+        logger.error(f"Error: no se puedo acceder a admvalue.")
+
+    bfAdminValues = admvalue.bfHTML
+    bfAdminValues = bfAdminValues.replace('rplBfAsegurado',str(param.bfAsegurado))
+    bfAdminValues = bfAdminValues.replace('rplBfTercero',str(param.bfTercero))
+    bfAdminValues = bfAdminValues.replace('rplBfMObra',str(param.bfMObra))
+    bfAdminValues = bfAdminValues.replace('rplBfMOMinimo',str(param.bfMOMinimo))
+    bfAdminValues = bfAdminValues.replace('rplBfPintura',str(param.bfPintura))
+    bfAdminValues = bfAdminValues.replace('rplBfAjuste',str(param.bfAjuste))
+    return bfAdminValues
+#==========================================================
+@app.post("/admtraratiosave", response_class=PlainTextResponse)
+async def admTraRatioSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:str="",PINTURA:str="",AJUSTE:str=""):
     bfMsg = "Valores grabados satisfactoriamente"
     try:
        engine = db.create_engine(cDBConnValue);
@@ -2083,7 +2311,7 @@ def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
     inCOD_PARTE = 2
     lsReponeAve = []
     flAverage   = 0
-    flAverageMD = 0
+    flAverageMD = 0 #BORRAR
 
     for index, item in enumerate(lsRepone):
         bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['COD_CLASE']  == inCOD_CLASE)  &
@@ -2095,6 +2323,7 @@ def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
         flMean = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)
         flAverage = pd.Series([flMean])
         
+        #BORRAR
         if   item=="BAUL"         :flAverageMD = paramal.bfBaul_Porton if isAlta else param.bfBaul_Porton
         elif item=="PORTON"       :flAverageMD = paramal.bfBaul_Porton if isAlta else param.bfBaul_Porton
         elif item=="GUARDABARRO"  :flAverageMD = paramal.bfGuardabarro if isAlta else param.bfGuardabarro
@@ -2102,12 +2331,6 @@ def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
         elif item=="PANELCOLACOMP":flAverageMD = paramal.bfPanel_Cola  if isAlta else param.bfPanel_Cola
         elif item=="PANELCOLASUP" :flAverageMD = paramal.bfPanel_Sup   if isAlta else param.bfPanel_Sup
         elif item=="PARAGOLPE"    :flAverageMD = paramal.bfParagolpe   if isAlta else param.bfParagolpe
-
-        ### Manejo 20% +- de la media
-        isLess20 = (0.8 * flAverageMD <= flAverage.iloc[0] <= 1.2 * flAverageMD)
-        if not isLess20: flAverage.iloc[0] = flAverageMD        
-        lsReponeAve.append(flAverage)
-        ### Manejo 20% +- de la media
 
     for index, item in enumerate(lsReponeAve): lsReponeAve[index] = list(set(item))[0]
 
@@ -2246,7 +2469,7 @@ def fnCambiaFrente(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
     inCOD_PARTE = 1
     lsReponeAve = []
     flAverage   = 0
-    flAverageMD = 0
+    flAverageMD = 0 #BORRAR
 
     for index, item in enumerate(lsRepone):
         bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['COD_CLASE'] == inCOD_CLASE)   &
@@ -2258,17 +2481,12 @@ def fnCambiaFrente(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
         flMean = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)
         flAverage = pd.Series([flMean])
 
+        #BORRAR
         if item  =="CAPOT"         :flAverageMD = paramal.bfFrt_GA_Del_Capot if isAlta          else param.bfFrt_GM_Del_Capot
         elif item=="FRENTE"        :flAverageMD = paramal.bfFrt_GA_Del_Frente if isAlta         else param.bfFrt_GM_Del_Frente
         elif item=="GUARDABARRO"   :flAverageMD = paramal.bfFrt_GA_Del_Guardabarro if isAlta    else param.bfFrt_GM_Del_Guardabarro
         elif item=="PARAGOLPE_ALMA":flAverageMD = paramal.bfFrt_GA_Del_Paragolpe_Alma if isAlta else param.bfFrt_GM_Del_Paragolpe_Alma
         elif item=="PARAGOLPE_CTRO":flAverageMD = paramal.bfFrt_GA_Del_Paragolpe_Ctro if isAlta else param.bfFrt_GM_Del_Paragolpe_Ctro
-
-        ### Manejo 20% +- de la media
-        isLess20 = (0.8 * flAverageMD <= flAverage.iloc[0] <= 1.2 * flAverageMD)
-        if not isLess20: flAverage.iloc[0] = flAverageMD
-        lsReponeAve.append(flAverage)
-        ### Manejo 20% +- de la media    
 
     for index, item in enumerate(lsReponeAve): lsReponeAve[index] = list(set(item))[0]
 
@@ -2449,7 +2667,7 @@ def fnCambiaLateral(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
     inCOD_PARTE = 3
     lsReponeAve = []
     flAverage   = 0
-    flAverageMD = 0
+    flAverageMD = 0 #BORRAR
 
     for index, item in enumerate(lsRepone):
         bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['COD_CLASE']  == inCOD_CLASE)  &
@@ -2461,17 +2679,12 @@ def fnCambiaLateral(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
         flMean = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)
         flAverage = pd.Series([flMean])
 
+        #BORRAR
         if   item=="PUERTA_DEL"      :flAverageMD = paramal.bfLat_Puerta_Delantera if isAlta  else param.bfLat_Puerta_Delantera
         elif item=="PUERTA_TRA"      :flAverageMD = paramal.bfLat_Puerta_Trasera if isAlta    else param.bfLat_Puerta_Trasera
         elif item=="PUERTA_DEL_PANEL":flAverageMD = paramal.bfLat_Puerta_Panel_Del  if isAlta else param.bfLat_Puerta_Panel_Del
         elif item=="PUERTA_TRA_PANEL":flAverageMD = paramal.bfLat_Puerta_Panel_Tras if isAlta else param.bfLat_Puerta_Panel_Tras
         elif item=="ZOCALO"          :flAverageMD = paramal.bfLat_Zocalo if isAlta            else param.bfLat_Zocalo
-
-        ### Manejo 20% +- de la media
-        isLess20 = (0.8 * flAverageMD <= flAverage.iloc[0] <= 1.2 * flAverageMD)
-        if not isLess20: flAverage.iloc[0] = flAverageMD
-        lsReponeAve.append(flAverage)
-        ### Manejo 20% +- de la media
 
     for index, item in enumerate(lsReponeAve): lsReponeAve[index] = list(set(item))[0]
 
