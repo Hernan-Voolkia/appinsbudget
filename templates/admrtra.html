@@ -15,63 +15,72 @@
         body {background-color:rgb(255,255,255);}
         label {text-align:right;font-family:'helvetica neue';font-size: 100%;}
         .vertical-text {
-            writing-mode: vertical-rl; 
-            transform: rotate(180deg); /
+            writing-mode: vertical-rl; /* Texto vertical de derecha a izquierda */
+            transform: rotate(180deg); /* Opcional: rota 180 grados para cambiar la dirección */
         }
-        .combo-container {border:none;padding:10px;}
-        .combo-container fieldset{
-            border: 1px solid rgb(0,89,147);
+        .combo-container {
+            border: none; 
             padding: 10px;
-            border-radius: 10px;
-            margin-top: 1px;
+        }
+        .combo-container fieldset{
+            border: 1px solid rgb(0,89,147); /* Define un borde sólido de 2px de color negro */
+            padding: 10px;           /* Añade un espacio interior para que los elementos no queden pegados al borde */
+            border-radius: 10px;      /* Redondea las esquinas del recuadro */
+            margin-top: 1px;        /* Añade un pequeño margen superior */
         }
         .combo-container legend {
-            padding: 0 10px;
-            margin-left: 10px;
+            padding: 0 10px;           /* Espacio a los lados del texto */
+            margin-left: 10px;         /* Empuja el texto un poco a la derecha */
             font-weight: bold;
-            color: rgb(0,89,147);
-            width: auto;
+            color: rgb(0,89,147);            /* Mismo color que el borde y las etiquetas */
+            width: auto;               /* Necesario para que el fondo no se extienda */
         }
+
         .center-container {
             border: none; 
             padding: 10px;
         }
         .center-container fieldset {
-            border: 1px solid rgb(0,89,147);
-            border-radius: 10px;
-            padding: 10px;
-            margin-top: 1px;
+            border: 1px solid rgb(0,89,147); /* Borde azul */
+            border-radius: 10px;       /* Esquinas redondeadas */
+            padding: 10px;             /* Espacio interior */
+            margin-top: 1px;        /* Reducimos el padding superior para acomodar la leyenda */
         }
+        
+        /* Estilos para la leyenda (el título del recuadro) */
         .center-container legend {
-            padding: 0 10px;
-            margin-left: 10px;
+            padding: 0 10px;           /* Espacio a los lados del texto */
+            margin-left: 10px;         /* Empuja el texto un poco a la derecha */
             font-weight: bold;
-            color: rgb(0,89,147);
-            width: auto;
+            color: rgb(0,89,147);            /* Mismo color que el borde y las etiquetas */
+            width: auto;               /* Necesario para que el fondo no se extienda */
         }
         .pure-control-group input {
             width: 100%;
             box-sizing: border-box;
         }                
+
         .pintura-container {
             border: none; 
             padding: 10px;
         }
         .pintura-container fieldset {
-            border: 1px solid rgb(0,89,147); 
-            border-radius: 10px; 
-            padding: 10px;  
-            margin-top: 1px;  
+            border: 1px solid rgb(0,89,147); /* Borde azul */
+            border-radius: 10px;       /* Esquinas redondeadas */
+            padding: 10px;             /* Espacio interior */
+            margin-top: 1px;        /* Reducimos el padding superior para acomodar la leyenda */
         }
+        
+        /* Estilos para la leyenda (el título del recuadro) */
         .pintura-container legend {
-            padding: 0 10px;   
-            margin-left: 10px; 
+            padding: 0 10px;           /* Espacio a los lados del texto */
+            margin-left: 10px;         /* Empuja el texto un poco a la derecha */
             font-weight: bold;
-            color: rgb(0,89,147); 
-            width: auto;  
+            color: rgb(0,89,147);            /* Mismo color que el borde y las etiquetas */
+            width: auto;               /* Necesario para que el fondo no se extienda */
         }
         #CostBrief {
-            transition: opacity 3s ease-out; 
+            transition: opacity 3s ease-out; /* Ahora tarda 3 segundos */
        }
     </style>
 </head>
@@ -101,13 +110,13 @@
                             <li class="pure-menu-item"></li>
                                 <a href="#" id="btnParams" class="pure-menu-link">Generales</a>
                             </li>
-                            <li class="pure-menu-item pure-menu-selected">
+                            <li class="pure-menu-item">
                                 <a href="#" id="btnDelRatio" class="pure-menu-link">Delantero</a>
                             </li>
                             <li class="pure-menu-item">
                                 <a href="#" id="btnLatRatio" class="pure-menu-link">Lateral</a>
                             </li>
-                            <li class="pure-menu-item">
+                            <li class="pure-menu-item pure-menu-selected">
                                 <a href="#" id="btnTraRatio" class="pure-menu-link">Trasero</a>
                             </li>
                         </ul>
@@ -164,7 +173,7 @@
              <p class="vertical-text"
                 style="margin-left:auto;margin-right:auto;display:block;
                        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-                       color:#005993;text-align:center; font-size: 25px;">Ratios Repuestos<br>Delanteros</p>
+                       color:#005993;text-align:center; font-size: 25px;">Ratios Repuestos<br>Traseros</p>
         </div> 
         <div class="pure-u-1 pure-u-md-7-24">
             <form class="pure-form pure-form-stacked">
@@ -197,24 +206,24 @@
                     <fieldset>
                         <legend>Mano de Obra</legend>         
                         <div class="pure-control-group">
-                            <label for="Capot_Ratio" style="color:#005993;text-align:left;">Capot</label>
-                            <input type="text" id="Capot_Ratio" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                            <label for="Baul_Ratio" style="color:#005993;text-align:left;">Baul</label>
+                            <input type="text" id="Baul_Ratio" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
                         </div>
                         <div class="pure-control-group">
                             <label for="Guardabarro_Ratio" style="color:#005993;text-align:left;">Guardabarro</label>
                             <input type="text" id="Guardabarro_Ratio" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
                         </div>
                         <div class="pure-control-group">
-                            <label for="Frente_Ratio" style="color:#005993;text-align:left;">Frente</label>
-                            <input type="text" id="Frente_Ratio" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                            <label for="Panel_Cola_Sup_Ratio" style="color:#005993;text-align:left;">Panel Cola Superior</label>
+                            <input type="text" id="Panel_Cola_Sup_Ratio" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
                         </div>  
                         <div class="pure-control-group">
-                            <label for="Paragolpe_Alma_Ratio" style="color:#005993;text-align:left;">Paragolpe Alma</label>
-                            <input type="text" id="Paragolpe_Alma_Ratio" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                            <label for="Paragolpe_Ratio" style="color:#005993;text-align:left;">Paragolpe</label>
+                            <input type="text" id="Paragolpe_Ratio" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
                         </div>
                         <div class="pure-control-group">
-                            <label for="Paragolpe_Ctro_Ratio" style="color:#005993;text-align:left;">Paragolpe Ctro</label>
-                            <input type="text" id="Paragolpe_Ctro_Ratio" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                            <label for="Porton_Ratio" style="color:#005993;text-align:left;">Portón</label>
+                            <input type="text" id="Porton_Ratio" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
                         </div>
                     </fieldset>
                 </div>                 
@@ -223,24 +232,24 @@
                     <fieldset>
                         <legend>Pintura</legend>         
                         <div class="pure-control-group">
-                            <label for="Capot_Ratio_PT" style="color:#005993;text-align:left;">Capot</label>
-                            <input type="text" id="Capot_Ratio_PT" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                            <label for="Baul_Ratio_PT" style="color:#005993;text-align:left;">Baul</label>
+                            <input type="text" id="Baul_Ratio_PT" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
                         </div>
                         <div class="pure-control-group">
                             <label for="Guardabarro_Ratio_PT" style="color:#005993;text-align:left;">Guardabarro</label>
                             <input type="text" id="Guardabarro_Ratio_PT" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
                         </div>
                         <div class="pure-control-group">
-                            <label for="Frente_Ratio_PT" style="color:#005993;text-align:left;">Frente</label>
-                            <input type="text" id="Frente_Ratio_PT" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                            <label for="Panel_Cola_Sup_Ratio_PT" style="color:#005993;text-align:left;">Panel Cola Superior</label>
+                            <input type="text" id="Panel_Cola_Sup_Ratio_PT" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
                         </div>  
                         <div class="pure-control-group">
-                            <label for="Paragolpe_Alma_Ratio_PT" style="color:#005993;text-align:left;">Paragolpe Alma</label>
-                            <input type="text" id="Paragolpe_Alma_Ratio_PT" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                            <label for="Paragolpe_Ratio_PT" style="color:#005993;text-align:left;">Paragolpe</label>
+                            <input type="text" id="Paragolpe_Ratio_PT" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
                         </div>
                         <div class="pure-control-group">
-                            <label for="Paragolpe_Ctro_Ratio_PT" style="color:#005993;text-align:left;">Paragolpe Ctro</label>
-                            <input type="text" id="Paragolpe_Ctro_Ratio_PT" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                            <label for="Porton_Ratio_PT" style="color:#005993;text-align:left;">Portón</label>
+                            <input type="text" id="Porton_Ratio_PT" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
                         </div>
                     </fieldset>
                 </div>                 
@@ -323,7 +332,6 @@
         event.preventDefault(); 
         window.location.href =  "/admreptraagsuv"; 
     }); 
-
     document.getElementById("btnDelRatio").addEventListener("click", function(event) {
         event.preventDefault(); 
         window.location.href =  "/admdelratio"; 
@@ -335,8 +343,8 @@
     document.getElementById("btnTraRatio").addEventListener("click", function(event) {
         event.preventDefault(); 
         window.location.href =  "/admtraratio"; 
-    });    
-    
+    });
+
     const selectClase = document.getElementById('clase');
     const selectSegmento = document.getElementById('segmento');
 
@@ -362,7 +370,7 @@
         sendData(text);
     }
     async function sendData(bfSearch) {
-        let url = "/admrdelsel?" + bfSearch;
+        let url = "/admrtrasel?" + bfSearch;
         var e = document.getElementById("CostBrief"); 
         e.innerHTML = "&nbsp;&nbsp;Cargando datos, por favor espere...&nbsp;&nbsp;";
             try {
@@ -371,18 +379,17 @@
                     throw new Error(`Error en la respuesta del servidor: ${response.status} ${response.statusText}`);
                 }
                 const data = await response.json();
-                document.getElementById("Capot_Ratio").value = (data.CAPOT || {}).flMO || '';
+                document.getElementById("Baul_Ratio").value = (data.BAUL || {}).flMO || '';
                 document.getElementById("Guardabarro_Ratio").value = (data.GUARDABARRO || {}).flMO || '';
-                document.getElementById("Frente_Ratio").value = (data.FRENTE || {}).flMO || '';
-                document.getElementById("Paragolpe_Alma_Ratio").value = (data.PARAGOLPE_ALMA || {}).flMO || '';
-                document.getElementById("Paragolpe_Ctro_Ratio").value = (data.PARAGOLPE_CTRO || {}).flMO || '';
+                document.getElementById("Panel_Cola_Sup_Ratio").value = (data.PANELCOLASUP || {}).flMO || '';
+                document.getElementById("Paragolpe_Ratio").value = (data.PARAGOLPE || {}).flMO || '';
+                document.getElementById("Porton_Ratio").value = (data.PORTON || {}).flMO || '';
 
-                document.getElementById("Capot_Ratio_PT").value = (data.CAPOT || {}).flPT || '';
+                document.getElementById("Baul_Ratio_PT").value = (data.BAUL || {}).flPT || '';
                 document.getElementById("Guardabarro_Ratio_PT").value = (data.GUARDABARRO || {}).flPT || '';
-                document.getElementById("Frente_Ratio_PT").value = (data.FRENTE || {}).flPT || '';
-                document.getElementById("Paragolpe_Alma_Ratio_PT").value = (data.PARAGOLPE_ALMA || {}).flPT || '';
-                document.getElementById("Paragolpe_Ctro_Ratio_PT").value = (data.PARAGOLPE_CTRO || {}).flPT || '';
-
+                document.getElementById("Panel_Cola_Sup_Ratio_PT").value = (data.PANELCOLASUP || {}).flPT || '';
+                document.getElementById("Paragolpe_Ratio_PT").value = (data.PARAGOLPE || {}).flPT || '';
+                document.getElementById("Porton_Ratio_PT").value = (data.PORTON || {}).flPT || '';
             } catch (error) {
                 console.error("Error al obtener los datos:", error);
             }
@@ -436,7 +443,7 @@
     }
     function sendValuesTra(bfSearch) {
         let xhr = new XMLHttpRequest();
-        let url = "/admrdelsave?" + bfSearch;
+        let url = "/admrtrasave?" + bfSearch;
         xhr.open("POST", url, true);
         xhr.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
