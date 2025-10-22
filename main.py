@@ -516,13 +516,7 @@ async def adminValuesSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:
 ##############################################################
 @app.get("/admdelratio", response_class=HTMLResponse)
 async def admDelRatio(request: Request):
-    context = {"request": request,
-               "Capot_Ratio": "",
-               "Guardabarro_Ratio":"",
-               "Frente_Ratio":"",
-               "Paragolpe_Alma_Ratio":"",
-               "Paragolpe_Ctro_Ratio":"",
-              }
+    context = {"request": request,}
     return templates.TemplateResponse("admrdel.html", context)
 
 @app.post("/admrdelsel", response_class=HTMLResponse)
@@ -534,7 +528,7 @@ async def admrdelsel(Clase: int, Segmento: int):
     try:
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
-        query = text("SELECT stname, flMO, flPT FROM admrdel WHERE clase = :clase AND seg = :seg")
+        query = text("SELECT stName, flMO, flPT FROM admrdel WHERE clase = :clase AND seg = :seg")
         result = conn.execute(query, {"clase": Clase, "seg": Segmento})
         
         for row in result:
@@ -737,93 +731,369 @@ async def admRDelSave(clase:str="",segmento:str="",Capot_Ratio:str="",Guardabarr
 ##############################################################
 @app.get("/admlatratio", response_class=HTMLResponse)
 async def admLatRatio(request: Request):
-    #DBVALUES
+    context = {"request": request,}
+    return templates.TemplateResponse("admrlat.html", context)
+#==========================================================
+@app.post("/admrlatsel", response_class=HTMLResponse)
+async def admrlatsel(Clase: int, Segmento: int):
+    parametros_dict = {"seg": "","clase": "","stName": "","flMO": "","flPT": ""}
+    ratios_from_db = {}
+    conn = None  
+    engine = None 
     try:
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
-        result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
+        query = text("SELECT stName, flMO, flPT FROM admrlat WHERE clase = :clase AND seg = :seg")
+        result = conn.execute(query, {"clase": Clase, "seg": Segmento})
+        
         for row in result:
-            if row[0] == 'Tercero'  : param.bfTercero   = float(row[1])
-            if row[0] == 'MObra'    : param.bfMObra     = float(row[1])
-            if row[0] == 'MOMinimo' : param.bfMOMinimo  = float(row[1])
-            if row[0] == 'Pintura'  : param.bfPintura   = float(row[1])
-            if row[0] == 'Ajuste'   : param.bfAjuste    = float(row[1])
-            if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
-        conn.close()
-        engine.dispose()
-    except Exception as e:
-        param.bfTercero = ""
-        param.bfMObra = ""
-        param.bfMOMinimo = ""
-        param.bfPintura = ""
-        param.bfAjuste = ""
-        param.bfAsegurado = ""
-        logger.error(f"Error: no se puedo acceder a admvalue.")
+            stname = row.stName
+            
+            try:
+                flmo_val = float(row.flMO)
+            except (ValueError, TypeError):
+                flmo_val = 0.0
+                logger.warning(f"Valor 'flMO' no válido para '{stname}'. Usando 0.0.")
 
-    bfAdminValues = admvalue.bfHTML
-    bfAdminValues = bfAdminValues.replace('rplBfAsegurado',str(param.bfAsegurado))
-    bfAdminValues = bfAdminValues.replace('rplBfTercero',str(param.bfTercero))
-    bfAdminValues = bfAdminValues.replace('rplBfMObra',str(param.bfMObra))
-    bfAdminValues = bfAdminValues.replace('rplBfMOMinimo',str(param.bfMOMinimo))
-    bfAdminValues = bfAdminValues.replace('rplBfPintura',str(param.bfPintura))
-    bfAdminValues = bfAdminValues.replace('rplBfAjuste',str(param.bfAjuste))
-    return bfAdminValues
-#==========================================================
-@app.post("/admlatratiosave", response_class=PlainTextResponse)
-async def admLatRatioSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:str="",PINTURA:str="",AJUSTE:str=""):
-    bfMsg = "Valores grabados satisfactoriamente"
-    try:
-       engine = db.create_engine(cDBConnValue);
-       conn = engine.connect()
-       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(TERCERO).replace(',','.') + ' WHERE stName=\'Tercero\''))
-       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(ASEGURADO).replace(',','.') + ' WHERE stName=\'Asegurado\''))
-       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(MOBRA).replace(',','.') + ' WHERE stName=\'MObra\''))
-       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(MOMINIMO).replace(',','.') + ' WHERE stName=\'MOMinimo\''))
-       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(PINTURA).replace(',','.') + ' WHERE stName=\'Pintura\''))
-       result = conn.execute(text('UPDATE admvalue SET flValue =' + str(AJUSTE).replace(',','.') + ' WHERE stName=\'Ajuste\''))
-       if conn.in_transaction(): conn.commit()
-       conn.close()
-       engine.dispose()
+            try:
+                flpt_val = float(row.flPT)
+            except (ValueError, TypeError):
+                flpt_val = 0.0
+                logger.warning(f"Valor 'flPT' no válido para '{stname}'. Usando 0.0.")
+
+            ratios_from_db[stname] = {
+                "flMO": flmo_val,
+                "flPT": flpt_val
+            } 
+                   
+        if not ratios_from_db:
+            logger.error(f"No se encontraron valores en la tabla admvalue para clase={Clase} y seg={Segmento}.")
+        
+        return JSONResponse(content=ratios_from_db)
+
     except Exception as e:
-       bfMsg = "Se produjo un error al grabar: "+str(e)
-       logger.error(f"Error: admvalue - "+str(e))
-    return bfMsg
+        logger.error(f"Error al acceder a la base de datos 'admvalue': {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500, 
+            detail="Error interno del servidor al consultar los valores."
+        )
+    finally:
+        if conn:
+            conn.close()
+            logger.debug("Conexión a la base de datos cerrada.")
+        if engine:
+            engine.dispose()
+            logger.debug("Engine de base de datos dispuesto.")
+#==========================================================
+@app.post("/admrlatsave", response_class=PlainTextResponse)
+async def admRLatSave(clase:str="",segmento:str="",Puerta_Del_Panel_Ratio:str="",Puerta_Tras_Panel_Ratio:str="",Zocalo_Ratio:str="",Puerta_Del_Panel_Ratio_PT:str="",Puerta_Tras_Panel_Ratio_PT:str="",Zocalo_Ratio_PT:str=""):
+    bfMsg = "Valores grabados satisfactoriamente"
+    engine = db.create_engine(cDBConnValue)
+    with engine.begin() as conn:
+        try:
+            p_seg   = int(segmento) if segmento else 0
+            p_clase = int(clase)    if clase else 0
+            ###PUERTA_DEL_PANEL M.O.###
+            sql_str = text(
+                """
+                UPDATE admrlat 
+                SET flMO = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """)
+            conn.execute(sql_str, {
+                "flmo": float(Puerta_Del_Panel_Ratio.replace(',', '.')) if Puerta_Del_Panel_Ratio else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "PUERTA_DEL_PANEL"
+            })
+            ###PUERTA_TRA_PANEL M.O.###
+            sql_str = text(
+                """
+                UPDATE admrlat 
+                SET flMO = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """)
+            conn.execute(sql_str, {
+                "flmo": float(Puerta_Tras_Panel_Ratio.replace(',', '.')) if Puerta_Tras_Panel_Ratio else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "PUERTA_TRA_PANEL" 
+            })
+            ###ZOCALO M.O.###
+            sql_str = text(
+                """
+                UPDATE admrlat 
+                SET flMO = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """)
+            conn.execute(sql_str, {
+                "flmo": float(Zocalo_Ratio.replace(',', '.')) if Zocalo_Ratio else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "ZOCALO" 
+            })
+            ###PUERTA_DEL_PANEL PINTURA###
+            sql_str = text(
+                """
+                UPDATE admrlat 
+                SET flPT = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """
+            )
+            conn.execute(sql_str, {
+                "flpt": float(Puerta_Del_Panel_Ratio_PT.replace(',', '.')) if Puerta_Del_Panel_Ratio_PT else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "PUERTA_DEL_PANEL"
+            })
+            ###PUERTA_TRA_PANEL PINTURA###
+            sql_str = text(
+                """
+                UPDATE admrlat 
+                SET flPT = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """)
+            conn.execute(sql_str, {
+                "flpt": float(Puerta_Tras_Panel_Ratio_PT.replace(',', '.')) if Puerta_Tras_Panel_Ratio_PT else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "PUERTA_TRA_PANEL" 
+            })
+            ###ZOCALO PINTURA###
+            sql_str = text(
+                """
+                UPDATE admrlat 
+                SET flPT = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """)
+            conn.execute(sql_str, {
+                "flpt": float(Zocalo_Ratio_PT.replace(',', '.')) if Zocalo_Ratio_PT else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "ZOCALO" 
+            })
+        except ValueError as e:
+            bfMsg = f"Error: Uno de los valores no es un número válido. {e}"
+        except Exception as e:
+            bfMsg =f"Error de base de datos: {e}"
+            raise    
+    return bfMsg            
 ##############################################################
 # Reporte de Ratios Trasero
 ##############################################################
 @app.get("/admtraratio", response_class=HTMLResponse)
 async def admTraRatio(request: Request):
-    #DBVALUES
+    context = {"request": request,}
+    return templates.TemplateResponse("admrtra.html", context)
+#==========================================================
+@app.post("/admrtrasel", response_class=HTMLResponse)
+async def admrtrasel(Clase: int, Segmento: int):
+    parametros_dict = {"seg": "","clase": "","stName": "","flMO": "","flPT": ""}
+    ratios_from_db = {}
+    conn = None  
+    engine = None 
     try:
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
-        result = conn.execute(text('SELECT stname,flvalue FROM admvalue;'))
+        query = text("SELECT stName, flMO, flPT FROM admrtra WHERE clase = :clase AND seg = :seg")
+        result = conn.execute(query, {"clase": Clase, "seg": Segmento})
+        
         for row in result:
-            if row[0] == 'Tercero'  : param.bfTercero   = float(row[1])
-            if row[0] == 'MObra'    : param.bfMObra     = float(row[1])
-            if row[0] == 'MOMinimo' : param.bfMOMinimo  = float(row[1])
-            if row[0] == 'Pintura'  : param.bfPintura   = float(row[1])
-            if row[0] == 'Ajuste'   : param.bfAjuste    = float(row[1])
-            if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
-        conn.close()
-        engine.dispose()
-    except Exception as e:
-        param.bfTercero = ""
-        param.bfMObra = ""
-        param.bfMOMinimo = ""
-        param.bfPintura = ""
-        param.bfAjuste = ""
-        param.bfAsegurado = ""
-        logger.error(f"Error: no se puedo acceder a admvalue.")
+            stname = row.stName
+            
+            try:
+                flmo_val = float(row.flMO)
+            except (ValueError, TypeError):
+                flmo_val = 0.0
+                logger.warning(f"Valor 'flMO' no válido para '{stname}'. Usando 0.0.")
 
-    bfAdminValues = admvalue.bfHTML
-    bfAdminValues = bfAdminValues.replace('rplBfAsegurado',str(param.bfAsegurado))
-    bfAdminValues = bfAdminValues.replace('rplBfTercero',str(param.bfTercero))
-    bfAdminValues = bfAdminValues.replace('rplBfMObra',str(param.bfMObra))
-    bfAdminValues = bfAdminValues.replace('rplBfMOMinimo',str(param.bfMOMinimo))
-    bfAdminValues = bfAdminValues.replace('rplBfPintura',str(param.bfPintura))
-    bfAdminValues = bfAdminValues.replace('rplBfAjuste',str(param.bfAjuste))
-    return bfAdminValues
+            try:
+                flpt_val = float(row.flPT)
+            except (ValueError, TypeError):
+                flpt_val = 0.0
+                logger.warning(f"Valor 'flPT' no válido para '{stname}'. Usando 0.0.")
+
+            ratios_from_db[stname] = {
+                "flMO": flmo_val,
+                "flPT": flpt_val
+            } 
+                   
+        if not ratios_from_db:
+            logger.error(f"No se encontraron valores en la tabla admvalue para clase={Clase} y seg={Segmento}.")
+        
+        return JSONResponse(content=ratios_from_db)
+
+    except Exception as e:
+        logger.error(f"Error al acceder a la base de datos 'admvalue': {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500, 
+            detail="Error interno del servidor al consultar los valores."
+        )
+    finally:
+        if conn:
+            conn.close()
+            logger.debug("Conexión a la base de datos cerrada.")
+        if engine:
+            engine.dispose()
+            logger.debug("Engine de base de datos dispuesto.")      
+#==========================================================
+@app.post("/admrtrasave", response_class=PlainTextResponse)
+async def admRTraSave(clase:str="",segmento:str="",Baul_Ratio:str="",Guardabarro_Ratio:str="",Panel_Cola_Sup_Ratio:str="",Paragolpe_Ratio:str="",Porton_Ratio:str="",Baul_Ratio_PT:str="",Guardabarro_Ratio_PT:str="",Panel_Cola_Sup_Ratio_PT:str="",Paragolpe_Ratio_PT:str="",Porton_Ratio_PT:str=""):
+    bfMsg = "Valores grabados satisfactoriamente"
+    engine = db.create_engine(cDBConnValue)
+    with engine.begin() as conn:
+        try:
+            p_seg   = int(segmento) if segmento else 0
+            p_clase = int(clase)    if clase else 0
+            ###BAUL M.O.###
+            sql = text(
+                """
+                UPDATE admrtra 
+                SET flMO = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """)
+            conn.execute(sql, {
+                "flmo": float(Baul_Ratio.replace(',', '.')) if Baul_Ratio else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "BAUL"
+            })
+            ###GUARDABARRO M.O.###
+            sql = text(
+                """
+                UPDATE admrtra 
+                SET flMO = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """)
+            conn.execute(sql, {
+                "flmo": float(Guardabarro_Ratio.replace(',', '.')) if Guardabarro_Ratio else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "GUARDABARRO" 
+            })
+            ###PANELCOLASUP M.O.###
+            sql = text(
+                """
+                UPDATE admrtra 
+                SET flMO = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """)
+            conn.execute(sql, {
+                "flmo": float(Panel_Cola_Sup_Ratio.replace(',', '.')) if Panel_Cola_Sup_Ratio else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "PANELCOLASUP" 
+            })
+            ###PARAGOLPE M.O.###
+            sql = text(
+                """
+                UPDATE admrtra 
+                SET flMO = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """)
+            conn.execute(sql, {
+                "flmo": float(Paragolpe_Ratio.replace(',', '.')) if Paragolpe_Ratio else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "PARAGOLPE" 
+            })
+            ###PORTON M.O.###
+            sql = text(
+                """
+                UPDATE admrtra 
+                SET flMO = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """)
+            conn.execute(sql, {
+                "flmo": float(Porton_Ratio.replace(',', '.')) if Porton_Ratio else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "PORTON" 
+            })
+            ###CABAULPOT PINTURA###
+            sql = text(
+                """
+                UPDATE admrtra 
+                SET flPT = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """)
+            conn.execute(sql, {
+                "flpt": float(Baul_Ratio_PT.replace(',', '.')) if Baul_Ratio_PT else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "BAUL"
+            })
+            ###GUARDABARRO PINTURA###
+            sql = text(
+                """
+                UPDATE admrtra 
+                SET flPT = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """)
+            conn.execute(sql, {
+                "flpt": float(Guardabarro_Ratio_PT.replace(',', '.')) if Guardabarro_Ratio_PT else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "GUARDABARRO" 
+            })
+            ###PANELCOLASUP PINTURA###
+            sql = text(
+                """
+                UPDATE admrtra 
+                SET flPT = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """)
+            conn.execute(sql, {
+                "flpt": float(Panel_Cola_Sup_Ratio_PT.replace(',', '.')) if Panel_Cola_Sup_Ratio_PT else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "PANELCOLASUP" 
+            })
+            ###PARAGOLPE PINTURA###
+            sql = text(
+                """
+                UPDATE admrtra 
+                SET flPT = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """)
+            conn.execute(sql, {
+                "flpt": float(Paragolpe_Ratio_PT.replace(',', '.')) if Paragolpe_Ratio_PT else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "PARAGOLPE" 
+            })
+            ###PORTON PINTURA###
+            sql = text(
+                """
+                UPDATE admrtra 
+                SET flPT = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                """)
+            conn.execute(sql, {
+                "flpt": float(Porton_Ratio_PT.replace(',', '.')) if Porton_Ratio_PT else 0.0,
+                "seg": p_seg,
+                "clase": p_clase,
+                "stname": "PORTON" 
+            })
+        except ValueError as e:
+            bfMsg = f"Error: Uno de los valores no es un número válido. {e}"
+        except Exception as e:
+            bfMsg =f"Error de base de datos: {e}"
+            raise    
+    return bfMsg                  
+##############################################################
+# Reporte de Ratios Trasero
+##############################################################
+@app.get("/admtraratio", response_class=HTMLResponse)
+async def admTraRatio(request: Request):
+    context = {"request": request,
+               "Capot_Ratio": "",
+               "Guardabarro_Ratio":"",
+               "Frente_Ratio":"",
+               "Paragolpe_Alma_Ratio":"",
+               "Paragolpe_Ctro_Ratio":"",
+              }
+    return templates.TemplateResponse("admrtra.html", context)
 #==========================================================
 @app.post("/admtraratiosave", response_class=PlainTextResponse)
 async def admTraRatioSave(ASEGURADO:str="",TERCERO:str="",MOBRA:str="",MOMINIMO:str="",PINTURA:str="",AJUSTE:str=""):
