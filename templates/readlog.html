@@ -47,9 +47,23 @@
                 <li class="nav-item">
                     <a href="#" id="btnHistorial" class="nav-link fw-bold">Historial</a>
                 </li>
-                <li class="nav-item">
-                    <a href="#" id="btnParams" class="nav-link">Params</a>
-                </li>
+                    <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover pure-menu-selected">
+                        <a href="#" id="menuLink1" class="pure-menu-link">Params</a>
+                        <ul class="pure-menu-children">
+                            <li class="pure-menu-item"></li>
+                                <a href="#" id="btnParams" class="pure-menu-link">Generales</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnDelRatio" class="pure-menu-link">Delantero</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnLatRatio" class="pure-menu-link">Lateral</a>
+                            </li>
+                            <li class="pure-menu-item">
+                                <a href="#" id="btnTraRatio" class="pure-menu-link">Trasero</a>
+                            </li>
+                        </ul>
+                    </li>
                 <li class="nav-item dropdown">
                     <a href="#" id="menuLink1" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Repuestos</a>
                     <ul class="dropdown-menu">
@@ -95,9 +109,9 @@
                 <th>EspejoEle</th><th>EspejoMan</th><th>ManijaDel</th>
                 <th>ManijaTra</th><th>MolduraDel</th><th>MolduraTra</th>
                 <th>CristalDel</th><th>CristalTra</th><th>Total</th>
-                <th data-toggle="ttRTDPiezas" data-placement="top" title="<p>Repara<br>B = Baul Porton</u><br>Gd = Guardabarro Derecho<br>Gd = Guardabarro Izquierda<br>C = Panel Cola<br>P = Paragolpe</p>">D.Piezas</th>
+                <th data-toggle="ttRTDPiezas" data-placement="top" title="<p>Repara<br>B = Baul Porton</u><br>Gd = Guardabarro Derecho<br>Gi = Guardabarro Izquierdo<br>C = Panel Cola<br>P = Paragolpe</p>">D.Piezas</th>
                 <th data-toggle="ttVPPMO" data-placement="top" title="Valor Total de Reparación de Pieza, Pintura y Mano de Mano">V.PPMO</th>
-                <th  data-toggle="ttCTDPiezas" data-placement="top" title="<p>Repone<br>B = Baul Porton</u><br>Gd = Guardabarro Derecho<br>Gd = Guardabarro Izquierda<br>C = Panel Cola<br>P = Paragolpe</p>">D.Piezas</th><th>V.Piezas</th><th>V.Pint</th><th>V.MO</th>
+                <th  data-toggle="ttCTDPiezas" data-placement="top" title="<p>Repone<br>B = Baul Porton</u><br>Gd = Guardabarro Derecho<br>Gi = Guardabarro Izquierdo<br>C = Panel Cola<br>P = Paragolpe</p>">D.Piezas</th><th>V.Piezas</th><th>V.Pint</th><th>V.MO</th>
                 <th>Moldura</th><th>FaroExt</th><th>FaroInt</th><th>Total</th>
                 <th>Aseg</th><th>Tercero</th><th>M.Obra</th><th>Pintura</th><th>Ajuste</th>
                 <th>Nombre</th><th>Valor</th>    
@@ -218,6 +232,18 @@
         event.preventDefault(); 
         window.location.href =  "/admvalue"; 
     });
+    document.getElementById("btnDelRatio").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admdelratio"; 
+    });
+    document.getElementById("btnLatRatio").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admlatratio"; 
+    });
+    document.getElementById("btnTraRatio").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        window.location.href =  "/admtraratio"; 
+    });    
     document.getElementById("btnDelantero").addEventListener("click", function(event) {
         event.preventDefault(); 
         window.location.href =  "/admrepdel"; 
