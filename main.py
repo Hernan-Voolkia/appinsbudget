@@ -176,7 +176,6 @@ cEnv = ""
 try:
     with open('.env', 'r') as file: 
         cEnv=file.read().strip()
-        #logger.info(f"ENV: {cEnv}")
 except FileNotFoundError:
     logger.error(f"Error: .env no fue encontrado.")
 except Exception as e:
@@ -2098,9 +2097,6 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
     flFrente=0
     flLateral=0
     flTrasero=0
-
-    
-    logger.info(f"Nada: {lsValuesResult}")
     
     if '1' in lsFrente:
         lsFrenteCambiaElems, lsFrenteReparaElems, lsFrenteFaritoElemsDel, lsFrenteFaroElemsDel, lsFrenteFaro_AuxiliarElemsDel,\
@@ -2180,7 +2176,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(0)
         lsValuesResult.append(0)
 
-    logger.info(f"Frente: {lsValuesResult}")
+    #logger.info(f"Frente: {lsValuesResult}")
     
     if '1' in lsLateral:
         lsLateralCambiaElems,lsLateralReparaElems, lsLateralMolduraElemsDel,lsLateralMolduraElemsTra, lsLateralEspejoElecElems,lsLateralEspejoManElems,\
@@ -2283,7 +2279,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(0)
         lsValuesResult.append(0)
 
-    logger.info(f"lateral: {lsValuesResult}")
+    #logger.info(f"lateral: {lsValuesResult}")
 
     if '1' in lsTrasero:
         lsTraseroCambiaElems,lsTraseroReparaElems,lsTraseroMolduraElems,\
@@ -2349,7 +2345,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(0)
         lsValuesResult.append(0)
 
-    logger.info(f"Trasero: {lsValuesResult}")
+    #logger.info(f"Trasero: {lsValuesResult}")
     
     #ToDo: Seguir codigo
     if len(lsFrenteCambiaElems) + len(lsFrenteReparaElems) +\
@@ -2657,29 +2653,41 @@ def fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfData):
 ###TRASERO##########################################################################################
 def fnReparaTrasero(inSEG,inCOD_CLASE,lsRepara):
     ###ToDo:Se necesita separar en gama alta y media? 
-    inCOD_PARTE = 2
     lsReparaAve = []
     flAverage = 0
-
     for index, item in enumerate(lsRepara):
-        bfID_ELEM = dfVALOR_MO_UNIF_TRASERO.loc[(dfVALOR_MO_UNIF_TRASERO['COD_CLASE'] == inCOD_CLASE) &
-                                                (dfVALOR_MO_UNIF_TRASERO['COD_PARTE'] == inCOD_PARTE) &
-                        (dfVALOR_MO_UNIF_TRASERO['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                                                       [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']]
-
-        flVALOR_MO_MEAN     = bfID_ELEM['VALOR_MO_MEAN']
-        flCANT_HS_PINT_MEAN = bfID_ELEM['CANT_HS_PINT_MEAN']
-
-        ###Todo:Sacar############################################################################
-        flVALOR_MO_MEAN     = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2)       
-        flCANT_HS_PINT_MEAN = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfPintura),2) 
-        ###Todo:Sacar############################################################################
-
-        flAverage=np.round((flVALOR_MO_MEAN + flCANT_HS_PINT_MEAN + bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-        lsReparaAve.append(flAverage)
-
-    for index, item in enumerate(lsReparaAve): lsReparaAve[index] = list(set(item))[0]
-
+        conn = None  
+        engine = None 
+        try:        
+            engine = db.create_engine(cDBConnValue)
+            conn = engine.connect()
+            query = text("SELECT flMO, flPT FROM admrtra WHERE seg = :seg  AND clase = :clase AND stName LIKE :name")
+            item_con_wildcards = f"%{item}%"
+            result = conn.execute(query, {"seg": int(inSEG), "clase": int(inCOD_CLASE), "name": item_con_wildcards})
+            for row in result:
+                try:
+                    flmo_val = float(row.flMO)
+                except (ValueError, TypeError):
+                    flmo_val = 1
+                    logger.warning(f"Valor 'flMO' no válido para '{item}'. Usando 1")
+                try:
+                    flpt_val = float(row.flPT)
+                except (ValueError, TypeError):
+                    flpt_val = 1
+                    logger.warning(f"Valor 'flPT' no válido para '{item}'. Usando 1")
+                flVALOR_MO_MEAN     = np.round(flmo_val * float(param.bfMObra),2) 
+                flCANT_HS_PINT_MEAN = np.round(flpt_val * float(param.bfMObra),2) 
+                flAverage = np.round((flVALOR_MO_MEAN + flCANT_HS_PINT_MEAN),2)
+                lsReparaAve.append(flAverage)
+        except Exception as e:
+            logger.error(f"Error al acceder a la base de datos 'admvalue': {e}", exc_info=True)
+            raise HTTPException(
+                status_code=500, 
+                detail="Error interno del servidor al consultar los valores."
+            )
+        finally:
+            if conn:   conn.close()
+            if engine: engine.dispose()                
     return lsReparaAve
 
 def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
@@ -2815,29 +2823,41 @@ def fnFaroIntTrasero(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 ###FRENTE#############################################################################################
 def fnReparaFrente(inSEG,inCOD_CLASE,lsRepara):
     ###ToDo:Se necesita separar en gama alta y media?     
-    inCOD_PARTE = 1
     lsReparaAve = []
     flAverage = 0
     for index, item in enumerate(lsRepara):
-        bfID_ELEM = dfVALOR_MO_UNIF_FRENTE.loc[(dfVALOR_MO_UNIF_FRENTE['COD_CLASE']==inCOD_CLASE) &
-                                               (dfVALOR_MO_UNIF_FRENTE['COD_PARTE']==inCOD_PARTE) &
-                                (dfVALOR_MO_UNIF_FRENTE['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                                                              [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']]
-
-        flVALOR_MO_MEAN      = bfID_ELEM['VALOR_MO_MEAN']
-        flCANT_HS_PINT_MEAN  = bfID_ELEM['CANT_HS_PINT_MEAN']
-
-        ###Todo:Sacar############################################################################
-        flVALOR_MO_MEAN       = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2) 
-        flCANT_HS_PINT_MEAN   = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfMObra),2) 
-        ###Todo:Sacar############################################################################
-
-        flAverage = np.round((flVALOR_MO_MEAN + flCANT_HS_PINT_MEAN + bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-        lsReparaAve.append(flAverage)
-
-    for index, item in enumerate(lsReparaAve):
-        lsReparaAve[index]=list(set(item))[0]
-
+        conn = None  
+        engine = None 
+        try:        
+            engine = db.create_engine(cDBConnValue)
+            conn = engine.connect()
+            query = text("SELECT flMO, flPT FROM admrdel WHERE seg = :seg  AND clase = :clase AND stName LIKE :name")
+            item_con_wildcards = f"%{item}%"
+            result = conn.execute(query, {"seg": int(inSEG), "clase": int(inCOD_CLASE), "name": item_con_wildcards})
+            for row in result:
+                try:
+                    flmo_val = float(row.flMO)
+                except (ValueError, TypeError):
+                    flmo_val = 1
+                    logger.warning(f"Valor 'flMO' no válido para '{item}'. Usando 1")
+                try:
+                    flpt_val = float(row.flPT)
+                except (ValueError, TypeError):
+                    flpt_val = 1
+                    logger.warning(f"Valor 'flPT' no válido para '{item}'. Usando 1")
+                flVALOR_MO_MEAN     = np.round(flmo_val * float(param.bfMObra),2) 
+                flCANT_HS_PINT_MEAN = np.round(flpt_val * float(param.bfMObra),2) 
+                flAverage = np.round((flVALOR_MO_MEAN + flCANT_HS_PINT_MEAN),2)
+                lsReparaAve.append(flAverage)
+        except Exception as e:
+            logger.error(f"Error al acceder a la base de datos 'admvalue': {e}", exc_info=True)
+            raise HTTPException(
+                status_code=500, 
+                detail="Error interno del servidor al consultar los valores."
+            )
+        finally:
+            if conn:   conn.close()
+            if engine: engine.dispose()                
     return lsReparaAve
 
 def fnCambiaFrente(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
@@ -3008,34 +3028,46 @@ def fnFaritoFrente(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
     lsMeanFaro.append(round(flValue + param.bfMOMinimo,2))
 
     return lsMeanFaro
-
-
 ######################################################################################################
 ###LATERAL############################################################################################
 def fnReparaLateral(inSEG,inCOD_CLASE,lsRepara):
     ###ToDo:Se necesita separar en gama alta y media?     
-    inCOD_PARTE = 3
+    ###ToDo:Se necesita separar en gama alta y media?     
     lsReparaAve = []
     flAverage = 0
     for index, item in enumerate(lsRepara):
-        bfID_ELEM = dfVALOR_MO_UNIF_LATERAL.loc[(dfVALOR_MO_UNIF_LATERAL['COD_CLASE']==inCOD_CLASE)&
-                                                (dfVALOR_MO_UNIF_LATERAL['COD_PARTE']==inCOD_PARTE)&
-                                (dfVALOR_MO_UNIF_LATERAL['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))]\
-                                                               [['VALOR_MO_MEAN','CANT_HS_PINT_MEAN','VALOR_MAT_PINT_MEAN']]
-
-        flVALOR_MO_MEAN      = bfID_ELEM['VALOR_MO_MEAN']
-        flCANT_HS_PINT_MEAN  = bfID_ELEM['CANT_HS_PINT_MEAN']
-
-        ###Todo:Sacar############################################################################
-        flVALOR_MO_MEAN       = np.round((flVALOR_MO_MEAN / 6350) * float(param.bfMObra),2) 
-        flCANT_HS_PINT_MEAN   = np.round((flCANT_HS_PINT_MEAN / 6350) * float(param.bfMObra),2)
-        ###Todo:Sacar############################################################################
-
-        flAverage = np.round((flVALOR_MO_MEAN + flCANT_HS_PINT_MEAN + bfID_ELEM['VALOR_MAT_PINT_MEAN']),2)
-        lsReparaAve.append(flAverage)
-
-    for index, item in enumerate(lsReparaAve): lsReparaAve[index]=list(set(item))[0]
-
+        conn = None  
+        engine = None 
+        try:        
+            engine = db.create_engine(cDBConnValue)
+            conn = engine.connect()
+            query = text("SELECT flMO, flPT FROM admrlat WHERE seg = :seg  AND clase = :clase AND stName LIKE :name")
+            item_con_wildcards = f"%{item}%"
+            result = conn.execute(query, {"seg": int(inSEG), "clase": int(inCOD_CLASE), "name": item_con_wildcards})
+            for row in result:
+                try:
+                    flmo_val = float(row.flMO)
+                except (ValueError, TypeError):
+                    flmo_val = 1
+                    logger.warning(f"Valor 'flMO' no válido para '{item}'. Usando 1")
+                try:
+                    flpt_val = float(row.flPT)
+                except (ValueError, TypeError):
+                    flpt_val = 1
+                    logger.warning(f"Valor 'flPT' no válido para '{item}'. Usando 1")
+                flVALOR_MO_MEAN     = np.round(flmo_val * float(param.bfMObra),2) 
+                flCANT_HS_PINT_MEAN = np.round(flpt_val * float(param.bfMObra),2) 
+                flAverage = np.round((flVALOR_MO_MEAN + flCANT_HS_PINT_MEAN),2)
+                lsReparaAve.append(flAverage)
+        except Exception as e:
+            logger.error(f"Error al acceder a la base de datos 'admvalue': {e}", exc_info=True)
+            raise HTTPException(
+                status_code=500, 
+                detail="Error interno del servidor al consultar los valores."
+            )
+        finally:
+            if conn:   conn.close()
+            if engine: engine.dispose()                
     return lsReparaAve
 
 def fnCambiaLateral(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
@@ -3294,9 +3326,9 @@ def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,FRENTE,LA
 
     bfValues = str(ts)+","+str(CLIENTE)+","+str(CLASE)+","+str(MARCA)+","+str(MODELO)+",'"+SINIESTRO+"','"+PERITO.replace(',','')+"','"+VALORPERITO+"','"+FRENTE+"','"+LATERAL+"','"+TRASERO+"',"
 
-    bfValues += str(lsValuesResultWrite[0])+","+ str(lsValuesResultWrite[1])+","+ str(lsValuesResultWrite[2])+","+ str(lsValuesResultWrite[3])+","\
-             +  str(lsValuesResultWrite[4])+","+ str(lsValuesResultWrite[5])+","+ str(lsValuesResultWrite[6])+","+ str(lsValuesResultWrite[7])+","\
-             +  str(lsValuesResultWrite[8])+","+ str(lsValuesResultWrite[9])+","+ str(lsValuesResultWrite[10])+","+str(lsValuesResultWrite[11])+","\
+    bfValues += str(lsValuesResultWrite[0]) +","+str(lsValuesResultWrite[1]) +","+str(lsValuesResultWrite[2]) +","+str(lsValuesResultWrite[3]) +","\
+             +  str(lsValuesResultWrite[4]) +","+str(lsValuesResultWrite[5]) +","+str(lsValuesResultWrite[6]) +","+str(lsValuesResultWrite[7]) +","\
+             +  str(lsValuesResultWrite[8]) +","+str(lsValuesResultWrite[9]) +","+str(lsValuesResultWrite[10])+","+str(lsValuesResultWrite[11])+","\
              +  str(lsValuesResultWrite[12])+","+str(lsValuesResultWrite[13])+","+str(lsValuesResultWrite[14])+","+str(lsValuesResultWrite[15])+","\
              +  str(lsValuesResultWrite[16])+","+str(lsValuesResultWrite[17])+","+str(lsValuesResultWrite[18])+","+str(lsValuesResultWrite[19])+","\
              +  str(lsValuesResultWrite[20])+","+str(lsValuesResultWrite[21])+","+str(lsValuesResultWrite[22])+","+str(lsValuesResultWrite[23])+","\
