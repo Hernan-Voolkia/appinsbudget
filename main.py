@@ -6,6 +6,7 @@ from fastapi.templating import Jinja2Templates
 import warnings
 import datetime
 import re
+import sys
 import pandas as pd
 import numpy as np
 import sqlalchemy as db
@@ -27,8 +28,10 @@ import dbstatus
 warnings.filterwarnings("ignore")
 np.set_printoptions(suppress=True)
 
-LOG_FILE_NAME = 'log.csv'
-logging.basicConfig(level=logging.INFO,format='%(asctime)s - %(levelname)s - %(message)s',filename=LOG_FILE_NAME,filemode='a')
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    handlers=[logging.StreamHandler(sys.stdout)]
+                   )
 logger = logging.getLogger(__name__)
 
 #MARCA-MODELO
@@ -62,39 +65,6 @@ try:
                                     'COD_PARTE':'int8','DESC_ELEM':'str','PRECIO_MEAN':'float64','VIEJO':'bool'})
 except FileNotFoundError:
     logger.error(f"Error: _dfVALOR_REPUESTO_ALL_V7.csv no fue encontrado.")
-#VALOR-MO-FRENTE
-try:
-    dfVALOR_MO_UNIF_FRENTE = pd.read_csv('./data/_dfVALOR_REPARA_MO&PINT_FRENTEV7.csv',sep=';',encoding='utf-8',decimal='.',
-                            dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
-                                    'VALOR_MO_MEAN':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
-                                    'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
-                                    'RATIO_HS_PINT_STD':'float64','CANT_HS_PINT_STD':'float64',
-                                    'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_ST':'float64',
-                                    'ORIG_MAT_PINT_MEAN':'float64','ORIG_MAT_PINT_STD':'float64'})
-except FileNotFoundError:
-    logger.error(f"Error: _dfVALOR_REPARA_MO&PINT_FRENTEV7.csv no fue encontrado.")
-#VALOR-MO-TRASERO
-try:
-    dfVALOR_MO_UNIF_TRASERO = pd.read_csv('./data/_dfVALOR_REPARA_MO&PINT_TRASEROV7.csv',sep=';',encoding='utf-8',decimal='.',
-                            dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
-                                    'VALOR_MO_MEAN':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
-                                    'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
-                                    'RATIO_HS_PINT_STD':'float64','CANT_HS_PINT_STD':'float64',
-                                    'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_ST':'float64',
-                                    'ORIG_MAT_PINT_MEAN':'float64','ORIG_MAT_PINT_STD':'float64'})
-except FileNotFoundError:
-    logger.error(f"Error: _dfVALOR_REPARA_MO&PINT_TRASEROV7.csv no fue encontrado.")
-#VALOR-MO-LATERAL
-try:
-    dfVALOR_MO_UNIF_LATERAL = pd.read_csv('./data/_dfVALOR_REPARA_MO&PINT_LATERALV7.csv',sep=';',encoding='utf-8',decimal='.',
-                            dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
-                                    'VALOR_MO_MEAN':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
-                                    'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
-                                    'RATIO_HS_PINT_STD':'float64','CANT_HS_PINT_STD':'float64',
-                                    'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_ST':'float64',
-                                    'ORIG_MAT_PINT_MEAN':'float64','ORIG_MAT_PINT_STD':'float64'})
-except FileNotFoundError:
-    logger.error(f"Error: _dfVALOR_REPARA_MO&PINT_LATERALV7.csv no fue encontrado.")
 #VALRO-MO-PINT-FRENTE
 try:
     dfVALOR_REPUESTO_VALOR_MAT_FRENTE = pd.read_csv('./data/_dfVALOR_REPUESTO_MO&PINT_FRENTEV7.csv',sep=';',encoding='utf-8',decimal='.',
@@ -205,11 +175,6 @@ templates = Jinja2Templates(directory="templates")
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
     return index.bfHTML
-
-@app.get("/log", response_class=PlainTextResponse)
-async def log(iLines:int=1):
-    bfLog = leer_ultimas_lineas_log(iLines)
-    return "Lines:" + str(iLines) + str(bfLog)
 
 @app.post("/vh", response_class=PlainTextResponse)
 async def modelo(CLASE  : int = 0):
@@ -536,14 +501,14 @@ async def admrdelsel(Clase: int, Segmento: int):
             try:
                 flmo_val = float(row.flMO)
             except (ValueError, TypeError):
-                flmo_val = 0.0
-                logger.warning(f"Valor 'flMO' no válido para '{stname}'. Usando 0.0.")
+                flmo_val = 1
+                logger.warning(f"Valor 'flMO' no válido para '{stname}'. Usando 1")
 
             try:
                 flpt_val = float(row.flPT)
             except (ValueError, TypeError):
-                flpt_val = 0.0
-                logger.warning(f"Valor 'flPT' no válido para '{stname}'. Usando 0.0.")
+                flpt_val = 1
+                logger.warning(f"Valor 'flPT' no válido para '{stname}'. Usando 1")
 
             ratios_from_db[stname] = {
                 "flMO": flmo_val,
@@ -564,10 +529,8 @@ async def admrdelsel(Clase: int, Segmento: int):
     finally:
         if conn:
             conn.close()
-            logger.debug("Conexión a la base de datos cerrada.")
         if engine:
             engine.dispose()
-            logger.debug("Engine de base de datos dispuesto.")
 #==========================================================
 @app.post("/admrdelsave", response_class=PlainTextResponse)
 async def admRDelSave(clase:str="",segmento:str="",Capot_Ratio:str="",Guardabarro_Ratio:str="",Frente_Ratio:str="",Paragolpe_Alma_Ratio:str="",Paragolpe_Ctro_Ratio:str="",Capot_Ratio_PT:str="",Guardabarro_Ratio_PT:str="",Frente_Ratio_PT:str="",Paragolpe_Alma_Ratio_PT:str="",Paragolpe_Ctro_Ratio_PT:str=""):
@@ -751,14 +714,14 @@ async def admrlatsel(Clase: int, Segmento: int):
             try:
                 flmo_val = float(row.flMO)
             except (ValueError, TypeError):
-                flmo_val = 0.0
-                logger.warning(f"Valor 'flMO' no válido para '{stname}'. Usando 0.0.")
+                flmo_val = 1
+                logger.warning(f"Valor 'flMO' no válido para '{stname}'. Usando 1")
 
             try:
                 flpt_val = float(row.flPT)
             except (ValueError, TypeError):
-                flpt_val = 0.0
-                logger.warning(f"Valor 'flPT' no válido para '{stname}'. Usando 0.0.")
+                flpt_val = 1
+                logger.warning(f"Valor 'flPT' no válido para '{stname}'. Usando 1")
 
             ratios_from_db[stname] = {
                 "flMO": flmo_val,
@@ -779,10 +742,8 @@ async def admrlatsel(Clase: int, Segmento: int):
     finally:
         if conn:
             conn.close()
-            logger.debug("Conexión a la base de datos cerrada.")
         if engine:
             engine.dispose()
-            logger.debug("Engine de base de datos dispuesto.")
 #==========================================================
 @app.post("/admrlatsave", response_class=PlainTextResponse)
 async def admRLatSave(clase:str="",segmento:str="",Puerta_Del_Panel_Ratio:str="",Puerta_Tras_Panel_Ratio:str="",Zocalo_Ratio:str="",Puerta_Del_Panel_Ratio_PT:str="",Puerta_Tras_Panel_Ratio_PT:str="",Zocalo_Ratio_PT:str=""):
@@ -903,14 +864,14 @@ async def admrtrasel(Clase: int, Segmento: int):
             try:
                 flmo_val = float(row.flMO)
             except (ValueError, TypeError):
-                flmo_val = 0.0
-                logger.warning(f"Valor 'flMO' no válido para '{stname}'. Usando 0.0.")
+                flmo_val = 1
+                logger.warning(f"Valor 'flMO' no válido para '{stname}'. Usando 1.")
 
             try:
                 flpt_val = float(row.flPT)
             except (ValueError, TypeError):
-                flpt_val = 0.0
-                logger.warning(f"Valor 'flPT' no válido para '{stname}'. Usando 0.0.")
+                flpt_val = 1
+                logger.warning(f"Valor 'flPT' no válido para '{stname}'. Usando 1")
 
             ratios_from_db[stname] = {
                 "flMO": flmo_val,
@@ -931,10 +892,8 @@ async def admrtrasel(Clase: int, Segmento: int):
     finally:
         if conn:
             conn.close()
-            logger.debug("Conexión a la base de datos cerrada.")
         if engine:
-            engine.dispose()
-            logger.debug("Engine de base de datos dispuesto.")      
+            engine.dispose()   
 #==========================================================
 @app.post("/admrtrasave", response_class=PlainTextResponse)
 async def admRTraSave(clase:str="",segmento:str="",Baul_Ratio:str="",Guardabarro_Ratio:str="",Panel_Cola_Sup_Ratio:str="",Paragolpe_Ratio:str="",Porton_Ratio:str="",Baul_Ratio_PT:str="",Guardabarro_Ratio_PT:str="",Panel_Cola_Sup_Ratio_PT:str="",Paragolpe_Ratio_PT:str="",Porton_Ratio_PT:str=""):
@@ -2176,8 +2135,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(0)
         lsValuesResult.append(0)
 
-    #logger.info(f"Frente: {lsValuesResult}")
-    
+    ###LATERAL###
     if '1' in lsLateral:
         lsLateralCambiaElems,lsLateralReparaElems, lsLateralMolduraElemsDel,lsLateralMolduraElemsTra, lsLateralEspejoElecElems,lsLateralEspejoManElems,\
         lsLateralManijaElemsDel,lsLateralManijaElemsTra, lsLateralCristalElemDel, lsLateralCristalElemTra = fnGetLateralElems(lsLateral)
@@ -2279,8 +2237,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(0)
         lsValuesResult.append(0)
 
-    #logger.info(f"lateral: {lsValuesResult}")
-
+    ###TRASERO###
     if '1' in lsTrasero:
         lsTraseroCambiaElems,lsTraseroReparaElems,lsTraseroMolduraElems,\
         lsTraseroFaroExtElems,lsTraseroFaroIntElems= fnGetTraseroElems(CLASE,MARCA,MODELO,lsTrasero)
@@ -2345,9 +2302,6 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",SIN
         lsValuesResult.append(0)
         lsValuesResult.append(0)
 
-    #logger.info(f"Trasero: {lsValuesResult}")
-    
-    #ToDo: Seguir codigo
     if len(lsFrenteCambiaElems) + len(lsFrenteReparaElems) +\
        len(lsLateralCambiaElems) + len(lsLateralReparaElems) +\
        len(lsTraseroCambiaElems) + len(lsTraseroReparaElems) == 1:
@@ -3320,7 +3274,7 @@ def resumeDataBrief(intCLIENTE,fltFrente,fltLateral,fltTrasero):
     return txtValorTotal
 
 def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,FRENTE,LATERAL,TRASERO,lsValuesResultWrite):
-    logger.info (f"lsValuesResultWrite: {lsValuesResultWrite}")
+    #logger.info (f"lsValuesResultWrite: {lsValuesResultWrite}")
     bfWrite =True
     ts = datetime.datetime.now().timestamp()
 
@@ -3346,7 +3300,6 @@ def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,FRENTE,LA
                                                  trReparaPintura,trReponeElemento,trReponePintura,trReponeManoObra,
                                                  trReponeMoldura,trReponeFaroExt,trReponeFaroInt,trTotal,
                                                  Asegurado,Tercero,MObra,Pintura,Ajuste) VALUES (''' + bfValues + ');'
-    logger.info (f"bfClause: {bfClause}")
     try:
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
@@ -3389,13 +3342,3 @@ def fnAltaGama(CLASE,MARCA,MODELO):
     conn.close()
     engine.dispose()
     return bAltaGama
-
-def leer_ultimas_lineas_log(num_lineas=1):
-    try:
-        with open(LOG_FILE_NAME, 'r') as f:
-            lines = f.readlines()
-            ultimas_lineas = lines[-num_lineas:]
-            return [line.strip() for line in ultimas_lineas] 
-    except Exception as e:
-        logger.error(f"Error: LOG_FILE_NAME {e}", exc_info=True)
-        return []
