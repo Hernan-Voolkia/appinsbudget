@@ -492,40 +492,32 @@ async def admrdelsel(Clase: int, Segmento: int):
     try:
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
-        query = text("SELECT stName, flMO, flPT FROM admrdel WHERE clase = :clase AND seg = :seg")
+        query = text("SELECT stname, flmo, flpt FROM admrdel WHERE clase = :clase AND seg = :seg")
         result = conn.execute(query, {"clase": Clase, "seg": Segmento})
-        
         for row in result:
-            stname = row.stName
-            
+            stName = row.stname
             try:
-                flmo_val = float(row.flMO)
+                flmo_val = float(row.flmo)
             except (ValueError, TypeError):
                 flmo_val = 1
-                logger.warning(f"Valor 'flMO' no válido para '{stname}'. Usando 1")
+                logger.warning(f"Valor 'flMO' no válido para '{stName}'. Usando 1")
 
             try:
-                flpt_val = float(row.flPT)
+                flpt_val = float(row.flpt)
             except (ValueError, TypeError):
                 flpt_val = 1
-                logger.warning(f"Valor 'flPT' no válido para '{stname}'. Usando 1")
+                logger.warning(f"Valor 'flPT' no válido para '{stName}'. Usando 1")
 
-            ratios_from_db[stname] = {
+            ratios_from_db[stName] = {
                 "flMO": flmo_val,
                 "flPT": flpt_val
             } 
-                   
         if not ratios_from_db:
-            logger.error(f"No se encontraron valores en la tabla admvalue para clase={Clase} y seg={Segmento}.")
-        
+            logger.error(f"No se encontraron valores en la tabla admrdel para clase={Clase} y seg={Segmento}.")
         return JSONResponse(content=ratios_from_db)
-
     except Exception as e:
-        logger.error(f"Error al acceder a la base de datos 'admvalue': {e}", exc_info=True)
-        raise HTTPException(
-            status_code=500, 
-            detail="Error interno del servidor al consultar los valores."
-        )
+        logger.error(f"Error al acceder a la base de datos 'admrdel': {e}", exc_info=True)
+        raise HTTPException(status_code=500,detail="Error interno del servidor al consultar los valores.")
     finally:
         if conn:
             conn.close()
@@ -544,10 +536,9 @@ async def admRDelSave(clase:str="",segmento:str="",Capot_Ratio:str="",Guardabarr
             sql_capot = text(
                 """
                 UPDATE admrdel 
-                SET flMO = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
-                """
-            )
+                SET flmo = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
+                """)
             conn.execute(sql_capot, {
                 "flmo": float(Capot_Ratio.replace(',', '.')) if Capot_Ratio else 0.0,
                 "seg": p_seg,
@@ -558,10 +549,9 @@ async def admRDelSave(clase:str="",segmento:str="",Capot_Ratio:str="",Guardabarr
             sql_guardabarro = text(
                 """
                 UPDATE admrdel 
-                SET flMO = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
-                """
-            )
+                SET flmo = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
+                """)
             conn.execute(sql_guardabarro, {
                 "flmo": float(Guardabarro_Ratio.replace(',', '.')) if Guardabarro_Ratio else 0.0,
                 "seg": p_seg,
@@ -572,10 +562,9 @@ async def admRDelSave(clase:str="",segmento:str="",Capot_Ratio:str="",Guardabarr
             sql_frente = text(
                 """
                 UPDATE admrdel 
-                SET flMO = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
-                """
-            )
+                SET flmo = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
+                """)
             conn.execute(sql_frente, {
                 "flmo": float(Frente_Ratio.replace(',', '.')) if Frente_Ratio else 0.0,
                 "seg": p_seg,
@@ -586,10 +575,9 @@ async def admRDelSave(clase:str="",segmento:str="",Capot_Ratio:str="",Guardabarr
             sql_frente = text(
                 """
                 UPDATE admrdel 
-                SET flMO = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
-                """
-            )
+                SET flmo = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
+                """)
             conn.execute(sql_frente, {
                 "flmo": float(Paragolpe_Alma_Ratio.replace(',', '.')) if Paragolpe_Alma_Ratio else 0.0,
                 "seg": p_seg,
@@ -600,10 +588,9 @@ async def admRDelSave(clase:str="",segmento:str="",Capot_Ratio:str="",Guardabarr
             sql_frente = text(
                 """
                 UPDATE admrdel 
-                SET flMO = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
-                """
-            )
+                SET flmo = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
+                """)
             conn.execute(sql_frente, {
                 "flmo": float(Paragolpe_Ctro_Ratio.replace(',', '.')) if Paragolpe_Ctro_Ratio else 0.0,
                 "seg": p_seg,
@@ -615,9 +602,8 @@ async def admRDelSave(clase:str="",segmento:str="",Capot_Ratio:str="",Guardabarr
                 """
                 UPDATE admrdel 
                 SET flPT = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
-                """
-            )
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
+                """)
             conn.execute(sql_capot, {
                 "flpt": float(Capot_Ratio_PT.replace(',', '.')) if Capot_Ratio_PT else 0.0,
                 "seg": p_seg,
@@ -629,9 +615,8 @@ async def admRDelSave(clase:str="",segmento:str="",Capot_Ratio:str="",Guardabarr
                 """
                 UPDATE admrdel 
                 SET flPT = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
-                """
-            )
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
+                """)
             conn.execute(sql_guardabarro, {
                 "flpt": float(Guardabarro_Ratio_PT.replace(',', '.')) if Guardabarro_Ratio_PT else 0.0,
                 "seg": p_seg,
@@ -643,9 +628,8 @@ async def admRDelSave(clase:str="",segmento:str="",Capot_Ratio:str="",Guardabarr
                 """
                 UPDATE admrdel 
                 SET flPT = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
-                """
-            )
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
+                """)
             conn.execute(sql_frente, {
                 "flpt": float(Frente_Ratio_PT.replace(',', '.')) if Frente_Ratio_PT else 0.0,
                 "seg": p_seg,
@@ -657,9 +641,8 @@ async def admRDelSave(clase:str="",segmento:str="",Capot_Ratio:str="",Guardabarr
                 """
                 UPDATE admrdel 
                 SET flPT = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
-                """
-            )
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
+                """)
             conn.execute(sql_frente, {
                 "flpt": float(Paragolpe_Alma_Ratio_PT.replace(',', '.')) if Paragolpe_Alma_Ratio_PT else 0.0,
                 "seg": p_seg,
@@ -671,22 +654,19 @@ async def admRDelSave(clase:str="",segmento:str="",Capot_Ratio:str="",Guardabarr
                 """
                 UPDATE admrdel 
                 SET flPT = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
-                """
-            )
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
+                """)
             conn.execute(sql_frente, {
                 "flpt": float(Paragolpe_Ctro_Ratio_PT.replace(',', '.')) if Paragolpe_Ctro_Ratio_PT else 0.0,
                 "seg": p_seg,
                 "clase": p_clase,
                 "stname": "PARAGOLPE_CTRO" 
             })
-
         except ValueError as e:
             bfMsg = f"Error: Uno de los valores no es un número válido. {e}"
         except Exception as e:
             bfMsg =f"Error de base de datos: {e}"
             raise    
-       
     return bfMsg
 ##############################################################
 # Reporte de Ratios Lateral
@@ -705,40 +685,30 @@ async def admrlatsel(Clase: int, Segmento: int):
     try:
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
-        query = text("SELECT stName, flMO, flPT FROM admrlat WHERE clase = :clase AND seg = :seg")
+        query = text("SELECT stname, flmo, flpt FROM admrlat WHERE clase = :clase AND seg = :seg")
         result = conn.execute(query, {"clase": Clase, "seg": Segmento})
-        
         for row in result:
-            stname = row.stName
-            
+            stname = row.stname
             try:
-                flmo_val = float(row.flMO)
+                flmo_val = float(row.flmo)
             except (ValueError, TypeError):
                 flmo_val = 1
-                logger.warning(f"Valor 'flMO' no válido para '{stname}'. Usando 1")
-
+                logger.warning(f"Valor 'flmo' no válido para '{stname}'. Usando 1")
             try:
-                flpt_val = float(row.flPT)
+                flpt_val = float(row.flpt)
             except (ValueError, TypeError):
                 flpt_val = 1
-                logger.warning(f"Valor 'flPT' no válido para '{stname}'. Usando 1")
-
+                logger.warning(f"Valor 'flpt' no válido para '{stname}'. Usando 1")
             ratios_from_db[stname] = {
                 "flMO": flmo_val,
                 "flPT": flpt_val
             } 
-                   
         if not ratios_from_db:
-            logger.error(f"No se encontraron valores en la tabla admvalue para clase={Clase} y seg={Segmento}.")
-        
+            logger.error(f"No se encontraron valores en la tabla admrlat para clase={Clase} y seg={Segmento}.")
         return JSONResponse(content=ratios_from_db)
-
     except Exception as e:
-        logger.error(f"Error al acceder a la base de datos 'admvalue': {e}", exc_info=True)
-        raise HTTPException(
-            status_code=500, 
-            detail="Error interno del servidor al consultar los valores."
-        )
+        logger.error(f"Error al acceder a la base de datos 'admrlat': {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Error interno del servidor al consultar los valores.")
     finally:
         if conn:
             conn.close()
@@ -757,8 +727,8 @@ async def admRLatSave(clase:str="",segmento:str="",Puerta_Del_Panel_Ratio:str=""
             sql_str = text(
                 """
                 UPDATE admrlat 
-                SET flMO = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                SET flmo = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql_str, {
                 "flmo": float(Puerta_Del_Panel_Ratio.replace(',', '.')) if Puerta_Del_Panel_Ratio else 0.0,
@@ -770,8 +740,8 @@ async def admRLatSave(clase:str="",segmento:str="",Puerta_Del_Panel_Ratio:str=""
             sql_str = text(
                 """
                 UPDATE admrlat 
-                SET flMO = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                SET flmo = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql_str, {
                 "flmo": float(Puerta_Tras_Panel_Ratio.replace(',', '.')) if Puerta_Tras_Panel_Ratio else 0.0,
@@ -783,8 +753,8 @@ async def admRLatSave(clase:str="",segmento:str="",Puerta_Del_Panel_Ratio:str=""
             sql_str = text(
                 """
                 UPDATE admrlat 
-                SET flMO = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                SET flmo = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql_str, {
                 "flmo": float(Zocalo_Ratio.replace(',', '.')) if Zocalo_Ratio else 0.0,
@@ -796,10 +766,9 @@ async def admRLatSave(clase:str="",segmento:str="",Puerta_Del_Panel_Ratio:str=""
             sql_str = text(
                 """
                 UPDATE admrlat 
-                SET flPT = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
-                """
-            )
+                SET flpt = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
+                """)
             conn.execute(sql_str, {
                 "flpt": float(Puerta_Del_Panel_Ratio_PT.replace(',', '.')) if Puerta_Del_Panel_Ratio_PT else 0.0,
                 "seg": p_seg,
@@ -810,8 +779,8 @@ async def admRLatSave(clase:str="",segmento:str="",Puerta_Del_Panel_Ratio:str=""
             sql_str = text(
                 """
                 UPDATE admrlat 
-                SET flPT = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                SET flpt = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql_str, {
                 "flpt": float(Puerta_Tras_Panel_Ratio_PT.replace(',', '.')) if Puerta_Tras_Panel_Ratio_PT else 0.0,
@@ -823,8 +792,8 @@ async def admRLatSave(clase:str="",segmento:str="",Puerta_Del_Panel_Ratio:str=""
             sql_str = text(
                 """
                 UPDATE admrlat 
-                SET flPT = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                SET flpt = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql_str, {
                 "flpt": float(Zocalo_Ratio_PT.replace(',', '.')) if Zocalo_Ratio_PT else 0.0,
@@ -855,45 +824,33 @@ async def admrtrasel(Clase: int, Segmento: int):
     try:
         engine = db.create_engine(cDBConnValue)
         conn = engine.connect()
-        query = text("SELECT stName, flMO, flPT FROM admrtra WHERE clase = :clase AND seg = :seg")
+        query = text("SELECT stname, flmo, flpt FROM admrtra WHERE clase = :clase AND seg = :seg")
         result = conn.execute(query, {"clase": Clase, "seg": Segmento})
-        
         for row in result:
-            stname = row.stName
-            
+            stname = row.stname
             try:
-                flmo_val = float(row.flMO)
+                flmo_val = float(row.flmo)
             except (ValueError, TypeError):
                 flmo_val = 1
-                logger.warning(f"Valor 'flMO' no válido para '{stname}'. Usando 1.")
-
+                logger.warning(f"Valor 'flmo' no válido para '{stname}'. Usando 1.")
             try:
-                flpt_val = float(row.flPT)
+                flpt_val = float(row.flpt)
             except (ValueError, TypeError):
                 flpt_val = 1
-                logger.warning(f"Valor 'flPT' no válido para '{stname}'. Usando 1")
-
+                logger.warning(f"Valor 'flpt' no válido para '{stname}'. Usando 1")
             ratios_from_db[stname] = {
                 "flMO": flmo_val,
                 "flPT": flpt_val
             } 
-                   
         if not ratios_from_db:
-            logger.error(f"No se encontraron valores en la tabla admvalue para clase={Clase} y seg={Segmento}.")
-        
+            logger.error(f"No se encontraron valores en la tabla admrtra para clase={Clase} y seg={Segmento}.")
         return JSONResponse(content=ratios_from_db)
-
     except Exception as e:
-        logger.error(f"Error al acceder a la base de datos 'admvalue': {e}", exc_info=True)
-        raise HTTPException(
-            status_code=500, 
-            detail="Error interno del servidor al consultar los valores."
-        )
+        logger.error(f"Error al acceder a la base de datos 'admrtra': {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Error interno del servidor al consultar los valores.")
     finally:
-        if conn:
-            conn.close()
-        if engine:
-            engine.dispose()   
+        if conn:   conn.close()
+        if engine: engine.dispose()   
 #==========================================================
 @app.post("/admrtrasave", response_class=PlainTextResponse)
 async def admRTraSave(clase:str="",segmento:str="",Baul_Ratio:str="",Guardabarro_Ratio:str="",Panel_Cola_Sup_Ratio:str="",Paragolpe_Ratio:str="",Porton_Ratio:str="",Baul_Ratio_PT:str="",Guardabarro_Ratio_PT:str="",Panel_Cola_Sup_Ratio_PT:str="",Paragolpe_Ratio_PT:str="",Porton_Ratio_PT:str=""):
@@ -907,8 +864,8 @@ async def admRTraSave(clase:str="",segmento:str="",Baul_Ratio:str="",Guardabarro
             sql = text(
                 """
                 UPDATE admrtra 
-                SET flMO = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                SET flmo = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql, {
                 "flmo": float(Baul_Ratio.replace(',', '.')) if Baul_Ratio else 0.0,
@@ -920,8 +877,8 @@ async def admRTraSave(clase:str="",segmento:str="",Baul_Ratio:str="",Guardabarro
             sql = text(
                 """
                 UPDATE admrtra 
-                SET flMO = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                SET flmo = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql, {
                 "flmo": float(Guardabarro_Ratio.replace(',', '.')) if Guardabarro_Ratio else 0.0,
@@ -933,8 +890,8 @@ async def admRTraSave(clase:str="",segmento:str="",Baul_Ratio:str="",Guardabarro
             sql = text(
                 """
                 UPDATE admrtra 
-                SET flMO = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                SET flmo = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql, {
                 "flmo": float(Panel_Cola_Sup_Ratio.replace(',', '.')) if Panel_Cola_Sup_Ratio else 0.0,
@@ -946,8 +903,8 @@ async def admRTraSave(clase:str="",segmento:str="",Baul_Ratio:str="",Guardabarro
             sql = text(
                 """
                 UPDATE admrtra 
-                SET flMO = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                SET flmo = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql, {
                 "flmo": float(Paragolpe_Ratio.replace(',', '.')) if Paragolpe_Ratio else 0.0,
@@ -959,8 +916,8 @@ async def admRTraSave(clase:str="",segmento:str="",Baul_Ratio:str="",Guardabarro
             sql = text(
                 """
                 UPDATE admrtra 
-                SET flMO = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                SET flmo = :flmo 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql, {
                 "flmo": float(Porton_Ratio.replace(',', '.')) if Porton_Ratio else 0.0,
@@ -972,8 +929,8 @@ async def admRTraSave(clase:str="",segmento:str="",Baul_Ratio:str="",Guardabarro
             sql = text(
                 """
                 UPDATE admrtra 
-                SET flPT = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                SET flpt = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql, {
                 "flpt": float(Baul_Ratio_PT.replace(',', '.')) if Baul_Ratio_PT else 0.0,
@@ -985,8 +942,8 @@ async def admRTraSave(clase:str="",segmento:str="",Baul_Ratio:str="",Guardabarro
             sql = text(
                 """
                 UPDATE admrtra 
-                SET flPT = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                SET flpt = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql, {
                 "flpt": float(Guardabarro_Ratio_PT.replace(',', '.')) if Guardabarro_Ratio_PT else 0.0,
@@ -998,8 +955,8 @@ async def admRTraSave(clase:str="",segmento:str="",Baul_Ratio:str="",Guardabarro
             sql = text(
                 """
                 UPDATE admrtra 
-                SET flPT = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                SET flpt = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql, {
                 "flpt": float(Panel_Cola_Sup_Ratio_PT.replace(',', '.')) if Panel_Cola_Sup_Ratio_PT else 0.0,
@@ -1011,8 +968,8 @@ async def admRTraSave(clase:str="",segmento:str="",Baul_Ratio:str="",Guardabarro
             sql = text(
                 """
                 UPDATE admrtra 
-                SET flPT = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                SET flpt = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql, {
                 "flpt": float(Paragolpe_Ratio_PT.replace(',', '.')) if Paragolpe_Ratio_PT else 0.0,
@@ -1024,8 +981,8 @@ async def admRTraSave(clase:str="",segmento:str="",Baul_Ratio:str="",Guardabarro
             sql = text(
                 """
                 UPDATE admrtra 
-                SET flPT = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stName = :stname
+                SET flpt = :flpt 
+                WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql, {
                 "flpt": float(Porton_Ratio_PT.replace(',', '.')) if Porton_Ratio_PT else 0.0,
@@ -2615,30 +2572,27 @@ def fnReparaTrasero(inSEG,inCOD_CLASE,lsRepara):
         try:        
             engine = db.create_engine(cDBConnValue)
             conn = engine.connect()
-            query = text("SELECT flMO, flPT FROM admrtra WHERE seg = :seg  AND clase = :clase AND stName LIKE :name")
+            query = text("SELECT flmo, flpt FROM admrtra WHERE seg = :seg  AND clase = :clase AND stname LIKE :name")
             item_con_wildcards = f"%{item}%"
             result = conn.execute(query, {"seg": int(inSEG), "clase": int(inCOD_CLASE), "name": item_con_wildcards})
             for row in result:
                 try:
-                    flmo_val = float(row.flMO)
+                    flmo_val = float(row.flmo)
                 except (ValueError, TypeError):
                     flmo_val = 1
-                    logger.warning(f"Valor 'flMO' no válido para '{item}'. Usando 1")
+                    logger.warning(f"Valor 'flmo' no válido para '{item}'. Usando 1")
                 try:
-                    flpt_val = float(row.flPT)
+                    flpt_val = float(row.flpt)
                 except (ValueError, TypeError):
                     flpt_val = 1
-                    logger.warning(f"Valor 'flPT' no válido para '{item}'. Usando 1")
+                    logger.warning(f"Valor 'flpt' no válido para '{item}'. Usando 1")
                 flVALOR_MO_MEAN     = np.round(flmo_val * float(param.bfMObra),2) 
                 flCANT_HS_PINT_MEAN = np.round(flpt_val * float(param.bfMObra),2) 
                 flAverage = np.round((flVALOR_MO_MEAN + flCANT_HS_PINT_MEAN),2)
                 lsReparaAve.append(flAverage)
         except Exception as e:
-            logger.error(f"Error al acceder a la base de datos 'admvalue': {e}", exc_info=True)
-            raise HTTPException(
-                status_code=500, 
-                detail="Error interno del servidor al consultar los valores."
-            )
+            logger.error(f"Error al acceder a la base de datos 'admrtra': {e}", exc_info=True)
+            raise HTTPException(status_code=500, detail="Error interno del servidor al consultar los valores.")
         finally:
             if conn:   conn.close()
             if engine: engine.dispose()                
@@ -2785,30 +2739,27 @@ def fnReparaFrente(inSEG,inCOD_CLASE,lsRepara):
         try:        
             engine = db.create_engine(cDBConnValue)
             conn = engine.connect()
-            query = text("SELECT flMO, flPT FROM admrdel WHERE seg = :seg  AND clase = :clase AND stName LIKE :name")
+            query = text("SELECT flmo, flpt FROM admrdel WHERE seg = :seg  AND clase = :clase AND stname LIKE :name")
             item_con_wildcards = f"%{item}%"
             result = conn.execute(query, {"seg": int(inSEG), "clase": int(inCOD_CLASE), "name": item_con_wildcards})
             for row in result:
                 try:
-                    flmo_val = float(row.flMO)
+                    flmo_val = float(row.flmo)
                 except (ValueError, TypeError):
                     flmo_val = 1
-                    logger.warning(f"Valor 'flMO' no válido para '{item}'. Usando 1")
+                    logger.warning(f"Valor 'flmo' no válido para '{item}'. Usando 1")
                 try:
-                    flpt_val = float(row.flPT)
+                    flpt_val = float(row.flpt)
                 except (ValueError, TypeError):
                     flpt_val = 1
-                    logger.warning(f"Valor 'flPT' no válido para '{item}'. Usando 1")
+                    logger.warning(f"Valor 'flpt' no válido para '{item}'. Usando 1")
                 flVALOR_MO_MEAN     = np.round(flmo_val * float(param.bfMObra),2) 
                 flCANT_HS_PINT_MEAN = np.round(flpt_val * float(param.bfMObra),2) 
                 flAverage = np.round((flVALOR_MO_MEAN + flCANT_HS_PINT_MEAN),2)
                 lsReparaAve.append(flAverage)
         except Exception as e:
-            logger.error(f"Error al acceder a la base de datos 'admvalue': {e}", exc_info=True)
-            raise HTTPException(
-                status_code=500, 
-                detail="Error interno del servidor al consultar los valores."
-            )
+            logger.error(f"Error al acceder a la base de datos 'admrdel': {e}", exc_info=True)
+            raise HTTPException(status_code=500,detail="Error interno del servidor al consultar los valores.")
         finally:
             if conn:   conn.close()
             if engine: engine.dispose()                
@@ -2995,30 +2946,27 @@ def fnReparaLateral(inSEG,inCOD_CLASE,lsRepara):
         try:        
             engine = db.create_engine(cDBConnValue)
             conn = engine.connect()
-            query = text("SELECT flMO, flPT FROM admrlat WHERE seg = :seg  AND clase = :clase AND stName LIKE :name")
+            query = text("SELECT flmo, flpt FROM admrlat WHERE seg = :seg  AND clase = :clase AND stname LIKE :name")
             item_con_wildcards = f"%{item}%"
             result = conn.execute(query, {"seg": int(inSEG), "clase": int(inCOD_CLASE), "name": item_con_wildcards})
             for row in result:
                 try:
-                    flmo_val = float(row.flMO)
+                    flmo_val = float(row.flmo)
                 except (ValueError, TypeError):
                     flmo_val = 1
-                    logger.warning(f"Valor 'flMO' no válido para '{item}'. Usando 1")
+                    logger.warning(f"Valor 'flmo' no válido para '{item}'. Usando 1")
                 try:
-                    flpt_val = float(row.flPT)
+                    flpt_val = float(row.flpt)
                 except (ValueError, TypeError):
                     flpt_val = 1
-                    logger.warning(f"Valor 'flPT' no válido para '{item}'. Usando 1")
+                    logger.warning(f"Valor 'flpt' no válido para '{item}'. Usando 1")
                 flVALOR_MO_MEAN     = np.round(flmo_val * float(param.bfMObra),2) 
                 flCANT_HS_PINT_MEAN = np.round(flpt_val * float(param.bfMObra),2) 
                 flAverage = np.round((flVALOR_MO_MEAN + flCANT_HS_PINT_MEAN),2)
                 lsReparaAve.append(flAverage)
         except Exception as e:
-            logger.error(f"Error al acceder a la base de datos 'admvalue': {e}", exc_info=True)
-            raise HTTPException(
-                status_code=500, 
-                detail="Error interno del servidor al consultar los valores."
-            )
+            logger.error(f"Error al acceder a la base de datos 'admrlat': {e}", exc_info=True)
+            raise HTTPException(status_code=500,detail="Error interno del servidor al consultar los valores.")         
         finally:
             if conn:   conn.close()
             if engine: engine.dispose()                
