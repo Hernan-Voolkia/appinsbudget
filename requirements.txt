@@ -6,3 +6,5 @@ pandas
 numpy
 uvicorn
 jinja2
+streamlit
+
