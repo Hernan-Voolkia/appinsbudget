@@ -1807,7 +1807,8 @@ async def dbRead(request: Request):
     engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
     try:
-        result = conn.execute(text('''SELECT * FROM logpresupuestosV1;'''))
+        #result = conn.execute(text('''SELECT * FROM logpresupuestosV1;'''))
+        result = conn.execute(text('''SELECT id,timestamp,user,cliente,clase,marca,modelo,siniestro,frente,lateralr,trasero,frReparaPintura,frReponeElemento,frReponePintura,frReponeManoObra,frReponeFarito,frReponeFaro,frReponeFaro_Auxiliar,frReponeParabrisas,frReponeParagolpe_Rejilla,frReponeRejilla_Radiador,frTotal,ltReparaPintura,ltReponeElemento,ltReponePintura,ltReponeManoObra,ltReponeEspejoEle,ltReponeEspejoMan,ltReponeManijaDel,ltReponeManijaTra,ltReponeMolduraDel,ltReponeMolduraTra,ltReponeCristalDel,ltReponeCristalTra,ltTotal,trReparaPintura,trReponeElemento,trReponePintura,trReponeManoObra,trReponeMoldura,trReponeFaroExt,trReponeFaroInt,trTotal,Asegurado,Tercero,MObra,Pintura,Ajuste,Perito,ValorPerito FROM logpresupuestosV1;'''))
         for record in result:
             lsResult.append(record)
             lsTimeStamp.append(datetime.datetime.fromtimestamp(float(record.timestamp)).strftime('%Y-%m-%d %H:%M:%S'))
