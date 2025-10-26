@@ -22,48 +22,76 @@
         }
         label {text-align:right;font-family:'helvetica neue';font-size: 100%;}
         .vertical-text {
-            writing-mode: vertical-rl; /* Texto vertical de derecha a izquierda */
-            transform: rotate(180deg); /* Opcional: rota 180 grados para cambiar la dirección */
+            writing-mode: vertical-rl; 
+            transform: rotate(180deg);
         }
         .navbar-brand {
             margin-right: 0px; 
         }
         .tooltip-inner {
-            text-align: left; /* Alinea el texto a la izquierda */
+            text-align: left;
+            max-width: 300px !important;
+        }
+        table.dataTable thead tr {
+            background-color: #005993 !important;
+        }
+
+        table.dataTable thead tr th {
+            color: white !important;
+            border-color: #004a7c; 
+        }
+        #logtable th, 
+        #logtable td {
+            white-space: nowrap;
+        }
+        .dataTables_wrapper > .row:first-child > .col-sm-12 {
+            display: flex;           /* Activar Flexbox */
+            justify-content: flex-start; /* Alinear todo a la izquierda */
+            align-items: center;     /* Alinear verticalmente (botones y búsqueda) */
+            flex-wrap: wrap;         /* Permitir que se envuelva en pantallas pequeñas */
+            padding: 0;              /* Resetear padding si lo hubiera */
+        }
+        .dataTables_wrapper .dt-buttons {
+            float: none; /* Quitar float si lo tenía */
+            position: relative; 
+        }
+        .dataTables_wrapper .dataTables_filter {
+            float: none !important;         /* Asegurarse de que no flote a la derecha */
+            text-align: left; /* Mantener el texto "Buscar:" a la izquierda */
+            margin-left: 1.5rem; /* Mantener el espacio */
+        }
+        #custom-filters {
+            display: flex;       /* Alinear labels e inputs */
+            align-items: center; /* Alinear verticalmente */
+            margin-left: 1.5rem; /* Espacio después de la búsqueda global */
+        }
+        #custom-filters label {
+             margin-right: 0.5rem;
+             margin-left: 0.5rem;
+             white-space: nowrap; /* Evitar que "Desde:" se parta */
+             margin-bottom: 0; /* Quitar margen de form-label */
+        }
+        #custom-filters input {
+            width: auto; /* Ajustar ancho al contenido */
         }
     </style>
 </head>
 <body>
-<div class="container-fluid">
+<div class="container-fluid my-5">
     <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <a href="#" class="navbar-brand">
-            <img src="/img/favicon.ico" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
-        </a>        
         <div class="collapse navbar-collapse justify-content-center" id="navbarMenu">
             <ul class="navbar-nav mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a href="#" id="btnConsulta" class="nav-link">Consulta</a>
+                <li class="nav-item"><a href="#" id="btnConsulta" class="nav-link">Consulta</a></li>
+                <li class="nav-item"><a href="#" id="btnHistorial" class="nav-link fw-bold">Historial</a></li>
+                <li class="nav-item dropdown">   
+                    <a href="#" id="menuLink1" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Params</a>
+                    <ul class="dropdown-menu">
+                        <li class="pure-menu-item"></li><a href="#" id="btnParams" class="pure-menu-link">Generales</a></li>
+                        <li class="pure-menu-item"><a href="#" id="btnDelRatio" class="pure-menu-link">Delantero</a></li>
+                        <li class="pure-menu-item"><a href="#" id="btnLatRatio" class="pure-menu-link">Lateral</a></li>
+                        <li class="pure-menu-item"><a href="#" id="btnTraRatio" class="pure-menu-link">Trasero</a></li>
+                    </ul>
                 </li>
-                <li class="nav-item">
-                    <a href="#" id="btnHistorial" class="nav-link fw-bold">Historial</a>
-                </li>
-                    <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover pure-menu-selected">
-                        <a href="#" id="menuLink1" class="pure-menu-link">Params</a>
-                        <ul class="pure-menu-children">
-                            <li class="pure-menu-item"></li>
-                                <a href="#" id="btnParams" class="pure-menu-link">Generales</a>
-                            </li>
-                            <li class="pure-menu-item">
-                                <a href="#" id="btnDelRatio" class="pure-menu-link">Delantero</a>
-                            </li>
-                            <li class="pure-menu-item">
-                                <a href="#" id="btnLatRatio" class="pure-menu-link">Lateral</a>
-                            </li>
-                            <li class="pure-menu-item">
-                                <a href="#" id="btnTraRatio" class="pure-menu-link">Trasero</a>
-                            </li>
-                        </ul>
-                    </li>
                 <li class="nav-item dropdown">
                     <a href="#" id="menuLink1" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Repuestos</a>
                     <ul class="dropdown-menu">
@@ -84,31 +112,50 @@
             </ul>
         </div>
     </nav>
-    <h4 style="color:#005993;text-align:left;text-align: center;">Consulta de Logs</h4>
+    <h4 style="margin-left:auto;margin-right:auto;display:block;
+               font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+               color:#005993;text-align:center; font-size: 25px;">Consulta de Evaluaciones</h4>
+    <div id="custom-filters" style="display: none;">
+        <label for="min-date" class="form-label">Desde:</label>
+        <input type="date" id="min-date" class="form-control form-control-sm">
+        <label for="max-date" class="form-label">Hasta:</label>
+        <input type="date" id="max-date" class="form-control form-control-sm">
+    </div>
     <table id="logtable" class="table table-striped table-bordered" style="width:100%">
         <thead>
             <tr>
                 <th colspan="7">Datos Básicos</th>
+                <th colspan="2">Repara Frente</th>                
+                <th colspan="11">Repone Frente y Accesorios</th>
                 <th colspan="2">Repara Lateral</th>
-                <th colspan="13">Repone Lateral + Elementos Pequeños</th>
+                <th colspan="13">Repone Lateral y Accesorios</th>
                 <th colspan="2">Repara Trasero</th>
-                <th colspan="8">Repone Trasero + Elementos Pequeños</th>
-                <th colspan="5">Parametros</th>
+                <th colspan="8">Repone Trasero y Accesorios</th>
+                <th colspan="5">Parametros Generales</th>
                 <th colspan="2">Perito</th>    
             </tr>            
             <tr>
-                <th>ID</th><th>Fecha&HoraCarga</th>
+                <!--<th>ID</th>-->
+                <th>Fecha</th>
+                <th>Hora</th>
                 <!--<th>User</th>-->
-                <th>Cliente</th>
+                <th>Tipo</th>
                 <th>Clase</th><th>Marca</th><th>Modelo</th><th>Siniestro</th>
+                <th data-toggle="ttRFDPiezas" data-placement="top" title="<p><u>Repara</u><br>Fca = Capot<br>Ffe = Frente<br><u>Guardabarro</u><br>Fgd = Derecho<br>Fgi = Izqierdo<br><u>Paragole</u><br>Fpa = Alma<br>Fpc = Centro<br></p>">D.Piezas</th>
+                <th data-toggle="ttVPPMO" data-placement="top" title="Valor Total de Reparación de Pieza, Pintura y Mano de Mano">V.PPMO</th>
+                <th data-toggle="ttRFDPiezas" data-placement="top" title="<p><u>Repone</u><br>Fca = Capot<br>Ffe = Frente<br><u>Guardabarro</u><br>Fgd = Derecho<br>Fgi = Izqierdo<br><u>Paragole</u><br>Fpa = Alma<br>Fpc = Centro<br></p>">D.Piezas</th>
+                <th>V.Piezas</th><th>V.Pint</th><th>V.MO</th>
+                <th>Farito</th><th>Faro</th><th>Faro Aux</th>
+                <th>Parabrisas</th><th>Rejilla</th><th>Radiador</th>
+                <th>Total</th>
                 <th data-toggle="ttRLDPiezas" data-placement="top" title="<p>Repara<br><u>Panel Puerta Delantera</u><br>Pdd = Derecha<br>Pdi = Izquierda<br><u>Panel Puerta Trasera</u><br>Ptd =  Derecha<br>Pti = Izquierda<br><u>Zocalo</u><br>Zd = Derecho<br>Zi = Izqierdo</p>">D.Piezas</th>
                 <th data-toggle="ttVPPMO" data-placement="top" title="Valor Total de Reparación de Pieza, Pintura y Mano de Mano">V.PPMO</th>
                 <th data-toggle="ttCLDPiezas" data-placement="top" title="<p>Repone<br><u>Panel Puerta Delantera</u><br>Pdd = Derecha<br>Pdi = Izquierda<br><u>Panel Puerta Trasera</u><br>Ptd =  Derecha<br>Pti = Izquierda<br><u>Zocalo</u><br>Zd = Derecho<br>Zi = Izqierdo</p>">D.Piezas</th>
-                <th>V.Piezas</th>
-                <th>V.Pint</th><th>V.MO</th>
+                <th>V.Piezas</th><th>V.Pint</th><th>V.MO</th>
                 <th>EspejoEle</th><th>EspejoMan</th><th>ManijaDel</th>
                 <th>ManijaTra</th><th>MolduraDel</th><th>MolduraTra</th>
-                <th>CristalDel</th><th>CristalTra</th><th>Total</th>
+                <th>CristalDel</th><th>CristalTra</th>
+                <th>Total</th>
                 <th data-toggle="ttRTDPiezas" data-placement="top" title="<p>Repara<br>B = Baul Porton</u><br>Gd = Guardabarro Derecho<br>Gi = Guardabarro Izquierdo<br>C = Panel Cola<br>P = Paragolpe</p>">D.Piezas</th>
                 <th data-toggle="ttVPPMO" data-placement="top" title="Valor Total de Reparación de Pieza, Pintura y Mano de Mano">V.PPMO</th>
                 <th  data-toggle="ttCTDPiezas" data-placement="top" title="<p>Repone<br>B = Baul Porton</u><br>Gd = Guardabarro Derecho<br>Gi = Guardabarro Izquierdo<br>C = Panel Cola<br>P = Paragolpe</p>">D.Piezas</th><th>V.Piezas</th><th>V.Pint</th><th>V.MO</th>
@@ -120,24 +167,19 @@
         <tbody>
             {% for record in result %}
             <tr>
-                <td>{{record[0]}}</td>
-                <td>{{restimestamp[loop.index-1]}}</td>
+                <!--<td align="center">{{record[0]}}</td>-->
+                <td>{{restimestamp[loop.index-1].split(' ')[0]}}</td>
+                <td>{{restimestamp[loop.index-1].split(' ')[1]}}</td>
                 <!--<td>{{record[2]}}</td>-->
-                <td>
-                {% if record[3] == 1 %}
-                    Asegurado
-                {% else %}
-                    Tercero
-                {% endif %}
-                </td>
+                <td>{% if record[3] == 1 %}Asegurado {% else %}Tercero{% endif %}</td>
                 <td align="center">{{record[4]}}</td>
                 <td align="center">{{record[5]}}</td>
                 <td align="center">{{record[6]}}</td>
                 <td>{{record[7]}}</td>
-                <td>{{reparalateral[loop.index-1]}}</td>
-               <td>{{record[10]}}</td>
-               <td>{{cambialateral[loop.index-1]}}</td>
+
+                <td>{{reparafrente[loop.index-1]}}</td>
                 <td>{{record[11]}}</td>
+                <td>{{cambiafrente[loop.index-1]}}</td>
                 <td>{{record[12]}}</td>
                 <td>{{record[13]}}</td>
                 <td>{{record[14]}}</td>
@@ -147,11 +189,11 @@
                 <td>{{record[18]}}</td>
                 <td>{{record[19]}}</td>
                 <td>{{record[20]}}</td>
-                <td>{{record[21]}}</td>                
-                <td>{{record[22]}}</td>
-                <td>{{reparatrasero[loop.index-1]}}</td>
+                <td>{{record[21]}}</td>
+
+                <td>{{reparalateral[loop.index-1]}}</td>
                 <td>{{record[23]}}</td>
-                <td>{{cambiatrasero[loop.index-1]}}</td>
+                <td>{{cambialateral[loop.index-1]}}</td>
                 <td>{{record[24]}}</td>
                 <td>{{record[25]}}</td>
                 <td>{{record[26]}}</td>
@@ -162,10 +204,26 @@
                 <td>{{record[31]}}</td>
                 <td>{{record[32]}}</td>
                 <td>{{record[33]}}</td>
-                <td>{{record[34]}}</td>
+                <td>{{record[34]}}</td>                
+                <td>{{record[35]}}</td>
+                <td>{{reparatrasero[loop.index-1]}}</td>
+                <td>{{record[35]}}</td>
+                <td>{{cambiatrasero[loop.index-1]}}</td>
                 <td>{{record[35]}}</td>
                 <td>{{record[36]}}</td>
                 <td>{{record[37]}}</td>
+                <td>{{record[38]}}</td>
+                <td>{{record[39]}}</td>
+                <td>{{record[41]}}</td>
+                <td>{{record[42]}}</td>
+
+                <td>{{record[43]}}</td>
+                <td>{{record[44]}}</td>
+                <td>{{record[45]}}</td>
+                <td>{{record[46]}}</td>
+                <td>{{record[47]}}</td>
+                <td>{{record[48]}}</td>
+                <td>{{record[49]}}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -175,25 +233,54 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
-<!-- DataTables Buttons JS -->
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.bootstrap5.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
 <script>
-    $(document).ready(function(){$('[data-toggle="ttCLDPiezas"]').tooltip({ html: true });});
-    $(document).ready(function(){$('[data-toggle="ttVPPMO"]').tooltip({ html: true });});
-    $(document).ready(function(){$('[data-toggle="ttRLDPiezas"]').tooltip({ html: true });});
-    $(document).ready(function(){$('[data-toggle="ttRTDPiezas"]').tooltip({ html: true });});
-    $(document).ready(function(){$('[data-toggle="ttCTDPiezas"]').tooltip({ html: true });});
+    $(document).ready(function(){
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-toggle="ttCLDPiezas"], [data-toggle="ttVPPMO"], [data-toggle="ttRFDPiezas"], [data-toggle="ttRLDPiezas"], [data-toggle="ttRTDPiezas"], [data-toggle="ttCTDPiezas"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl, { html: true, placement: 'top' })
+        })
+    });
+    
     $(document).ready(function () {
-        $('#logtable').DataTable({
+        // --- NUEVO: Registrar filtro de rango de fechas ---
+        // Esto se registra ANTES de inicializar la tabla.
+        $.fn.dataTable.ext.search.push(
+            function( settings, data, dataIndex ) {
+                if ( settings.nTable.id !== 'logtable' ) {
+                    return true;
+                }
+
+                var min = $('#min-date').val();
+                var max = $('#max-date').val();
+                var date = data[0].trim();
+                if (( min === "" && max === "" )  || ( min === "" && date <= max ) || 
+                    ( min <= date && max === "" ) || ( min <= date && date <= max )
+                ) {
+                    return true;
+                }
+                return false;
+            }
+        );        
+        table = $('#logtable').DataTable({
             "paging": true,
             "searching": true, 
             "ordering": true,
-            dom: 'Bfrtip', 
-            buttons: [ {extend: 'csvHtml5', text: 'Exportar a CSV'},
-                       {extend: 'excelHtml5', text: 'Exportar a Excel'}],            
+            "pageLength": 10,
+            "scrollX": true,
+            "initComplete": function(settings, json) {
+                $(this).DataTable().columns.adjust();
+            },            
+            dom: "<'row'<'col-sm-12'Bf>>" + 
+                 "<'row'<'col-sm-12'tr>>" + 
+                 "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            buttons: [
+                {extend: 'csvHtml5', text: 'Exportar a CSV', className: 'btn btn-secondary btn-sm'},
+                {extend: 'excelHtml5', text: 'Exportar a Excel', className: 'btn btn-success btn-sm'}
+            ],
             "language": {
                 decimal: "",
                 emptyTable: "No hay información",
@@ -216,8 +303,12 @@
                 aria: {
                     sortAscending: ": activar para ordenar la columna de manera ascendente",
                     sortDescending: ": activar para ordenar la columna de manera descendente"
-                }
+                      }
                         },
+        });
+        $("#custom-filters").appendTo(".dataTables_wrapper > .row:first-child > .col-sm-12").show();
+        $('#min-date, #max-date').on('change', function() {
+            table.draw();
         });
     });
     document.getElementById("btnConsulta").addEventListener("click", function(event) {
