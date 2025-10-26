@@ -78,7 +78,7 @@
 </head>
 <body>
 <div class="container-fluid my-5">
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
+    <nav class="navbar navbar-expand-md navbar-light">
         <div class="collapse navbar-collapse justify-content-center" id="navbarMenu">
             <ul class="navbar-nav mb-2 mb-lg-0">
                 <li class="nav-item"><a href="#" id="btnConsulta" class="nav-link">Consulta</a></li>
@@ -146,7 +146,7 @@
                 <th data-toggle="ttRFDPiezas" data-placement="top" title="<p><u>Repone</u><br>Fca = Capot<br>Ffe = Frente<br><u>Guardabarro</u><br>Fgd = Derecho<br>Fgi = Izqierdo<br><u>Paragole</u><br>Fpa = Alma<br>Fpc = Centro<br></p>">D.Piezas</th>
                 <th>V.Piezas</th><th>V.Pint</th><th>V.MO</th>
                 <th>Farito</th><th>Faro</th><th>Faro Aux</th>
-                <th>Parabrisas</th><th>Rejilla</th><th>Radiador</th>
+                <th>Parabrisas</th><th>Rej.Paragolpe</th><th>Rej.Radiador</th>
                 <th>Total</th>
                 <th data-toggle="ttRLDPiezas" data-placement="top" title="<p>Repara<br><u>Panel Puerta Delantera</u><br>Pdd = Derecha<br>Pdi = Izquierda<br><u>Panel Puerta Trasera</u><br>Ptd =  Derecha<br>Pti = Izquierda<br><u>Zocalo</u><br>Zd = Derecho<br>Zi = Izqierdo</p>">D.Piezas</th>
                 <th data-toggle="ttVPPMO" data-placement="top" title="Valor Total de Reparación de Pieza, Pintura y Mano de Mano">V.PPMO</th>
@@ -192,8 +192,9 @@
                 <td>{{record[21]}}</td>
 
                 <td>{{reparalateral[loop.index-1]}}</td>
-                <td>{{record[23]}}</td>
+                <td>{{record[22]}}</td>
                 <td>{{cambialateral[loop.index-1]}}</td>
+                <td>{{record[23]}}</td>
                 <td>{{record[24]}}</td>
                 <td>{{record[25]}}</td>
                 <td>{{record[26]}}</td>
@@ -203,17 +204,16 @@
                 <td>{{record[30]}}</td>
                 <td>{{record[31]}}</td>
                 <td>{{record[32]}}</td>
-                <td>{{record[33]}}</td>
-                <td>{{record[34]}}</td>                
-                <td>{{record[35]}}</td>
+                <td>{{record[33]}}</td>                
+                <td>{{record[34]}}</td>
                 <td>{{reparatrasero[loop.index-1]}}</td>
                 <td>{{record[35]}}</td>
                 <td>{{cambiatrasero[loop.index-1]}}</td>
-                <td>{{record[35]}}</td>
                 <td>{{record[36]}}</td>
                 <td>{{record[37]}}</td>
                 <td>{{record[38]}}</td>
                 <td>{{record[39]}}</td>
+                <td>{{record[40]}}</td>
                 <td>{{record[41]}}</td>
                 <td>{{record[42]}}</td>
 
