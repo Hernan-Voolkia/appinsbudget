@@ -1799,7 +1799,8 @@ async def dbRead(request: Request):
     lsCambiaLateral = []
     lsReparaFrente  = []
     lsCambiaFrente  = []
-    context = {"request": request,"result":'',"timestamp":'',
+    context = {"request": request,"result":'',"restimestamp":'',
+               "reparafrente":'',"cambiafrente":'',
                "reparatrasero":'',"cambiatrasero":'',
                "reparalateral":'',"cambialateral":''}
     
@@ -1810,12 +1811,12 @@ async def dbRead(request: Request):
         for record in result:
             lsResult.append(record)
             lsTimeStamp.append(datetime.datetime.fromtimestamp(float(record.timestamp)).strftime('%Y-%m-%d %H:%M:%S'))
+            lsReparaFrente.append(fnRepFrente(record.frente))
+            lsCambiaFrente.append(fnCmbFrente(record.frente))
             lsReparaTrasero.append(fnRepTrasero(record.trasero))
             lsCambiaTrasero.append(fnCmbTrasero(record.trasero))
             lsReparaLateral.append(fnRepLateral(record.lateralr))
             lsCambiaLateral.append(fnCmbLateral(record.lateralr))
-            #lsReparaFrente.append(fnRepLateral(record.frente))
-            #lsCambiaFrente.append(fnCmbLateral(record.frente))
 
     except exc.SQLAlchemyError as e:
         bfValue = 'dbInsertAdminValue Error: '+str(e)
@@ -1824,12 +1825,13 @@ async def dbRead(request: Request):
     engine.dispose()
     context["result"] = lsResult
     context["restimestamp"]  = lsTimeStamp
+    context["reparafrente"]  = lsReparaFrente
+    context["cambiafrente"]  = lsCambiaFrente
     context["reparatrasero"] = lsReparaTrasero
     context["cambiatrasero"] = lsCambiaTrasero
     context["reparalateral"] = lsReparaLateral
     context["cambialateral"] = lsCambiaLateral
-    #context["reparafrente"]  = lsReparaFrente
-    #context["cambiafrente"]  = lsCambiaFrente
+    logger.info(context)
 
     return templates.TemplateResponse("readlog.html", context)
 
@@ -1929,6 +1931,56 @@ def fnCmbLateral(input):
                 bfDisplay += 'Zd'
             elif indice == cPosZOCALOCambiaIzq:
                 bfDisplay += 'Zi'
+    return bfDisplay
+
+def fnRepFrente(input):
+    valores = input.split('-')
+    cPosCapot=1
+    cPosFrente=9
+    cPosGuardabarro_Der=11
+    cPosGuardabarro_Izq=12
+    cPosParagolpe_Alma=15
+    cPosParagolpe_Centro=17
+    bfDisplay = ''
+    for indice, valor in enumerate(valores):
+        if valor == '1':
+            if indice == cPosCapot:
+                bfDisplay += 'Fca'
+            elif indice == cPosFrente:
+                bfDisplay += 'Ffe'
+            elif indice == cPosGuardabarro_Der:
+                bfDisplay += 'Fgd'
+            elif indice == cPosGuardabarro_Izq:
+                bfDisplay += 'Fgi'
+            elif indice == cPosParagolpe_Alma:
+                bfDisplay += 'Fpa'
+            elif indice == cPosParagolpe_Centro:
+                bfDisplay += 'Fpc'
+    return bfDisplay
+
+def fnCmbFrente(input):
+    valores = input.split('-')
+    cPosCapot=0
+    cPosFrente=8
+    cPosGuardabarro_Der=10
+    cPosGuardabarro_Izq=12    
+    cPosParagolpe_Alma=14
+    cPosParagolpe_Centro=16
+    bfDisplay = ''
+    for indice, valor in enumerate(valores):
+        if valor == '1':
+            if indice == cPosCapot:
+                bfDisplay += 'Ffa'
+            elif indice == cPosFrente:
+                bfDisplay += 'Ffe'
+            elif indice == cPosGuardabarro_Der:
+                bfDisplay += 'Fgd'
+            elif indice == cPosGuardabarro_Izq:
+                bfDisplay += 'Fgi'
+            elif indice == cPosParagolpe_Alma:
+                bfDisplay += 'Fpa'
+            elif indice == cPosParagolpe_Centro:
+                bfDisplay += 'Fpc'
     return bfDisplay
 
 @app.post("/search", response_class=PlainTextResponse)
