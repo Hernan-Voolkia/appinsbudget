@@ -1831,7 +1831,6 @@ async def dbRead(request: Request):
     context["cambiatrasero"] = lsCambiaTrasero
     context["reparalateral"] = lsReparaLateral
     context["cambialateral"] = lsCambiaLateral
-    logger.info(context)
 
     return templates.TemplateResponse("readlog.html", context)
 
@@ -1970,7 +1969,7 @@ def fnCmbFrente(input):
     for indice, valor in enumerate(valores):
         if valor == '1':
             if indice == cPosCapot:
-                bfDisplay += 'Ffa'
+                bfDisplay += 'Fca'
             elif indice == cPosFrente:
                 bfDisplay += 'Ffe'
             elif indice == cPosGuardabarro_Der:
@@ -2989,7 +2988,6 @@ def fnFaritoFrente(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 ###LATERAL############################################################################################
 def fnReparaLateral(inSEG,inCOD_CLASE,lsRepara):
     ###ToDo:Se necesita separar en gama alta y media?     
-    ###ToDo:Se necesita separar en gama alta y media?     
     lsReparaAve = []
     flAverage = 0
     for index, item in enumerate(lsRepara):
@@ -3274,7 +3272,6 @@ def resumeDataBrief(intCLIENTE,fltFrente,fltLateral,fltTrasero):
     return txtValorTotal
 
 def fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,FRENTE,LATERAL,TRASERO,lsValuesResultWrite):
-    #logger.info (f"lsValuesResultWrite: {lsValuesResultWrite}")
     bfWrite =True
     ts = datetime.datetime.now().timestamp()
 
