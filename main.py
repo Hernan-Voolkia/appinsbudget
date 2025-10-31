@@ -28,12 +28,33 @@ import dbstatus
 warnings.filterwarnings("ignore")
 np.set_printoptions(suppress=True)
 
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s',
-                    handlers=[logging.StreamHandler(sys.stdout)]
-                   )
-logger = logging.getLogger(__name__)
+#logging.basicConfig(level=logging.INFO,format='%(asctime)s - %(levelname)s - %(message)s',handlers=[logging.StreamHandler(sys.stdout)])
+#logger = logging.getLogger(__name__)
+def setup_explicit_logger(name):
+    """
+    Configura y devuelve un logger, asegurando que use sys.stdout y que no
+    se creen handlers duplicados.
+    """
+    # 2. Obtener el logger específico por nombre
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.INFO)
 
+    # 3. Comprobar si ya tiene handlers. Si no tiene, lo configuramos.
+    if not logger.handlers:
+        # 4. Crear el Handler para sys.stdout
+        stdout_handler = logging.StreamHandler(sys.stdout)
+
+        # 5. Definir el formato (incluyendo el nombre del logger)
+        formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
+        stdout_handler.setFormatter(formatter)
+
+        # 6. Añadir el handler al logger
+        logger.addHandler(stdout_handler)
+
+    return logger
+logger = setup_explicit_logger(__name__)
 #MARCA-MODELO
 try:
     dfModelo = pd.read_csv('./data/ClaseMarcaModelo.csv',sep=';',encoding='latin-1',decimal='.',
@@ -1807,7 +1828,6 @@ async def dbRead(request: Request):
     engine = db.create_engine(cDBConnValue)
     conn = engine.connect()
     try:
-        #result = conn.execute(text('''SELECT * FROM logpresupuestosV1;'''))
         result = conn.execute(text('''SELECT id,timestamp,user,cliente,clase,marca,modelo,siniestro,frente,lateralr,trasero,frReparaPintura,frReponeElemento,frReponePintura,frReponeManoObra,frReponeFarito,frReponeFaro,frReponeFaro_Auxiliar,frReponeParabrisas,frReponeParagolpe_Rejilla,frReponeRejilla_Radiador,frTotal,ltReparaPintura,ltReponeElemento,ltReponePintura,ltReponeManoObra,ltReponeEspejoEle,ltReponeEspejoMan,ltReponeManijaDel,ltReponeManijaTra,ltReponeMolduraDel,ltReponeMolduraTra,ltReponeCristalDel,ltReponeCristalTra,ltTotal,trReparaPintura,trReponeElemento,trReponePintura,trReponeManoObra,trReponeMoldura,trReponeFaroExt,trReponeFaroInt,trTotal,Asegurado,Tercero,MObra,Pintura,Ajuste,Perito,ValorPerito FROM logpresupuestosV1;'''))
         for record in result:
             lsResult.append(record)
@@ -1853,9 +1873,9 @@ def fnRepTrasero(input):
             elif indice+1 == cGuardabarro_IzaRep:
                 bfDisplay += 'Gi'
             elif indice+1 == cPanel_Cola_DerRep:
-                bfDisplay += 'C'
+                bfDisplay += 'Pc'
             elif indice+1 == cParagolpe_DerRep:
-                bfDisplay += 'P'
+                bfDisplay += 'Pa'
     return bfDisplay
 
 def fnCmbTrasero(input):
@@ -1863,6 +1883,7 @@ def fnCmbTrasero(input):
     cBaul_Portón_DerCam =1
     cGuardabarro_DerCam =7
     cGuardabarro_IzaCam =9
+    cLuneta             =11
     cPanel_Cola_DerCam  =13
     cParagolpe_DerCam   =15
     bfDisplay = ''
@@ -1875,10 +1896,12 @@ def fnCmbTrasero(input):
                 bfDisplay += 'Gd'
             elif indice+1 == cGuardabarro_IzaCam:
                 bfDisplay += 'Gi'
+            elif indice+1 == cLuneta:
+                bfDisplay += 'Lu'
             elif indice+1 == cPanel_Cola_DerCam:
-                bfDisplay += 'C'
+                bfDisplay += 'Pc'
             elif indice+1 == cParagolpe_DerCam:
-                bfDisplay += 'P'
+                bfDisplay += 'Pa'
     return bfDisplay
 
 def fnRepLateral(input):
@@ -1938,9 +1961,9 @@ def fnRepFrente(input):
     cPosCapot=1
     cPosFrente=9
     cPosGuardabarro_Der=11
-    cPosGuardabarro_Izq=12
-    cPosParagolpe_Alma=15
-    cPosParagolpe_Centro=17
+    cPosGuardabarro_Izq=13
+    cPosParagolpe_Alma=16
+    cPosParagolpe_Centro=18
     bfDisplay = ''
     for indice, valor in enumerate(valores):
         if valor == '1':
@@ -1964,8 +1987,8 @@ def fnCmbFrente(input):
     cPosFrente=8
     cPosGuardabarro_Der=10
     cPosGuardabarro_Izq=12    
-    cPosParagolpe_Alma=14
-    cPosParagolpe_Centro=16
+    cPosParagolpe_Alma=15
+    cPosParagolpe_Centro=17
     bfDisplay = ''
     for indice, valor in enumerate(valores):
         if valor == '1':
@@ -2654,7 +2677,6 @@ def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
     inCOD_PARTE = 2
     lsReponeAve = []
     flAverage   = 0
-    flAverageMD = 0 #BORRAR
 
     for index, item in enumerate(lsRepone):
         bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['COD_CLASE']  == inCOD_CLASE)  &
@@ -2663,19 +2685,18 @@ def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
                                                  (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']  == inCOD_PARTE)  & 
                     (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']]
 
-        flMean = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)
-        flAverage = pd.Series([flMean])
-        
-        #BORRAR
-        if   item=="BAUL"         :flAverageMD = paramal.bfBaul_Porton if isAlta else param.bfBaul_Porton
-        elif item=="PORTON"       :flAverageMD = paramal.bfBaul_Porton if isAlta else param.bfBaul_Porton
-        elif item=="GUARDABARRO"  :flAverageMD = paramal.bfGuardabarro if isAlta else param.bfGuardabarro
-        elif item=="LUNETA"       :flAverageMD = paramal.bfLuneta      if isAlta else param.bfLuneta
-        elif item=="PANELCOLACOMP":flAverageMD = paramal.bfPanel_Cola  if isAlta else param.bfPanel_Cola
-        elif item=="PANELCOLASUP" :flAverageMD = paramal.bfPanel_Sup   if isAlta else param.bfPanel_Sup
-        elif item=="PARAGOLPE"    :flAverageMD = paramal.bfParagolpe   if isAlta else param.bfParagolpe
+        flAverage = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)
+        if pd.isna(flAverage):
+            if   item=="BAUL"         :flAverage = paramal.bfBaul_Porton if isAlta else param.bfBaul_Porton
+            elif item=="PORTON"       :flAverage = paramal.bfBaul_Porton if isAlta else param.bfBaul_Porton
+            elif item=="GUARDABARRO"  :flAverage = paramal.bfGuardabarro if isAlta else param.bfGuardabarro
+            elif item=="LUNETA"       :flAverage = paramal.bfLuneta      if isAlta else param.bfLuneta
+            elif item=="PANELCOLACOMP":flAverage = paramal.bfPanel_Cola  if isAlta else param.bfPanel_Cola
+            elif item=="PANELCOLASUP" :flAverage = paramal.bfPanel_Sup   if isAlta else param.bfPanel_Sup
+            elif item=="PARAGOLPE"    :flAverage = paramal.bfParagolpe   if isAlta else param.bfParagolpe
+            if flAverage==1 or pd.isna(flAverage): logger.warning(f"Valor no valido para '{item}'")
 
-    for index, item in enumerate(lsReponeAve): lsReponeAve[index] = list(set(item))[0]
+        lsReponeAve.append(flAverage)
 
     return lsReponeAve
 
@@ -2821,7 +2842,6 @@ def fnCambiaFrente(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
     inCOD_PARTE = 1
     lsReponeAve = []
     flAverage   = 0
-    flAverageMD = 0 #BORRAR
 
     for index, item in enumerate(lsRepone):
         bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['COD_CLASE'] == inCOD_CLASE)   &
@@ -2830,18 +2850,17 @@ def fnCambiaFrente(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
                                                  (dfVALOR_REPUESTO_MO_Unif['COD_PARTE'] == inCOD_PARTE)   & 
                     (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']]
 
-        flMean = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)
-        flAverage = pd.Series([flMean])
+        flAverage = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)
+        if pd.isna(flAverage):
+            if item  =="CAPOT"         :flAverage = paramal.bfFrt_GA_Del_Capot if isAlta          else param.bfFrt_GM_Del_Capot
+            elif item=="FRENTE"        :flAverage = paramal.bfFrt_GA_Del_Frente if isAlta         else param.bfFrt_GM_Del_Frente
+            elif item=="GUARDABARRO"   :flAverage = paramal.bfFrt_GA_Del_Guardabarro if isAlta    else param.bfFrt_GM_Del_Guardabarro
+            elif item=="PARAGOLPE_ALMA":flAverage = paramal.bfFrt_GA_Del_Paragolpe_Alma if isAlta else param.bfFrt_GM_Del_Paragolpe_Alma
+            elif item=="PARAGOLPE_CTRO":flAverage = paramal.bfFrt_GA_Del_Paragolpe_Ctro if isAlta else param.bfFrt_GM_Del_Paragolpe_Ctro
+            if flAverage==1 or pd.isna(flAverage): logger.warning(f"Valor no valido para '{item}'")
 
-        #BORRAR
-        if item  =="CAPOT"         :flAverageMD = paramal.bfFrt_GA_Del_Capot if isAlta          else param.bfFrt_GM_Del_Capot
-        elif item=="FRENTE"        :flAverageMD = paramal.bfFrt_GA_Del_Frente if isAlta         else param.bfFrt_GM_Del_Frente
-        elif item=="GUARDABARRO"   :flAverageMD = paramal.bfFrt_GA_Del_Guardabarro if isAlta    else param.bfFrt_GM_Del_Guardabarro
-        elif item=="PARAGOLPE_ALMA":flAverageMD = paramal.bfFrt_GA_Del_Paragolpe_Alma if isAlta else param.bfFrt_GM_Del_Paragolpe_Alma
-        elif item=="PARAGOLPE_CTRO":flAverageMD = paramal.bfFrt_GA_Del_Paragolpe_Ctro if isAlta else param.bfFrt_GM_Del_Paragolpe_Ctro
-
-    for index, item in enumerate(lsReponeAve): lsReponeAve[index] = list(set(item))[0]
-
+        lsReponeAve.append(flAverage)
+    
     return lsReponeAve
 
 def fnCambiaPinturaFrente(inSEG,inCOD_CLASE,lsRepone):
@@ -3027,7 +3046,6 @@ def fnCambiaLateral(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
     inCOD_PARTE = 3
     lsReponeAve = []
     flAverage   = 0
-    flAverageMD = 0 #BORRAR
 
     for index, item in enumerate(lsRepone):
         bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['COD_CLASE']  == inCOD_CLASE)  &
@@ -3035,18 +3053,15 @@ def fnCambiaLateral(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
                                                  (dfVALOR_REPUESTO_MO_Unif['COD_MODELO'] == inCOD_MODELO) &
                                                  (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']  == inCOD_PARTE)  &
                     (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']]
-
-        flMean = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)
-        flAverage = pd.Series([flMean])
-
-        #BORRAR
-        if   item=="PUERTA_DEL"      :flAverageMD = paramal.bfLat_Puerta_Delantera if isAlta  else param.bfLat_Puerta_Delantera
-        elif item=="PUERTA_TRA"      :flAverageMD = paramal.bfLat_Puerta_Trasera if isAlta    else param.bfLat_Puerta_Trasera
-        elif item=="PUERTA_DEL_PANEL":flAverageMD = paramal.bfLat_Puerta_Panel_Del  if isAlta else param.bfLat_Puerta_Panel_Del
-        elif item=="PUERTA_TRA_PANEL":flAverageMD = paramal.bfLat_Puerta_Panel_Tras if isAlta else param.bfLat_Puerta_Panel_Tras
-        elif item=="ZOCALO"          :flAverageMD = paramal.bfLat_Zocalo if isAlta            else param.bfLat_Zocalo
-
-    for index, item in enumerate(lsReponeAve): lsReponeAve[index] = list(set(item))[0]
+        
+        flAverage = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)
+        if pd.isna(flAverage): 
+            if   item=="PUERTA_DEL"      :flAverage = paramal.bfLat_Puerta_Delantera if isAlta  else param.bfLat_Puerta_Delantera
+            elif item=="PUERTA_TRA"      :flAverage = paramal.bfLat_Puerta_Trasera if isAlta    else param.bfLat_Puerta_Trasera
+            elif item=="ZOCALO"          :flAverage = paramal.bfLat_Zocalo if isAlta            else param.bfLat_Zocalo
+            if flAverage==1 or pd.isna(flAverage): logger.warning(f"Valor no valido para '{item}'")
+    
+        lsReponeAve.append(flAverage)
 
     return lsReponeAve
 
