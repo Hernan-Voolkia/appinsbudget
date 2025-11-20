@@ -199,24 +199,103 @@ async def read_root():
 
 @app.post("/vh", response_class=PlainTextResponse)
 async def modelo(CLASE  : int = 0):
-    bfVH = ''
-    if   CLASE == 901: bfVH = marca.bfMarca901
-    elif CLASE == 907: bfVH = marca.bfMarca907
-    elif CLASE == 908: bfVH = marca.bfMarca908
+    bfVH = "<option id=0></option>\n"
+    bfCLASE = ''
+    marcas_top = ['CHEVROLET','CITROEN','FIAT','FORD','PEUGEOT','RENAULT','TOYOTA','VOLKSWAGEN']
+    marcas_sql_list = ", ".join([f"'{m}'" for m in marcas_top])
+                  
+    if   CLASE == 901: bfCLASE = 'SEDAN' 
+    elif CLASE == 907: bfCLASE = 'SUV'
+    elif CLASE == 900: bfCLASE = 'COUPE'        
+    elif CLASE == 910: bfCLASE = 'PICK-UP'
+
+    if bfCLASE != '':        
+        try:
+            engine = db.create_engine(cDBConnValue)
+            conn = engine.connect()
+            sql = text(f"""SELECT DISTINCT cyc_cod_marca, cyc_desc_marca 
+                        FROM clasemarcamodelo 
+                        WHERE desc_cod_clase_vehic_poliza = :tipo
+                        ORDER BY 
+                            CASE 
+                              WHEN cyc_desc_marca IN ({marcas_sql_list}) THEN 0 
+                              ELSE 1 
+                            END,
+                        cyc_desc_marca ASC
+                    """)
+            result = conn.execute(sql, {"tipo": bfCLASE})
+            for row in result:
+                cod_marca = row.cyc_cod_marca
+                desc_marca = row.cyc_desc_marca.title()
+                linea = f"<option id={cod_marca}>{desc_marca}</option>\n"
+                bfVH += linea
+        except Exception as e:
+            logger.error(f"ERROR CLASE: "+str(e))               
     return bfVH
 
 @app.post("/modelo", response_class=PlainTextResponse)
 async def modelo(CLASE:int=901, MARCA:int=0):
-    bfOptions = '<option id=0></option>'
-    if   CLASE == 901 or CLASE == 907:
-        dfModeloSearch = dfModelo.loc[(dfModelo['CLASE']==CLASE) & (dfModelo['MARCA']==MARCA)]
-    elif CLASE == 908 or CLASE == 909 or CLASE == 910 or CLASE == 911 or CLASE == 912:
-        dfModeloSearch = dfMOTO.loc[(dfMOTO['MARCA']==MARCA)]
+    bfOptions = "<option id=0></option>\n"
+    bfCLASE = ''
+                  
+    if   CLASE == 901: bfCLASE = 'SEDAN' 
+    elif CLASE == 907: bfCLASE = 'SUV'
+    elif CLASE == 900: bfCLASE = 'COUPE'        
+    elif CLASE == 910: bfCLASE = 'PICK-UP'
 
-    dfModeloSearch = dfModeloSearch.sort_values(['MODELO'], ascending=[False])
-    for index, row in dfModeloSearch.iterrows():
-        bfOptions += "<option id=" + str(row['MODELO']) + ">" + str(row['DMODELO']) + "</option>"
+    if bfCLASE != '':        
+        try:
+            engine = db.create_engine(cDBConnValue)
+            conn = engine.connect()
+            sql = text(f"""
+                        SELECT DISTINCT cyc_cod_modelo, cyc_desc_modelo 
+                        FROM clasemarcamodelo 
+                        WHERE desc_cod_clase_vehic_poliza = :tipo 
+                        AND cyc_cod_marca = :marca
+                        ORDER BY cyc_desc_modelo ASC
+                    """)
+            result = conn.execute(sql, {"tipo": bfCLASE, "marca": MARCA})
+            for row in result:
+                cod_marca = row.cyc_cod_modelo
+                desc_marca = row.cyc_desc_modelo.title()
+                linea = f"<option id={cod_marca}>{desc_marca}</option>\n"
+                bfOptions += linea
+        except Exception as e:
+            logger.error(f"ERROR CLASE: "+str(e))           
+    
+    return bfOptions
 
+@app.post("/version", response_class=PlainTextResponse)
+async def version(CLASE:int=901, MARCA:int=0, MODELO:int=0):
+    bfOptions = "<option id=0></option>\n"
+    bfCLASE = ''
+                  
+    if   CLASE == 901: bfCLASE = 'SEDAN' 
+    elif CLASE == 907: bfCLASE = 'SUV'
+    elif CLASE == 900: bfCLASE = 'COUPE'        
+    elif CLASE == 910: bfCLASE = 'PICK-UP'
+
+    if bfCLASE != '':        
+        try:
+            engine = db.create_engine(cDBConnValue)
+            conn = engine.connect()
+            sql = text(f"""
+                        SELECT DISTINCT cyc_cod_vehiculo, cyc_desc_version 
+                        FROM clasemarcamodelo 
+                        WHERE desc_cod_clase_vehic_poliza = :tipo 
+                        AND cyc_cod_marca = :marca
+                        AND cyc_cod_modelo = :modelo
+                        ORDER BY cyc_desc_version ASC
+                    """)
+            result = conn.execute(sql, {"tipo": bfCLASE, "marca": MARCA, "modelo": MODELO})
+            for row in result:
+                cod_marca = row.cyc_cod_vehiculo
+                desc_marca = row.cyc_desc_version.title()
+                linea = f"<option id={cod_marca}>{desc_marca}</option>\n"
+                bfOptions += linea
+        except Exception as e:
+            logger.error(f"ERROR CLASE: "+str(e))           
+    
     return bfOptions
 
 @app.get("/consulta", response_class=HTMLResponse)

@@ -58,17 +58,19 @@ bfHTML = """
                         <div class="pure-control-group">
                             <label for="aligned-name" style="color:#005993;text-align:left;">Cliente</label>
                             <select id="stacked-cliente" style="min-width:343px;">
-                                <option id=0></option>
+                                <option id=0 selected></option>
                                 <option id=1>ASEGURADO</option>
-                                <option id=2 selected>TERCERO</option>
+                                <option id=2>TERCERO</option>
                             </select>
                         </div>
                         <div class="pure-control-group">
                             <label for="aligned-name" style="color:#005993;text-align:left;">Clase</label>
                             <select id="stacked-clase" style="min-width:343px;" onchange="fnGetClase()">
-                                <option id=0></option>
+                                <option id=0 selected></option>
+                                <option id=900>COUPE</option>
                                 <option id=901>SEDAN</option>
                                 <option id=907>SUV</option>
+                                <option id=910>PICK-UP</option>
                                 <option id=908>MOTO</option>
                             </select>
                         </div>
@@ -80,10 +82,16 @@ bfHTML = """
                         </div>
                         <div class="pure-control-group">
                             <label for="aligned-name" style="color:#005993;text-align:left;">Modelo</label>
-                            <select id="stacked-modelo" style="min-width:343px;">
+                            <select id="stacked-modelo" style="min-width:343px;" onchange="fnGetVersion()">
                                 <option id=0></option>
                             </select>
                         </div>
+                        <div class="pure-control-group">
+                            <label for="aligned-name" style="color:#005993;text-align:left;">Version</label>
+                            <select id="stacked-version" style="min-width:343px;">
+                                <option id=0></option>
+                            </select>
+                        </div>                        
                         <div class="pure-control-group">
                             <label for="aligned-name" style="color:#005993;text-align:left;">Siniestro</label>
                             <input type="email" id="stacked-siniestro" placeholder="" style="min-width:343px;" onblur="checkLength(this)"/>
@@ -1008,7 +1016,7 @@ bfHTML = """
         var bfMarca = e.options[e.selectedIndex].id;
 
         runModelo(bfClase, bfMarca);
-    }  
+    } 
     function runModelo(bfClase, bfMarca) {
        let xhr = new XMLHttpRequest();
   
@@ -1018,6 +1026,57 @@ bfHTML = """
         xhr.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 var e = document.getElementById("stacked-modelo");
+                options = [];
+                options.push(this.responseText);
+                e.selectedIndex = 0;
+                e.style.width = "250px";
+                e.innerHTML = options; 
+            }
+        }
+        xhr.send();
+    }      
+    function fnGetVersion(){
+        var e = document.getElementById("stacked-clase");
+        var bfClase = e.options[e.selectedIndex].id;
+            if(bfClase==0){
+                alert("Se debe cargar la 'CLASE'");
+                document.getElementById("stacked-clase").focus();
+                document.getElementById("stacked-marca").selectedIndex = 0;
+                document.getElementById("stacked-modelo").selectedIndex = 0;
+                document.getElementById("stacked-version").selectedIndex = 0;
+                return;
+                }
+                
+        var e = document.getElementById("stacked-marca");
+        var bfMarca = e.options[e.selectedIndex].id;
+            if(bfMarca==0){
+                alert("Se debe cargar la 'MARCA'");
+                document.getElementById("stacked-marca").focus();
+                document.getElementById("stacked-modelo").selectedIndex = 0;
+                document.getElementById("stacked-version").selectedIndex = 0;
+                return;
+                }
+                
+        var e = document.getElementById("stacked-modelo");
+        var bfModelo = e.options[e.selectedIndex].id;                
+            if(bfModelo==0){
+                alert("Se debe cargar la 'MODELO'");
+                document.getElementById("stacked-modelo").focus();
+                document.getElementById("stacked-version").selectedIndex = 0;
+                return;
+                }                                
+
+        runVersion(bfClase, bfMarca, bfModelo);
+    }      
+    function runVersion(bfClase, bfMarca, bfModelo) {
+       let xhr = new XMLHttpRequest();
+  
+        let url = '/version?CLASE=' + bfClase + '&MARCA=' + bfMarca + '&MODELO=' + bfModelo;
+        xhr.open("POST", url, true);
+     
+        xhr.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var e = document.getElementById("stacked-version");
                 options = [];
                 options.push(this.responseText);
                 e.selectedIndex = 0;
