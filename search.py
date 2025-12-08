@@ -752,6 +752,15 @@ bfHTML = """
             return
         }    
         text = text + '&MODELO=' + e.options[e.selectedIndex].id;
+
+        var e = document.getElementById("stacked-version");
+        if(e.options[e.selectedIndex].id == 0) 
+        {
+            alert('Debe seleccionar Version');
+            e.focus(); 
+            return
+        }    
+        text = text + '&VERSION=' + e.options[e.selectedIndex].id;
             
         var e = document.getElementById("stacked-siniestro");
             text = text + '&SINIESTRO=' + e.value;
