@@ -63,9 +63,6 @@ try:
 except FileNotFoundError:
     logger.error(f"Error: dfPortonV2.csv no fue encontrado.")
 try:
-    #dfVALOR_REPUESTO_MO_Unif = pd.read_csv('./data/_dfVALOR_REPUESTO_ALL_V7.csv',sep=';',encoding='utf-8',decimal='.',parse_dates = ['FECHA'],
-    #                        dtype = {'SEG':'int8','COD_CLASE':'int16','COD_MARCA':'int8','COD_MODELO':'int8',
-    #                                'COD_PARTE':'int8','DESC_ELEM':'str','PRECIO_MEAN':'float64','VIEJO':'bool'})
     dfVALOR_REPUESTO_MO_Unif = pd.read_csv('./data/LPM_REPUESTOS_VER11_FMT_RED.csv',sep=';',encoding='utf-8',decimal='.',
                                 dtype = {'cod_vehiculo':'int32','cod_parte':'int8','cod_elem_red':'int16',
                                          'elemento':'str','precio':'float32','faro_int_ext':'int8'})     
@@ -102,46 +99,6 @@ try:
                                     'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_STD':'float64'})
 except FileNotFoundError:
     logger.error(f"Error: _dfVALOR_REPUESTO_MO&PINT_LATERALV7.csv no fue encontrado.")
-#MOLDURAS
-try:
-    dfMOLDURA = pd.read_csv('./data/MolduraValueMin.csv',sep=';',encoding='utf-8',decimal='.',
-                            dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
-                                    'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
-                                    'COD_ELEM':'int64','VALOR':'float64','VIEJO':'bool'})
-except FileNotFoundError:
-    logger.error(f"Error: MolduraValueMin.csv no fue encontrado.")
-#ESPEJO
-try:
-    dfESPEJO = pd.read_csv('./data/PuertaEspejoValueMin.csv',sep=';',encoding='utf-8',decimal='.',
-                            dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
-                                    'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
-                                    'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
-except FileNotFoundError:
-    logger.error(f"Error: PuertaEspejoValueMin.csv no fue encontrado.")
-#FARO
-try:
-    dfFARO = pd.read_csv('./data/FaroOnlyValueMin.csv',sep=';',encoding='utf-8',decimal='.',
-                        dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
-                                'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
-                                'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
-except FileNotFoundError:
-    logger.error(f"Error: FaroOnlyValueMin.csv no fue encontrado.")
-#CRISTAL
-try:
-    dfCRISTAL = pd.read_csv('./data/PuertaCristalValueMin.csv',sep=';',encoding='utf-8',decimal='.',
-                            dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
-                                    'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
-                                    'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
-except FileNotFoundError:
-    logger.error(f"Error: PuertaCristalValueMin.csv no fue encontrado.")
-#MANIJA
-try:
-    dfMANIJA = pd.read_csv('./data/PuertaManijaValueMin.csv',sep=';',encoding='utf-8',decimal='.',
-                        dtype = {'COD_CLASE':'int16','COD_MARCA':'int16','COD_MODELO':'int16',
-                                    'COD_PARTE':'int8','ID_ELEM':'int64','DESC_ELEM':'str',
-                                    'COD_ELEM':'int64','VALOR': 'float64','VIEJO':'bool'})
-except FileNotFoundError:
-    logger.error(f"Error: PuertaManijaValueMin.csv no fue encontrado.")
 #MOTOS
 try:
     dfMOTO = pd.read_csv('./data/motos.csv',sep=';',encoding='utf-8',na_values=['NA', '?'], on_bad_lines='warn',
@@ -2052,10 +2009,10 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",VER
     #ToDo: Agregar si no es numerico mensaje de error
     if CLASE.isdigit(): 
         iCLASE = int(CLASE)
-        if   CLASE == 901: bfCLASE = 'SEDAN' 
-        elif CLASE == 907: bfCLASE = 'SUV'
-        elif CLASE == 900: bfCLASE = 'COUPE'        
-        elif CLASE == 910: bfCLASE = 'PICK-UP'
+        if   iCLASE == 901: bfCLASE = 'SEDAN' 
+        elif iCLASE == 907: bfCLASE = 'SUV'
+        elif iCLASE == 900: bfCLASE = 'COUPE'        
+        elif iCLASE == 910: bfCLASE = 'PICK-UP'
 
     if MARCA.isdigit(): iMARCA = int(MARCA)
     if MODELO.isdigit():iMODELO= int(MODELO)
@@ -2079,7 +2036,6 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",VER
             flFrtValorReparaAve = np.round(sum(lsLatReparaAve),2)
 
         if len(lsFrenteCambiaElems)>0:
-            #lsLatReponeAve=fnCambiaFrente(iSEG,iCLASE,iMARCA,iMODELO,iVERSION,lsFrenteCambiaElems,isAlta)
             lsLatReponeAve=fnCambiaFrente(iVERSION,lsFrenteCambiaElems,isAlta)
             if len(lsLatReponeAve) == 0: lsLatReponeAve.append(0)
             flFrtValorReponeElem = np.round(sum(lsLatReponeAve),2)
@@ -2092,38 +2048,34 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",VER
             flFrtValorReponeMoAv = np.round(sum(lsLatReponeMoAv),2)
 
         if len(lsFrenteFaritoElemsDel)>0:
-            #lsFrenteMean = fnFaritoFrente(iCLASE,iMARCA,iMODELO,isAlta)
             lsFrenteMean = fnFaritoFrente(iVERSION,isAlta)
             if len(lsFrenteMean) == 0: lsFrenteMean.append(0)
             flFrtValorReponeFarito = np.round(lsFrenteMean[0],2)
+            if len(lsFrenteFaritoElemsDel) == 2: flFrtValorReponeFarito = flFrtValorReponeFarito * 2
 
         if len(lsFrenteFaroElemsDel)>0:
-            #lsFrenteMean = fnFaroFrente(iCLASE,iMARCA,iMODELO,isAlta)
             lsFrenteMean = fnFaroFrente(iVERSION,isAlta)
             if len(lsFrenteMean) == 0: lsFrenteMean.append(0)
             flFrtValorReponeFaro = np.round(lsFrenteMean[0],2)
+            if len(lsFrenteFaroElemsDel) == 2: flFrtValorReponeFaro = flFrtValorReponeFaro * 2
 
         if len(lsFrenteFaro_AuxiliarElemsDel)>0:
-            #if isAlta: flFrtValorReponeFaro_Auxiliar = paramal.bfFrt_GA_Del_Faro_Auxiliar
-            #else:      flFrtValorReponeFaro_Auxiliar = param.bfFrt_GM_Del_Faro_Auxiliar
             lsFrenteMean = fnFaroAuxiliarFrente(iVERSION,isAlta)
             if len(lsFrenteMean) == 0: lsFrenteMean.append(0)
             flFrtValorReponeFaro_Auxiliar = np.round(lsFrenteMean[0],2)
+            if len(lsFrenteFaro_AuxiliarElemsDel) == 2: flFrtValorReponeFaro_Auxiliar = flFrtValorReponeFaro_Auxiliar * 2
 
         if len(lsFrenteParabrisasElemsDel)>0:
-            #lsFrenteMean = fnParabrisas(iCLASE,iMARCA,iMODELO,isAlta)
             lsFrenteMean = fnParabrisas(iVERSION,isAlta)
             if len(lsFrenteMean) == 0: lsFrenteMean.append(0)
             flFrtValorReponeParabrisas = np.round(lsFrenteMean[0],2)
 
         if len(lsFrenteParagolpe_RejillaElemsDel)>0:
-            #lsFrenteMean = fnParagolpe_Rejilla(iCLASE,iMARCA,iMODELO,isAlta)
             lsFrenteMean = fnParagolpe_Rejilla(iVERSION,isAlta)
             if len(lsFrenteMean) == 0: lsFrenteMean.append(0)
             flFrtValorReponeParagolpe_Rejilla = np.round(lsFrenteMean[0],2)
 
         if len(lsFrenteRejilla_RadiadorElemsDel)>0:
-            #lsFrenteMean = fnRejilla_Radiador(iCLASE,iMARCA,iMODELO,isAlta)
             lsFrenteMean = fnRejilla_Radiador(iVERSION,isAlta)
             if len(lsFrenteMean) == 0: lsFrenteMean.append(0)
             flFrtValorReponeRejilla_Radiador = np.round(lsFrenteMean[0],2)
@@ -2167,7 +2119,6 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",VER
             flLatValorReparaAve = np.round(sum(lsLatReparaAve),2)
 
         if len(lsLateralCambiaElems)>0:
-            #lsLatReponeAve=fnCambiaLateral(iSEG,iCLASE,iMARCA,iMODELO,lsLateralCambiaElems,isAlta)
             lsLatReponeAve=fnCambiaLateral(iVERSION,lsLateralCambiaElems,isAlta)
             if len(lsLatReponeAve) == 0: lsLatReponeAve.append(0)
             flLatValorReponeElem = np.round(sum(lsLatReponeAve),2)
@@ -2179,56 +2130,48 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",VER
             flLatValorReponeMoAv = np.round(sum(lsLatReponeMoAv),2)
 
         if len(lsLateralMolduraElemsDel)>0:
-            #lsLatMeanMod = fnMolduraLateralDel(iCLASE,iMARCA,iMODELO,isAlta)
             lsLatMeanMod = fnMolduraLateralDel(iVERSION,isAlta)
             if len(lsLatMeanMod) == 0: lsLatMeanMod.append(0)
             flLatValorReponeMolduraDel = np.round(lsLatMeanMod[0],2)
             if len(lsLateralMolduraElemsDel)== 2: flLatValorReponeMolduraDel*=2
 
         if len(lsLateralMolduraElemsTra)>0:
-            #lsLatMeanMod = fnMolduraLateralTra(iCLASE,iMARCA,iMODELO,isAlta)
             lsLatMeanMod = fnMolduraLateralTra(iVERSION,isAlta)
             if len(lsLatMeanMod) == 0: lsLatMeanMod.append(0)
             flLatValorReponeMolduraTra = np.round(lsLatMeanMod[0],2)
             if len(lsLateralMolduraElemsTra)== 2: flLatValorReponeMolduraTra*=2
 
         if len(lsLateralEspejoElecElems)>0:
-            #lsLatMeanEsp = fnEspejoLateralElec(iCLASE,iMARCA,iMODELO,isAlta)
             lsLatMeanEsp = fnEspejoLateralElec(iVERSION,isAlta)
             if len(lsLatMeanEsp) == 0: lsLatMeanEsp.append(0)
             flLatValorReponeEspejoElec = np.round(lsLatMeanEsp[0],2)
             if len(lsLateralEspejoElecElems) >1: flLatValorReponeEspejoElec*=2
 
         if len(lsLateralEspejoManElems)>0:
-            #lsLatMeanEsp = fnEspejoLateralMan(iCLASE,iMARCA,iMODELO,isAlta)
             lsLatMeanEsp = fnEspejoLateralMan(iVERSION,isAlta)
             if len(lsLatMeanEsp) == 0: lsLatMeanEsp.append(0)
             flLatValorReponeEspejoMan = np.round(lsLatMeanEsp[0],2)
             if len(lsLateralEspejoManElems) >1: flLatValorReponeEspejoMan*=2
 
         if len(lsLateralManijaElemsDel)>0:
-            #lsLatMeanManDel = fnManijaLateralDel(iCLASE,iMARCA,iMODELO,isAlta)
             lsLatMeanManDel = fnManijaLateralDel(iVERSION,isAlta)
             if len(lsLatMeanManDel) == 0: lsLatMeanManDel.append(0)
             flLatValorReponeManDel = np.round(lsLatMeanManDel[0],2)
             if len(lsLateralManijaElemsDel) >1: flLatValorReponeManDel*=2
 
         if len(lsLateralManijaElemsTra)>0:
-            #lsLatMeanManTra = fnManijaLateralTra(iCLASE,iMARCA,iMODELO,isAlta)
             lsLatMeanManTra = fnManijaLateralTra(iVERSION,isAlta)
             if len(lsLatMeanManTra) == 0: lsLatMeanManTra.append(0)
             flLatValorReponeManTra = np.round(lsLatMeanManTra[0],2)
             if len(lsLateralManijaElemsTra) >1: flLatValorReponeManTra*=2
 
         if len(lsLateralCristalElemDel)>0:
-            #lsLatMeanCriDel = fnCristalLateralDel(iCLASE,iMARCA,iMODELO,isAlta)
             lsLatMeanCriDel = fnCristalLateralDel(iVERSION,isAlta)
             if len(lsLatMeanCriDel) == 0: lsLatMeanCriDel.append(0)
             flLatValorReponeCriDel = np.round(lsLatMeanCriDel[0],2)
             if len(lsLateralCristalElemDel) >1: flLatValorReponeCriDel*=2
 
         if len(lsLateralCristalElemTra)>0:
-            #lsLatMeanCriTra = fnCristalLateralTra(iCLASE,iMARCA,iMODELO,isAlta)
             lsLatMeanCriTra = fnCristalLateralTra(iVERSION,isAlta)
             if len(lsLatMeanCriTra) == 0: lsLatMeanCriTra.append(0)
             flLatValorReponeCriTra = np.round(lsLatMeanCriTra[0],2)
@@ -2708,37 +2651,29 @@ def fnCambiaTrasero(inCOD_VERSION,lsRepone,isAlta):
     lsReponeAve = []
     flAverage   = 0
 
-    if item  =="BAUL": 
-        inCOD_ELEMRED = 20003
-        itemRed = "TAPA BAUL"
-    elif item=="PORTON": 
-        inCOD_ELEMRED = 20006
-        itemRed = "TAPA PORTON"
-    elif item=="GUARDABARRO":
-        inCOD_ELEMRED = 7006
-        itemRed = "GUARDABARRO DER"
-    elif item=="LUNETA":
-        inCOD_ELEMRED = 12009
-        itemRed = "LUNETA CRISTAL"
-    elif item=="PANELCOLACOMP":
-        inCOD_ELEMRED = 16003
-        itemRed = "PANEL COLA COMP"
-    elif item=="PANELCOLASUP":
-        inCOD_ELEMRED = 16003
-        itemRed = "PANEL COLA SUP"   
-    elif item=="PARAGOLPE":
-        inCOD_ELEMRED = 16005
-        itemRed = "PARAGOLPE / CTRO"
-
     for index, item in enumerate(lsRepone):
-        '''
-        bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['COD_CLASE']  == inCOD_CLASE)  &
-                                                 (dfVALOR_REPUESTO_MO_Unif['COD_MARCA']  == inCOD_MARCA)  & 
-                                                 (dfVALOR_REPUESTO_MO_Unif['COD_MODELO'] == inCOD_MODELO) &
-                                                 (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']  == inCOD_PARTE)  & 
-                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']]
-        flAverage = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)
-        '''
+        if item  =="BAUL": 
+            inCOD_ELEMRED = 20003
+            itemRed = "TAPA BAUL"
+        elif item=="PORTON": 
+            inCOD_ELEMRED = 20006
+            itemRed = "TAPA PORTON"
+        elif item=="GUARDABARRO":
+            inCOD_ELEMRED = 7006
+            itemRed = "GUARDABARRO DER"
+        elif item=="LUNETA":
+            inCOD_ELEMRED = 12009
+            itemRed = "LUNETA CRISTAL"
+        elif item=="PANELCOLACOMP":
+            inCOD_ELEMRED = 16003
+            itemRed = "PANEL COLA COMP"
+        elif item=="PANELCOLASUP":
+            inCOD_ELEMRED = 16003
+            itemRed = "PANEL COLA SUP"   
+        elif item=="PARAGOLPE":
+            inCOD_ELEMRED = 16005
+            itemRed = "PARAGOLPE / CTRO"
+
         bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                                  (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                                  (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
@@ -2797,23 +2732,6 @@ def fnCambiaPinturaTrasero(inSEG,inCOD_CLASE,lsRepone):
 
 #def fnMolduraTrasero(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnMolduraTrasero(inCOD_VERSION,isAlta):    
-    '''
-    inCOD_PARTE = 2
-    moldCtro    = ['PARAGOLPE EMBELLEC / MOLD']
-    lsVersion   = ['1','2','3']
-    lsMoldCtro  = []
-    dfMOLD_CTRO = dfMOLDURA.loc[(dfMOLDURA['COD_CLASE']  == inCOD_CLASE)  & (dfMOLDURA['COD_MARCA']  == inCOD_MARCA)  &
-                                (dfMOLDURA['COD_MODELO'] == inCOD_MODELO) & (dfMOLDURA['COD_PARTE']  == inCOD_PARTE)  &
-                                (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, moldCtro))))].sort_values(['VALOR'], ascending=[False])
-    dfTmp = dfMOLD_CTRO.loc[~dfMOLD_CTRO['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-    if len(dfTmp)!=0:
-        flValue = dfTmp['VALOR'].mean() 
-    else:
-        if isAlta: flValue = paramal.bfMoldura
-        else:      flValue = param.bfMoldura
-    lsMoldCtro.append(round(flValue  + param.bfMOMinimo,2))
-    return lsMoldCtro
-    '''
     inCOD_PARTE = 2
     inCOD_ELEMRED = 20006
     itemRed = "TAPA BAUL / PORTON MOLD CTRO"
@@ -2829,30 +2747,11 @@ def fnMolduraTrasero(inCOD_VERSION,isAlta):
         if isAlta: flAverage = paramal.bfMoldura
         else:      flAverage = param.bfMoldura    
 
-    return lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    return lsReponeAve
 
 #def fnFaroExtTrasero(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnFaroExtTrasero(inCOD_VERSION,isAlta):    
-    '''
-    inCOD_PARTE = 2
-    faroDer = ['FARO DER']
-    lsVersion = ['1','2','3','4','5','6']
-    lsFaroExt = []
-    dfFARO_EXT = dfFARO.loc[(dfFARO['COD_CLASE']  == inCOD_CLASE)  & 
-                            (dfFARO['COD_MARCA']  == inCOD_MARCA)  &
-                            (dfFARO['COD_MODELO'] == inCOD_MODELO) & 
-                            (dfFARO['COD_PARTE']  == inCOD_PARTE)  &
-                            (dfFARO['DESC_ELEM'].str.contains('|'.join(map(re.escape, faroDer))))].sort_values(['VALOR'], ascending=[False])
-
-    dfTmp = dfFARO_EXT.loc[~dfFARO_EXT['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-    if len(dfTmp)!=0:
-        flValue = dfTmp['VALOR'].mean()
-    else:
-        if isAlta: flValue = paramal.bfFaro_Ext
-        else:      flValue = param.bfFaro_Ext
-    lsFaroExt.append(round(flValue + param.bfMOMinimo,2))
-    return lsFaroExt
-    '''
     inCOD_PARTE = 2
     inCOD_ELEMRED = 6002
     itemRed = "FARO DER"
@@ -2868,25 +2767,11 @@ def fnFaroExtTrasero(inCOD_VERSION,isAlta):
         if isAlta: flAverage = paramal.bfFaro_Ext
         else:      flAverage = param.bfFaro_Ext    
 
-    return lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    return lsReponeAve
 
 #def fnFaroIntTrasero(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnFaroIntTrasero(inCOD_VERSION,isAlta):    
-    '''
-    inCOD_PARTE = 2
-    faroDer = ['FARO DER 1']
-    lsFaroInt = []
-    dfFARO_INT = dfFARO.loc[(dfFARO['COD_CLASE']  == inCOD_CLASE)  & (dfFARO['COD_MARCA']  == inCOD_MARCA)  &
-                            (dfFARO['COD_MODELO'] == inCOD_MODELO) & (dfFARO['COD_PARTE']  == inCOD_PARTE)  & 
-                            (dfFARO['DESC_ELEM'].str.contains('|'.join(map(re.escape, faroDer))))].sort_values(['VALOR'], ascending=[False])
-    if len(dfFARO_INT)!=0:
-        flValue = dfFARO_INT['VALOR'].mean()
-    else:
-        if isAlta: flValue = paramal.bfFaro_Int
-        else:      flValue = param.bfFaro_Int 
-    lsFaroInt.append(round(flValue + param.bfMOMinimo,2))
-    return lsFaroInt
-    '''
     inCOD_PARTE = 2
     inCOD_ELEMRED = 6002
     itemRed = "FARO DER"
@@ -2902,7 +2787,8 @@ def fnFaroIntTrasero(inCOD_VERSION,isAlta):
         if isAlta: flAverage = paramal.bfFaro_Int
         else:      flAverage = param.bfFaro_Int    
 
-    return lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    return lsReponeAve
     
 ######################################################################################################
 ###FRENTE#############################################################################################
@@ -2948,14 +2834,6 @@ def fnReparaFrente(inSEG, inCOD_CLASE, lsRepara):
 
 #def fnCambiaFrente(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,inCOD_VERSION,lsRepone,isAlta):
 def fnCambiaFrente(inCOD_VERSION,lsRepone,isAlta):    
-    '''
-        bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['COD_CLASE'] == inCOD_CLASE)   &
-                                                 (dfVALOR_REPUESTO_MO_Unif['COD_MARCA'] == inCOD_MARCA)   & 
-                                                 (dfVALOR_REPUESTO_MO_Unif['COD_MODELO'] == inCOD_MODELO) &
-                                                 (dfVALOR_REPUESTO_MO_Unif['COD_PARTE'] == inCOD_PARTE)   & 
-                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']]
-        flAverage = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)            
-    '''
     inCOD_PARTE = 1
     inCOD_ELEMRED = 0
     itemRed = ""
@@ -3035,21 +2913,6 @@ def fnCambiaPinturaFrente(inSEG,inCOD_CLASE,lsRepone):
 
 #def fnParabrisas(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnParabrisas(inCOD_VERSION,isAlta):    
-    '''
-    inCOD_PARTE = 1
-    espPara = ['PARABRISAS']
-    lsMeanPara = []
-    dfMOLD_LATERAL = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['COD_CLASE']  == inCOD_CLASE)  & (dfVALOR_REPUESTO_MO_Unif['COD_MARCA']  == inCOD_MARCA)  &
-                                                  (dfVALOR_REPUESTO_MO_Unif['COD_MODELO'] == inCOD_MODELO) & (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']  == inCOD_PARTE)  &
-                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].str.contains('|'.join(map(re.escape, espPara))))].sort_values(['PRECIO_MEAN'], ascending=[False])
-    if len(dfMOLD_LATERAL)!=0:
-        flValue = dfMOLD_LATERAL['PRECIO_MEAN'].mean() 
-    else:
-        if isAlta: flValue = paramal.bfFrt_GA_Del_Parabrisas
-        else:      flValue = param.bfFrt_GM_Del_Parabrisas
-    lsMeanPara.append(round(flValue + param.bfMOMinimo,2))
-    return lsMeanPara
-    '''
     inCOD_PARTE = 1
     inCOD_ELEMRED = 16004
     itemRed = "PARABRISAS"
@@ -3065,25 +2928,11 @@ def fnParabrisas(inCOD_VERSION,isAlta):
         if isAlta: flAverage = paramal.bfFrt_GA_Del_Parabrisas
         else:      flAverage = param.bfFrt_GM_Del_Parabrisas    
 
-    return lsReponeAve.append(flAverage)     
+    lsReponeAve.append(flAverage)
+    return lsReponeAve 
 
 #def fnParagolpe_Rejilla(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnParagolpe_Rejilla(inCOD_VERSION,isAlta):    
-    '''
-    inCOD_PARTE = 1
-    espPara = ['PARAGOLPE_REJILLA']
-    lsMeanPara = []
-    dfPARAGOLPE_REJILLA = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['COD_CLASE']  == inCOD_CLASE)  & (dfVALOR_REPUESTO_MO_Unif['COD_MARCA']  == inCOD_MARCA)  &
-                                                       (dfVALOR_REPUESTO_MO_Unif['COD_MODELO'] == inCOD_MODELO) & (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']  == inCOD_PARTE)  &
-                        (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].str.contains('|'.join(map(re.escape, espPara))))].sort_values(['PRECIO_MEAN'], ascending=[False])
-    if len(dfPARAGOLPE_REJILLA)!=0:
-        flValue = dfPARAGOLPE_REJILLA['PRECIO_MEAN'].mean() 
-    else:
-        if isAlta: flValue = paramal.bfFrt_GA_Del_Paragolpe_Rejilla
-        else:      flValue = param.bfFrt_GM_Del_Paragolpe_Rejilla
-    lsMeanPara.append(round(flValue + param.bfMOMinimo,2))
-    return lsMeanPara
-    '''
     inCOD_PARTE = 1
     inCOD_ELEMRED = 16005
     itemRed = "PARAGOLPE REJILLA CENTRAL"
@@ -3101,25 +2950,12 @@ def fnParagolpe_Rejilla(inCOD_VERSION,isAlta):
         if isAlta: flAverage = paramal.bfFrt_GA_Del_Paragolpe_Rejilla
         else:      flAverage = param.bfFrt_GM_Del_Paragolpe_Rejilla    
 
-    return lsReponeAve.append(flAverage)     
+    lsReponeAve.append(flAverage)
+    return lsReponeAve 
+     
 
 #def fnRejilla_Radiador(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnRejilla_Radiador(inCOD_VERSION,isAlta):
-    '''
-    inCOD_PARTE = 1
-    espPara = ['REJILLA_RADIADOR']
-    lsMeanPara = []
-    dfREJILLA_RADIADOR = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['COD_CLASE']  == inCOD_CLASE)  & (dfVALOR_REPUESTO_MO_Unif['COD_MARCA']  == inCOD_MARCA)  &
-                                                      (dfVALOR_REPUESTO_MO_Unif['COD_MODELO'] == inCOD_MODELO) & (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']  == inCOD_PARTE)  &
-    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].str.contains('|'.join(map(re.escape, espPara))))].sort_values(['PRECIO_MEAN'], ascending=[False])
-    if len(dfREJILLA_RADIADOR)!=0:
-        flValue = dfREJILLA_RADIADOR['PRECIO_MEAN'].mean() 
-    else:
-        if isAlta: flValue = paramal.bfFrt_GA_Del_Rejilla_Radiador
-        else:      flValue = param.bfFrt_GM_Del_Rejilla_Radiador
-    lsMeanPara.append(round(flValue + param.bfMOMinimo,2))
-    return lsMeanPara
-    '''
     inCOD_PARTE = 1
     inCOD_ELEMRED = 18005
     itemRed = "REJILLA RADIADOR"
@@ -3138,33 +2974,12 @@ def fnRejilla_Radiador(inCOD_VERSION,isAlta):
         if isAlta: flAverage = paramal.bfFrt_GA_Del_Rejilla_Radiador
         else:      flAverage = param.bfFrt_GM_Del_Rejilla_Radiador    
 
-    return lsReponeAve.append(flAverage)     
+    lsReponeAve.append(flAverage)
+    return lsReponeAve 
+    
 
 #def fnFaroFrente(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnFaroFrente(inCOD_VERSION,isAlta):    
-    '''
-    inCOD_PARTE = 1
-    faroDer = ['FARO DER']
-    lsVersion = ['1','2','3','4']
-    lsMeanFaro = []
-
-    dfFARO_FRENTE = dfFARO.loc[(dfFARO['COD_CLASE']  == inCOD_CLASE)  &
-                               (dfFARO['COD_MARCA']  == inCOD_MARCA)  &
-                               (dfFARO['COD_MODELO'] == inCOD_MODELO) &
-                               (dfFARO['COD_PARTE']  == inCOD_PARTE)  &
-                               (dfFARO['DESC_ELEM'].str.contains('|'.join(map(re.escape, faroDer))))].sort_values(['VALOR'], ascending=[False])
-
-    dfTmp = dfFARO_FRENTE.loc[~dfFARO_FRENTE['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-
-    if len(dfTmp)!=0:
-        flValue = dfTmp['VALOR'].mean() 
-    else:
-        if isAlta: flValue = paramal.bfFrt_GA_Del_Faro
-        else:      flValue = param.bfFrt_GM_Del_Faro  
-    lsMeanFaro.append(round(flValue + param.bfMOMinimo,2))
-
-    return lsMeanFaro
-    '''
     inCOD_PARTE = 1
     inCOD_ELEMRED = 6002
     itemRed = "FARO DER"
@@ -3180,7 +2995,8 @@ def fnFaroFrente(inCOD_VERSION,isAlta):
         if isAlta: flAverage = paramal.bfFrt_GA_Del_Farito
         else:      flAverage = param.bfFrt_GM_Del_Farito    
 
-    return lsReponeAve.append(flAverage) 
+    lsReponeAve.append(flAverage)
+    return lsReponeAve
 
 def fnFaroAuxiliarFrente(inCOD_VERSION,isAlta):    
     inCOD_PARTE = 1
@@ -3198,26 +3014,11 @@ def fnFaroAuxiliarFrente(inCOD_VERSION,isAlta):
         if isAlta: flAverage = paramal.bfFrt_GA_Del_Faro_Auxiliar
         else:      flAverage = param.bfFrt_GM_Del_Faro_Auxiliar    
 
-    return lsReponeAve.append(flAverage) 
+    lsReponeAve.append(flAverage)
+    return lsReponeAve 
 
 #def fnFaritoFrente(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnFaritoFrente(inCOD_VERSION,isAlta):
-    '''
-    #faroDer = ['FARITO DER']
-    #lsVersion = ['1','2','3','4']
-    #lsMeanFaro = []
-    dfFARITO_FRENTE = dfFARO.loc[(dfFARO['COD_CLASE'] == inCOD_CLASE)  & (dfFARO['COD_MARCA'] == inCOD_MARCA)  &
-                               (dfFARO['COD_MODELO'] == inCOD_MODELO) & (dfFARO['COD_PARTE'] == inCOD_PARTE)  &
-                               (dfFARO['DESC_ELEM'].str.contains('|'.join(map(re.escape, faroDer))))].sort_values(['VALOR'], ascending=[False])
-    dfTmp = dfFARITO_FRENTE.loc[~dfFARITO_FRENTE['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-    if len(dfTmp)!=0:
-        flValue = dfTmp['VALOR'].mean() 
-    else:
-        if isAlta: flValue = paramal.bfFrt_GA_Del_Farito
-        else:      flValue = param.bfFrt_GM_Del_Farito  
-    lsMeanFaro.append(round(flValue + param.bfMOMinimo,2))
-    return lsMeanFaro
-    '''
     inCOD_PARTE = 1
     inCOD_ELEMRED = 6001
     itemRed = "FARITO DER"
@@ -3233,7 +3034,8 @@ def fnFaritoFrente(inCOD_VERSION,isAlta):
         if isAlta: flAverage = paramal.bfFrt_GA_Del_Farito
         else:      flAverage = param.bfFrt_GM_Del_Farito    
 
-    return lsReponeAve.append(flAverage)  
+    lsReponeAve.append(flAverage)
+    return lsReponeAve 
 ######################################################################################################
 ###LATERAL############################################################################################
 def fnReparaLateral(inSEG, inCOD_CLASE, lsRepara):
@@ -3273,23 +3075,6 @@ def fnReparaLateral(inSEG, inCOD_CLASE, lsRepara):
 
 #def fnCambiaLateral(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
 def fnCambiaLateral(inCOD_VERSION,lsRepone,isAlta):    
-    '''
-    inCOD_PARTE = 3
-    lsReponeAve = []
-    flAverage   = 0
-    for index, item in enumerate(lsRepone):
-        bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['COD_CLASE']  == inCOD_CLASE)  & (dfVALOR_REPUESTO_MO_Unif['COD_MARCA']  == inCOD_MARCA)  &
-                                                 (dfVALOR_REPUESTO_MO_Unif['COD_MODELO'] == inCOD_MODELO) & (dfVALOR_REPUESTO_MO_Unif['COD_PARTE']  == inCOD_PARTE)  &
-                    (dfVALOR_REPUESTO_MO_Unif['DESC_ELEM'].astype(str).str.contains(item,case=False,regex=True))][['PRECIO_MEAN']]
-        flAverage = np.round(bfID_ELEM['PRECIO_MEAN'].mean(),2)
-        if pd.isna(flAverage): 
-            if   item=="PUERTA_DEL"      :flAverage = paramal.bfLat_Puerta_Delantera if isAlta  else param.bfLat_Puerta_Delantera
-            elif item=="PUERTA_TRA"      :flAverage = paramal.bfLat_Puerta_Trasera if isAlta    else param.bfLat_Puerta_Trasera
-            elif item=="ZOCALO"          :flAverage = paramal.bfLat_Zocalo if isAlta            else param.bfLat_Zocalo
-            if flAverage==1 or pd.isna(flAverage): logger.warning(f"Valor no valido para '{item}'")
-        lsReponeAve.append(flAverage)
-    return lsReponeAve
-    '''
     inCOD_PARTE = 3
     inCOD_ELEMRED = 0
     itemRed = ""
@@ -3366,26 +3151,6 @@ def fnCambiaPinturaLateral(inSEG,inCOD_CLASE,lsRepone):
 
 #def fnEspejoLateralElec(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnEspejoLateralElec(inCOD_VERSION,isAlta):
-    '''
-    inCOD_PARTE = 3
-    espElec = ['ESPEJO ELECTRICO']
-    lsVersion = ['1','2','3','4','5']
-    lsMeanEsp = []
-    dfESPEJO_ELEC = dfESPEJO.loc[(dfESPEJO['COD_CLASE']  == inCOD_CLASE)  &
-                                 (dfESPEJO['COD_MARCA']  == inCOD_MARCA)  &
-                                 (dfESPEJO['COD_MODELO'] == inCOD_MODELO) &
-                                 (dfESPEJO['COD_PARTE']  == inCOD_PARTE)  &
-                                 (dfESPEJO['DESC_ELEM'].str.contains('|'.join(map(re.escape, espElec))))].sort_values(['VALOR'], ascending=[False])
-
-    dfTmp = dfESPEJO_ELEC.loc[~dfESPEJO_ELEC['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-    if len(dfTmp)!=0:
-        flValue = dfTmp['VALOR'].mean() 
-    else:
-        if isAlta: flValue = paramal.bfLat_Espejo_Electrico 
-        else:      flValue = param.bfLat_Espejo_Electrico 
-    lsMeanEsp.append(round(flValue + param.bfMOMinimo,2))
-    return lsMeanEsp
-    '''
     inCOD_PARTE = 1
     inCOD_ELEMRED = 16024
     itemRed = "PUERTA DEL ESPEJO ELECTRICO"
@@ -3401,27 +3166,11 @@ def fnEspejoLateralElec(inCOD_VERSION,isAlta):
         if isAlta: flAverage = paramal.bfLat_Espejo_Electrico 
         else:      flAverage = param.bfLat_Espejo_Electrico 
 
-    return lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    return lsReponeAve
 
 #def fnEspejoLateralMan(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnEspejoLateralMan(inCOD_VERSION,isAlta):    
-    '''
-    inCOD_PARTE = 3
-    espMan = ['ESPEJO MANUAL']
-    lsVersion = ['1','2','3','4','5']
-    lsMeanEsp = []
-    dfESPEJO_MAN = dfESPEJO.loc[(dfESPEJO['COD_MARCA'] == inCOD_MARCA)   & (dfESPEJO['COD_MODELO'] == inCOD_MODELO) &
-                                (dfESPEJO['COD_PARTE']  == inCOD_PARTE)  & (dfESPEJO['COD_PARTE']  == inCOD_PARTE)  &
-                                (dfESPEJO['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMan))))].sort_values(['VALOR'], ascending=[False])
-    dfTmp = dfESPEJO_MAN.loc[~dfESPEJO_MAN['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-    if len(dfTmp)!=0:
-        flValue = dfTmp['VALOR'].mean() 
-    else:
-        if isAlta: flValue = paramal.bfLat_Espejo_Manual 
-        else:      flValue = param.bfLat_Espejo_Manual
-    lsMeanEsp.append(round(flValue + param.bfMOMinimo,2))
-    return lsMeanEsp
-    '''
     inCOD_PARTE = 1
     inCOD_ELEMRED = 16024
     itemRed = "PUERTA DEL ESPEJO MANUAL C/ CONTROL"
@@ -3437,27 +3186,11 @@ def fnEspejoLateralMan(inCOD_VERSION,isAlta):
         if isAlta: flAverage = paramal.bfLat_Espejo_Manual 
         else:      flAverage = param.bfLat_Espejo_Manual
 
-    return lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    return lsReponeAve
     
 #def fnManijaLateralDel(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnManijaLateralDel(inCOD_VERSION,isAlta):    
-    '''
-    inCOD_PARTE = 3
-    lsManija = ['DEL MANIJA']
-    lsVersion = ['1','2','3','4','5']
-    lsMeanMan = []
-    dfMANIJA_RST  = dfMANIJA.loc[(dfMANIJA['COD_CLASE']  == inCOD_CLASE)  & (dfMANIJA['COD_MARCA']  == inCOD_MARCA)  &
-                                 (dfMANIJA['COD_MODELO'] == inCOD_MODELO) & (dfMANIJA['COD_PARTE']  == inCOD_PARTE)  &
-                                 (dfMANIJA['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsManija))))].sort_values(['VALOR'], ascending=[False])
-    dfTmp = dfMANIJA_RST.loc[~dfMANIJA_RST['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-    if len(dfTmp)!=0:
-        flValue = dfTmp['VALOR'].mean() 
-    else:
-        if isAlta: flValue = paramal.bfLat_Manija_Pta_Del
-        else:      flValue = param.bfLat_Manija_Pta_Del
-    lsMeanMan.append(round(flValue + param.bfMOMinimo,2))
-    return lsMeanMan
-    '''
     inCOD_PARTE = 1
     inCOD_ELEMRED = 16024
     itemRed = "PUERTA DEL MANIJA EXT"
@@ -3473,28 +3206,11 @@ def fnManijaLateralDel(inCOD_VERSION,isAlta):
         if isAlta: flAverage = paramal.bfLat_Manija_Pta_Del
         else:      flAverage = param.bfLat_Manija_Pta_Del
 
-    return lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    return lsReponeAve
     
 #def fnManijaLateralTra(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnManijaLateralTra(inCOD_VERSION,isAlta):    
-    '''
-    inCOD_PARTE = 3
-    lsManija = ['TRAS MANIJA']
-    lsVersion = ['1','2','3','4','5']
-    lsMeanMan = []
-    dfMANIJA_RST  = dfMANIJA.loc[(dfMANIJA['COD_CLASE']  == inCOD_CLASE)  & (dfMANIJA['COD_MARCA']  == inCOD_MARCA)  &
-                                 (dfMANIJA['COD_MODELO'] == inCOD_MODELO) & (dfMANIJA['COD_PARTE']  == inCOD_PARTE)  &
-                                 (dfMANIJA['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsManija))))].sort_values(['VALOR'], ascending=[False])
-
-    dfTmp = dfMANIJA_RST.loc[~dfMANIJA_RST['DESC_ELEM'].str.contains('|'.join(map(re.escape, lsVersion)))]
-    if len(dfTmp)!=0:
-        flValue = dfTmp['VALOR'].mean()
-    else:
-        if isAlta: flValue = paramal.bfLat_Manija_Pta_Tras
-        else:      flValue = param.bfLat_Manija_Pta_Tras
-    lsMeanMan.append(round(flValue + param.bfMOMinimo,2))
-    return lsMeanMan
-    '''
     inCOD_PARTE = 1
     inCOD_ELEMRED = 16024
     itemRed = "PUERTA TRAS MANIJA EXT"
@@ -3510,25 +3226,11 @@ def fnManijaLateralTra(inCOD_VERSION,isAlta):
         if isAlta: flAverage = paramal.bfLat_Manija_Pta_Tras
         else:      flAverage = param.bfLat_Manija_Pta_Tras
 
-    return lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    return lsReponeAve
     
 #def fnMolduraLateralDel(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnMolduraLateralDel(inCOD_VERSION,isAlta):    
-    '''
-    inCOD_PARTE = 3
-    espMold = ['DEL MOLD']
-    lsMeanMold = []
-    dfMOLD_LATERAL = dfMOLDURA.loc[(dfMOLDURA['COD_CLASE']  == inCOD_CLASE)  & (dfMOLDURA['COD_MARCA']  == inCOD_MARCA)  &
-                                   (dfMOLDURA['COD_MODELO'] == inCOD_MODELO) & (dfMOLDURA['COD_PARTE']  == inCOD_PARTE)  &
-                                   (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))].sort_values(['VALOR'], ascending=[False])
-    if len(dfMOLD_LATERAL)!=0:
-        flValue = dfMOLD_LATERAL['VALOR'].mean() 
-    else:
-        if isAlta: flValue = paramal.bfLat_Moldura_Pta_Del
-        else:      flValue = param.bfLat_Moldura_Pta_Del
-    lsMeanMold.append(round(flValue + param.bfMOMinimo,2))
-    return lsMeanMold
-    '''
     inCOD_PARTE = 3
     inCOD_ELEMRED = 16024
     itemRed = "PUERTA DEL MOLD MEDIA"
@@ -3544,25 +3246,11 @@ def fnMolduraLateralDel(inCOD_VERSION,isAlta):
         if isAlta: flAverage = paramal.bfLat_Moldura_Pta_Del
         else:      flAverage = param.bfLat_Moldura_Pta_Del    
 
-    return lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    return lsReponeAve
     
 #def fnMolduraLateralTra(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnMolduraLateralTra(inCOD_VERSION,isAlta):    
-    '''
-    inCOD_PARTE = 3
-    espMold = ['TRAS MOLD']
-    lsMeanMold = []
-    dfMOLD_LATERAL = dfMOLDURA.loc[(dfMOLDURA['COD_CLASE']  == inCOD_CLASE)  & (dfMOLDURA['COD_MARCA']  == inCOD_MARCA)  &
-                                   (dfMOLDURA['COD_MODELO'] == inCOD_MODELO) & (dfMOLDURA['COD_PARTE']  == inCOD_PARTE)  &
-                                   (dfMOLDURA['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))].sort_values(['VALOR'], ascending=[False])
-    if len(dfMOLD_LATERAL)!=0:
-        flValue = dfMOLD_LATERAL['VALOR'].mean() 
-    else:
-        if isAlta: flValue = paramal.bfLat_Moldura_Pta_Tras
-        else:      flValue = param.bfLat_Moldura_Pta_Tras
-    lsMeanMold.append(round(flValue + param.bfMOMinimo,2))
-    return lsMeanMold
-    '''
     inCOD_PARTE = 3
     inCOD_ELEMRED = 16024
     itemRed = "PUERTA TRAS MOLD MEDIA"
@@ -3578,27 +3266,11 @@ def fnMolduraLateralTra(inCOD_VERSION,isAlta):
         if isAlta: flAverage = paramal.bfLat_Moldura_Pta_Tras
         else:      flAverage = param.bfLat_Moldura_Pta_Tras    
 
-    return lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    return lsReponeAve
 
 #def fnCristalLateralDel(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnCristalLateralDel(inCOD_VERSION,isAlta):
-    '''
-    inCOD_PARTE = 3
-    espMold = ['DEL CRISTAL']
-    lsMeanMold = []
-    dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_CLASE']  == inCOD_CLASE)  & 
-                                   (dfCRISTAL['COD_MARCA']  == inCOD_MARCA)  &
-                                   (dfCRISTAL['COD_MODELO'] == inCOD_MODELO) &
-                                   (dfCRISTAL['COD_PARTE']  == inCOD_PARTE)  &
-                                   (dfCRISTAL['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))].sort_values(['VALOR'], ascending=[False])
-    if len(dfMOLD_LATERAL)!=0:
-        flValue = dfMOLD_LATERAL['VALOR'].mean()
-    else:
-        if isAlta: flValue = paramal.bfLat_Cristal_Delantero
-        else:      flValue = param.bfLat_Cristal_Delantero
-    lsMeanMold.append(round(flValue + param.bfMOMinimo,2))
-    return lsMeanMold
-    ''' 
     inCOD_PARTE = 3
     inCOD_ELEMRED = 16024
     itemRed = "PUERTA DEL CRISTAL"
@@ -3609,30 +3281,18 @@ def fnCristalLateralDel(inCOD_VERSION,isAlta):
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
     
+    print(inCOD_VERSION)
+    print(bfID_ELEM)
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
         if isAlta: flAverage = paramal.bfLat_Cristal_Delantero
         else:      flAverage = param.bfLat_Cristal_Delantero    
 
-    return lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    return lsReponeAve
     
 #def fnCristalLateralTra(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnCristalLateralTra(inCOD_VERSION,isAlta):
-    '''
-    inCOD_PARTE = 3
-    espMold = ['TRAS CRISTAL']
-    lsMeanMold = []
-    dfMOLD_LATERAL = dfCRISTAL.loc[(dfCRISTAL['COD_CLASE']  == inCOD_CLASE)  & (dfCRISTAL['COD_MARCA']  == inCOD_MARCA)  &
-                                   (dfCRISTAL['COD_MODELO'] == inCOD_MODELO) & (dfCRISTAL['COD_PARTE']  == inCOD_PARTE)  &
-                                   (dfCRISTAL['DESC_ELEM'].str.contains('|'.join(map(re.escape, espMold))))].sort_values(['VALOR'], ascending=[False])
-    if len(dfMOLD_LATERAL)!=0:
-        flValue = dfMOLD_LATERAL['VALOR'].mean()
-    else:
-        if isAlta: flValue = paramal.bfLat_Cristal_Trasero
-        else:      flValue = param.bfLat_Cristal_Trasero
-    lsMeanMold.append(round(flValue + param.bfMOMinimo,2))
-    return lsMeanMold
-    '''
     inCOD_PARTE = 3
     inCOD_ELEMRED = 16024
     itemRed = "PUERTA TRAS CRISTAL"
@@ -3648,7 +3308,8 @@ def fnCristalLateralTra(inCOD_VERSION,isAlta):
         if isAlta: flAverage = paramal.bfLat_Cristal_Trasero
         else:      flAverage = param.bfLat_Cristal_Trasero    
 
-    return lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
+    return lsReponeAve
     
 ####################################################################################
 ####################################################################################
