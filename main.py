@@ -3324,6 +3324,83 @@ def resumeDataBrief(intCLIENTE,fltFrente,fltLateral,fltTrasero):
     txtValorTotal = "<span id=\"CostBrief\" class=\"pure-form-message-inline\" style=\"text-align:left;font-family:'helvetica neue';font-size:100%;color:rgb(170,27,23);\">Sugerido&nbsp$&nbsp{0:0.2f}".format(ftSum)+"</span>"
     return txtValorTotal
 
+# Función de ayuda para convertir a float nativo
+def to_python_float(value):
+    """Convierte un valor de NumPy a un float nativo de Python, si es necesario."""
+    # Usamos isinstance() para verificar si es un tipo numpy.generic (que incluye float32)
+    if isinstance(value, (np.float32, np.float64, np.generic)):
+        # El método .item() es la forma más segura de obtener el valor nativo
+        return value.item()
+    return value
+
+def fnWriteLog(CLIENTE, CLASE, MARCA, MODELO, SINIESTRO, PERITO, VALORPERITO, FRENTE, LATERAL, TRASERO, lsValuesResultWrite):
+    bfWrite = True
+    try:
+        # 1. Creamos el diccionario con los parámetros principales
+        values_dict = {
+            "timestamp":    datetime.datetime.now().timestamp(),
+            "cliente":      CLIENTE,
+            "clase":        CLASE,
+            "marca":        MARCA,
+            "modelo":       MODELO,
+            "siniestro":    SINIESTRO,
+            "perito":       str(PERITO).replace(',', ''),
+            "valor_perito": VALORPERITO,
+            "frente":       FRENTE,
+            "lateral":      LATERAL,
+            "trasero":      TRASERO,
+            
+            # 2. CONVERSIÓN EN LAS VARIABLES 'param.bf...'
+            # Asumimos que 'param' es un objeto accesible globalmente o pasado a la función
+            "asegurado":    to_python_float(param.bfAsegurado),
+            "tercero":      to_python_float(param.bfTercero),
+            "mobra":        to_python_float(param.bfMObra),
+            "pintura":      to_python_float(param.bfPintura),
+            "ajuste":       to_python_float(param.bfAjuste)
+        }
+        
+        # 3. CONVERSIÓN EN EL BUCLE DE lsValuesResultWrite (v0 a v31)
+        for i, val in enumerate(lsValuesResultWrite):
+            # Aplicamos la conversión antes de asignarla al diccionario
+            values_dict[f"v{i}"] = to_python_float(val)
+
+        # ... (el resto del código de la consulta SQL y ejecución es correcto)
+        
+        sql = text("""
+            INSERT INTO logpresupuestosV1 (
+                timestamp, cliente, clase, marca, modelo, siniestro, Perito, ValorPerito, frente, lateralr, trasero,
+                
+                frReparaPintura, frReponeElemento, frReponePintura, frReponeManoObra, frReponeFarito, frReponeFaro,
+                frReponeFaro_Auxiliar, frReponeParabrisas, frReponeParagolpe_Rejilla, frReponeRejilla_Radiador, frTotal,
+                
+                ltReparaPintura, ltReponeElemento, ltReponePintura, ltReponeManoObra, ltReponeEspejoEle,
+                ltReponeEspejoMan, ltReponeManijaDel, ltReponeManijaTra, ltReponeMolduraDel, ltReponeMolduraTra,
+                ltReponeCristalDel, ltReponeCristalTra, ltTotal,
+                
+                trReparaPintura, trReponeElemento, trReponePintura, trReponeManoObra,
+                trReponeMoldura, trReponeFaroExt, trReponeFaroInt, trTotal,
+                
+                Asegurado, Tercero, MObra, Pintura, Ajuste
+            ) VALUES (
+                :timestamp, :cliente, :clase, :marca, :modelo, :siniestro, :perito, :valor_perito, :frente, :lateral, :trasero,
+                
+                :v0, :v1, :v2, :v3, :v4, :v5, :v6, :v7, :v8, :v9, :v10,
+                
+                :v11, :v12, :v13, :v14, :v15, :v16, :v17, :v18, :v19, :v20, :v21, :v22, :v23,
+                
+                :v24, :v25, :v26, :v27, :v28, :v29, :v30, :v31,
+                
+                :asegurado, :tercero, :mobra, :pintura, :ajuste
+            )
+        """)
+        with engine.begin() as conn:
+            conn.execute(sql, values_dict)
+    except Exception as e:
+        bfWrite = False
+        logger.error(f"Error en fnWriteLog: {e}")
+
+    return bfWrite
+'''
 def fnWriteLog(CLIENTE, CLASE, MARCA, MODELO, SINIESTRO, PERITO, VALORPERITO, FRENTE, LATERAL, TRASERO, lsValuesResultWrite):
     bfWrite = True
     try:
@@ -3382,6 +3459,7 @@ def fnWriteLog(CLIENTE, CLASE, MARCA, MODELO, SINIESTRO, PERITO, VALORPERITO, FR
         logger.error(f"Error en fnWriteLog: {e}")
 
     return bfWrite
+'''
 
 def fnWriteLogBrief(CLIENTE, CLASE, MARCA, MODELO, SINIESTRO, PERITO, VALORPERITO):     
     bfWrite = True
