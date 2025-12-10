@@ -159,15 +159,14 @@ async def modelo(CLASE  : int = 0):
         try:
             with engine.connect() as conn:
                 sql = text(f"""
-                           SELECT DISTINCT cyc_cod_marca, cyc_desc_marca 
+                           SELECT DISTINCT cyc_cod_marca, cyc_desc_marca,
+                           CASE 
+                           WHEN cyc_desc_marca IN ({marcas_sql_list}) THEN 0 
+                           ELSE 1 
+                           END AS order_priority
                            FROM clasemarcamodelo 
                            WHERE desc_cod_clase_vehic_poliza = :tipo 
-                           ORDER BY 
-                           CASE 
-                              WHEN cyc_desc_marca IN ({marcas_sql_list}) THEN 0 
-                           ELSE 1 
-                           END,
-                           cyc_desc_marca ASC
+                           ORDER BY  order_priority, cyc_desc_marca ASC;
                            """)
                 result = conn.execute(sql, {"tipo": bfCLASE})
                 opciones_html = []
