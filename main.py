@@ -154,6 +154,7 @@ async def modelo(CLASE  : int = 0):
     elif CLASE == 907: bfCLASE = 'SUV'
     elif CLASE == 900: bfCLASE = 'COUPE'        
     elif CLASE == 910: bfCLASE = 'PICK-UP'
+    elif CLASE == 908: bfCLASE = 'MOTOCICLETA'
 
     if bfCLASE != '':        
         try:
@@ -190,6 +191,7 @@ async def modelo(CLASE:int=901, MARCA:int=0):
     elif CLASE == 907: bfCLASE = 'SUV'
     elif CLASE == 900: bfCLASE = 'COUPE'        
     elif CLASE == 910: bfCLASE = 'PICK-UP'
+    elif CLASE == 908: bfCLASE = 'MOTOCICLETA'
 
     if bfCLASE != '':        
         try:
@@ -227,6 +229,7 @@ async def version(CLASE:int=901, MARCA:int=0, MODELO:int=0):
     elif CLASE == 907: bfCLASE = 'SUV'
     elif CLASE == 900: bfCLASE = 'COUPE'        
     elif CLASE == 910: bfCLASE = 'PICK-UP'
+    elif CLASE == 908: bfCLASE = 'MOTOCICLETA'
 
     if bfCLASE != '':        
         try:
