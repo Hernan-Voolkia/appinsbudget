@@ -3153,7 +3153,7 @@ def fnCambiaPinturaLateral(inSEG,inCOD_CLASE,lsRepone):
 
 #def fnEspejoLateralElec(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnEspejoLateralElec(inCOD_VERSION,isAlta):
-    inCOD_PARTE = 1
+    inCOD_PARTE = 3
     inCOD_ELEMRED = 16024
     itemRed = "PUERTA DEL ESPEJO ELECTRICO"
     lsReponeAve = []
@@ -3173,7 +3173,7 @@ def fnEspejoLateralElec(inCOD_VERSION,isAlta):
 
 #def fnEspejoLateralMan(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnEspejoLateralMan(inCOD_VERSION,isAlta):    
-    inCOD_PARTE = 1
+    inCOD_PARTE = 3
     inCOD_ELEMRED = 16024
     itemRed = "PUERTA DEL ESPEJO MANUAL C/ CONTROL"
     lsReponeAve = []
@@ -3193,7 +3193,7 @@ def fnEspejoLateralMan(inCOD_VERSION,isAlta):
     
 #def fnManijaLateralDel(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnManijaLateralDel(inCOD_VERSION,isAlta):    
-    inCOD_PARTE = 1
+    inCOD_PARTE = 3
     inCOD_ELEMRED = 16024
     itemRed = "PUERTA DEL MANIJA EXT"
     lsReponeAve = []
@@ -3213,7 +3213,7 @@ def fnManijaLateralDel(inCOD_VERSION,isAlta):
     
 #def fnManijaLateralTra(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnManijaLateralTra(inCOD_VERSION,isAlta):    
-    inCOD_PARTE = 1
+    inCOD_PARTE = 3
     inCOD_ELEMRED = 16024
     itemRed = "PUERTA TRAS MANIJA EXT"
     lsReponeAve = []
