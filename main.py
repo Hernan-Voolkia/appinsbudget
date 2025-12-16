@@ -135,6 +135,8 @@ try:
 except Exception as e:
     logger.error(f"ERROR CLASE: {str(e)}")
 
+print(param.bfMObra)
+
 app = FastAPI()
 app.mount("/img", StaticFiles(directory="img"), name='img')
 templates = Jinja2Templates(directory="templates")
@@ -2613,19 +2615,18 @@ def fnReparaTrasero(inSEG, inCOD_CLASE, lsRepara):
     except (ValueError, TypeError):
         logger.warning("param.bfMObra inválido, usando 1.0 por defecto")
         val_mobra = 1.0
-
     try:
         with engine.connect() as conn:
             sql = text("SELECT flmo, flpt FROM admrtra WHERE seg = :seg AND clase = :clase AND stname LIKE :name")
+
             for item in lsRepara:
                 item_con_wildcards = f"%{item}%"
-                
                 result = conn.execute(sql, {
                     "seg": int(inSEG), 
                     "clase": int(inCOD_CLASE), 
                     "name": item_con_wildcards
                 })
-
+             
                 for row in result:
                     try:
                         flmo_val = float(row.flmo)
