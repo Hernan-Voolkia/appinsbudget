@@ -2326,8 +2326,7 @@ def fnSegmento(bfCLASE,MARCA,MODELO,VERSION):
                 segmento_map = {'MM1': 1, 'MM2': 2, 'MM3': 3}
                 iSegmento = segmento_map.get(seg_upper, 0)
                 
-                if gama_upper == 'GM':
-                    isAlta = True
+                if gama_upper == 'GA': isAlta = True
     except Exception as e:
         logger.error(f"ERROR CLASE: "+str(e))           
     return iSegmento, isAlta
@@ -2865,6 +2864,7 @@ def fnCambiaFrente(inCOD_VERSION,lsRepone,isAlta):
                                                  (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                     (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
         
+        print(isAlta)
         flAverage = np.round(bfID_ELEM['precio'].mean(),2)
         if pd.isna(flAverage):
             if item  =="CAPOT"         :flAverage = paramal.bfFrt_GA_Del_Capot if isAlta          else param.bfFrt_GM_Del_Capot
