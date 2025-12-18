@@ -2864,7 +2864,6 @@ def fnCambiaFrente(inCOD_VERSION,lsRepone,isAlta):
                                                  (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                     (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
         
-        print(isAlta)
         flAverage = np.round(bfID_ELEM['precio'].mean(),2)
         if pd.isna(flAverage):
             if item  =="CAPOT"         :flAverage = paramal.bfFrt_GA_Del_Capot if isAlta          else param.bfFrt_GM_Del_Capot
