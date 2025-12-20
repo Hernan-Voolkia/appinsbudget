@@ -1,11 +1,13 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Depends, status
 from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 
 import warnings
 import datetime
-import re
+#import re
 import sys
 import pandas as pd
 import numpy as np
@@ -13,24 +15,28 @@ import sqlalchemy as db
 from sqlalchemy import text, exc, create_engine 
 from functools import lru_cache
 import logging
+import os
+from dotenv import load_dotenv
+import secrets
 
-from streamlit import context
+
+#from streamlit import context
 
 import param
 import paramal
 import paramsuv
 import paramsuval
 import search
-import marca
+#import marca
 import index
 import admvalue
-import dbstatus
+import html
+
+security = HTTPBasic()
 
 warnings.filterwarnings("ignore")
 np.set_printoptions(suppress=True)
 
-#logging.basicConfig(level=logging.INFO,format='%(asctime)s - %(levelname)s - %(message)s',handlers=[logging.StreamHandler(sys.stdout)])
-#logger = logging.getLogger(__name__)
 def setup_explicit_logger(name):
     """
     Configura y devuelve un logger, asegurando que use sys.stdout y que no
@@ -56,6 +62,26 @@ def setup_explicit_logger(name):
 
     return logger
 logger = setup_explicit_logger(__name__)
+
+def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
+    """
+    Validación simple contra variables de entorno.
+    Se reemplazará por LDAP en la Fase 2.
+    """
+    correct_username = os.getenv("ADMIN_USER", "*_")
+    correct_password = os.getenv("ADMIN_PASSWORD", "_*")
+
+    is_correct_username = secrets.compare_digest(credentials.username, correct_username)
+    is_correct_password = secrets.compare_digest(credentials.password, correct_password)
+
+    if not (is_correct_username and is_correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Credenciales incorrectas",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials.username
+
 #PORTON
 try:
     dfPorton = pd.read_csv('./data/dfPortonV2.csv',sep=';',encoding='utf-8',decimal='.',
@@ -106,21 +132,11 @@ try:
 except FileNotFoundError:
     logger.error(f"Error: motos.csv no fue encontrado.")
 #DBVALUES
-cEnv = ""
-try:
-    with open('.env', 'r') as file: 
-        cEnv=file.read().strip()
-except FileNotFoundError:
-    logger.error(f"Error: .env no fue encontrado.")
-except Exception as e:
-    logger.error(f"Error: .env", exc_info=True)
 
-if cEnv == 'PROD':
-    cDBConnValue = 'postgresql://appinsbudgetuser:oGcfNsvSvdQsdmZGK6PnfsTGASpEg2da@dpg-cq3b65qju9rs739bbnb0-a/appinsbudgetdb'
-else:    
-    cDBConnValue = 'sqlite:///appinsbudget.sqlite3'
-
+load_dotenv()
+cDBConnValue = os.getenv('DB_CONN_STRING', 'sqlite:///appinsbudget.sqlite3')
 engine = db.create_engine(cDBConnValue, pool_size=10, max_overflow=20)
+
 try:
     with engine.connect() as conn:
         sql = text("""SELECT stname,flvalue FROM admvalue;""")
@@ -135,11 +151,22 @@ try:
 except Exception as e:
     logger.error(f"ERROR CLASE: {str(e)}")
 
-print(param.bfMObra)
-
 app = FastAPI()
+app.add_middleware(
+    TrustedHostMiddleware, 
+    allowed_hosts=["localhost", "127.0.0.1", "appinsbudget.onrender.com"] 
+)
 app.mount("/img", StaticFiles(directory="img"), name='img')
 templates = Jinja2Templates(directory="templates")
+
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "SAMEORIGIN"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    return response
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
@@ -175,8 +202,8 @@ async def modelo(CLASE  : int = 0):
                 opciones_html = []
                 for row in result:
                     cod_marca = row.cyc_cod_marca
-                    desc_marca = row.cyc_desc_marca.title() 
-                    linea = f"<option id={cod_marca}>{desc_marca}</option>\n"
+                    desc_marca = html.escape(row.cyc_desc_marca.title())
+                    linea = f'<option id="{cod_marca}">{desc_marca}</option>\n'
                     opciones_html.append(linea)
                 bfVH += "".join(opciones_html)
         
@@ -211,8 +238,8 @@ async def modelo(CLASE:int=901, MARCA:int=0):
                 
                 for row in result:
                     cod_modelo = row.cyc_cod_modelo
-                    desc_modelo = row.cyc_desc_modelo.title()
-                    linea = f"<option id={cod_modelo}>{desc_modelo}</option>\n"
+                    desc_modelo = html.escape(row.cyc_desc_modelo.title())
+                    linea = f'<option id="{cod_modelo}">{desc_modelo}</option>\n'
                     opciones_html.append(linea)
                 
                 bfOptions += "".join(opciones_html)
@@ -249,8 +276,9 @@ async def version(CLASE:int=901, MARCA:int=0, MODELO:int=0):
                 opciones_html = []
                 for row in result:
                     cod_vehiculo = row.cyc_cod_vehiculo
-                    desc_version = row.cyc_desc_version.title()
-                    linea = f"<option id={cod_vehiculo}>{desc_version}</option>\n"
+
+                    desc_version = html.escape(row.cyc_desc_version.title())
+                    linea = f'<option id="{cod_vehiculo}">{desc_version}</option>\n'
                     opciones_html.append(linea)
                 
                 bfOptions += "".join(opciones_html)
@@ -269,6 +297,13 @@ async def consulta():
     Configuración de Mapeo: (NombreTabla, ObjetoDestino, PrefijoAtributo)
     Esto reemplaza todos los bloques if/else manuales.
     """
+    ALLOWED_TABLES = {
+        'admvalue', 
+        'admvalueslat', 'admvalueslatSUV', 'admvalueslatal', 'admvalueslatalSUV',
+        'admvaluesdel', 'admvaluesdelSUV', 'admvaluesdelal', 'admvaluesdelalSUV',
+        'admvaluestra', 'admvaluestraSUV', 'admvaluestraal', 'admvaluestraalSUV'
+    }    
+    
     tablas_config = [
         # Tablas Generales (Prefijo 'bf')
         ('admvalue',            param,      'bf'),
@@ -294,6 +329,11 @@ async def consulta():
     try:
         with engine.connect() as conn:
             for tabla, objeto_destino, prefijo in tablas_config:
+                
+                if tabla not in ALLOWED_TABLES:
+                    logger.critical(f"ALERTA DE SEGURIDAD: Intento de consulta a tabla no autorizada: {tabla}")
+                    return 
+                
                 try:
                     # Ejecutamos la query para la tabla actual
                     sql = text(f"SELECT stname, flvalue FROM {tabla}")
@@ -362,7 +402,9 @@ async def adminValues():
     return bfAdminValues
 #==========================================================
 @app.post("/admvaluesave", response_class=PlainTextResponse)
-async def adminValuesSave(ASEGURADO:str="", TERCERO:str="", MOBRA:str="", MOMINIMO:str="", PINTURA:str="", AJUSTE:str=""):
+async def adminValuesSave(ASEGURADO:str="", TERCERO:str="", MOBRA:str="", MOMINIMO:str="", PINTURA:str="", AJUSTE:str="",
+                          username: str = Depends(get_current_username) 
+):    
     bfMsg = "Valores grabados satisfactoriamente"
     # Esto nos permitirá ejecutar una sola instrucción SQL
     updates = [
@@ -383,7 +425,7 @@ async def adminValuesSave(ASEGURADO:str="", TERCERO:str="", MOBRA:str="", MOMINI
             conn.execute(sql, updates)
 
     except Exception as e:
-        bfMsg = f"Se produjo un error al grabar: {str(e)}"
+        bfMsg = "Se produjo un error al grabar"
         logger.error(f"Error: admvalue - {e}")
     
     return bfMsg
@@ -429,9 +471,10 @@ async def admrdelsel(Clase: int, Segmento: int):
         raise HTTPException(status_code=500, detail="Error interno del servidor al consultar los valores.")
 #==========================================================
 @app.post("/admrdelsave", response_class=PlainTextResponse)
-async def admRDelSave(clase:str="",segmento:str="",Capot_Ratio:str="",Guardabarro_Ratio:str="",Frente_Ratio:str="",Paragolpe_Alma_Ratio:str="",Paragolpe_Ctro_Ratio:str="",Capot_Ratio_PT:str="",Guardabarro_Ratio_PT:str="",Frente_Ratio_PT:str="",Paragolpe_Alma_Ratio_PT:str="",Paragolpe_Ctro_Ratio_PT:str=""):
+async def admRDelSave(clase:str="",segmento:str="",Capot_Ratio:str="",Guardabarro_Ratio:str="",Frente_Ratio:str="",Paragolpe_Alma_Ratio:str="",Paragolpe_Ctro_Ratio:str="",Capot_Ratio_PT:str="",Guardabarro_Ratio_PT:str="",Frente_Ratio_PT:str="",Paragolpe_Alma_Ratio_PT:str="",Paragolpe_Ctro_Ratio_PT:str="",
+                      username: str = Depends(get_current_username)):
     bfMsg = "Valores grabados satisfactoriamente"
-    engine = db.create_engine(cDBConnValue)
+    #engine = db.create_engine(cDBConnValue)
     with engine.begin() as conn:
         try:
             p_seg   = int(segmento) if segmento else 0
@@ -567,10 +610,11 @@ async def admRDelSave(clase:str="",segmento:str="",Capot_Ratio:str="",Guardabarr
                 "stname": "PARAGOLPE_CTRO" 
             })
         except ValueError as e:
-            bfMsg = f"Error: Uno de los valores no es un número válido. {e}"
+            bfMsg = f"Error numero válido"
+            logger.error(f"Error: Valores no es un numero válido. {e}", exc_info=True)
         except Exception as e:
-            bfMsg =f"Error de base de datos: {e}"
-            raise    
+            bfMsg =f"Error de base de datos"
+            logger.error(f"Error de base de datos al guardar admrdel: {e}", exc_info=True)
     return bfMsg
 ##############################################################
 # Reporte de Ratios Lateral
@@ -615,9 +659,10 @@ async def admrlatsel(Clase: int, Segmento: int):
         raise HTTPException(status_code=500, detail="Error interno del servidor al consultar los valores.")
 #==========================================================
 @app.post("/admrlatsave", response_class=PlainTextResponse)
-async def admRLatSave(clase:str="",segmento:str="",Puerta_Del_Panel_Ratio:str="",Puerta_Tras_Panel_Ratio:str="",Zocalo_Ratio:str="",Puerta_Del_Panel_Ratio_PT:str="",Puerta_Tras_Panel_Ratio_PT:str="",Zocalo_Ratio_PT:str=""):
+async def admRLatSave(clase:str="",segmento:str="",Puerta_Del_Panel_Ratio:str="",Puerta_Tras_Panel_Ratio:str="",Zocalo_Ratio:str="",Puerta_Del_Panel_Ratio_PT:str="",Puerta_Tras_Panel_Ratio_PT:str="",Zocalo_Ratio_PT:str="",
+                      username: str = Depends(get_current_username)):
     bfMsg = "Valores grabados satisfactoriamente"
-    engine = db.create_engine(cDBConnValue)
+    #engine = db.create_engine(cDBConnValue)
     with engine.begin() as conn:
         try:
             p_seg   = int(segmento) if segmento else 0
@@ -701,10 +746,11 @@ async def admRLatSave(clase:str="",segmento:str="",Puerta_Del_Panel_Ratio:str=""
                 "stname": "ZOCALO" 
             })
         except ValueError as e:
-            bfMsg = f"Error: Uno de los valores no es un número válido. {e}"
+            bfMsg = f"Error numero no valido"
+            logger.error(f"Error: Uno de los valores no es un numero valido. {e}", exc_info=True)
         except Exception as e:
-            bfMsg =f"Error de base de datos: {e}"
-            raise    
+            bfMsg =f"Error de base de datos"
+            logger.error(f"Error de base de datos: {e}", exc_info=True)
     return bfMsg            
 ##############################################################
 # Reporte de Ratios Trasero
@@ -749,9 +795,10 @@ async def admrtrasel(Clase: int, Segmento: int):
         raise HTTPException(status_code=500, detail="Error interno del servidor al consultar los valores.")   
 #==========================================================
 @app.post("/admrtrasave", response_class=PlainTextResponse)
-async def admRTraSave(clase:str="",segmento:str="",Baul_Ratio:str="",Guardabarro_Ratio:str="",Panel_Cola_Sup_Ratio:str="",Paragolpe_Ratio:str="",Porton_Ratio:str="",Baul_Ratio_PT:str="",Guardabarro_Ratio_PT:str="",Panel_Cola_Sup_Ratio_PT:str="",Paragolpe_Ratio_PT:str="",Porton_Ratio_PT:str=""):
+async def admRTraSave(clase:str="",segmento:str="",Baul_Ratio:str="",Guardabarro_Ratio:str="",Panel_Cola_Sup_Ratio:str="",Paragolpe_Ratio:str="",Porton_Ratio:str="",Baul_Ratio_PT:str="",Guardabarro_Ratio_PT:str="",Panel_Cola_Sup_Ratio_PT:str="",Paragolpe_Ratio_PT:str="",Porton_Ratio_PT:str="",
+                      username: str = Depends(get_current_username)):
     bfMsg = "Valores grabados satisfactoriamente"
-    engine = db.create_engine(cDBConnValue)
+    #engine = db.create_engine(cDBConnValue)
     with engine.begin() as conn:
         try:
             p_seg   = int(segmento) if segmento else 0
@@ -887,10 +934,11 @@ async def admRTraSave(clase:str="",segmento:str="",Baul_Ratio:str="",Guardabarro
                 "stname": "PORTON" 
             })
         except ValueError as e:
-            bfMsg = f"Error: Uno de los valores no es un número válido. {e}"
+            bfMsg = f"Error número no valido"
+            logger.error(f"Error número no valido: {e}", exc_info=True)
         except Exception as e:
-            bfMsg =f"Error de base de datos: {e}"
-            raise    
+            bfMsg =f"Error de base de datos"
+            logger.error(f"Error de base de datos: {e}", exc_info=True)
     return bfMsg                  
 ##############################################################
 # Reporte de Ratios Trasero
@@ -907,7 +955,8 @@ async def admTraRatio(request: Request):
     return templates.TemplateResponse("admrtra.html", context)
 #==========================================================
 @app.post("/admtraratiosave", response_class=PlainTextResponse)
-async def admTraRatioSave(ASEGURADO:str="", TERCERO:str="", MOBRA:str="", MOMINIMO:str="", PINTURA:str="", AJUSTE:str=""):
+async def admTraRatioSave(ASEGURADO:str="", TERCERO:str="", MOBRA:str="", MOMINIMO:str="", PINTURA:str="", AJUSTE:str="",
+                          username: str = Depends(get_current_username)):
     bfMsg = "Valores grabados satisfactoriamente"
     updates = [
         {'name': 'Asegurado', 'val': str(ASEGURADO).replace(',', '.')},
@@ -922,7 +971,7 @@ async def admTraRatioSave(ASEGURADO:str="", TERCERO:str="", MOBRA:str="", MOMINI
             sql = text("UPDATE admvalue SET flValue = :val WHERE stName = :name")
             conn.execute(sql, updates)
     except Exception as e:
-        bfMsg = f"Se produjo un error al grabar: {str(e)}"
+        bfMsg = f"Se produjo un error al grabar"
         logger.error(f"Error: admvalue (TraRatioSave) - {e}")
     
     return bfMsg
@@ -967,7 +1016,8 @@ async def admvalueslat(request: Request,
                        Lat_Manija_Pta_Del:str="",    Lat_Manija_Pta_Tras:str="",
                        Lat_Moldura_Pta_Del:str="",   Lat_Moldura_Pta_Tras:str="",
                        Lat_Puerta_Delantera:str="",  Lat_Puerta_Trasera:str="",
-                       Lat_Zocalo:str=""):
+                       Lat_Zocalo:str="",
+                       username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     # Nota: Agregué 'Lat_Puerta_Delantera' que faltaba en tu query original.
@@ -993,7 +1043,7 @@ async def admvalueslat(request: Request,
             sql = text("UPDATE admvalueslat SET flValue = :val WHERE stName = :name")
             conn.execute(sql, updates_formatted)
     except Exception as e:
-        bfMsg = f"Se produjo un error al grabar, comuniquese con el administrador {str(e)}"
+        bfMsg = f"Se produjo un error al grabar, comuniquese con el administrador"
         logger.error(f"Error en admvalueslat: {e}")
     
     return bfMsg
@@ -1036,7 +1086,8 @@ async def admvalueslatsuv(request: Request,
                           Lat_Manija_Pta_Del:str="",    Lat_Manija_Pta_Tras:str="",
                           Lat_Moldura_Pta_Del:str="",   Lat_Moldura_Pta_Tras:str="",
                           Lat_Puerta_Delantera:str="",  Lat_Puerta_Trasera:str="",
-                          Lat_Zocalo:str=""):
+                          Lat_Zocalo:str="",
+                          username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1061,7 +1112,7 @@ async def admvalueslatsuv(request: Request,
             sql = text("UPDATE admvalueslatsuv SET flValue = :val WHERE stName = :name")
             conn.execute(sql, updates_formatted)
     except Exception as e:
-        bfMsg = f"Se produjo un error al grabar, comuniquese con el administrador {str(e)}"
+        bfMsg = f"Se produjo un error al grabar, comuniquese con el administrador"
         logger.error(f"Error en admvalueslatsuv: {e}")
     
     return bfMsg
@@ -1104,7 +1155,7 @@ async def admvalueslatag(request: Request,
                          Lat_Manija_Pta_Del:str="",    Lat_Manija_Pta_Tras:str="",
                          Lat_Moldura_Pta_Del:str="",   Lat_Moldura_Pta_Tras:str="",
                          Lat_Puerta_Delantera:str="",  Lat_Puerta_Trasera:str="",
-                         Lat_Zocalo:str=""):
+                         Lat_Zocalo:str="", username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1130,7 +1181,7 @@ async def admvalueslatag(request: Request,
             sql = text("UPDATE admvalueslatal SET flValue = :val WHERE stName = :name")
             conn.execute(sql, updates_formatted)
     except Exception as e:
-        bfMsg = f"Se produjo un error al grabar, comuniquese con el administrador {str(e)}"
+        bfMsg = f"Se produjo un error al grabar, comuniquese con el administrador"
         logger.error(f"Error en admvalueslatag: {e}")
     
     return bfMsg
@@ -1173,7 +1224,7 @@ async def admvalueslatagsuv(request: Request,
                             Lat_Manija_Pta_Del:str="",    Lat_Manija_Pta_Tras:str="",
                             Lat_Moldura_Pta_Del:str="",   Lat_Moldura_Pta_Tras:str="",
                             Lat_Puerta_Delantera:str="",  Lat_Puerta_Trasera:str="",
-                            Lat_Zocalo:str=""):
+                            Lat_Zocalo:str="", username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1198,7 +1249,7 @@ async def admvalueslatagsuv(request: Request,
             sql = text("UPDATE admvalueslatalsuv SET flValue = :val WHERE stName = :name")
             conn.execute(sql, updates_formatted)
     except Exception as e:
-        bfMsg = f"Se produjo un error al grabar, comuniquese con el administrador {str(e)}"
+        bfMsg = f"Se produjo un error al grabar, comuniquese con el administrador"
         logger.error(f"Error en admvalueslatagsuv: {e}")
     
     return bfMsg
@@ -1235,7 +1286,7 @@ async def admreptra(request: Request):
 @app.post("/admvaluestra", response_class=PlainTextResponse)
 async def admvaluestra(Baul_Porton:str="", Faro_Ext:str="", Faro_Int:str="",
                        Guardabarro:str="", Luneta:str="",   Moldura:str="",
-                       Panel_Cola:str="",  Paragolpe:str=""):
+                       Panel_Cola:str="",  Paragolpe:str="", username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1257,7 +1308,7 @@ async def admvaluestra(Baul_Porton:str="", Faro_Ext:str="", Faro_Int:str="",
             sql = text("UPDATE admvaluestra SET flValue = :val WHERE stName = :name")
             conn.execute(sql, updates_formatted)
     except Exception as e:
-        bfMsg = f"Se produjo un error al grabar: {str(e)}"
+        bfMsg = f"Se produjo un error al grabar"
         logger.error(f"Error en admvaluestra: {e}")
     
     return bfMsg
@@ -1292,7 +1343,7 @@ async def admreptrasuv(request: Request):
 @app.post("/admvaluestrasuv", response_class=PlainTextResponse)
 async def admvaluestrasuv(Baul_Porton:str="", Faro_Ext:str="", Faro_Int:str="",
                           Guardabarro:str="", Luneta:str="",   Moldura:str="",
-                          Panel_Cola:str="",  Paragolpe:str=""):
+                          Panel_Cola:str="",  Paragolpe:str="", username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1314,7 +1365,7 @@ async def admvaluestrasuv(Baul_Porton:str="", Faro_Ext:str="", Faro_Int:str="",
             sql = text("UPDATE admvaluestrasuv SET flValue = :val WHERE stName = :name")
             conn.execute(sql, updates_formatted)
     except Exception as e:
-        bfMsg = f"Se produjo un error al grabar: {str(e)}"
+        bfMsg = f"Se produjo un error al grabar"
         logger.error(f"Error en admvaluestrasuv: {e}")
     
     return bfMsg
@@ -1349,7 +1400,7 @@ async def admreptraag(request: Request):
 @app.post("/admvaluestraag", response_class=PlainTextResponse)
 async def admvaluestraag(Baul_Porton:str="", Faro_Ext:str="", Faro_Int:str="",
                          Guardabarro:str="", Luneta:str="",   Moldura:str="",
-                         Panel_Cola:str="",  Paragolpe:str=""):
+                         Panel_Cola:str="",  Paragolpe:str="", username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1371,7 +1422,7 @@ async def admvaluestraag(Baul_Porton:str="", Faro_Ext:str="", Faro_Int:str="",
             sql = text("UPDATE admvaluestraal SET flValue = :val WHERE stName = :name")
             conn.execute(sql, updates_formatted)
     except Exception as e:
-        bfMsg = f"Se produjo un error al grabar: {str(e)}"
+        bfMsg = f"Se produjo un error al grabar"
         logger.error(f"Error en admvaluestraag: {e}")
     
     return bfMsg
@@ -1406,7 +1457,7 @@ async def admreptraagsuv(request: Request):
 @app.post("/admvaluestraagsuv", response_class=PlainTextResponse)
 async def admvaluestraagsuv(Baul_Porton:str="", Faro_Ext:str="", Faro_Int:str="",
                             Guardabarro:str="", Luneta:str="",   Moldura:str="",
-                            Panel_Cola:str="",  Paragolpe:str=""):
+                            Panel_Cola:str="",  Paragolpe:str="", username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1429,7 +1480,7 @@ async def admvaluestraagsuv(Baul_Porton:str="", Faro_Ext:str="", Faro_Int:str=""
             sql = text("UPDATE admvaluestraalsuv SET flValue = :val WHERE stName = :name")
             conn.execute(sql, updates_formatted)
     except Exception as e:
-        bfMsg = f"Se produjo un error al grabar: {str(e)}"
+        bfMsg = f"Se produjo un error al grabar"
         logger.error(f"Error en admvaluestraagsuv: {e}")
     
     return bfMsg
@@ -1477,7 +1528,7 @@ async def admvaluesdel(Paragolpe_Ctro:str="",   Paragolpe_Rejilla:str="",
                        Frente:str="",           Guardabarro:str="",
                        Faro:str="",             Faro_Auxiliar:str="",
                        Farito:str="",           Capot:str="",
-                       Parabrisas:str=""):
+                       Parabrisas:str="", username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1502,7 +1553,7 @@ async def admvaluesdel(Paragolpe_Ctro:str="",   Paragolpe_Rejilla:str="",
             sql = text("UPDATE admvaluesdel SET flValue = :val WHERE stName = :name")
             conn.execute(sql, updates_formatted)
     except Exception as e:
-        bfMsg = f"Se produjo un error al grabar: {str(e)}"
+        bfMsg = f"Se produjo un error al grabar"
         logger.error(f"Error en admvaluesdel: {e}")
     
     return bfMsg
@@ -1548,7 +1599,7 @@ async def admvaluesdelsuv(Paragolpe_Ctro:str="",   Paragolpe_Rejilla:str="",
                           Frente:str="",           Guardabarro:str="",
                           Faro:str="",             Faro_Auxiliar:str="",
                           Farito:str="",           Capot:str="",
-                          Parabrisas:str=""):
+                          Parabrisas:str="", username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1573,7 +1624,7 @@ async def admvaluesdelsuv(Paragolpe_Ctro:str="",   Paragolpe_Rejilla:str="",
             sql = text("UPDATE admvaluesdelsuv SET flValue = :val WHERE stName = :name")
             conn.execute(sql, updates_formatted)
     except Exception as e:
-        bfMsg = f"Se produjo un error al grabar: {str(e)}"
+        bfMsg = f"Se produjo un error al grabar"
         logger.error(f"Error en admvaluesdelsuv: {e}")
     
     return bfMsg
@@ -1619,7 +1670,7 @@ async def admvaluesdelag(Paragolpe_Ctro:str="",   Paragolpe_Rejilla:str="",
                          Frente:str="",           Guardabarro:str="",
                          Faro:str="",             Faro_Auxiliar:str="",
                          Farito:str="",           Capot:str="",
-                         Parabrisas:str=""):
+                         Parabrisas:str="", username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1644,7 +1695,7 @@ async def admvaluesdelag(Paragolpe_Ctro:str="",   Paragolpe_Rejilla:str="",
             sql = text("UPDATE admvaluesdelal SET flValue = :val WHERE stName = :name")
             conn.execute(sql, updates_formatted)
     except Exception as e:
-        bfMsg = f"Se produjo un error al grabar: {str(e)}"
+        bfMsg = f"Se produjo un error al grabar"
         logger.error(f"Error en admvaluesdelag: {e}")
     
     return bfMsg
@@ -1690,7 +1741,7 @@ async def admvaluesdelagsuv(Paragolpe_Ctro:str="",   Paragolpe_Rejilla:str="",
                             Frente:str="",           Guardabarro:str="",
                             Faro:str="",             Faro_Auxiliar:str="",
                             Farito:str="",           Capot:str="",
-                            Parabrisas:str=""):
+                            Parabrisas:str="", username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1715,7 +1766,7 @@ async def admvaluesdelagsuv(Paragolpe_Ctro:str="",   Paragolpe_Rejilla:str="",
             sql = text("UPDATE admvaluesdelalsuv SET flValue = :val WHERE stName = :name")
             conn.execute(sql, updates_formatted)
     except Exception as e:
-        bfMsg = f"Se produjo un error al grabar: {str(e)}"
+        bfMsg = f"Se produjo un error al grabar"
         logger.error(f"Error en admvaluesdelagsuv: {e}")
     
     return bfMsg
@@ -2007,7 +2058,7 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",VER
 
     if CLASE == "908":
         isWrited = fnWriteLogBrief(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO)
-        bfTmp = "Sugerido&nbsp$&nbsp" + VALORPERITO
+        bfTmp = "Sugerido&nbsp$&nbsp" + html.escape(VALORPERITO)
         return bfTmp
 
     #ToDo: Agregar si no es numerico mensaje de error
@@ -2645,7 +2696,6 @@ def fnReparaTrasero(inSEG, inCOD_CLASE, lsRepara):
 
     return lsReparaAve
 
-#def fnCambiaTrasero(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
 def fnCambiaTrasero(inCOD_VERSION,lsRepone,isAlta):    
     inCOD_PARTE = 2
     inCOD_ELEMRED = 0
@@ -2732,7 +2782,6 @@ def fnCambiaPinturaTrasero(inSEG,inCOD_CLASE,lsRepone):
 
     return lsReponePintAve,lsReponeMoAv
 
-#def fnMolduraTrasero(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnMolduraTrasero(inCOD_VERSION,isAlta):    
     inCOD_PARTE = 2
     inCOD_ELEMRED = 20006
@@ -2752,7 +2801,6 @@ def fnMolduraTrasero(inCOD_VERSION,isAlta):
     lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
     return lsReponeAve
 
-#def fnFaroExtTrasero(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnFaroExtTrasero(inCOD_VERSION,isAlta):    
     inCOD_PARTE = 2
     inCOD_ELEMRED = 6002
@@ -2772,7 +2820,6 @@ def fnFaroExtTrasero(inCOD_VERSION,isAlta):
     lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
     return lsReponeAve
 
-#def fnFaroIntTrasero(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnFaroIntTrasero(inCOD_VERSION,isAlta):    
     inCOD_PARTE = 2
     inCOD_ELEMRED = 6002
@@ -2834,7 +2881,6 @@ def fnReparaFrente(inSEG, inCOD_CLASE, lsRepara):
         raise HTTPException(status_code=500, detail="Error interno del servidor al consultar los valores de frente.")
     return lsReparaAve
 
-#def fnCambiaFrente(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,inCOD_VERSION,lsRepone,isAlta):
 def fnCambiaFrente(inCOD_VERSION,lsRepone,isAlta):    
     inCOD_PARTE = 1
     inCOD_ELEMRED = 0
@@ -2913,7 +2959,6 @@ def fnCambiaPinturaFrente(inSEG,inCOD_CLASE,lsRepone):
 
     return lsReponePintAve,lsReponeMoAv
 
-#def fnParabrisas(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnParabrisas(inCOD_VERSION,isAlta):    
     inCOD_PARTE = 1
     inCOD_ELEMRED = 16004
@@ -2933,7 +2978,6 @@ def fnParabrisas(inCOD_VERSION,isAlta):
     lsReponeAve.append(flAverage)
     return lsReponeAve 
 
-#def fnParagolpe_Rejilla(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnParagolpe_Rejilla(inCOD_VERSION,isAlta):    
     inCOD_PARTE = 1
     inCOD_ELEMRED = 16005
@@ -2956,7 +3000,6 @@ def fnParagolpe_Rejilla(inCOD_VERSION,isAlta):
     return lsReponeAve 
      
 
-#def fnRejilla_Radiador(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnRejilla_Radiador(inCOD_VERSION,isAlta):
     inCOD_PARTE = 1
     inCOD_ELEMRED = 18005
@@ -2980,7 +3023,6 @@ def fnRejilla_Radiador(inCOD_VERSION,isAlta):
     return lsReponeAve 
     
 
-#def fnFaroFrente(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnFaroFrente(inCOD_VERSION,isAlta):    
     inCOD_PARTE = 1
     inCOD_ELEMRED = 6002
@@ -3019,7 +3061,6 @@ def fnFaroAuxiliarFrente(inCOD_VERSION,isAlta):
     lsReponeAve.append(flAverage)
     return lsReponeAve 
 
-#def fnFaritoFrente(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnFaritoFrente(inCOD_VERSION,isAlta):
     inCOD_PARTE = 1
     inCOD_ELEMRED = 6001
@@ -3075,7 +3116,6 @@ def fnReparaLateral(inSEG, inCOD_CLASE, lsRepara):
         raise HTTPException(status_code=500, detail="Error interno del servidor al consultar los valores laterales.")
     return lsReparaAve
 
-#def fnCambiaLateral(inSEG,inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,lsRepone,isAlta):
 def fnCambiaLateral(inCOD_VERSION,lsRepone,isAlta):    
     inCOD_PARTE = 3
     inCOD_ELEMRED = 0
@@ -3151,7 +3191,6 @@ def fnCambiaPinturaLateral(inSEG,inCOD_CLASE,lsRepone):
 
     return lsReponePintAve,lsReponeMoAv
 
-#def fnEspejoLateralElec(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnEspejoLateralElec(inCOD_VERSION,isAlta):
     inCOD_PARTE = 3
     inCOD_ELEMRED = 16024
@@ -3171,7 +3210,6 @@ def fnEspejoLateralElec(inCOD_VERSION,isAlta):
     lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
     return lsReponeAve
 
-#def fnEspejoLateralMan(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnEspejoLateralMan(inCOD_VERSION,isAlta):    
     inCOD_PARTE = 3
     inCOD_ELEMRED = 16024
@@ -3191,7 +3229,6 @@ def fnEspejoLateralMan(inCOD_VERSION,isAlta):
     lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
     return lsReponeAve
     
-#def fnManijaLateralDel(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnManijaLateralDel(inCOD_VERSION,isAlta):    
     inCOD_PARTE = 3
     inCOD_ELEMRED = 16024
@@ -3211,7 +3248,6 @@ def fnManijaLateralDel(inCOD_VERSION,isAlta):
     lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
     return lsReponeAve
     
-#def fnManijaLateralTra(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnManijaLateralTra(inCOD_VERSION,isAlta):    
     inCOD_PARTE = 3
     inCOD_ELEMRED = 16024
@@ -3231,7 +3267,6 @@ def fnManijaLateralTra(inCOD_VERSION,isAlta):
     lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
     return lsReponeAve
     
-#def fnMolduraLateralDel(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnMolduraLateralDel(inCOD_VERSION,isAlta):    
     inCOD_PARTE = 3
     inCOD_ELEMRED = 16024
@@ -3251,7 +3286,6 @@ def fnMolduraLateralDel(inCOD_VERSION,isAlta):
     lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
     return lsReponeAve
     
-#def fnMolduraLateralTra(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnMolduraLateralTra(inCOD_VERSION,isAlta):    
     inCOD_PARTE = 3
     inCOD_ELEMRED = 16024
@@ -3271,7 +3305,6 @@ def fnMolduraLateralTra(inCOD_VERSION,isAlta):
     lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
     return lsReponeAve
 
-#def fnCristalLateralDel(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnCristalLateralDel(inCOD_VERSION,isAlta):
     inCOD_PARTE = 3
     inCOD_ELEMRED = 16024
@@ -3283,8 +3316,7 @@ def fnCristalLateralDel(inCOD_VERSION,isAlta):
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
     
-    print(inCOD_VERSION)
-    print(bfID_ELEM)
+
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
         if isAlta: flAverage = paramal.bfLat_Cristal_Delantero
@@ -3293,7 +3325,6 @@ def fnCristalLateralDel(inCOD_VERSION,isAlta):
     lsReponeAve.append(round(flAverage + param.bfMOMinimo,2)) 
     return lsReponeAve
     
-#def fnCristalLateralTra(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,isAlta):
 def fnCristalLateralTra(inCOD_VERSION,isAlta):
     inCOD_PARTE = 3
     inCOD_ELEMRED = 16024
@@ -3386,13 +3417,9 @@ def fnWriteLog(CLIENTE, CLASE, MARCA, MODELO, SINIESTRO, PERITO, VALORPERITO, FR
                 Asegurado, Tercero, MObra, Pintura, Ajuste
             ) VALUES (
                 :timestamp, :cliente, :clase, :marca, :modelo, :siniestro, :perito, :valor_perito, :frente, :lateral, :trasero,
-                
                 :v0, :v1, :v2, :v3, :v4, :v5, :v6, :v7, :v8, :v9, :v10,
-                
                 :v11, :v12, :v13, :v14, :v15, :v16, :v17, :v18, :v19, :v20, :v21, :v22, :v23,
-                
                 :v24, :v25, :v26, :v27, :v28, :v29, :v30, :v31,
-                
                 :asegurado, :tercero, :mobra, :pintura, :ajuste
             )
         """)
@@ -3403,66 +3430,6 @@ def fnWriteLog(CLIENTE, CLASE, MARCA, MODELO, SINIESTRO, PERITO, VALORPERITO, FR
         logger.error(f"Error en fnWriteLog: {e}")
 
     return bfWrite
-'''
-def fnWriteLog(CLIENTE, CLASE, MARCA, MODELO, SINIESTRO, PERITO, VALORPERITO, FRENTE, LATERAL, TRASERO, lsValuesResultWrite):
-    bfWrite = True
-    try:
-        values_dict = {
-            "timestamp":    datetime.datetime.now().timestamp(),
-            "cliente":      CLIENTE,
-            "clase":        CLASE,
-            "marca":        MARCA,
-            "modelo":       MODELO,
-            "siniestro":    SINIESTRO,
-            "perito":       str(PERITO).replace(',', ''), # Mantenemos tu lógica de limpieza
-            "valor_perito": VALORPERITO,
-            "frente":       FRENTE,
-            "lateral":      LATERAL,
-            "trasero":      TRASERO,
-            "asegurado":    param.bfAsegurado,
-            "tercero":      param.bfTercero,
-            "mobra":        param.bfMObra,
-            "pintura":      param.bfPintura,
-            "ajuste":       param.bfAjuste
-        }
-        for i, val in enumerate(lsValuesResultWrite):
-            values_dict[f"v{i}"] = val
-
-        sql = text("""
-            INSERT INTO logpresupuestosV1 (
-                timestamp, cliente, clase, marca, modelo, siniestro, Perito, ValorPerito, frente, lateralr, trasero,
-                
-                frReparaPintura, frReponeElemento, frReponePintura, frReponeManoObra, frReponeFarito, frReponeFaro,
-                frReponeFaro_Auxiliar, frReponeParabrisas, frReponeParagolpe_Rejilla, frReponeRejilla_Radiador, frTotal,
-                
-                ltReparaPintura, ltReponeElemento, ltReponePintura, ltReponeManoObra, ltReponeEspejoEle,
-                ltReponeEspejoMan, ltReponeManijaDel, ltReponeManijaTra, ltReponeMolduraDel, ltReponeMolduraTra,
-                ltReponeCristalDel, ltReponeCristalTra, ltTotal,
-                
-                trReparaPintura, trReponeElemento, trReponePintura, trReponeManoObra,
-                trReponeMoldura, trReponeFaroExt, trReponeFaroInt, trTotal,
-                
-                Asegurado, Tercero, MObra, Pintura, Ajuste
-            ) VALUES (
-                :timestamp, :cliente, :clase, :marca, :modelo, :siniestro, :perito, :valor_perito, :frente, :lateral, :trasero,
-                
-                :v0, :v1, :v2, :v3, :v4, :v5, :v6, :v7, :v8, :v9, :v10,
-                
-                :v11, :v12, :v13, :v14, :v15, :v16, :v17, :v18, :v19, :v20, :v21, :v22, :v23,
-                
-                :v24, :v25, :v26, :v27, :v28, :v29, :v30, :v31,
-                
-                :asegurado, :tercero, :mobra, :pintura, :ajuste
-            )
-        """)
-        with engine.begin() as conn:
-            conn.execute(sql, values_dict)
-    except Exception as e:
-        bfWrite = False
-        logger.error(f"Error en fnWriteLog: {e}")
-
-    return bfWrite
-'''
 
 def fnWriteLogBrief(CLIENTE, CLASE, MARCA, MODELO, SINIESTRO, PERITO, VALORPERITO):     
     bfWrite = True
