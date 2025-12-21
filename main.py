@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Request, Depends, status
+from fastapi import FastAPI, HTTPException, Request, Depends, status, Form
 from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -18,19 +18,12 @@ import logging
 import os
 from dotenv import load_dotenv
 import secrets
-
-
-#from streamlit import context
+import html
 
 import param
 import paramal
 import paramsuv
 import paramsuval
-import search
-#import marca
-import index
-import admvalue
-import html
 
 security = HTTPBasic()
 
@@ -169,8 +162,9 @@ async def add_security_headers(request: Request, call_next):
     return response
 
 @app.get("/", response_class=HTMLResponse)
-async def read_root():
-    return index.bfHTML
+async def read_root(request: Request):
+    context = {"request": request,}
+    return templates.TemplateResponse("search.html", context)
 
 @app.post("/vh", response_class=PlainTextResponse)
 async def modelo(CLASE  : int = 0):
@@ -289,7 +283,7 @@ async def version(CLASE:int=901, MARCA:int=0, MODELO:int=0):
     return bfOptions
 
 @app.get("/consulta", response_class=HTMLResponse)
-async def consulta():
+async def consulta(request: Request):
     """
     Carga masiva de parámetros desde múltiples tablas usando una sola conexión
     y asignación dinámica de atributos.
@@ -359,17 +353,17 @@ async def consulta():
 
                 except Exception as e_tabla:
                     logger.error(f"Error cargando tabla {tabla}: {e_tabla}")
-                    # Continuamos con la siguiente tabla aunque una falle
 
     except Exception as e:
         logger.error(f"Error crítico en consulta de carga masiva: {e}")
     
-    return search.bfHTML
+    context = {"request": request,}
+    return templates.TemplateResponse("search.html", context)
 ##############################################################
 # Reporte de Valores de Valores Genericos
 ##############################################################
 @app.get("/admvalue", response_class=HTMLResponse)
-async def adminValues():
+async def adminValues(request: Request):
     try:
         with engine.connect() as conn:
             result = conn.execute(text('SELECT stname, flvalue FROM admvalue;'))
@@ -381,11 +375,12 @@ async def adminValues():
                     setattr(param, attr_name, float(row.flvalue))
 
     except Exception as e:
-        logger.error(f"Error: no se pudo acceder a admvalue. {e}")
+        logger.error(f"Error: no se pudo acceder a admvalue {e}")
         campos_error = ['Tercero', 'MObra', 'MOMinimo', 'Pintura', 'Ajuste', 'Asegurado']
         for campo in campos_error:
             setattr(param, f"bf{campo}", "")
 
+    '''
     bfAdminValues = admvalue.bfHTML
     
     reemplazos = {
@@ -398,8 +393,17 @@ async def adminValues():
     }
     for token, valor in reemplazos.items():
         bfAdminValues = bfAdminValues.replace(token, str(valor))
-        
     return bfAdminValues
+    '''
+    context = {'request': request,
+               'rplBfAsegurado': param.bfAsegurado,
+               'rplBfTercero':   param.bfTercero,
+               'rplBfMObra':     param.bfMObra,
+               'rplBfMOMinimo':  param.bfMOMinimo,
+               'rplBfPintura':   param.bfPintura,
+               'rplBfAjuste':    param.bfAjuste
+              }
+    return templates.TemplateResponse("admvalue.html", context)
 #==========================================================
 @app.post("/admvaluesave", response_class=PlainTextResponse)
 async def adminValuesSave(ASEGURADO:str="", TERCERO:str="", MOBRA:str="", MOMINIMO:str="", PINTURA:str="", AJUSTE:str="",
@@ -1992,8 +1996,35 @@ def fnCmbFrente(input):
 
 @app.post("/search", response_class=PlainTextResponse)
     #Segmenta Input
-async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",VERSION:str="",SINIESTRO:str="",\
-                      PERITO:str="",VALORPERITO:str="",FRENTE:str="",LATERAL:str="",TRASERO:str=""):
+async def search_Data(CLIENTE: str = Form(""), 
+                      CLASE: str = Form(""),
+                      MARCA: str = Form(""),
+                      MODELO: str = Form(""),
+                      VERSION: str = Form(""),
+                      SINIESTRO: str = Form(""),
+                      PERITO: str = Form(""),
+                      VALORPERITO: str = Form(""),
+                      FRENTE: str = Form(""),
+                      LATERAL: str = Form(""),
+                      TRASERO: str = Form("")):
+    
+    if CLASE == "908":
+        isWrited = fnWriteLogBrief(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO)
+        bfTmp = "Sugerido&nbsp$&nbsp" + html.escape(VALORPERITO)
+        return bfTmp
+
+    #ToDo: Agregar si no es numerico mensaje de error
+    if CLASE.isdigit(): 
+        iCLASE = int(CLASE)
+        if   iCLASE == 901: bfCLASE = 'SEDAN' 
+        elif iCLASE == 907: bfCLASE = 'SUV'
+        elif iCLASE == 900: bfCLASE = 'COUPE'        
+        elif iCLASE == 910: bfCLASE = 'PICK-UP'
+
+    if MARCA.isdigit(): iMARCA = int(MARCA)
+    if MODELO.isdigit():iMODELO= int(MODELO)
+    if VERSION.isdigit():iVERSION= int(VERSION)
+    
     lsFrente  = FRENTE.split('-')
     lsLateral = LATERAL.split('-')
     lsTrasero = TRASERO.split('-')
@@ -2056,22 +2087,6 @@ async def search_Data(CLIENTE:str="",CLASE:str="",MARCA:str="",MODELO:str="",VER
     flTraValorReponeFaroExt=0
     flTraValorReponeFaroInt=0
 
-    if CLASE == "908":
-        isWrited = fnWriteLogBrief(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO)
-        bfTmp = "Sugerido&nbsp$&nbsp" + html.escape(VALORPERITO)
-        return bfTmp
-
-    #ToDo: Agregar si no es numerico mensaje de error
-    if CLASE.isdigit(): 
-        iCLASE = int(CLASE)
-        if   iCLASE == 901: bfCLASE = 'SEDAN' 
-        elif iCLASE == 907: bfCLASE = 'SUV'
-        elif iCLASE == 900: bfCLASE = 'COUPE'        
-        elif iCLASE == 910: bfCLASE = 'PICK-UP'
-
-    if MARCA.isdigit(): iMARCA = int(MARCA)
-    if MODELO.isdigit():iMODELO= int(MODELO)
-    if VERSION.isdigit():iVERSION= int(VERSION)
 
     #ToDo: Sacar de la consuilta Clase, Marca Modelo
     #      Ademas generar corte si iVERSION no existe y enviar mensaje
