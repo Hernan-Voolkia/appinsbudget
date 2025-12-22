@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link id="favicon" rel="icon" type="image/x-icon" href="/img/favicon.ico">
-    <link href='http://fonts.cdnfonts.com/css/helvetica-neue-9' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.cdnfonts.com/css/helvetica-neue-9' rel='stylesheet' type='text/css'>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.cdnfonts.com; font-src https://fonts.gstatic.com https://fonts.cdnfonts.com;">    
     <title>App Presupuesto</title>
     <style>
         body {background-color:rgb(255,255,255);}
@@ -371,11 +372,13 @@
         sendData(text);
     }
     async function sendData(bfSearch) {
-        let url = "/admrtrasel?" + bfSearch;
+        let url = "/admrtrasel";
         var e = document.getElementById("CostBrief"); 
         e.innerHTML = "&nbsp;&nbsp;Cargando datos, por favor espere...&nbsp;&nbsp;";
             try {
-                const response = await fetch(url, { method: 'POST' });
+                const response = await fetch(url, { method: 'POST',
+                                             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                                             body: bfSearch});
                 if (!response.ok) {
                     throw new Error(`Error en la respuesta del servidor: ${response.status} ${response.statusText}`);
                 }
@@ -444,8 +447,10 @@
     }
     function sendValuesTra(bfSearch) {
         let xhr = new XMLHttpRequest();
-        let url = "/admrtrasave?" + bfSearch;
+        let url = "/admrtrasave";
         xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.send(bfSearch);
         xhr.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 var e = document.getElementById("CostBrief");
