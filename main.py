@@ -406,7 +406,7 @@ async def adminValues(request: Request):
     return templates.TemplateResponse("admvalue.html", context)
 #==========================================================
 @app.post("/admvaluesave", response_class=PlainTextResponse)
-async def adminValuesSave(ASEGURADO:str="", TERCERO:str="", MOBRA:str="", MOMINIMO:str="", PINTURA:str="", AJUSTE:str="",
+async def adminValuesSave(ASEGURADO: str = Form(""), TERCERO: str = Form(""), MOBRA: str = Form(""), MOMINIMO: str = Form(""), PINTURA: str = Form(""), AJUSTE: str = Form(""),
                           username: str = Depends(get_current_username) 
 ):    
     bfMsg = "Valores grabados satisfactoriamente"
@@ -442,7 +442,7 @@ async def admDelRatio(request: Request):
     return templates.TemplateResponse("admrdel.html", context)
 
 @app.post("/admrdelsel", response_class=HTMLResponse)
-async def admrdelsel(Clase: int, Segmento: int):
+async def admrdelsel(Clase: int = Form(...), Segmento: int = Form(...)):
     ratios_from_db = {}
     try:
         with engine.connect() as conn:
@@ -629,7 +629,7 @@ async def admLatRatio(request: Request):
     return templates.TemplateResponse("admrlat.html", context)
 #==========================================================
 @app.post("/admrlatsel", response_class=HTMLResponse)
-async def admrlatsel(Clase: int, Segmento: int):
+async def admrlatsel(Clase: int = Form(...), Segmento: int = Form(...)):
     ratios_from_db = {}
     try:
         with engine.connect() as conn:
@@ -663,7 +663,7 @@ async def admrlatsel(Clase: int, Segmento: int):
         raise HTTPException(status_code=500, detail="Error interno del servidor al consultar los valores.")
 #==========================================================
 @app.post("/admrlatsave", response_class=PlainTextResponse)
-async def admRLatSave(clase:str="",segmento:str="",Puerta_Del_Panel_Ratio:str="",Puerta_Tras_Panel_Ratio:str="",Zocalo_Ratio:str="",Puerta_Del_Panel_Ratio_PT:str="",Puerta_Tras_Panel_Ratio_PT:str="",Zocalo_Ratio_PT:str="",
+async def admRLatSave(clase: str = Form(""),segmento: str = Form(""),Puerta_Del_Panel_Ratio: str = Form(""),Puerta_Tras_Panel_Ratio: str = Form(""),Zocalo_Ratio: str = Form(""),Puerta_Del_Panel_Ratio_PT: str = Form(""),Puerta_Tras_Panel_Ratio_PT: str = Form(""),Zocalo_Ratio_PT: str = Form(""),
                       username: str = Depends(get_current_username)):
     bfMsg = "Valores grabados satisfactoriamente"
     #engine = db.create_engine(cDBConnValue)
@@ -765,7 +765,7 @@ async def admTraRatio(request: Request):
     return templates.TemplateResponse("admrtra.html", context)
 #==========================================================
 @app.post("/admrtrasel", response_class=HTMLResponse)
-async def admrtrasel(Clase: int, Segmento: int):
+async def admrtrasel(Clase: int = Form(...), Segmento: int = Form(...)):
     ratios_from_db = {}
     try:
         with engine.connect() as conn:
@@ -799,7 +799,7 @@ async def admrtrasel(Clase: int, Segmento: int):
         raise HTTPException(status_code=500, detail="Error interno del servidor al consultar los valores.")   
 #==========================================================
 @app.post("/admrtrasave", response_class=PlainTextResponse)
-async def admRTraSave(clase:str="",segmento:str="",Baul_Ratio:str="",Guardabarro_Ratio:str="",Panel_Cola_Sup_Ratio:str="",Paragolpe_Ratio:str="",Porton_Ratio:str="",Baul_Ratio_PT:str="",Guardabarro_Ratio_PT:str="",Panel_Cola_Sup_Ratio_PT:str="",Paragolpe_Ratio_PT:str="",Porton_Ratio_PT:str="",
+async def admRTraSave(clase: str = Form(""),segmento: str = Form(""),Baul_Ratio: str = Form(""),Guardabarro_Ratio: str = Form(""),Panel_Cola_Sup_Ratio: str = Form(""),Paragolpe_Ratio: str = Form(""),Porton_Ratio: str = Form(""),Baul_Ratio_PT: str = Form(""),Guardabarro_Ratio_PT: str = Form(""),Panel_Cola_Sup_Ratio_PT: str = Form(""),Paragolpe_Ratio_PT: str = Form(""),Porton_Ratio_PT: str = Form(""),
                       username: str = Depends(get_current_username)):
     bfMsg = "Valores grabados satisfactoriamente"
     #engine = db.create_engine(cDBConnValue)
@@ -1015,13 +1015,12 @@ async def admreplat(request: Request):
 #==========================================================
 @app.post("/admvalueslat", response_class=PlainTextResponse)
 async def admvalueslat(request: Request, 
-                       Lat_Cristal_Delantero:str="", Lat_Cristal_Trasero:str="",
-                       Lat_Espejo_Electrico:str="",  Lat_Espejo_Manual:str="",
-                       Lat_Manija_Pta_Del:str="",    Lat_Manija_Pta_Tras:str="",
-                       Lat_Moldura_Pta_Del:str="",   Lat_Moldura_Pta_Tras:str="",
-                       Lat_Puerta_Delantera:str="",  Lat_Puerta_Trasera:str="",
-                       Lat_Zocalo:str="",
-                       username: str = Depends(get_current_username)):
+                       Lat_Cristal_Delantero: str = Form(""), Lat_Cristal_Trasero: str = Form(""),
+                       Lat_Espejo_Electrico: str = Form(""),  Lat_Espejo_Manual: str = Form(""),
+                       Lat_Manija_Pta_Del: str = Form(""),    Lat_Manija_Pta_Tras: str = Form(""),
+                       Lat_Moldura_Pta_Del: str = Form(""),   Lat_Moldura_Pta_Tras: str = Form(""),
+                       Lat_Puerta_Delantera: str = Form(""),  Lat_Puerta_Trasera: str = Form(""),
+                       Lat_Zocalo: str = Form(""), username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     # Nota: Agregué 'Lat_Puerta_Delantera' que faltaba en tu query original.
@@ -1085,12 +1084,12 @@ async def admreplatsuv(request: Request):
 #==========================================================
 @app.post("/admvalueslatsuv", response_class=PlainTextResponse)
 async def admvalueslatsuv(request: Request, 
-                          Lat_Cristal_Delantero:str="", Lat_Cristal_Trasero:str="",
-                          Lat_Espejo_Electrico:str="",  Lat_Espejo_Manual:str="",
-                          Lat_Manija_Pta_Del:str="",    Lat_Manija_Pta_Tras:str="",
-                          Lat_Moldura_Pta_Del:str="",   Lat_Moldura_Pta_Tras:str="",
-                          Lat_Puerta_Delantera:str="",  Lat_Puerta_Trasera:str="",
-                          Lat_Zocalo:str="",
+                          Lat_Cristal_Delantero: str = Form(""), Lat_Cristal_Trasero: str = Form(""),
+                          Lat_Espejo_Electrico: str = Form(""),  Lat_Espejo_Manual: str = Form(""),
+                          Lat_Manija_Pta_Del: str = Form(""),    Lat_Manija_Pta_Tras: str = Form(""),
+                          Lat_Moldura_Pta_Del: str = Form(""),   Lat_Moldura_Pta_Tras: str = Form(""),
+                          Lat_Puerta_Delantera: str = Form(""),  Lat_Puerta_Trasera: str = Form(""),
+                          Lat_Zocalo: str = Form(""),
                           username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
@@ -1154,12 +1153,12 @@ async def admreplatag(request: Request):
 #==========================================================
 @app.post("/admvalueslatag", response_class=PlainTextResponse)
 async def admvalueslatag(request: Request, 
-                         Lat_Cristal_Delantero:str="", Lat_Cristal_Trasero:str="",
-                         Lat_Espejo_Electrico:str="",  Lat_Espejo_Manual:str="",
-                         Lat_Manija_Pta_Del:str="",    Lat_Manija_Pta_Tras:str="",
-                         Lat_Moldura_Pta_Del:str="",   Lat_Moldura_Pta_Tras:str="",
-                         Lat_Puerta_Delantera:str="",  Lat_Puerta_Trasera:str="",
-                         Lat_Zocalo:str="", username: str = Depends(get_current_username)):
+                         Lat_Cristal_Delantero: str = Form(""), Lat_Cristal_Trasero: str = Form(""),
+                         Lat_Espejo_Electrico: str = Form(""),  Lat_Espejo_Manual: str = Form(""),
+                         Lat_Manija_Pta_Del: str = Form(""),    Lat_Manija_Pta_Tras: str = Form(""),
+                         Lat_Moldura_Pta_Del: str = Form(""),   Lat_Moldura_Pta_Tras: str = Form(""),
+                         Lat_Puerta_Delantera: str = Form(""),  Lat_Puerta_Trasera: str = Form(""),
+                         Lat_Zocalo: str = Form(""), username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1223,12 +1222,12 @@ async def admreplatagsuv(request: Request):
 #==========================================================
 @app.post("/admvalueslatagsuv", response_class=PlainTextResponse)
 async def admvalueslatagsuv(request: Request, 
-                            Lat_Cristal_Delantero:str="", Lat_Cristal_Trasero:str="",
-                            Lat_Espejo_Electrico:str="",  Lat_Espejo_Manual:str="",
-                            Lat_Manija_Pta_Del:str="",    Lat_Manija_Pta_Tras:str="",
-                            Lat_Moldura_Pta_Del:str="",   Lat_Moldura_Pta_Tras:str="",
-                            Lat_Puerta_Delantera:str="",  Lat_Puerta_Trasera:str="",
-                            Lat_Zocalo:str="", username: str = Depends(get_current_username)):
+                            Lat_Cristal_Delantero: str = Form(""), Lat_Cristal_Trasero: str = Form(""),
+                            Lat_Espejo_Electrico: str = Form(""),  Lat_Espejo_Manual: str = Form(""),
+                            Lat_Manija_Pta_Del: str = Form(""),    Lat_Manija_Pta_Tras: str = Form(""),
+                            Lat_Moldura_Pta_Del: str = Form(""),   Lat_Moldura_Pta_Tras: str = Form(""),
+                            Lat_Puerta_Delantera: str = Form(""),  Lat_Puerta_Trasera: str = Form(""),
+                            Lat_Zocalo: str = Form(""), username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1288,10 +1287,10 @@ async def admreptra(request: Request):
     return templates.TemplateResponse("admreptra.html", context)
 #===========================================================
 @app.post("/admvaluestra", response_class=PlainTextResponse)
-async def admvaluestra(Baul_Porton:str="", Faro_Ext:str="", Faro_Int:str="",
-                       Guardabarro:str="", Luneta:str="",   Moldura:str="",
-                       Panel_Cola:str="",  Paragolpe:str="", username: str = Depends(get_current_username)):
-    
+async def admvaluestra(Baul_Porton: str = Form(""), Faro_Ext: str = Form(""), Faro_Int: str = Form(""),
+                       Guardabarro: str = Form(""), Luneta: str = Form(""),   Moldura: str = Form(""),
+                       Panel_Cola: str = Form(""),  Paragolpe: str = Form(""), username: str = Depends(get_current_username)):
+
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
         ('Baul_Porton', Baul_Porton),
@@ -1345,10 +1344,10 @@ async def admreptrasuv(request: Request):
     return templates.TemplateResponse("admreptrasuv.html", context)
 #=============================================================
 @app.post("/admvaluestrasuv", response_class=PlainTextResponse)
-async def admvaluestrasuv(Baul_Porton:str="", Faro_Ext:str="", Faro_Int:str="",
-                          Guardabarro:str="", Luneta:str="",   Moldura:str="",
-                          Panel_Cola:str="",  Paragolpe:str="", username: str = Depends(get_current_username)):
-    
+async def admvaluestrasuv(Baul_Porton: str = Form(""), Faro_Ext: str = Form(""), Faro_Int: str = Form(""),
+                          Guardabarro: str = Form(""), Luneta: str = Form(""),   Moldura: str = Form(""),
+                          Panel_Cola: str = Form(""),  Paragolpe: str = Form(""), username: str = Depends(get_current_username)):
+
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
         ('Baul_Porton', Baul_Porton),
@@ -1402,9 +1401,9 @@ async def admreptraag(request: Request):
     return templates.TemplateResponse("admreptraag.html", context)
 #==========================================================
 @app.post("/admvaluestraag", response_class=PlainTextResponse)
-async def admvaluestraag(Baul_Porton:str="", Faro_Ext:str="", Faro_Int:str="",
-                         Guardabarro:str="", Luneta:str="",   Moldura:str="",
-                         Panel_Cola:str="",  Paragolpe:str="", username: str = Depends(get_current_username)):
+async def admvaluestraag(Baul_Porton: str = Form(""), Faro_Ext: str = Form(""), Faro_Int: str = Form(""),
+                         Guardabarro: str = Form(""), Luneta: str = Form(""),   Moldura: str = Form(""),
+                         Panel_Cola: str = Form(""),  Paragolpe: str = Form(""), username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1459,9 +1458,9 @@ async def admreptraagsuv(request: Request):
     return templates.TemplateResponse("admreptraagsuv.html", context)
 #=============================================================
 @app.post("/admvaluestraagsuv", response_class=PlainTextResponse)
-async def admvaluestraagsuv(Baul_Porton:str="", Faro_Ext:str="", Faro_Int:str="",
-                            Guardabarro:str="", Luneta:str="",   Moldura:str="",
-                            Panel_Cola:str="",  Paragolpe:str="", username: str = Depends(get_current_username)):
+async def admvaluestraagsuv(Baul_Porton: str = Form(""), Faro_Ext: str = Form(""), Faro_Int: str = Form(""),
+                            Guardabarro: str = Form(""), Luneta: str = Form(""),   Moldura: str = Form(""),
+                            Panel_Cola: str = Form(""),  Paragolpe: str = Form(""), username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1527,13 +1526,13 @@ async def admrepdel(request: Request):
     return templates.TemplateResponse("admrepdel.html", context)
 #===========================================================
 @app.post("/admvaluesdel", response_class=PlainTextResponse)
-async def admvaluesdel(Paragolpe_Ctro:str="",   Paragolpe_Rejilla:str="",
-                       Paragolpe_Alma:str="",   Rejilla_Radiador:str="",
-                       Frente:str="",           Guardabarro:str="",
-                       Faro:str="",             Faro_Auxiliar:str="",
-                       Farito:str="",           Capot:str="",
-                       Parabrisas:str="", username: str = Depends(get_current_username)):
-    
+async def admvaluesdel(Paragolpe_Ctro: str = Form(""),   Paragolpe_Rejilla: str = Form(""),
+                       Paragolpe_Alma: str = Form(""),   Rejilla_Radiador: str = Form(""),
+                       Frente: str = Form(""),           Guardabarro: str = Form(""),
+                       Faro: str = Form(""),             Faro_Auxiliar: str = Form(""),
+                       Farito: str = Form(""),           Capot: str = Form(""),
+                       Parabrisas: str = Form(""), username: str = Depends(get_current_username)):
+
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
         ('Del_Paragolpe_Ctro',    Paragolpe_Ctro),
@@ -1598,12 +1597,12 @@ async def admrepdelsuv(request: Request):
     return templates.TemplateResponse("admrepdelsuv.html", context)
 #===========================================================
 @app.post("/admvaluesdelsuv", response_class=PlainTextResponse)
-async def admvaluesdelsuv(Paragolpe_Ctro:str="",   Paragolpe_Rejilla:str="",
-                          Paragolpe_Alma:str="",   Rejilla_Radiador:str="",
-                          Frente:str="",           Guardabarro:str="",
-                          Faro:str="",             Faro_Auxiliar:str="",
-                          Farito:str="",           Capot:str="",
-                          Parabrisas:str="", username: str = Depends(get_current_username)):
+async def admvaluesdelsuv(Paragolpe_Ctro: str = Form(""),   Paragolpe_Rejilla: str = Form(""),
+                          Paragolpe_Alma: str = Form(""),   Rejilla_Radiador: str = Form(""),
+                          Frente: str = Form(""),           Guardabarro: str = Form(""),
+                          Faro: str = Form(""),             Faro_Auxiliar: str = Form(""),
+                          Farito: str = Form(""),           Capot: str = Form(""),
+                          Parabrisas: str = Form(""), username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1669,12 +1668,12 @@ async def admrepdelag(request: Request):
     return templates.TemplateResponse("admrepdelag.html", context)
 #===========================================================
 @app.post("/admvaluesdelag", response_class=PlainTextResponse)
-async def admvaluesdelag(Paragolpe_Ctro:str="",   Paragolpe_Rejilla:str="",
-                         Paragolpe_Alma:str="",   Rejilla_Radiador:str="",
-                         Frente:str="",           Guardabarro:str="",
-                         Faro:str="",             Faro_Auxiliar:str="",
-                         Farito:str="",           Capot:str="",
-                         Parabrisas:str="", username: str = Depends(get_current_username)):
+async def admvaluesdelag(Paragolpe_Ctro: str = Form(""),   Paragolpe_Rejilla: str = Form(""),
+                         Paragolpe_Alma: str = Form(""),   Rejilla_Radiador: str = Form(""),
+                         Frente: str = Form(""),           Guardabarro: str = Form(""),
+                         Faro: str = Form(""),             Faro_Auxiliar: str = Form(""),
+                         Farito: str = Form(""),           Capot: str = Form(""),
+                         Parabrisas: str = Form(""), username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1740,12 +1739,12 @@ async def admrepdelagsuv(request: Request):
     return templates.TemplateResponse("admrepdelagsuv.html", context)
 #===============================================================
 @app.post("/admvaluesdelagsuv", response_class=PlainTextResponse)
-async def admvaluesdelagsuv(Paragolpe_Ctro:str="",   Paragolpe_Rejilla:str="",
-                            Paragolpe_Alma:str="",   Rejilla_Radiador:str="",
-                            Frente:str="",           Guardabarro:str="",
-                            Faro:str="",             Faro_Auxiliar:str="",
-                            Farito:str="",           Capot:str="",
-                            Parabrisas:str="", username: str = Depends(get_current_username)):
+async def admvaluesdelagsuv(Paragolpe_Ctro: str = Form(""),   Paragolpe_Rejilla: str = Form(""),
+                            Paragolpe_Alma: str = Form(""),   Rejilla_Radiador: str = Form(""),
+                            Frente: str = Form(""),           Guardabarro: str = Form(""),
+                            Faro: str = Form(""),             Faro_Auxiliar: str = Form(""),
+                            Farito: str = Form(""),           Capot: str = Form(""),
+                            Parabrisas: str = Form(""), username: str = Depends(get_current_username)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
