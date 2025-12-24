@@ -19,6 +19,23 @@
             writing-mode: vertical-rl;
             transform: rotate(180deg);
         }
+        .center-container {
+            border: none; 
+            padding: 10px;
+        }
+        .center-container fieldset {
+            border: 1px solid rgb(0,89,147);
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 1px;
+        }
+        .center-container legend {
+            padding: 0 10px;
+            margin-left: 10px;
+            font-weight: bold;
+            color: rgb(0,89,147);
+            width: auto;
+        }
     </style>
 </head>
 <body>
@@ -116,32 +133,37 @@
         </div> 
         <div class="pure-u-1 pure-u-md-7-24"> <!--<div class="pure-u-1 pure-u-md-3-5">-->
             <form class="pure-form pure-form-stacked">
-                <fieldset>
-                    <div class="pure-control-group">
-                        <label for="stacked-Asegurado" style="color:#005993;text-align:left;">Asegurado</label>
-                        <input type="text" id="stacked-Asegurado" style="min-width:343px;" value="{{ rplBfAsegurado | default('') }}" onblur="validarCampoDecimal(this)"/>
-                    </div>
-                    <div class="pure-control-group">
-                        <label for="stacked-AseguradoTercero" style="color:#005993;text-align:left;">Tercero</label>
-                        <input type="text" id="stacked-Tercero" style="min-width:343px;" value="{{ rplBfTercero | default('') }}" onblur="validarCampoDecimal(this)"/>
-                    </div>
-                    <div class="pure-control-group">
-                        <label for="stacked-MObra" style="color:#005993;text-align:left;">Mano de Obra</label>
-                        <input type="text" id="stacked-MObra" style="min-width:343px;" value="{{ rplBfMObra | default('') }}" onblur="validarCampoDecimal(this)"/>
-                    </div>
-                    <div class="pure-control-group">
-                        <label for="stacked-MOMinimo" style="color:#005993;text-align:left;">Mano de Obra Minimo</label>
-                        <input type="text" id="stacked-MOMinimo" style="min-width:343px;" value="{{ rplBfMOMinimo | default('') }}" onblur="validarCampoDecimal(this)"/>
-                    </div>
-                    <div class="pure-control-group">
-                        <label for="stacked-Pintura" style="color:#005993;text-align:left;">Pintura</label>
-                        <input type="text" id="stacked-Pintura" style="min-width:343px;" value="{{ rplBfPintura | default('') }}" onblur="validarCampoDecimal(this)"/>
-                    </div>
-                    <div class="pure-control-group">
-                        <label for="stacked-Ajuste" style="color:#005993;text-align:left;">Ajuste</label>
-                        <input type="text" id="stacked-Ajuste" style="min-width:343px;" value="{{ rplBfAjuste | default('') }}" onblur="validarCampoDecimal(this)"/>
-                    </div>
-               </fieldset>
+                <div class="center-container">
+                    <fieldset>
+                        <legend>Valores Base</legend>
+                        <div class="pure-control-group">
+                            <div class="pure-control-group">
+                                <label for="stacked-Asegurado" style="color:#005993;text-align:left;">Ratio Asegurado</label>
+                                <input type="text" id="stacked-Asegurado" style="min-width:343px;" value="{{ rplBfAsegurado | default('') }}" onblur="validarCampoDecimal(this)"/>
+                            </div>
+                            <div class="pure-control-group">
+                                <label for="stacked-AseguradoTercero" style="color:#005993;text-align:left;">Ratio Tercero</label>
+                                <input type="text" id="stacked-Tercero" style="min-width:343px;" value="{{ rplBfTercero | default('') }}" onblur="validarCampoDecimal(this)"/>
+                            </div>
+                            <div class="pure-control-group">
+                                <label for="stacked-MObra" style="color:#005993;text-align:left;">Valor Mano de Obra General</label>
+                                <input type="text" id="stacked-MObra" style="min-width:343px;" value="{{ rplBfMObra | default('') }}" onblur="validarCampoDecimal(this)"/>
+                            </div>
+                            <div class="pure-control-group">
+                                <label for="stacked-MOMinimo" style="color:#005993;text-align:left;">Valor Mano de Obra Mínimo</label>
+                                <input type="text" id="stacked-MOMinimo" style="min-width:343px;" value="{{ rplBfMOMinimo | default('') }}" onblur="validarCampoDecimal(this)"/>
+                            </div>
+                            <div class="pure-control-group">
+                                <label for="stacked-Pintura" style="color:#005993;text-align:left;">Valor Pintura</label>
+                                <input type="text" id="stacked-Pintura" style="min-width:343px;" value="{{ rplBfPintura | default('') }}" onblur="validarCampoDecimal(this)"/>
+                            </div>
+                            <div class="pure-control-group">
+                                <label for="stacked-Ajuste" style="color:#005993;text-align:left;">Ratio de Ajuste</label>
+                                <input type="text" id="stacked-Ajuste" style="min-width:343px;" value="{{ rplBfAjuste | default('') }}" onblur="validarCampoDecimal(this)"/>
+                            </div>
+                        </div>    
+                    </fieldset>
+               </div>
                 <br style="display: block;content:'';margin-top:5;">
                 <span id="CostBrief" class="pure-form-message-inline" style="padding-left:3px;text-align:left;font-family:'helvetica neue';font-size:100%;color:rgb(170,27,23);">&nbsp;&nbsp;</span>
             </form>
