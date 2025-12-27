@@ -75,12 +75,7 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
         )
     return credentials.username
 
-#PORTON
-try:
-    dfPorton = pd.read_csv('./data/dfPortonV2.csv',sep=';',encoding='utf-8',decimal='.',
-                        dtype = {'COD_CLASE':'int16','COD_MARCA':'int8','COD_MODELO':'int8'})
-except FileNotFoundError:
-    logger.error(f"Error: dfPortonV2.csv no fue encontrado.")
+
 try:
     dfVALOR_REPUESTO_MO_Unif = pd.read_csv('./data/LPM_REPUESTOS_VER11_FMT_RED.csv',sep=';',encoding='utf-8',decimal='.',
                                 dtype = {'cod_vehiculo':'int32','cod_parte':'int8','cod_elem_red':'int16',
@@ -118,12 +113,6 @@ try:
                                     'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_STD':'float64'})
 except FileNotFoundError:
     logger.error(f"Error: _dfVALOR_REPUESTO_MO&PINT_LATERALV7.csv no fue encontrado.")
-#MOTOS
-try:
-    dfMOTO = pd.read_csv('./data/motos.csv',sep=';',encoding='utf-8',na_values=['NA', '?'], on_bad_lines='warn',
-                        dtype={'CLASE':int,'MARCA':int,'MODELO':int,'DMARCA':str,'DMODELO':str})
-except FileNotFoundError:
-    logger.error(f"Error: motos.csv no fue encontrado.")
 #DBVALUES
 
 load_dotenv()
@@ -154,11 +143,69 @@ templates = Jinja2Templates(directory="templates")
 
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
+    # Procesa la solicitud y captura la respuesta generada por FastAPI
     response = await call_next(request)
+    
+    # --- SECCIÓN 1: CONTENT SECURITY POLICY (CSP) ---
+    # Define una "lista blanca" de orígenes permitidos.
+    '''
+    csp_directives = [
+        "default-src 'self'",  # Por defecto, solo permite recursos de tu propio dominio.
+        # style-src: Permite CSS propio, estilos 'inline' (necesarios para Bootstrap) y CDNs de fuentes.
+        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.cdnfonts.com https://fonts.googleapis.com",
+        # font-src: Permite descargar los archivos de fuente reales de tu servidor y de los proveedores externos.
+        "font-src 'self' data: https://fonts.gstatic.com https://fonts.cdnfonts.com",
+        # script-src: Permite ejecutar JavaScript de tu servidor y del CDN de Bootstrap.
+        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+        # img-src: Permite imágenes locales y aquellas codificadas en base64 (data:).
+        "img-src 'self' data:",
+        # connect-src: Restringe a qué servidores puede conectarse tu JS (AJAX/Fetch). Solo al tuyo.
+        "connect-src 'self'"
+    ]
+    '''
+    csp_directives = [
+        "default-src 'self'",
+        
+        # style-src: Agregamos DataTables y Bootstrap
+        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.cdnfonts.com https://fonts.googleapis.com https://cdn.datatables.net",
+        
+        # font-src: Soporte para fuentes y archivos de fuentes locales/remotos
+        "font-src 'self' data: https://fonts.gstatic.com https://fonts.cdnfonts.com",
+        
+        # script-src: Agregamos DataTables y mantenemos jsPDF/html2canvas
+        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdn.datatables.net https://cdnjs.cloudflare.com https://code.jquery.com",
+        
+        # img-src: 'blob:' es clave para jsPDF y capturas de pantalla
+        "img-src 'self' data: blob:",
+        
+        # connect-src: Permitimos mapas de origen de cdnjs y conexiones locales
+        "connect-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net"
+    ]
+     # Unificamos las directivas en un solo string separado por puntos y coma.
+    response.headers["Content-Security-Policy"] = "; ".join(csp_directives)
+
+    # --- SECCIÓN 2: ENCABEZADOS DE SEGURIDAD ESTÁNDAR ---
+
+    # Previene el "MIME Sniffing": evita que el navegador intente adivinar el tipo de archivo.
+    # Si dices que es un texto, el navegador lo trata como texto y no como un script ejecutable.
     response.headers["X-Content-Type-Options"] = "nosniff"
+
+    # Anti-Clickjacking: impide que tu página sea cargada dentro de un <iframe> en otros sitios.
+    # 'SAMEORIGIN' solo permite iframes si el sitio padre es el tuyo.
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
+
+    # Filtro XSS: Activa la protección nativa del navegador contra ataques de scripts reflejados.
+    # 'mode=block' detiene totalmente la carga de la página si detecta una inyección maliciosa.
     response.headers["X-XSS-Protection"] = "1; mode=block"
+
+    # Privacidad del Referer: controla cuánta información de tu URL se envía cuando un usuario
+    # hace clic en un enlace que lleva a otro sitio web.
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+
+    # HSTS (Strict-Transport-Security): Obliga al navegador a comunicarse con tu servidor 
+    # únicamente a través de HTTPS durante un año (31,536,000 segundos).
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    
     return response
 
 @app.get("/", response_class=HTMLResponse)
@@ -2282,7 +2329,7 @@ async def search_Data(CLIENTE: str = Form(""),
     ###TRASERO###
     if '1' in lsTrasero:
         lsTraseroCambiaElems,lsTraseroReparaElems,lsTraseroMolduraElems,\
-        lsTraseroFaroExtElems,lsTraseroFaroIntElems= fnGetTraseroElems(CLASE,MARCA,MODELO,lsTrasero)
+        lsTraseroFaroExtElems,lsTraseroFaroIntElems= fnGetTraseroElems(CLASE,MARCA,MODELO,iVERSION,lsTrasero)
 
         if len(lsTraseroReparaElems)>0:
             lsTraReparaAve=fnReparaTrasero(iSEG,iCLASE,lsTraseroReparaElems)
@@ -2583,7 +2630,7 @@ def fnGetLateralElems(lsLateralLc):
            lsLateralManijaDel,lsLateralManijaTra,\
            lsLateralCristalDel,lsLateralCristalTra
 
-def fnGetTraseroElems(iClaseLc, iMarcaLc, iModeloLc, lsTraseroLc):
+def fnGetTraseroElems(iClaseLc, iMarcaLc, iModeloLc, iVersion, lsTraseroLc):
     lsTraseroElemsLc = ['BAULPORTON','FAROEXT','FAROINT','GUARDABARRO','LUNETA','MOLDURA','PANELCOLACOMP','PARAGOLPE','PANELCOLASUP']
 
     lsTraseroCambiaVal  = []
@@ -2636,7 +2683,7 @@ def fnGetTraseroElems(iClaseLc, iMarcaLc, iModeloLc, lsTraseroLc):
     lsTraseroCambiaVal.append(lsTraseroElemsLc[iPosPARAGOLPE] if lsTraseroLc[iPosPARAGOLPECambiaDer] == "1" else "")
     lsTraseroReparaVal.append(lsTraseroElemsLc[iPosPARAGOLPE] if lsTraseroLc[iPosPARAGOLPEReparaDer] == "1" else "")
 
-    blPorton = fnHasPorton(iClaseLc, iMarcaLc, iModeloLc)
+    blPorton = fnHasPorton(iVersion)
     if lsTraseroCambiaVal[iPosBAULPORTON]=="BAULPORTON":
         if blPorton==True: lsTraseroCambiaVal[iPosBAULPORTON]="PORTON"
         else: lsTraseroCambiaVal[iPosBAULPORTON]="BAUL"
@@ -2652,24 +2699,16 @@ def fnGetTraseroElems(iClaseLc, iMarcaLc, iModeloLc, lsTraseroLc):
 
     return lsTraseroCambiaVal,lsTraseroReparaVal,lsTraseroMolduraVal,lsTraseroFaroExtVal,lsTraseroFaroIntVal
 
-def fnHasPorton(iClaseLc, iMarcaLc, iModeloLc):
+def fnHasPorton(iVersion):
     blPorton = False
-    if len(dfPorton.loc[(dfPorton['COD_CLASE']==int(iClaseLc))&(dfPorton['COD_MARCA']==int(iMarcaLc))&(dfPorton['COD_MODELO']==int(iModeloLc))])!=0:
-        blPorton = True
+    bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == iVersion) &
+                                             (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == 2) & 
+                            ~(dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains('MOLD',case=False,regex=True)) & 
+            (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains("TAPA BAUL",case=False,regex=True))][['elemento']]
+    
+    if len(bfID_ELEM) == 0: blPorton = True
+
     return blPorton
-
-def fnIsOld(inCOD_CLASE,inCOD_MARCA,inCOD_MODELO,dfData):
-    blOld = False
-    dfOld = dfData.loc[(dfData['COD_CLASE'] == inCOD_CLASE) & (dfData['COD_MARCA'] == inCOD_MARCA) & (dfData['COD_MODELO'] == inCOD_MODELO)]['VIEJO']
-
-    if len(dfOld) == 0:
-        blOld = False
-    else:
-        blOld = dfData.loc[(dfData['COD_CLASE'] == inCOD_CLASE) & (dfData['COD_MARCA'] == inCOD_MARCA) & (dfData['COD_MODELO'] == inCOD_MODELO)]['VIEJO'].iloc[0]
-
-    if blOld!=True and blOld!=False: blOld = False
-
-    return blOld
 
 ###TRASERO##########################################################################################
 def fnReparaTrasero(inSEG, inCOD_CLASE, lsRepara):
