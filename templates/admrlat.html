@@ -16,8 +16,18 @@
         body {background-color:rgb(255,255,255);}
         label {text-align:right;font-family:'helvetica neue';font-size: 100%;}
         .vertical-text {
-            writing-mode: vertical-rl; /* Texto vertical de derecha a izquierda */
-            transform: rotate(180deg); /* Opcional: rota 180 grados para cambiar la dirección */
+            writing-mode: horizontal-tb; 
+            transform: none;
+            text-align: center;
+            margin: 10px 0;
+        }
+        @media screen and (min-width: 48em) {
+        .vertical-text {
+                writing-mode: vertical-rl; 
+                transform: rotate(180deg);
+                display: table;
+                margin: 20px auto;
+            }
         }
         .combo-container {
             border: none; 
@@ -112,7 +122,6 @@
             <form class="pure-form pure-form-stacked">
                 <div class="combo-container">
                     <fieldset>
-
                         <legend>Busqueda</legend>
                         <div class="pure-control-group">
                             <label for="clase" style="color:#005993;text-align:left;">Clase</label>
@@ -133,9 +142,16 @@
                                 <option value=3>MM3</option>
                             </select>
                         </div> 
-                </fieldset>   
-                    </div> 
-                 
+                        <div class="pure-control-group">
+                            <label for="tipo" style="color:#005993;text-align:left;">Tipo</label>
+                            <select id="tipo" style="min-width:343px;">
+                                <option value=0 selected></option>
+                                <option value=1>CAMBIO</option>
+                                <option value=2>RAPARACIÓN</option>
+                            </select>
+                        </div>
+                    </fieldset>   
+                </div> 
                 <div class="center-container">
                     <fieldset>
                         <legend>Mano de Obra</legend>         
@@ -268,18 +284,21 @@
 
     const selectClase = document.getElementById('clase');
     const selectSegmento = document.getElementById('segmento');
+    const selectTipo = document.getElementById('tipo');
 
     function verificarCombos() {
         const idClaseSeleccionado = selectClase.value;
         const idSegmentoSeleccionado = selectSegmento.value;
+        const idTipoSeleccionado = selectTipo.value;
 
-        if (idClaseSeleccionado !== "0" && idSegmentoSeleccionado !== "9") {
+        if (idClaseSeleccionado !== "0" && idSegmentoSeleccionado !== "9"  && idTipoSeleccionado !== "0") {
             fnSendData();
         } 
     }
 
     selectClase.addEventListener('change', verificarCombos);
     selectSegmento.addEventListener('change', verificarCombos);
+    selectTipo.addEventListener('change', verificarCombos);
 
     function fnSendData(){
         var e = document.getElementById("clase");
@@ -287,6 +306,9 @@
 
         var e = document.getElementById("segmento");
         text = text + '&Segmento=' + e.value;
+
+        var e = document.getElementById("tipo");
+        text = text + '&Tipo=' + e.value;
             
         sendData(text);
     }
@@ -295,20 +317,21 @@
         var e = document.getElementById("CostBrief"); 
         e.innerHTML = "&nbsp;&nbsp;Cargando datos, por favor espere...&nbsp;&nbsp;";
             try {
-                const response = await fetch(url, { method: 'POST',
+                const response = await fetch(url, 
+                                           { method: 'POST',
                                              headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                                              body: bfSearch});
                 if (!response.ok) {
                     throw new Error(`Error en la respuesta del servidor: ${response.status} ${response.statusText}`);
                 }
                 const data = await response.json();
-                document.getElementById("Puerta_Del_Panel_Ratio").value = (data.PUERTA_DEL_PANEL || {}).flMO || '';
-                document.getElementById("Puerta_Tras_Panel_Ratio").value = (data.PUERTA_TRA_PANEL || {}).flMO || '';
-                document.getElementById("Zocalo_Ratio").value = (data.ZOCALO || {}).flMO || '';
+                document.getElementById("Puerta_Del_Panel_Ratio").value = (data.PUERTA_DEL_PANEL || {}).flMO ?? '';
+                document.getElementById("Puerta_Tras_Panel_Ratio").value = (data.PUERTA_TRA_PANEL || {}).flMO ?? '';
+                document.getElementById("Zocalo_Ratio").value = (data.ZOCALO || {}).flMO ?? '';
 
-                document.getElementById("Puerta_Del_Panel_Ratio_PT").value = (data.PUERTA_DEL_PANEL || {}).flPT || '';
-                document.getElementById("Puerta_Tras_Panel_Ratio_PT").value = (data.PUERTA_TRA_PANEL || {}).flPT || '';
-                document.getElementById("Zocalo_Ratio_PT").value = (data.ZOCALO || {}).flPT || '';
+                document.getElementById("Puerta_Del_Panel_Ratio_PT").value = (data.PUERTA_DEL_PANEL || {}).flPT ?? '';
+                document.getElementById("Puerta_Tras_Panel_Ratio_PT").value = (data.PUERTA_TRA_PANEL || {}).flPT ?? '';
+                document.getElementById("Zocalo_Ratio_PT").value = (data.ZOCALO || {}).flPT ?? '';
 
             } catch (error) {
                 console.error("Error al obtener los datos:", error);

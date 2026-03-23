@@ -16,8 +16,18 @@
         body {background-color:rgb(255,255,255);}
         label {text-align:right;font-family:'helvetica neue';font-size: 100%;}
         .vertical-text {
-            writing-mode: vertical-rl; 
-            transform: rotate(180deg); /
+            writing-mode: horizontal-tb; 
+            transform: none;
+            text-align: center;
+            margin: 10px 0;
+        }
+        @media screen and (min-width: 48em) {
+        .vertical-text {
+                writing-mode: vertical-rl; 
+                transform: rotate(180deg);
+                display: table;
+                margin: 20px auto;
+            }
         }
         .combo-container {border:none;padding:10px;}
         .combo-container fieldset{
@@ -103,7 +113,6 @@
             <form class="pure-form pure-form-stacked">
                 <div class="combo-container">
                     <fieldset>
-
                         <legend>Busqueda</legend>
                         <div class="pure-control-group">
                             <label for="clase" style="color:#005993;text-align:left;">Clase</label>
@@ -124,9 +133,16 @@
                                 <option value=3>MM3</option>
                             </select>
                         </div> 
-                </fieldset>   
-                    </div> 
-                 
+                        <div class="pure-control-group">
+                            <label for="tipo" style="color:#005993;text-align:left;">Tipo</label>
+                            <select id="tipo" style="min-width:343px;">
+                                <option value=0 selected></option>
+                                <option value=1>CAMBIO</option>
+                                <option value=2>RAPARACIÓN</option>
+                            </select>
+                        </div>
+                    </fieldset>   
+                </div> 
                 <div class="center-container">
                     <fieldset>
                         <legend>Mano de Obra</legend>         
@@ -276,18 +292,21 @@
     
     const selectClase = document.getElementById('clase');
     const selectSegmento = document.getElementById('segmento');
+    const selectTipo = document.getElementById('tipo');
 
     function verificarCombos() {
         const idClaseSeleccionado = selectClase.value;
         const idSegmentoSeleccionado = selectSegmento.value;
+        const idTipoSeleccionado = selectTipo.value;
 
-        if (idClaseSeleccionado !== "0" && idSegmentoSeleccionado !== "9") {
+        if (idClaseSeleccionado !== "0" && idSegmentoSeleccionado !== "9" && idTipoSeleccionado !== "0") {
             fnSendData();
         } 
     }
 
     selectClase.addEventListener('change', verificarCombos);
     selectSegmento.addEventListener('change', verificarCombos);
+    selectTipo.addEventListener('change', verificarCombos);
 
     function fnSendData(){
         var e = document.getElementById("clase");
@@ -295,7 +314,10 @@
 
         var e = document.getElementById("segmento");
         text = text + '&Segmento=' + e.value;
-            
+
+        var e = document.getElementById("tipo");
+        text = text + '&Tipo=' + e.value;
+
         sendData(text);
     }
     async function sendData(bfSearch) {
@@ -311,18 +333,17 @@
                     throw new Error(`Error en la respuesta del servidor: ${response.status} ${response.statusText}`);
                 }
                 const data = await response.json();
-                document.getElementById("Capot_Ratio").value = (data.CAPOT || {}).flMO || '';
-                document.getElementById("Guardabarro_Ratio").value = (data.GUARDABARRO || {}).flMO || '';
-                document.getElementById("Frente_Ratio").value = (data.FRENTE || {}).flMO || '';
-                document.getElementById("Paragolpe_Alma_Ratio").value = (data.PARAGOLPE_ALMA || {}).flMO || '';
-                document.getElementById("Paragolpe_Ctro_Ratio").value = (data.PARAGOLPE_CTRO || {}).flMO || '';
+                document.getElementById("Capot_Ratio").value = (data.CAPOT || {}).flMO ?? '';
+                document.getElementById("Guardabarro_Ratio").value = (data.GUARDABARRO || {}).flMO ?? '';
+                document.getElementById("Frente_Ratio").value = (data.FRENTE || {}).flMO ?? '';
+                document.getElementById("Paragolpe_Alma_Ratio").value = (data.PARAGOLPE_ALMA || {}).flMO ?? '';
+                document.getElementById("Paragolpe_Ctro_Ratio").value = (data.PARAGOLPE_CTRO || {}).flMO ?? '';
 
-                document.getElementById("Capot_Ratio_PT").value = (data.CAPOT || {}).flPT || '';
-                document.getElementById("Guardabarro_Ratio_PT").value = (data.GUARDABARRO || {}).flPT || '';
-                document.getElementById("Frente_Ratio_PT").value = (data.FRENTE || {}).flPT || '';
-                document.getElementById("Paragolpe_Alma_Ratio_PT").value = (data.PARAGOLPE_ALMA || {}).flPT || '';
-                document.getElementById("Paragolpe_Ctro_Ratio_PT").value = (data.PARAGOLPE_CTRO || {}).flPT || '';
-
+                document.getElementById("Capot_Ratio_PT").value = (data.CAPOT || {}).flPT ?? '';
+                document.getElementById("Guardabarro_Ratio_PT").value = (data.GUARDABARRO || {}).flPT ?? '';
+                document.getElementById("Frente_Ratio_PT").value = (data.FRENTE || {}).flPT ?? '';
+                document.getElementById("Paragolpe_Alma_Ratio_PT").value = (data.PARAGOLPE_ALMA || {}).flPT ?? '';
+                document.getElementById("Paragolpe_Ctro_Ratio_PT").value = (data.PARAGOLPE_CTRO || {}).flPT ?? '';
             } catch (error) {
                 console.error("Error al obtener los datos:", error);
             }
@@ -372,9 +393,9 @@
             dataParts.push(`${id}=${value}`);
             }
         });
-        sendValuesTra(dataParts.join('&'));
+        sendValuesDel(dataParts.join('&'));
     }
-    function sendValuesTra(bfSearch) {
+    function sendValuesDel(bfSearch) {
         let xhr = new XMLHttpRequest();
         let url = "/admrdelsave";
         xhr.open("POST", url, true);
@@ -393,7 +414,6 @@
                     });
             }
         }
-        xhr.send();
     } 
     </script>
  </html>    
