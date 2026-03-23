@@ -1,9 +1,11 @@
+
 from fastapi import FastAPI, HTTPException, Request, Depends, status, Form
 from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi import Form
 
 import warnings
 import datetime
@@ -148,26 +150,14 @@ async def add_security_headers(request: Request, call_next):
     
     # --- SECCIÓN 1: CONTENT SECURITY POLICY (CSP) ---
     # Define una "lista blanca" de orígenes permitidos.
-    '''
-    csp_directives = [
-        "default-src 'self'",  # Por defecto, solo permite recursos de tu propio dominio.
-        # style-src: Permite CSS propio, estilos 'inline' (necesarios para Bootstrap) y CDNs de fuentes.
-        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.cdnfonts.com https://fonts.googleapis.com",
-        # font-src: Permite descargar los archivos de fuente reales de tu servidor y de los proveedores externos.
-        "font-src 'self' data: https://fonts.gstatic.com https://fonts.cdnfonts.com",
-        # script-src: Permite ejecutar JavaScript de tu servidor y del CDN de Bootstrap.
-        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
-        # img-src: Permite imágenes locales y aquellas codificadas en base64 (data:).
-        "img-src 'self' data:",
-        # connect-src: Restringe a qué servidores puede conectarse tu JS (AJAX/Fetch). Solo al tuyo.
-        "connect-src 'self'"
-    ]
-    '''
     csp_directives = [
         "default-src 'self'",
         
         # style-src: Agregamos DataTables y Bootstrap
         "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.cdnfonts.com https://fonts.googleapis.com https://cdn.datatables.net",
+        
+        # style-src-elem: Específico para etiquetas <link> (evita el error que mencionaste)
+        "style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.cdnfonts.com https://cdn.datatables.net",
         
         # font-src: Soporte para fuentes y archivos de fuentes locales/remotos
         "font-src 'self' data: https://fonts.gstatic.com https://fonts.cdnfonts.com",
@@ -489,28 +479,35 @@ async def admDelRatio(request: Request):
     return templates.TemplateResponse("admrdel.html", context)
 
 @app.post("/admrdelsel", response_class=HTMLResponse)
-async def admrdelsel(Clase: int = Form(...), Segmento: int = Form(...)):
+async def admrdelsel(Clase: int = Form(...), Segmento: int = Form(...), Tipo: int = Form(1)):
     ratios_from_db = {}
     try:
         with engine.connect() as conn:
-            query = text("SELECT stname, flmo, flpt FROM admrdel WHERE clase = :clase AND seg = :seg")
+            if Tipo == 2:
+                sql_str = "SELECT stname, flmor AS flmo, flptr AS flpt FROM admrdel WHERE clase = :clase AND seg = :seg"
+            else:
+                sql_str = "SELECT stname, flmo, flpt FROM admrdel WHERE clase = :clase AND seg = :seg"
+            query = text(sql_str)
             result = conn.execute(query, {"clase": Clase, "seg": Segmento})
             for row in result:
                 stName = row.stname
                 try:
+                    # Como usamos AS en el SQL, row.flmo funcionará para ambos casos
                     flmo_val = float(row.flmo)
                 except (ValueError, TypeError):
                     flmo_val = 1.0
                     logger.warning(f"Valor 'flMO' no válido para '{stName}'. Usando 1")
+                    
                 try:
+                    # Lo mismo para row.flpt
                     flpt_val = float(row.flpt)
                 except (ValueError, TypeError):
                     flpt_val = 1.0
                     logger.warning(f"Valor 'flPT' no válido para '{stName}'. Usando 1")
 
                 ratios_from_db[stName] = {
-                    "flMO": flmo_val,
-                    "flPT": flpt_val
+                    "flMO": f"{flmo_val:.2f}",
+                    "flPT": f"{flpt_val:.2f}"
                 } 
         if not ratios_from_db:
             logger.error(f"No se encontraron valores en la tabla admrdel para clase={Clase} y seg={Segmento}.")
@@ -522,144 +519,54 @@ async def admrdelsel(Clase: int = Form(...), Segmento: int = Form(...)):
         raise HTTPException(status_code=500, detail="Error interno del servidor al consultar los valores.")
 #==========================================================
 @app.post("/admrdelsave", response_class=PlainTextResponse)
-async def admRDelSave(clase:str="",segmento:str="",Capot_Ratio:str="",Guardabarro_Ratio:str="",Frente_Ratio:str="",Paragolpe_Alma_Ratio:str="",Paragolpe_Ctro_Ratio:str="",Capot_Ratio_PT:str="",Guardabarro_Ratio_PT:str="",Frente_Ratio_PT:str="",Paragolpe_Alma_Ratio_PT:str="",Paragolpe_Ctro_Ratio_PT:str="",
-                      username: str = Depends(get_current_username)):
+async def admRDelSave(
+        clase: str = Form(""),
+        segmento: str = Form(""),
+        tipo: str = Form(""),
+        Capot_Ratio: str = Form(""),
+        Guardabarro_Ratio: str = Form(""),
+        Frente_Ratio: str = Form(""),
+        Paragolpe_Alma_Ratio: str = Form(""),
+        Paragolpe_Ctro_Ratio: str = Form(""),
+        Capot_Ratio_PT: str = Form(""),
+        Guardabarro_Ratio_PT: str = Form(""),
+        Frente_Ratio_PT: str = Form(""),
+        Paragolpe_Alma_Ratio_PT: str = Form(""),
+        Paragolpe_Ctro_Ratio_PT: str = Form(""),
+        username: str = Depends(get_current_username)
+    ):    
     bfMsg = "Valores grabados satisfactoriamente"
-    #engine = db.create_engine(cDBConnValue)
     with engine.begin() as conn:
         try:
             p_seg   = int(segmento) if segmento else 0
             p_clase = int(clase)    if clase else 0
-            ###CAPOT M.O.###
-            sql_capot = text(
-                """
+            p_tipo  = int(tipo)     if tipo else 0
+            # 1. Determinamos las columnas dinámicamente según p_tipo
+            col_mo = "flmor" if p_tipo == 2 else "flmo"
+            col_pt = "flPTr" if p_tipo == 2 else "flPT" 
+            # 2. Preparamos las sentencias SQL base
+            sql_mo = text(f"""
                 UPDATE admrdel 
-                SET flmo = :flmo 
+                SET {col_mo} = :valor 
                 WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
-            conn.execute(sql_capot, {
-                "flmo": float(Capot_Ratio.replace(',', '.')) if Capot_Ratio else 0.0,
-                "seg": p_seg,
-                "clase": p_clase,
-                "stname": "CAPOT"
-            })
-            ###GUARDABARRO M.O.###
-            sql_guardabarro = text(
-                """
+            sql_pt = text(f"""
                 UPDATE admrdel 
-                SET flmo = :flmo 
+                SET {col_pt} = :valor 
                 WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
-            conn.execute(sql_guardabarro, {
-                "flmo": float(Guardabarro_Ratio.replace(',', '.')) if Guardabarro_Ratio else 0.0,
-                "seg": p_seg,
-                "clase": p_clase,
-                "stname": "GUARDABARRO" 
-            })
-            ###FRENTE M.O.###
-            sql_frente = text(
-                """
-                UPDATE admrdel 
-                SET flmo = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stname = :stname
-                """)
-            conn.execute(sql_frente, {
-                "flmo": float(Frente_Ratio.replace(',', '.')) if Frente_Ratio else 0.0,
-                "seg": p_seg,
-                "clase": p_clase,
-                "stname": "FRENTE" 
-            })
-            ###PARAGOLPE_ALMA M.O.###
-            sql_frente = text(
-                """
-                UPDATE admrdel 
-                SET flmo = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stname = :stname
-                """)
-            conn.execute(sql_frente, {
-                "flmo": float(Paragolpe_Alma_Ratio.replace(',', '.')) if Paragolpe_Alma_Ratio else 0.0,
-                "seg": p_seg,
-                "clase": p_clase,
-                "stname": "PARAGOLPE_ALMA" 
-            })
-            ###PARAGOLPE_CTRO M.O.###
-            sql_frente = text(
-                """
-                UPDATE admrdel 
-                SET flmo = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stname = :stname
-                """)
-            conn.execute(sql_frente, {
-                "flmo": float(Paragolpe_Ctro_Ratio.replace(',', '.')) if Paragolpe_Ctro_Ratio else 0.0,
-                "seg": p_seg,
-                "clase": p_clase,
-                "stname": "PARAGOLPE_CTRO" 
-            })
-            ###CAPOT PINTURA###
-            sql_capot = text(
-                """
-                UPDATE admrdel 
-                SET flPT = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stname = :stname
-                """)
-            conn.execute(sql_capot, {
-                "flpt": float(Capot_Ratio_PT.replace(',', '.')) if Capot_Ratio_PT else 0.0,
-                "seg": p_seg,
-                "clase": p_clase,
-                "stname": "CAPOT"
-            })
-            ###GUARDABARRO PINTURA###
-            sql_guardabarro = text(
-                """
-                UPDATE admrdel 
-                SET flPT = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stname = :stname
-                """)
-            conn.execute(sql_guardabarro, {
-                "flpt": float(Guardabarro_Ratio_PT.replace(',', '.')) if Guardabarro_Ratio_PT else 0.0,
-                "seg": p_seg,
-                "clase": p_clase,
-                "stname": "GUARDABARRO" 
-            })
-            ###FRENTE PINTURA###
-            sql_frente = text(
-                """
-                UPDATE admrdel 
-                SET flPT = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stname = :stname
-                """)
-            conn.execute(sql_frente, {
-                "flpt": float(Frente_Ratio_PT.replace(',', '.')) if Frente_Ratio_PT else 0.0,
-                "seg": p_seg,
-                "clase": p_clase,
-                "stname": "FRENTE" 
-            })
-            ###PARAGOLPE_ALMA PINTURA###
-            sql_frente = text(
-                """
-                UPDATE admrdel 
-                SET flPT = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stname = :stname
-                """)
-            conn.execute(sql_frente, {
-                "flpt": float(Paragolpe_Alma_Ratio_PT.replace(',', '.')) if Paragolpe_Alma_Ratio_PT else 0.0,
-                "seg": p_seg,
-                "clase": p_clase,
-                "stname": "PARAGOLPE_ALMA" 
-            })
-            ###PARAGOLPE_CTRO PINTURA###
-            sql_frente = text(
-                """
-                UPDATE admrdel 
-                SET flPT = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stname = :stname
-                """)
-            conn.execute(sql_frente, {
-                "flpt": float(Paragolpe_Ctro_Ratio_PT.replace(',', '.')) if Paragolpe_Ctro_Ratio_PT else 0.0,
-                "seg": p_seg,
-                "clase": p_clase,
-                "stname": "PARAGOLPE_CTRO" 
-            })
+            # --- BLOQUE MANO DE OBRA (M.O.) ---
+            conn.execute(sql_mo, {"valor": float(Capot_Ratio.replace(',', '.')) if Capot_Ratio else 0.0, "seg": p_seg, "clase": p_clase, "stname": "CAPOT"})
+            conn.execute(sql_mo, {"valor": float(Guardabarro_Ratio.replace(',', '.')) if Guardabarro_Ratio else 0.0, "seg": p_seg, "clase": p_clase, "stname": "GUARDABARRO"})
+            conn.execute(sql_mo, {"valor": float(Frente_Ratio.replace(',', '.')) if Frente_Ratio else 0.0, "seg": p_seg, "clase": p_clase, "stname": "FRENTE"})
+            conn.execute(sql_mo, {"valor": float(Paragolpe_Alma_Ratio.replace(',', '.')) if Paragolpe_Alma_Ratio else 0.0, "seg": p_seg, "clase": p_clase, "stname": "PARAGOLPE_ALMA"})
+            conn.execute(sql_mo, {"valor": float(Paragolpe_Ctro_Ratio.replace(',', '.')) if Paragolpe_Ctro_Ratio else 0.0, "seg": p_seg, "clase": p_clase, "stname": "PARAGOLPE_CTRO"})
+            # --- BLOQUE PINTURA ---
+            conn.execute(sql_pt, {"valor": float(Capot_Ratio_PT.replace(',', '.')) if Capot_Ratio_PT else 0.0, "seg": p_seg, "clase": p_clase, "stname": "CAPOT"})
+            conn.execute(sql_pt, {"valor": float(Guardabarro_Ratio_PT.replace(',', '.')) if Guardabarro_Ratio_PT else 0.0, "seg": p_seg, "clase": p_clase, "stname": "GUARDABARRO"})
+            conn.execute(sql_pt, {"valor": float(Frente_Ratio_PT.replace(',', '.')) if Frente_Ratio_PT else 0.0, "seg": p_seg, "clase": p_clase, "stname": "FRENTE"})
+            conn.execute(sql_pt, {"valor": float(Paragolpe_Alma_Ratio_PT.replace(',', '.')) if Paragolpe_Alma_Ratio_PT else 0.0, "seg": p_seg, "clase": p_clase, "stname": "PARAGOLPE_ALMA"})
+            conn.execute(sql_pt, {"valor": float(Paragolpe_Ctro_Ratio_PT.replace(',', '.')) if Paragolpe_Ctro_Ratio_PT else 0.0, "seg": p_seg, "clase": p_clase, "stname": "PARAGOLPE_CTRO"})
         except ValueError as e:
             bfMsg = f"Error numero válido"
             logger.error(f"Error: Valores no es un numero válido. {e}", exc_info=True)
@@ -676,11 +583,15 @@ async def admLatRatio(request: Request):
     return templates.TemplateResponse("admrlat.html", context)
 #==========================================================
 @app.post("/admrlatsel", response_class=HTMLResponse)
-async def admrlatsel(Clase: int = Form(...), Segmento: int = Form(...)):
+async def admrlatsel(Clase: int = Form(...), Segmento: int = Form(...), Tipo: int = Form(1)):
     ratios_from_db = {}
     try:
         with engine.connect() as conn:
-            query = text("SELECT stname, flmo, flpt FROM admrlat WHERE clase = :clase AND seg = :seg")
+            if Tipo == 2:
+                sql_str = "SELECT stname, flmor AS flmo, flptr AS flpt FROM admrlat WHERE clase = :clase AND seg = :seg"            
+            else:     
+                sql_str = "SELECT stname, flmo, flpt FROM admrlat WHERE clase = :clase AND seg = :seg"
+            query = text(sql_str)
             result = conn.execute(query, {"clase": Clase, "seg": Segmento})
             
             for row in result:
@@ -697,8 +608,8 @@ async def admrlatsel(Clase: int = Form(...), Segmento: int = Form(...)):
                     logger.warning(f"Valor 'flPT' no válido para '{stName}'. Usando 1")
 
                 ratios_from_db[stName] = {
-                    "flMO": flmo_val,
-                    "flPT": flpt_val
+                    "flMO": f"{flmo_val:.2f}",
+                    "flPT": f"{flpt_val:.2f}"
                 } 
         if not ratios_from_db:
             logger.error(f"No se encontraron valores en la tabla admrlat para clase={Clase} y seg={Segmento}.")
@@ -812,11 +723,15 @@ async def admTraRatio(request: Request):
     return templates.TemplateResponse("admrtra.html", context)
 #==========================================================
 @app.post("/admrtrasel", response_class=HTMLResponse)
-async def admrtrasel(Clase: int = Form(...), Segmento: int = Form(...)):
+async def admrtrasel(Clase: int = Form(...), Segmento: int = Form(...), Tipo: int = Form(1)):
     ratios_from_db = {}
     try:
         with engine.connect() as conn:
-            query = text("SELECT stname, flmo, flpt FROM admrtra WHERE clase = :clase AND seg = :seg")
+            if Tipo == 2:
+                sql_str = "SELECT stname, flmor AS flmo, flptr AS flpt FROM admrtra WHERE clase = :clase AND seg = :seg"
+            else:
+                sql_str = "SELECT stname, flmo, flpt FROM admrtra WHERE clase = :clase AND seg = :seg"
+            query = text(sql_str)
             result = conn.execute(query, {"clase": Clase, "seg": Segmento})
             
             for row in result:
@@ -833,8 +748,8 @@ async def admrtrasel(Clase: int = Form(...), Segmento: int = Form(...)):
                     logger.warning(f"Valor 'flpt' no válido para '{stname}'. Usando 1")
                 
                 ratios_from_db[stname] = {
-                    "flMO": flmo_val,
-                    "flPT": flpt_val
+                    "flMO": f"{flmo_val:.2f}",
+                    "flPT": f"{flpt_val:.2f}"
                 } 
         if not ratios_from_db:
             logger.error(f"No se encontraron valores en la tabla admrtra para clase={Clase} y seg={Segmento}.")
