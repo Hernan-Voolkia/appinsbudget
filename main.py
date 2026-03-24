@@ -77,7 +77,6 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
         )
     return credentials.username
 
-
 try:
     dfVALOR_REPUESTO_MO_Unif = pd.read_csv('./data/LPM_REPUESTOS_VER11_FMT_RED.csv',sep=';',encoding='utf-8',decimal='.',
                                 dtype = {'cod_vehiculo':'int32','cod_parte':'int8','cod_elem_red':'int16',
@@ -85,6 +84,7 @@ try:
 except FileNotFoundError:
     #logger.error(f"Error: _dfVALOR_REPUESTO_ALL_V7.csv no fue encontrado.")
     logger.error(f"Error: LPM_REPUESTOS_VER11_FMT_RED.csv no fue encontrado.")
+'''
 #VALRO-MO-PINT-FRENTE
 try:
     dfVALOR_REPUESTO_VALOR_MAT_FRENTE = pd.read_csv('./data/_dfVALOR_REPUESTO_MO&PINT_FRENTEV7.csv',sep=';',encoding='utf-8',decimal='.',
@@ -115,8 +115,8 @@ try:
                                     'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_STD':'float64'})
 except FileNotFoundError:
     logger.error(f"Error: _dfVALOR_REPUESTO_MO&PINT_LATERALV7.csv no fue encontrado.")
+'''
 #DBVALUES
-
 load_dotenv()
 cDBConnValue = os.getenv('DB_CONN_STRING', 'sqlite:///appinsbudget.sqlite3')
 engine = db.create_engine(cDBConnValue, pool_size=10, max_overflow=20)
@@ -2631,12 +2631,16 @@ def fnReparaTrasero(inSEG, inCOD_CLASE, lsRepara):
     try:
         val_mobra = float(param.bfMObra)
     except (ValueError, TypeError):
-        logger.warning("param.bfMObra inválido, usando 1.0 por defecto")
+        logger.warning("param.bfMObra inválido en fnReparaTrasero, usando 1.0 por defecto")
         val_mobra = 1.0
     try:
+        val_pintura = float(param.bfPintura)
+    except (ValueError, TypeError):
+        logger.warning("param.bfPintura inválido en fnReparaTrasero, usando 1.0")
+        val_pintura = 1.0
+    try:
         with engine.connect() as conn:
-            sql = text("SELECT flmo, flpt FROM admrtra WHERE seg = :seg AND clase = :clase AND stname LIKE :name")
-
+            sql = text("SELECT flmor, flptr FROM admrtra WHERE seg = :seg AND clase = :clase AND stname LIKE :name")
             for item in lsRepara:
                 item_con_wildcards = f"%{item}%"
                 result = conn.execute(sql, {
@@ -2644,20 +2648,19 @@ def fnReparaTrasero(inSEG, inCOD_CLASE, lsRepara):
                     "clase": int(inCOD_CLASE), 
                     "name": item_con_wildcards
                 })
-             
                 for row in result:
                     try:
-                        flmo_val = float(row.flmo)
+                        flmor_val = float(row.flmor)
                     except (ValueError, TypeError):
-                        flmo_val = 1.0
+                        flmor_val = 1.0
                     try:
-                        flpt_val = float(row.flpt)
+                        flptr_val = float(row.flptr)
                     except (ValueError, TypeError):
-                        flpt_val = 1.0
+                        flptr_val = 1.0
                     
-                    suma_horas = flmo_val + flpt_val
-                    flAverage = np.round(suma_horas * val_mobra, 2)
-                    lsReparaAve.append(flAverage)
+                    flmo_total = np.round(flmor_val * float(val_mobra), 2)
+                    flpt_total = np.round(flptr_val * float(val_pintura), 2)
+                    lsReparaAve.append((flmo_total + flpt_total))
     except Exception as e:
         logger.error(f"Error al acceder a la base de datos 'admrtra': {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Error interno del servidor al consultar los valores.")
@@ -2716,6 +2719,7 @@ def fnCambiaTrasero(inCOD_VERSION,lsRepone,isAlta):
     return lsReponeAve
 
 def fnCambiaPinturaTrasero(inSEG,inCOD_CLASE,lsRepone):
+    '''
     inCOD_PARTE = 2
     lsReponePintAve=[]
     lsReponeMoAv=[]
@@ -2749,6 +2753,48 @@ def fnCambiaPinturaTrasero(inSEG,inCOD_CLASE,lsRepone):
     for index, item in enumerate(lsReponeMoAv)   : lsReponeMoAv[index]=list(set(item))[0]
 
     return lsReponePintAve,lsReponeMoAv
+    '''
+    lsReponePintAve = []
+    lsReponeMoAv    = []
+    try:
+        val_mobra = float(param.bfMObra)
+    except (ValueError, TypeError):
+        logger.warning("param.bfMObra inválido en fnCambiaPinturaTrasero, usando 1.0")
+        val_mobra = 1.0
+    try:
+        val_pintura = float(param.bfPintura)
+    except (ValueError, TypeError):
+        logger.warning("param.bfPintura inválido en fnCambiaPinturaTrasero, usando 1.0")
+        val_pintura = 1.0
+
+    try:
+        with engine.connect() as conn:
+            sql = text("SELECT flmo, flpt FROM admrtra WHERE seg = :seg AND clase = :clase AND stname LIKE :name")
+            for item in lsRepone:
+                item_con_wildcards = f"%{item}%"
+                result = conn.execute(sql, {
+                    "seg": int(inSEG), 
+                    "clase": int(inCOD_CLASE), 
+                    "name": item_con_wildcards
+                })
+                for row in result:
+                    try:
+                        flmo_val = float(row.flmo)
+                    except (ValueError, TypeError):
+                        flmo_val = 1.0
+                    try:
+                        flpt_val = float(row.flpt)
+                    except (ValueError, TypeError):
+                        flpt_val = 1.0
+                    
+                    lsReponeMoAv.append(np.round(flmo_val * float(val_mobra), 2))
+                    lsReponePintAve.append(np.round(flpt_val * float(val_pintura), 2))
+
+    except Exception as e:
+        logger.error(f"Error al acceder a la base de datos admrtra - Cambia: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Error interno del servidor al consultar los valores de frente.")
+
+    return lsReponePintAve,lsReponeMoAv    
 
 def fnMolduraTrasero(inCOD_VERSION,isAlta):    
     inCOD_PARTE = 2
@@ -2816,33 +2862,35 @@ def fnReparaFrente(inSEG, inCOD_CLASE, lsRepara):
     except (ValueError, TypeError):
         logger.warning("param.bfMObra inválido en fnReparaFrente, usando 1.0")
         val_mobra = 1.0
+    try:
+        val_pintura = float(param.bfPintura)
+    except (ValueError, TypeError):
+        logger.warning("param.bfPintura inválido en fnReparaFrente, usando 1.0")
+        val_pintura = 1.0
 
     try:
         with engine.connect() as conn:
-            sql = text("SELECT flmo, flpt FROM admrdel WHERE seg = :seg AND clase = :clase AND stname LIKE :name")
+            sql = text("SELECT flmor, flptr FROM admrdel WHERE seg = :seg AND clase = :clase AND stname LIKE :name")
             for item in lsRepara:
                 item_con_wildcards = f"%{item}%"
-                
                 result = conn.execute(sql, {
                     "seg": int(inSEG), 
                     "clase": int(inCOD_CLASE), 
                     "name": item_con_wildcards
                 })
-
                 for row in result:
                     try:
-                        flmo_val = float(row.flmo)
+                        flmor_val = float(row.flmor)
                     except (ValueError, TypeError):
-                        flmo_val = 1.0
-                        
+                        flmor_val = 1.0
                     try:
-                        flpt_val = float(row.flpt)
+                        flptr_val = float(row.flptr)
                     except (ValueError, TypeError):
-                        flpt_val = 1.0
+                        flptr_val = 1.0
                     
-                    suma_horas = flmo_val + flpt_val
-                    flAverage = np.round(suma_horas * val_mobra, 2)
-                    lsReparaAve.append(flAverage)
+                    flmo_total = np.round(flmor_val * float(val_mobra), 2)
+                    flpt_total = np.round(flptr_val * float(val_pintura), 2)
+                    lsReparaAve.append((flmo_total + flpt_total))
 
     except Exception as e:
         logger.error(f"Error al acceder a la base de datos 'admrdel': {e}", exc_info=True)
@@ -2892,6 +2940,7 @@ def fnCambiaFrente(inCOD_VERSION,lsRepone,isAlta):
     return lsReponeAve
 
 def fnCambiaPinturaFrente(inSEG,inCOD_CLASE,lsRepone):
+    '''
     inCOD_PARTE = 1
     lsReponePintAve = []
     lsReponeMoAv    = []
@@ -2924,6 +2973,48 @@ def fnCambiaPinturaFrente(inSEG,inCOD_CLASE,lsRepone):
 
     for index, item in enumerate(lsReponePintAve): lsReponePintAve[index] = list(set(item))[0]
     for index, item in enumerate(lsReponeMoAv)   : lsReponeMoAv[index] = list(set(item))[0]
+
+    return lsReponePintAve,lsReponeMoAv
+    '''
+    lsReponePintAve = []
+    lsReponeMoAv    = []
+    try:
+        val_mobra = float(param.bfMObra)
+    except (ValueError, TypeError):
+        logger.warning("param.bfMObra inválido en fnCambiaPinturaFrente, usando 1.0")
+        val_mobra = 1.0
+    try:
+        val_pintura = float(param.bfPintura)
+    except (ValueError, TypeError):
+        logger.warning("param.bfPintura inválido en fnCambiaPinturaFrente, usando 1.0")
+        val_pintura = 1.0
+
+    try:
+        with engine.connect() as conn:
+            sql = text("SELECT flmo, flpt FROM admrdel WHERE seg = :seg AND clase = :clase AND stname LIKE :name")
+            for item in lsRepone:
+                item_con_wildcards = f"%{item}%"
+                result = conn.execute(sql, {
+                    "seg": int(inSEG), 
+                    "clase": int(inCOD_CLASE), 
+                    "name": item_con_wildcards
+                })
+                for row in result:
+                    try:
+                        flmo_val = float(row.flmo)
+                    except (ValueError, TypeError):
+                        flmo_val = 1.0
+                    try:
+                        flpt_val = float(row.flpt)
+                    except (ValueError, TypeError):
+                        flpt_val = 1.0
+                    
+                    lsReponeMoAv.append(np.round(flmo_val * float(val_mobra), 2))
+                    lsReponePintAve.append(np.round(flpt_val * float(val_pintura), 2))
+
+    except Exception as e:
+        logger.error(f"Error al acceder a la base de datos admrdel - Cambia: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Error interno del servidor al consultar los valores de frente.")
 
     return lsReponePintAve,lsReponeMoAv
 
@@ -3057,11 +3148,15 @@ def fnReparaLateral(inSEG, inCOD_CLASE, lsRepara):
         logger.warning("param.bfMObra inválido en fnReparaLateral, usando 1.0")
         val_mobra = 1.0
     try:
+        val_pintura = float(param.bfPintura)
+    except (ValueError, TypeError):
+        logger.warning("param.bfPintura inválido en fnReparaLateral, usando 1.0")
+        val_pintura = 1.0
+    try:
         with engine.connect() as conn:
-            sql = text("SELECT flmo, flpt FROM admrlat WHERE seg = :seg AND clase = :clase AND stname LIKE :name")
+            sql = text("SELECT flmor, flptr FROM admrlat WHERE seg = :seg AND clase = :clase AND stname LIKE :name")
             for item in lsRepara:
                 item_con_wildcards = f"%{item}%"
-                
                 result = conn.execute(sql, {
                     "seg": int(inSEG), 
                     "clase": int(inCOD_CLASE), 
@@ -3069,16 +3164,17 @@ def fnReparaLateral(inSEG, inCOD_CLASE, lsRepara):
                 })
                 for row in result:
                     try:
-                        flmo_val = float(row.flmo)
+                        flmor_val = float(row.flmor)
                     except (ValueError, TypeError):
-                        flmo_val = 1.0
+                        flmor_val = 1.0
                     try:
-                        flpt_val = float(row.flpt)
+                        flptr_val = float(row.flptr)
                     except (ValueError, TypeError):
-                        flpt_val = 1.0
-                    suma_horas = flmo_val + flpt_val
-                    flAverage = np.round(suma_horas * val_mobra, 2)
-                    lsReparaAve.append(flAverage)
+                        flptr_val = 1.0
+                    
+                    flmo_total = np.round(flmor_val * float(val_mobra), 2)
+                    flpt_total = np.round(flptr_val * float(val_pintura), 2)
+                    lsReparaAve.append((flmo_total + flpt_total))
     except Exception as e:
         logger.error(f"Error al acceder a la base de datos 'admrlat': {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Error interno del servidor al consultar los valores laterales.")
@@ -3123,6 +3219,7 @@ def fnCambiaLateral(inCOD_VERSION,lsRepone,isAlta):
     return lsReponeAve
  
 def fnCambiaPinturaLateral(inSEG,inCOD_CLASE,lsRepone):
+    '''
     inCOD_PARTE = 3
     lsReponePintAve = []
     lsReponeMoAv    = []
@@ -3158,6 +3255,48 @@ def fnCambiaPinturaLateral(inSEG,inCOD_CLASE,lsRepone):
     for index, item in enumerate(lsReponeMoAv): lsReponeMoAv[index] = list(set(item))[0]
 
     return lsReponePintAve,lsReponeMoAv
+    '''
+    lsReponePintAve = []
+    lsReponeMoAv    = []
+    try:
+        val_mobra = float(param.bfMObra)
+    except (ValueError, TypeError):
+        logger.warning("param.bfMObra inválido en fnCambiaPinturaLateral, usando 1.0")
+        val_mobra = 1.0
+    try:
+        val_pintura = float(param.bfPintura)
+    except (ValueError, TypeError):
+        logger.warning("param.bfPintura inválido en fnCambiaPinturaLateral, usando 1.0")
+        val_pintura = 1.0
+
+    try:
+        with engine.connect() as conn:
+            sql = text("SELECT flmo, flpt FROM admrlat WHERE seg = :seg AND clase = :clase AND stname LIKE :name")
+            for item in lsRepone:
+                item_con_wildcards = f"%{item}%"
+                result = conn.execute(sql, {
+                    "seg": int(inSEG), 
+                    "clase": int(inCOD_CLASE), 
+                    "name": item_con_wildcards
+                })
+                for row in result:
+                    try:
+                        flmo_val = float(row.flmo)
+                    except (ValueError, TypeError):
+                        flmo_val = 1.0
+                    try:
+                        flpt_val = float(row.flpt)
+                    except (ValueError, TypeError):
+                        flpt_val = 1.0
+                    
+                    lsReponeMoAv.append(np.round(flmo_val * float(val_mobra), 2))
+                    lsReponePintAve.append(np.round(flpt_val * float(val_pintura), 2))
+
+    except Exception as e:
+        logger.error(f"Error al acceder a la base de datos admrlat - Cambia: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Error interno del servidor al consultar los valores de frente.")
+
+    return lsReponePintAve,lsReponeMoAv    
 
 def fnEspejoLateralElec(inCOD_VERSION,isAlta):
     inCOD_PARTE = 3
