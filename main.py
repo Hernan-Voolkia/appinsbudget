@@ -395,7 +395,7 @@ async def consulta(request: Request):
         logger.error(f"Error crítico en consulta de carga masiva: {e}")
     
     context = {"request": request,}
-    return templates.TemplateResponse("search.html", context)
+    return templates.TemplateResponse(request=request, name="search.html", context=context)
 ##############################################################
 # Reporte de Valores de Valores Genericos
 ##############################################################
