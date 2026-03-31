@@ -201,7 +201,8 @@ async def add_security_headers(request: Request, call_next):
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     context = {"request": request,}
-    return templates.TemplateResponse("search.html", context)
+    #return templates.TemplateResponse("search.html", context)
+    return templates.TemplateResponse(request=request, name="search.html", context=context)
 
 @app.post("/vh", response_class=PlainTextResponse)
 async def modelo(CLASE  : int = 0):
