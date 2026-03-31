@@ -2252,7 +2252,6 @@ async def search_Data(CLIENTE: str = Form(""),
             flTraValorReparaAve = np.round(sum(lsTraReparaAve),2)
 
         if len(lsTraseroCambiaElems)>0:
-            #lsTraReponeAve=fnCambiaTrasero(iSEG,iCLASE,iMARCA,iMODELO,lsTraseroCambiaElems,isAlta)
             lsTraReponeAve=fnCambiaTrasero(iVERSION,lsTraseroCambiaElems,isAlta)
             if len(lsTraReponeAve)  == 0: lsTraReponeAve.append(0)
             flTraValorReponeElem = np.round(sum(lsTraReponeAve),2)
@@ -2262,7 +2261,7 @@ async def search_Data(CLIENTE: str = Form(""),
             flTraValorReponePint = np.round(sum(lsTraReponePintAve),2)
             if len(lsTraReponeMoAv)  == 0: lsTraReponeMoAv.append(0)
             flTraValorReponeMoAv = np.round(sum(lsTraReponeMoAv),2)
-
+            
         if len(lsTraseroCambiaElems) + len(lsTraseroReparaElems) == 1:
             if flTraValorReparaAve != 0:
                 flTraValorReparaAve = flTraValorReparaAve + param.bfMObra
@@ -2310,6 +2309,7 @@ async def search_Data(CLIENTE: str = Form(""),
         lsValuesResult.append(0)
         lsValuesResult.append(0)
 
+    '''
     if len(lsFrenteCambiaElems) + len(lsFrenteReparaElems) +\
        len(lsLateralCambiaElems) + len(lsLateralReparaElems) +\
        len(lsTraseroCambiaElems) + len(lsTraseroReparaElems) == 1:
@@ -2317,7 +2317,7 @@ async def search_Data(CLIENTE: str = Form(""),
         if flFrente  != 0: flFrente =  flFrente  + param.bfMObra
         if flLateral != 0: flLateral = flLateral + param.bfMObra
         if flTrasero != 0: flTrasero = flTrasero + param.bfMObra
-
+    '''
     bfTmp = resumeDataBrief(CLIENTE,flFrente,flLateral,flTrasero)
     isWrited = fnWriteLog(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO,FRENTE,LATERAL,TRASERO,lsValuesResult)
     return bfTmp
@@ -2715,7 +2715,6 @@ def fnCambiaTrasero(inCOD_VERSION,lsRepone,isAlta):
             if flAverage==1 or pd.isna(flAverage): logger.warning(f"Valor no valido para '{item}'")
 
         lsReponeAve.append(flAverage)
-
     return lsReponeAve
 
 def fnCambiaPinturaTrasero(inSEG,inCOD_CLASE,lsRepone):
