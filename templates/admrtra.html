@@ -93,6 +93,12 @@
         #CostBrief {
             transition: opacity 3s ease-out; /* Ahora tarda 3 segundos */
        }
+       #segmento:disabled {
+            color: #000000; /* Fuerza el color negro */
+            opacity: 1; /* Safari por defecto le baja la opacidad, esto lo evita */
+            -webkit-text-fill-color: #000000; /* Asegura el color en navegadores Chrome/Safari */
+            background-color: #f2f2f2; /* Opcional: un fondo gris muy clarito para que el usuario entienda que está bloqueado */
+        }
     </style>
 </head>
 <body>
@@ -135,7 +141,7 @@
                         </div>
                         <div class="pure-control-group">
                             <label for="segmento" style="color:#005993;text-align:left;">Segmento</label>
-                            <select id="segmento" style="min-width:343px;">
+                            <select id="segmento" style="min-width:343px;" disabled>
                                 <option value=9 selected></option>
                                 <option value=1>MM1</option>
                                 <option value=2>MM2</option>
@@ -297,6 +303,31 @@
         event.preventDefault(); 
         window.location.href =  "/admtraratio"; 
     });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        
+        const comboClase = document.getElementById("clase");
+        const comboSegmento = document.getElementById("segmento");
+
+        comboClase.addEventListener("change", function() {
+            const valorClase = comboClase.value;
+            switch (valorClase) {
+                case "900": // COUPE
+                case "901": // SEDAN
+                    comboSegmento.value = "1"; // Selecciona MM1
+                    break;
+                case "907": // SUV
+                    comboSegmento.value = "2"; // Selecciona MM2
+                    break;
+                case "910": // PICK-UP
+                    comboSegmento.value = "3"; // Selecciona MM3
+                    break;
+                default:
+                    comboSegmento.value = "9"; // Vuelve al valor por defecto (vacío)
+                    break;
+            }
+        });
+    });    
 
     const selectClase = document.getElementById('clase');
     const selectSegmento = document.getElementById('segmento');
