@@ -201,7 +201,6 @@ async def add_security_headers(request: Request, call_next):
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     context = {"request": request,}
-    #return templates.TemplateResponse("search.html", context)
     return templates.TemplateResponse(request=request, name="search.html", context=context)
 
 @app.post("/vh", response_class=PlainTextResponse)
@@ -441,7 +440,7 @@ async def adminValues(request: Request):
                'rplBfPintura':   param.bfPintura,
                'rplBfAjuste':    param.bfAjuste
               }
-    return templates.TemplateResponse("admvalue.html", context)
+    return templates.TemplateResponse(request=request, name="admvalue.html", context=context)
 #==========================================================
 @app.post("/admvaluesave", response_class=PlainTextResponse)
 async def adminValuesSave(ASEGURADO: str = Form(""), TERCERO: str = Form(""), MOBRA: str = Form(""), MOMINIMO: str = Form(""), PINTURA: str = Form(""), AJUSTE: str = Form(""),
@@ -477,7 +476,7 @@ async def adminValuesSave(ASEGURADO: str = Form(""), TERCERO: str = Form(""), MO
 @app.get("/admdelratio", response_class=HTMLResponse)
 async def admDelRatio(request: Request):
     context = {"request": request,}
-    return templates.TemplateResponse("admrdel.html", context)
+    return templates.TemplateResponse(request=request, name="admrdel.html", context=context)
 
 @app.post("/admrdelsel", response_class=HTMLResponse)
 async def admrdelsel(Clase: int = Form(...), Segmento: int = Form(...), Tipo: int = Form(1)):
@@ -581,7 +580,7 @@ async def admRDelSave(
 @app.get("/admlatratio", response_class=HTMLResponse)
 async def admLatRatio(request: Request):
     context = {"request": request,}
-    return templates.TemplateResponse("admrlat.html", context)
+    return templates.TemplateResponse(request=request, name="admrlat.html", context=context)
 #==========================================================
 @app.post("/admrlatsel", response_class=HTMLResponse)
 async def admrlatsel(Clase: int = Form(...), Segmento: int = Form(...), Tipo: int = Form(1)):
@@ -721,7 +720,7 @@ async def admRLatSave(clase: str = Form(""),segmento: str = Form(""),Puerta_Del_
 @app.get("/admtraratio", response_class=HTMLResponse)
 async def admTraRatio(request: Request):
     context = {"request": request,}
-    return templates.TemplateResponse("admrtra.html", context)
+    return templates.TemplateResponse(request=request, name="admrtra.html", context=context)
 #==========================================================
 @app.post("/admrtrasel", response_class=HTMLResponse)
 async def admrtrasel(Clase: int = Form(...), Segmento: int = Form(...), Tipo: int = Form(1)):
@@ -919,7 +918,7 @@ async def admTraRatio(request: Request):
                "Paragolpe_Alma_Ratio":"",
                "Paragolpe_Ctro_Ratio":"",
               }
-    return templates.TemplateResponse("admrtra.html", context)
+    return templates.TemplateResponse(request=request, name="admrtra.html", context=context)
 #==========================================================
 @app.post("/admtraratiosave", response_class=PlainTextResponse)
 async def admTraRatioSave(ASEGURADO:str="", TERCERO:str="", MOBRA:str="", MOMINIMO:str="", PINTURA:str="", AJUSTE:str="",
@@ -974,7 +973,7 @@ async def admreplat(request: Request):
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
         logger.error(f"Error en admreplat: {e}")
 
-    return templates.TemplateResponse("admreplat.html", context)
+    return templates.TemplateResponse(request=request, name="admreplat.html", context=context)
 #==========================================================
 @app.post("/admvalueslat", response_class=PlainTextResponse)
 async def admvalueslat(request: Request, 
@@ -1043,7 +1042,7 @@ async def admreplatsuv(request: Request):
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
         logger.error(f"Error en admreplatsuv: {e}")
         
-    return templates.TemplateResponse("admreplatsuv.html", context)
+    return templates.TemplateResponse(request=request, name="admreplatsuv.html", context=context)
 #==========================================================
 @app.post("/admvalueslatsuv", response_class=PlainTextResponse)
 async def admvalueslatsuv(request: Request, 
@@ -1112,7 +1111,7 @@ async def admreplatag(request: Request):
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
         logger.error(f"Error en admreplatag: {e}")
 
-    return templates.TemplateResponse("admreplatag.html", context)
+    return templates.TemplateResponse(request=request, name="admreplatag.html", context=context)
 #==========================================================
 @app.post("/admvalueslatag", response_class=PlainTextResponse)
 async def admvalueslatag(request: Request, 
@@ -1181,7 +1180,7 @@ async def admreplatagsuv(request: Request):
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
         logger.error(f"Error en admreplatagsuv: {e}")
 
-    return templates.TemplateResponse("admreplatagsuv.html", context)
+    return templates.TemplateResponse(request=request, name="admreplatagsuv.html", context=context)
 #==========================================================
 @app.post("/admvalueslatagsuv", response_class=PlainTextResponse)
 async def admvalueslatagsuv(request: Request, 
@@ -1247,7 +1246,7 @@ async def admreptra(request: Request):
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
         logger.error(f"Error en admreptra: {e}")
 
-    return templates.TemplateResponse("admreptra.html", context)
+    return templates.TemplateResponse(request=request, name="admreptra.html", context=context)
 #===========================================================
 @app.post("/admvaluestra", response_class=PlainTextResponse)
 async def admvaluestra(Baul_Porton: str = Form(""), Faro_Ext: str = Form(""), Faro_Int: str = Form(""),
@@ -1304,7 +1303,7 @@ async def admreptrasuv(request: Request):
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
         logger.error(f"Error en admreptrasuv: {e}")
 
-    return templates.TemplateResponse("admreptrasuv.html", context)
+    return templates.TemplateResponse(request=request, name="admreptrasuv.html", context=context)
 #=============================================================
 @app.post("/admvaluestrasuv", response_class=PlainTextResponse)
 async def admvaluestrasuv(Baul_Porton: str = Form(""), Faro_Ext: str = Form(""), Faro_Int: str = Form(""),
@@ -1361,7 +1360,7 @@ async def admreptraag(request: Request):
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
         logger.error(f"Error en admreptraag: {e}")
 
-    return templates.TemplateResponse("admreptraag.html", context)
+    return templates.TemplateResponse(request=request, name="admreptraag.html", context=context)
 #==========================================================
 @app.post("/admvaluestraag", response_class=PlainTextResponse)
 async def admvaluestraag(Baul_Porton: str = Form(""), Faro_Ext: str = Form(""), Faro_Int: str = Form(""),
@@ -1418,7 +1417,7 @@ async def admreptraagsuv(request: Request):
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
         logger.error(f"Error en admreptraagsuv: {e}")
 
-    return templates.TemplateResponse("admreptraagsuv.html", context)
+    return templates.TemplateResponse(request=request, name="admreptraagsuv.html", context=context)
 #=============================================================
 @app.post("/admvaluestraagsuv", response_class=PlainTextResponse)
 async def admvaluestraagsuv(Baul_Porton: str = Form(""), Faro_Ext: str = Form(""), Faro_Int: str = Form(""),
@@ -1486,7 +1485,7 @@ async def admrepdel(request: Request):
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
         logger.error(f"Error en admrepdel: {e}")
 
-    return templates.TemplateResponse("admrepdel.html", context)
+    return templates.TemplateResponse(request=request, name="admrepdel.html", context=context)
 #===========================================================
 @app.post("/admvaluesdel", response_class=PlainTextResponse)
 async def admvaluesdel(Paragolpe_Ctro: str = Form(""),   Paragolpe_Rejilla: str = Form(""),
@@ -1557,7 +1556,7 @@ async def admrepdelsuv(request: Request):
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
         logger.error(f"Error en admrepdelsuv: {e}")
 
-    return templates.TemplateResponse("admrepdelsuv.html", context)
+    return templates.TemplateResponse(request=request, name="admrepdelsuv.html", context=context)
 #===========================================================
 @app.post("/admvaluesdelsuv", response_class=PlainTextResponse)
 async def admvaluesdelsuv(Paragolpe_Ctro: str = Form(""),   Paragolpe_Rejilla: str = Form(""),
@@ -1628,7 +1627,7 @@ async def admrepdelag(request: Request):
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
         logger.error(f"Error en admrepdelag: {e}")
 
-    return templates.TemplateResponse("admrepdelag.html", context)
+    return templates.TemplateResponse(request=request, name="admrepdelag.html", context=context)
 #===========================================================
 @app.post("/admvaluesdelag", response_class=PlainTextResponse)
 async def admvaluesdelag(Paragolpe_Ctro: str = Form(""),   Paragolpe_Rejilla: str = Form(""),
@@ -1699,7 +1698,7 @@ async def admrepdelagsuv(request: Request):
         context["MensajeRetorno"] = "Se produjo un error al recuperar los valores, comuniquese con el administrador"
         logger.error(f"Error en admrepdelagsuv: {e}")
 
-    return templates.TemplateResponse("admrepdelagsuv.html", context)
+    return templates.TemplateResponse(request=request, name="admrepdelagsuv.html", context=context)
 #===============================================================
 @app.post("/admvaluesdelagsuv", response_class=PlainTextResponse)
 async def admvaluesdelagsuv(Paragolpe_Ctro: str = Form(""),   Paragolpe_Rejilla: str = Form(""),
@@ -1740,7 +1739,7 @@ async def admvaluesdelagsuv(Paragolpe_Ctro: str = Form(""),   Paragolpe_Rejilla:
 @app.get("/admrdel", response_class=HTMLResponse)
 async def admrepdelagsuv(request: Request):
     context = {"request": request}
-    return templates.TemplateResponse("admrdel.html", context)
+    return templates.TemplateResponse(request=request, name="admrdel.html", context=context)
 #########################################################
 @app.get("/dbread", response_class=HTMLResponse)
 async def dbRead(request: Request):
@@ -1803,7 +1802,7 @@ async def dbRead(request: Request):
     context["reparalateral"] = lsReparaLateral
     context["cambialateral"] = lsCambiaLateral
 
-    return templates.TemplateResponse("readlog.html", context)
+    return templates.TemplateResponse(request=request, name="readlog.html", context=context)
 
 def fnRepTrasero(input):
     valores = input.split('-')
