@@ -32,6 +32,8 @@ security = HTTPBasic()
 warnings.filterwarnings("ignore")
 np.set_printoptions(suppress=True)
 
+CLASES_MAP = {900: 'COUPE', 901: 'SEDAN', 907: 'SUV', 908: 'MOTOCICLETA', 910: 'PICK-UP'}
+
 def setup_explicit_logger(name):
     """
     Configura y devuelve un logger, asegurando que use sys.stdout y que no
@@ -156,14 +158,17 @@ async def add_security_headers(request: Request, call_next):
         # style-src: Agregamos DataTables y Bootstrap
         "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.cdnfonts.com https://fonts.googleapis.com https://cdn.datatables.net",
         
-        # style-src-elem: Específico para etiquetas <link> (evita el error que mencionaste)
+        # style-src-elem: Específico para etiquetas <link>
         "style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.cdnfonts.com https://cdn.datatables.net",
         
         # font-src: Soporte para fuentes y archivos de fuentes locales/remotos
         "font-src 'self' data: https://fonts.gstatic.com https://fonts.cdnfonts.com",
         
         # script-src: Agregamos DataTables y mantenemos jsPDF/html2canvas
-        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdn.datatables.net https://cdnjs.cloudflare.com https://code.jquery.com",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.datatables.net https://cdnjs.cloudflare.com https://code.jquery.com",
+        
+        # worker-src: Permitimos a html2canvas usar blobs para procesos en segundo plano <--- ¡AQUÍ ESTÁ!
+        "worker-src 'self' blob:",
         
         # img-src: 'blob:' es clave para jsPDF y capturas de pantalla
         "img-src 'self' data: blob:",
@@ -204,17 +209,12 @@ async def read_root(request: Request):
     return templates.TemplateResponse(request=request, name="search.html", context=context)
 
 @app.post("/vh", response_class=PlainTextResponse)
-async def modelo(CLASE  : int = 0):
-    bfVH = "<option id=0></option>\n"
-    bfCLASE = ''
+async def get_vh(CLASE: int = 0): # MEJORA: Nombre único de función
+    bfVH = '<option value="0"></option>\n' # CORRECCIÓN: value en vez de id
+    bfCLASE = CLASES_MAP.get(CLASE, '')    # MEJORA: Uso del diccionario
+    
     marcas_top = ['CHEVROLET','CITROEN','FIAT','FORD','PEUGEOT','RENAULT','TOYOTA','VOLKSWAGEN']
     marcas_sql_list = ", ".join([f"'{m}'" for m in marcas_top])
-                  
-    if   CLASE == 901: bfCLASE = 'SEDAN' 
-    elif CLASE == 907: bfCLASE = 'SUV'
-    elif CLASE == 900: bfCLASE = 'COUPE'        
-    elif CLASE == 910: bfCLASE = 'PICK-UP'
-    elif CLASE == 908: bfCLASE = 'MOTOCICLETA'
 
     if bfCLASE != '':        
         try:
@@ -234,7 +234,9 @@ async def modelo(CLASE  : int = 0):
                 for row in result:
                     cod_marca = row.cyc_cod_marca
                     desc_marca = html.escape(row.cyc_desc_marca.title())
-                    linea = f'<option id="{cod_marca}">{desc_marca}</option>\n'
+                    
+                    # CORRECCIÓN: value en vez de id
+                    linea = f'<option value="{cod_marca}">{desc_marca}</option>\n'
                     opciones_html.append(linea)
                 bfVH += "".join(opciones_html)
         
@@ -244,14 +246,9 @@ async def modelo(CLASE  : int = 0):
     return bfVH
 
 @app.post("/modelo", response_class=PlainTextResponse)
-async def modelo(CLASE:int=901, MARCA:int=0):
-    bfOptions = "<option id=0></option>\n"
-    bfCLASE = ''
-    if   CLASE == 901: bfCLASE = 'SEDAN' 
-    elif CLASE == 907: bfCLASE = 'SUV'
-    elif CLASE == 900: bfCLASE = 'COUPE'        
-    elif CLASE == 910: bfCLASE = 'PICK-UP'
-    elif CLASE == 908: bfCLASE = 'MOTOCICLETA'
+async def get_modelo(CLASE: int = 901, MARCA: int = 0): # MEJORA: Nombre único
+    bfOptions = '<option value="0"></option>\n' # CORRECCIÓN: value
+    bfCLASE = CLASES_MAP.get(CLASE, '')         # MEJORA: Uso del diccionario
 
     if bfCLASE != '':        
         try:
@@ -270,7 +267,9 @@ async def modelo(CLASE:int=901, MARCA:int=0):
                 for row in result:
                     cod_modelo = row.cyc_cod_modelo
                     desc_modelo = html.escape(row.cyc_desc_modelo.title())
-                    linea = f'<option id="{cod_modelo}">{desc_modelo}</option>\n'
+                    
+                    # CORRECCIÓN: value en vez de id
+                    linea = f'<option value="{cod_modelo}">{desc_modelo}</option>\n'
                     opciones_html.append(linea)
                 
                 bfOptions += "".join(opciones_html)
@@ -281,15 +280,9 @@ async def modelo(CLASE:int=901, MARCA:int=0):
     return bfOptions
 
 @app.post("/version", response_class=PlainTextResponse)
-async def version(CLASE:int=901, MARCA:int=0, MODELO:int=0):
-    bfOptions = "<option id=0></option>\n"
-    bfCLASE = ''
-                  
-    if   CLASE == 901: bfCLASE = 'SEDAN' 
-    elif CLASE == 907: bfCLASE = 'SUV'
-    elif CLASE == 900: bfCLASE = 'COUPE'        
-    elif CLASE == 910: bfCLASE = 'PICK-UP'
-    elif CLASE == 908: bfCLASE = 'MOTOCICLETA'
+async def get_version(CLASE: int = 901, MARCA: int = 0, MODELO: int = 0): # MEJORA: Nombre único
+    bfOptions = '<option value="0"></option>\n' # CORRECCIÓN: value
+    bfCLASE = CLASES_MAP.get(CLASE, '')         # MEJORA: Uso del diccionario
 
     if bfCLASE != '':        
         try:
@@ -307,9 +300,10 @@ async def version(CLASE:int=901, MARCA:int=0, MODELO:int=0):
                 opciones_html = []
                 for row in result:
                     cod_vehiculo = row.cyc_cod_vehiculo
-
                     desc_version = html.escape(row.cyc_desc_version.title())
-                    linea = f'<option id="{cod_vehiculo}">{desc_version}</option>\n'
+                    
+                    # CORRECCIÓN: value en vez de id
+                    linea = f'<option value="{cod_vehiculo}">{desc_version}</option>\n'
                     opciones_html.append(linea)
                 
                 bfOptions += "".join(opciones_html)
@@ -1803,6 +1797,32 @@ async def dbRead(request: Request):
     context["cambialateral"] = lsCambiaLateral
 
     return templates.TemplateResponse(request=request, name="readlog.html", context=context)
+#########################################################
+@app.post("/guardar_formato", response_class=PlainTextResponse)
+async def guardar_formato(
+    PERITO: str = Form(""),
+    FECHA_HORA: str = Form(""),
+    FORMATO_TXT: str = Form("")
+):
+    bfMsg = ""
+    try:
+        with engine.begin() as conn:
+            sql = text("""
+                INSERT INTO presupuestos (perito, fecha_hora, formato_txt) 
+                VALUES (:perito, :fecha_hora, :formato_txt)
+            """)
+            conn.execute(sql, {
+                "perito": PERITO,
+                "fecha_hora": FECHA_HORA,
+                "formato_txt": FORMATO_TXT
+            })
+    except Exception as e:
+        bfMsg = "Error al guardar el formato"
+        logger.error(f"Error BD en guardar_formato: {e}")
+    
+    return bfMsg
+#########################################################
+#########################################################
 
 def fnRepTrasero(input):
     valores = input.split('-')
@@ -1974,18 +1994,15 @@ async def search_Data(CLIENTE: str = Form(""),
         bfTmp = "Sugerido&nbsp$&nbsp" + html.escape(VALORPERITO)
         return bfTmp
 
-    #ToDo: Agregar si no es numerico mensaje de error
-    if CLASE.isdigit(): 
-        iCLASE = int(CLASE)
-        if   iCLASE == 901: bfCLASE = 'SEDAN' 
-        elif iCLASE == 907: bfCLASE = 'SUV'
-        elif iCLASE == 900: bfCLASE = 'COUPE'        
-        elif iCLASE == 910: bfCLASE = 'PICK-UP'
+    iCLASE   = int(CLASE)   if CLASE.isdigit()   else 0
+    iMARCA   = int(MARCA)   if MARCA.isdigit()   else 0
+    iMODELO  = int(MODELO)  if MODELO.isdigit()  else 0
+    iVERSION = int(VERSION) if VERSION.isdigit() else 0
 
-    if MARCA.isdigit(): iMARCA = int(MARCA)
-    if MODELO.isdigit():iMODELO= int(MODELO)
-    if VERSION.isdigit():iVERSION= int(VERSION)
-    
+    bfCLASE = CLASES_MAP.get(iCLASE, '')
+    if not bfCLASE or not iMARCA or not iMODELO or not iVERSION:
+        return "Error: Faltan datos obligatorios o no son válidos."
+
     lsFrente  = FRENTE.split('-')
     lsLateral = LATERAL.split('-')
     lsTrasero = TRASERO.split('-')
