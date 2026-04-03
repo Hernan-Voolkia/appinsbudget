@@ -1822,6 +1822,196 @@ async def guardar_formato(
     
     return bfMsg
 #########################################################
+@app.get("/historial_presupuestos", response_class=HTMLResponse)
+async def view_presupuestos_grid(request: Request):
+    # Simplemente retorna el template con el nombre solicitado
+    return templates.TemplateResponse("presupuestosgrid.html", {"request": request})
+
+# 2. Endpoint de la API para búsqueda y paginación
+@app.post("/api/presupuestos", response_class=JSONResponse)
+async def get_presupuestos_data(
+    perito: str = Form(""),
+    fecha_desde: str = Form(""),
+    fecha_hasta: str = Form(""),
+    page: int = Form(1)
+):
+    limit = 10
+    offset = (page - 1) * limit
+    
+    where_clauses = []
+    params = {}
+    
+    # Filtro por Perito (búsqueda parcial "LIKE")
+    if perito.strip():
+        where_clauses.append("perito LIKE :perito")
+        params["perito"] = f"%{perito.strip()}%"
+        
+    # Filtro por Rango de Fechas (YYYY-MM-DD)
+    if fecha_desde and fecha_hasta:
+        # Extraemos los primeros 10 caracteres de fecha_hora para comparar fechas puras
+        where_clauses.append("SUBSTR(fecha_hora, 1, 10) BETWEEN :desde AND :hasta")
+        params["desde"] = fecha_desde
+        params["hasta"] = fecha_hasta
+        
+    where_sql = ""
+    if where_clauses:
+        where_sql = "WHERE " + " AND ".join(where_clauses)
+        
+    # Query para contar el total (necesario para la paginación del frontend)
+    count_sql = text(f"SELECT COUNT(*) FROM presupuestos {where_sql}")
+    
+    # Query para traer los datos limitados a 10 registros
+    data_sql = text(f"""
+        SELECT id, perito, fecha_hora, formato_txt 
+        FROM presupuestos 
+        {where_sql}
+        ORDER BY id DESC
+        LIMIT :limit OFFSET :offset
+    """)
+    
+    params["limit"] = limit
+    params["offset"] = offset
+    
+    try:
+        with engine.connect() as conn:
+            # Obtenemos total de registros
+            total_records = conn.execute(count_sql, params).scalar()
+            
+            # Obtenemos la página de datos
+            result = conn.execute(data_sql, params)
+            
+            filas = []
+            for row in result:
+                filas.append({
+                    "id": row.id,
+                    "perito": row.perito,
+                    "fecha_hora": row.fecha_hora,
+                    "formato_txt": row.formato_txt
+                })
+                
+            return JSONResponse(content={
+                "total": total_records,
+                "page": page,
+                "pages": (total_records + limit - 1) // limit if total_records > 0 else 1,
+                "data": filas
+            })
+            
+    except Exception as e:
+        logger.error(f"Error consultando la tabla presupuestos: {e}")
+        return JSONResponse(content={"error": "Error interno del servidor"}, status_code=500)
+#########################################################
+@app.post("/api/logpresupuestos", response_class=JSONResponse)
+async def api_logpresupuestos(
+    busqueda: str = Form(""),
+    fecha_desde: str = Form(""),
+    fecha_hasta: str = Form(""),
+    page: int = Form(1)
+):
+    limit = 10
+    offset = (page - 1) * limit
+    
+    where_clauses = []
+    params = {}
+    
+    # Búsqueda general (Cliente, Siniestro o Perito)
+    if busqueda.strip():
+        where_clauses.append("(cliente LIKE :busqueda OR siniestro LIKE :busqueda OR perito LIKE :busqueda)")
+        params["busqueda"] = f"%{busqueda.strip()}%"
+        
+    # Filtro por Rango de Fechas (el timestamp en tu BD es numérico)
+    if fecha_desde and fecha_hasta:
+        # Convertimos las fechas YYYY-MM-DD a timestamp de inicio y fin del día
+        try:
+            ts_desde = datetime.datetime.strptime(f"{fecha_desde} 00:00:00", "%Y-%m-%d %H:%M:%S").timestamp()
+            ts_hasta = datetime.datetime.strptime(f"{fecha_hasta} 23:59:59", "%Y-%m-%d %H:%M:%S").timestamp()
+            where_clauses.append("CAST(timestamp AS FLOAT) BETWEEN :desde AND :hasta")
+            params["desde"] = ts_desde
+            params["hasta"] = ts_hasta
+        except ValueError:
+            pass # Si hay error en la fecha, ignoramos el filtro
+        
+    where_sql = ""
+    if where_clauses:
+        where_sql = "WHERE " + " AND ".join(where_clauses)
+        
+    count_sql = text(f"SELECT COUNT(*) FROM logpresupuestosV1 {where_sql}")
+    
+    data_sql = text(f"""
+        SELECT timestamp, cliente, clase, marca, modelo, siniestro, 
+               frente, lateralr, trasero, 
+               frReparaPintura, frReponeElemento, frReponePintura, frReponeManoObra, 
+               frReponeFarito, frReponeFaro, frReponeFaro_Auxiliar, frReponeParabrisas, 
+               frReponeParagolpe_Rejilla, frReponeRejilla_Radiador, frTotal, 
+               ltReparaPintura, ltReponeElemento, ltReponePintura, ltReponeManoObra, 
+               ltReponeEspejoEle, ltReponeEspejoMan, ltReponeManijaDel, ltReponeManijaTra, 
+               ltReponeMolduraDel, ltReponeMolduraTra, ltReponeCristalDel, ltReponeCristalTra, ltTotal, 
+               trReparaPintura, trReponeElemento, trReponePintura, trReponeManoObra, 
+               trReponeMoldura, trReponeFaroExt, trReponeFaroInt, trTotal, 
+               Asegurado, Tercero, MObra, Pintura, Ajuste, Perito, ValorPerito 
+        FROM logpresupuestosV1
+        {where_sql}
+        ORDER BY id DESC
+        LIMIT :limit OFFSET :offset
+    """)
+    
+    params["limit"] = limit
+    params["offset"] = offset
+    
+    try:
+        with engine.connect() as conn:
+            total_records = conn.execute(count_sql, params).scalar()
+            result = conn.execute(data_sql, params)
+            
+            filas = []
+            for record in result:
+                try:
+                    ts_obj = datetime.datetime.fromtimestamp(float(record.timestamp))
+                    fecha_str = ts_obj.strftime('%Y-%m-%d')
+                    hora_str = ts_obj.strftime('%H:%M:%S')
+                except (ValueError, TypeError):
+                    fecha_str, hora_str = "N/A", "N/A"
+
+                tipo_cliente = "Asegurado" if str(record.Asegurado) != "0.0" and str(record.Asegurado) != "0" else "Tercero"
+
+                # Armamos un array puro con el orden exacto de las columnas de la tabla HTML
+                fila = [
+                    fecha_str,
+                    hora_str,
+                    tipo_cliente,
+                    record.clase, record.marca, record.modelo, record.siniestro,
+                    
+                    fnRepFrente(record.frente), record.frReparaPintura,
+                    fnCmbFrente(record.frente), record.frReponeElemento, record.frReponePintura, record.frReponeManoObra,
+                    record.frReponeFarito, record.frReponeFaro, record.frReponeFaro_Auxiliar,
+                    record.frReponeParabrisas, record.frReponeParagolpe_Rejilla, record.frReponeRejilla_Radiador, record.frTotal,
+                    
+                    fnRepLateral(record.lateralr), record.ltReparaPintura,
+                    fnCmbLateral(record.lateralr), record.ltReponeElemento, record.ltReponePintura, record.ltReponeManoObra,
+                    record.ltReponeEspejoEle, record.ltReponeEspejoMan, record.ltReponeManijaDel, record.ltReponeManijaTra,
+                    record.ltReponeMolduraDel, record.ltReponeMolduraTra, record.ltReponeCristalDel, record.ltReponeCristalTra, record.ltTotal,
+                    
+                    fnRepTrasero(record.trasero), record.trReparaPintura,
+                    fnCmbTrasero(record.trasero), record.trReponeElemento, record.trReponePintura, record.trReponeManoObra,
+                    record.trReponeMoldura, record.trReponeFaroExt, record.trReponeFaroInt, record.trTotal,
+                    
+                    record.Asegurado, record.Tercero, record.MObra, record.Pintura, record.Ajuste,
+                    record.Perito, record.ValorPerito
+                ]
+                # Reemplazar valores nulos por vacíos para evitar 'null' en la tabla
+                fila = ["" if v is None else v for v in fila]
+                filas.append(fila)
+                
+            return JSONResponse(content={
+                "total": total_records,
+                "page": page,
+                "pages": (total_records + limit - 1) // limit if total_records > 0 else 1,
+                "data": filas
+            })
+            
+    except Exception as e:
+        logger.error(f"Error consultando historial logpresupuestos: {e}")
+        return JSONResponse(content={"error": "Error interno"}, status_code=500)    
+#########################################################
 #########################################################
 
 def fnRepTrasero(input):
