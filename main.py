@@ -1802,19 +1802,21 @@ async def dbRead(request: Request):
 async def guardar_formato(
     PERITO: str = Form(""),
     FECHA_HORA: str = Form(""),
-    FORMATO_TXT: str = Form("")
+    FORMATO_TXT: str = Form(""),
+    NROPRESU: str = Form("")
 ):
-    bfMsg = ""
+    bfMsg = ""   
     try:
         with engine.begin() as conn:
             sql = text("""
-                INSERT INTO presupuestos (perito, fecha_hora, formato_txt) 
-                VALUES (:perito, :fecha_hora, :formato_txt)
+                INSERT INTO presupuestos (perito, fecha_hora, formato_txt, nropresu) 
+                VALUES (:perito, :fecha_hora, :formato_txt,:nropresu)
             """)
             conn.execute(sql, {
                 "perito": PERITO,
                 "fecha_hora": FECHA_HORA,
-                "formato_txt": FORMATO_TXT
+                "formato_txt": FORMATO_TXT, 
+                "nropresu": NROPRESU
             })
     except Exception as e:
         bfMsg = "Error al guardar el formato"
@@ -1862,7 +1864,7 @@ async def get_presupuestos_data(
     
     # Query para traer los datos limitados a 10 registros
     data_sql = text(f"""
-        SELECT id, perito, fecha_hora, formato_txt 
+        SELECT id, perito, fecha_hora, formato_txt, nropresu 
         FROM presupuestos 
         {where_sql}
         ORDER BY id DESC
@@ -1886,7 +1888,8 @@ async def get_presupuestos_data(
                     "id": row.id,
                     "perito": row.perito,
                     "fecha_hora": row.fecha_hora,
-                    "formato_txt": row.formato_txt
+                    "formato_txt": row.formato_txt,
+                    "nropresu": row.nropresu
                 })
                 
             return JSONResponse(content={
