@@ -147,58 +147,27 @@ templates = Jinja2Templates(directory="templates")
 
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
-    # Procesa la solicitud y captura la respuesta generada por FastAPI
     response = await call_next(request)
     
-    # --- SECCIÓN 1: CONTENT SECURITY POLICY (CSP) ---
-    # Define una "lista blanca" de orígenes permitidos.
-    csp_directives = [
-        "default-src 'self'",
-        
-        # style-src: Agregamos DataTables y Bootstrap
-        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.cdnfonts.com https://fonts.googleapis.com https://cdn.datatables.net",
-        
-        # style-src-elem: Específico para etiquetas <link>
-        "style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.cdnfonts.com https://cdn.datatables.net",
-        
-        # font-src: Soporte para fuentes y archivos de fuentes locales/remotos
-        "font-src 'self' data: https://fonts.gstatic.com https://fonts.cdnfonts.com",
-        
-        # script-src: Agregamos DataTables y mantenemos jsPDF/html2canvas
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.datatables.net https://cdnjs.cloudflare.com https://code.jquery.com",
-        
-        # worker-src: Permitimos a html2canvas usar blobs para procesos en segundo plano <--- ¡AQUÍ ESTÁ!
-        "worker-src 'self' blob:",
-        
-        # img-src: 'blob:' es clave para jsPDF y capturas de pantalla
-        "img-src 'self' data: blob:",
-        
-        # connect-src: Permitimos mapas de origen de cdnjs y conexiones locales
+    # Definimos la CSP como un string único y limpio. 
+    # Esto evita que Jinja2 o el Logger intenten "hashear" la lista dinámica.
+    csp = (
+        "default-src 'self'; "
+        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.cdnfonts.com https://fonts.googleapis.com https://cdn.datatables.net; "
+        "style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.cdnfonts.com https://cdn.datatables.net; "
+        "font-src 'self' data: https://fonts.gstatic.com https://fonts.cdnfonts.com; "
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.datatables.net https://cdnjs.cloudflare.com https://code.jquery.com; "
+        "worker-src 'self' blob:; "
+        "img-src 'self' data: blob:; "
         "connect-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net"
-    ]
-     # Unificamos las directivas en un solo string separado por puntos y coma.
-    response.headers["Content-Security-Policy"] = "; ".join(csp_directives)
+    )
 
-    # --- SECCIÓN 2: ENCABEZADOS DE SEGURIDAD ESTÁNDAR ---
-
-    # Previene el "MIME Sniffing": evita que el navegador intente adivinar el tipo de archivo.
-    # Si dices que es un texto, el navegador lo trata como texto y no como un script ejecutable.
+    # Asignación directa de encabezados
+    response.headers["Content-Security-Policy"] = csp
     response.headers["X-Content-Type-Options"] = "nosniff"
-
-    # Anti-Clickjacking: impide que tu página sea cargada dentro de un <iframe> en otros sitios.
-    # 'SAMEORIGIN' solo permite iframes si el sitio padre es el tuyo.
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
-
-    # Filtro XSS: Activa la protección nativa del navegador contra ataques de scripts reflejados.
-    # 'mode=block' detiene totalmente la carga de la página si detecta una inyección maliciosa.
     response.headers["X-XSS-Protection"] = "1; mode=block"
-
-    # Privacidad del Referer: controla cuánta información de tu URL se envía cuando un usuario
-    # hace clic en un enlace que lleva a otro sitio web.
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-
-    # HSTS (Strict-Transport-Security): Obliga al navegador a comunicarse con tu servidor 
-    # únicamente a través de HTTPS durante un año (31,536,000 segundos).
     response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     
     return response
