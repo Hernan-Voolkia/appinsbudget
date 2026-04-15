@@ -1805,34 +1805,43 @@ async def guardar_formato(
     FORMATO_TXT: str = Form(""),
     NROPRESU: str = Form("")
 ):
-    bfMsg = ""   
+    # Definimos los parámetros fuera para tener control
+    params = {
+        "perito": str(PERITO),
+        "fecha_hora": str(FECHA_HORA),
+        "formato_txt": str(FORMATO_TXT),
+        "nropresu": str(NROPRESU)
+    }
+    
     try:
         with engine.begin() as conn:
             sql = text("""
                 INSERT INTO presupuestos (perito, fecha_hora, formato_txt, nropresu) 
-                VALUES (:perito, :fecha_hora, :formato_txt,:nropresu)
+                VALUES (:perito, :fecha_hora, :formato_txt, :nropresu)
             """)
-            conn.execute(sql, {
-                "perito": PERITO,
-                "fecha_hora": FECHA_HORA,
-                "formato_txt": FORMATO_TXT, 
-                "nropresu": NROPRESU
-            })
+            conn.execute(sql, params)
+        
+        return "OK"
+
     except Exception as e:
-        bfMsg = "Error al guardar el formato"
-        logger.error(f"Error BD en guardar_formato: {e}")
-    
-    return bfMsg
+        # El error 'unhashable' suele venir de intentar loguear el objeto 'e' 
+        # que arrastra los parámetros de SQL Alchemy.
+        # Limpiamos el log para que sea solo texto:
+        error_pure_text = f"{type(e).__name__}: {str(e)}"
+        logger.error(f"Error crítico en BD: {error_pure_text}")
+        return "Error al guardar"
 #########################################################
 @app.get("/historial_presupuestos", response_class=HTMLResponse)
 async def view_presupuestos_grid(request: Request):
-    # Simplemente retorna el template con el nombre solicitado
     try:
         return templates.TemplateResponse("presupuestosgrid.html", {"request": request})
     except Exception as e:
-        bfMsg = "Error al cargar presupuestosgrid"
-        logger.error(f"Error BD en guardar_formato: {e}")
-    
+        # 1. Convertimos 'e' a str para evitar el error de 'unhashable dict'
+        # 2. Corregimos el nombre de la función en el mensaje para el log
+        logger.error(f"Error en view_presupuestos_grid: {str(e)}")
+        
+        # Opcional: Retornar un mensaje de error amigable al usuario
+        return HTMLResponse(content="<h1>Error al cargar el historial</h1>", status_code=500)
 
 # 2. Endpoint de la API para búsqueda y paginación
 @app.post("/api/presupuestos", response_class=JSONResponse)
