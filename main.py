@@ -1834,8 +1834,11 @@ async def guardar_formato(
 @app.get("/historial_presupuestos", response_class=HTMLResponse)
 async def view_presupuestos_grid(request: Request):
     try:
-        # Asegúrate de que no haya variables extrañas aquí
-        return templates.TemplateResponse("presupuestosgrid.html", {"request": request})
+        context = {
+            "request": request,
+            "titulo": "Auditoría de Presupuestos"
+        }
+        return templates.TemplateResponse("presupuestosgrid.html", context)
     except Exception as e:
         # Usamos repr(e) que es más estricto que str(e) para ver qué pasa
         logger.error(f"Error fatal en renderizado: {repr(e)}")
