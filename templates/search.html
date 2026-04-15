@@ -445,13 +445,15 @@
             
             formatoTXT = procesarDivParaImprimir(divPrint, cDia, cHora, mensaje);
             const inputPerito = document.getElementById("stacked-perito");
-            const nombrePerito = inputPerito.value.trim(); // .trim() quita espacios en blanco accidentales
+            const nombrePerito = inputPerito.value.trim(); 
+            const inputSiniestro = document.getElementById("stacked-siniestro");
+            const nroSiniestro   = inputSiniestro.value.trim(); 
             if (nombrePerito === "") {
                 alert("Debe ingresar el nombre del Perito antes de guardar.");
                 inputPerito.focus();
                 return;
             }
-            sendGuardarFormato(nombrePerito, cDiaHora, formatoTXT);
+            sendGuardarFormato(nombrePerito, cDiaHora, formatoTXT, nroSiniestro);
             
             document.getElementById("descargar").disabled = false;
             document.getElementById("consultar").disabled = true;
@@ -1320,11 +1322,12 @@ function fnGetData() {
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
         }
-        function sendGuardarFormato(cPerito, cDiaHora, cFormatoTXT) {
+        function sendGuardarFormato(cPerito, cDiaHora, cFormatoTXT, CSiniestro) {
             let formData = new FormData();
             formData.append('PERITO', cPerito);
             formData.append('FECHA_HORA', cDiaHora);
             formData.append('FORMATO_TXT', cFormatoTXT);
+            formData.append('NROPRESU', CSiniestro);
 
             let xhr = new XMLHttpRequest();
             let url = "/guardar_formato"; 

@@ -15,7 +15,8 @@
 </head>
 <body>
 <div class="container-fluid my-5">
-    
+   
+    <!--
     <nav class="navbar navbar-expand-md navbar-light mb-4">
         <div class="collapse navbar-collapse justify-content-center" id="navbarMenu">
             <ul class="navbar-nav mb-2 mb-lg-0">
@@ -25,7 +26,7 @@
             </ul>
         </div>
     </nav>
-
+    -->
     <h4 style="color:#005993;text-align:center; font-size: 25px; margin-bottom: 20px;">Auditoría de Presupuestos</h4>
 
     <div class="filtros-container d-flex gap-3 align-items-end justify-content-center">
@@ -51,8 +52,9 @@
         <thead>
             <tr>
                 <th class="cabecera-tabla" style="width: 10%;">ID</th>
+                <th class="cabecera-tabla" style="width: 20%;">Presupuesto</th>
                 <th class="cabecera-tabla" style="width: 25%;">Fecha y Hora</th>
-                <th class="cabecera-tabla" style="width: 50%;">Perito</th>
+                <th class="cabecera-tabla" style="width: 30%;">Perito</th>
                 <th class="cabecera-tabla" style="width: 15%; text-align: center;">Acción</th>
             </tr>
         </thead>
@@ -158,6 +160,7 @@
             let tr = document.createElement('tr');
             tr.innerHTML = `
                 <td class="align-middle text-center fw-bold">${fila.id}</td>
+                <td class="align-middle">${fila.nropresu}</td>
                 <td class="align-middle">${fila.fecha_hora}</td>
                 <td class="align-middle">${fila.perito}</td>
                 <td class="align-middle text-center">
