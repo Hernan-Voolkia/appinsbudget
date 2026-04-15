@@ -1834,14 +1834,12 @@ async def guardar_formato(
 @app.get("/historial_presupuestos", response_class=HTMLResponse)
 async def view_presupuestos_grid(request: Request):
     try:
+        # Asegúrate de que no haya variables extrañas aquí
         return templates.TemplateResponse("presupuestosgrid.html", {"request": request})
     except Exception as e:
-        # 1. Convertimos 'e' a str para evitar el error de 'unhashable dict'
-        # 2. Corregimos el nombre de la función en el mensaje para el log
-        logger.error(f"Error en view_presupuestos_grid: {str(e)}")
-        
-        # Opcional: Retornar un mensaje de error amigable al usuario
-        return HTMLResponse(content="<h1>Error al cargar el historial</h1>", status_code=500)
+        # Usamos repr(e) que es más estricto que str(e) para ver qué pasa
+        logger.error(f"Error fatal en renderizado: {repr(e)}")
+        return PlainTextResponse(f"Error interno: {str(e)}", status_code=500)
 
 # 2. Endpoint de la API para búsqueda y paginación
 @app.post("/api/presupuestos", response_class=JSONResponse)
