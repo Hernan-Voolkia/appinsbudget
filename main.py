@@ -1838,7 +1838,7 @@ async def view_presupuestos_grid(request: Request):
             "request": request,
             "titulo": "Auditoría de Presupuestos"
         }
-        return templates.TemplateResponse("presupuestosgrid.html", context)
+        return templates.TemplateResponse("consulta_presupuestos.html", context)
     except Exception as e:
         # Usamos repr(e) que es más estricto que str(e) para ver qué pasa
         logger.error(f"Error fatal en renderizado: {repr(e)}")
