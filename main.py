@@ -1807,11 +1807,11 @@ async def view_presupuestos_grid(request: Request):
             "request": request,
             "titulo": "Auditoría de Presupuestos"
         }
-        return templates.TemplateResponse("test_grid.html", context)
+        return templates.TemplateResponse(request=request, name="presupuestosgrid.html", context=context)
     except Exception as e:
-        # Usamos repr(e) que es más estricto que str(e) para ver qué pasa
         logger.error(f"Error fatal en renderizado: {repr(e)}")
-        return PlainTextResponse(f"Error interno: {str(e)}", status_code=500)
+        # Cambiamos PlainTextResponse por HTMLResponse para mantener la coherencia
+        return HTMLResponse(content=f"<h1>Error interno</h1><p>{str(e)}</p>", status_code=500)
 
 # 2. Endpoint de la API para búsqueda y paginación
 @app.post("/api/presupuestos", response_class=JSONResponse)
