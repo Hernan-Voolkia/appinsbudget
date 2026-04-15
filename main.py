@@ -1827,7 +1827,12 @@ async def guardar_formato(
 @app.get("/historial_presupuestos", response_class=HTMLResponse)
 async def view_presupuestos_grid(request: Request):
     # Simplemente retorna el template con el nombre solicitado
-    return templates.TemplateResponse("presupuestosgrid.html", {"request": request})
+    try:
+        return templates.TemplateResponse("presupuestosgrid.html", {"request": request})
+    except Exception as e:
+        bfMsg = "Error al cargar presupuestosgrid"
+        logger.error(f"Error BD en guardar_formato: {e}")
+    
 
 # 2. Endpoint de la API para búsqueda y paginación
 @app.post("/api/presupuestos", response_class=JSONResponse)
