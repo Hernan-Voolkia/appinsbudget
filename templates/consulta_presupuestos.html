@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
+    <link id="favicon" rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>Consulta de Presupuestos</title>
+    <style>
+        body { padding: 0 15px; background-color: rgb(255,255,255); }
+        .cabecera-tabla { background-color: #005993 !important; color: white !important; }
+        .filtros-container { background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+<div class="container-fluid my-5">
+   
+    <!--
+    <nav class="navbar navbar-expand-md navbar-light mb-4">
+        <div class="collapse navbar-collapse justify-content-center" id="navbarMenu">
+            <ul class="navbar-nav mb-2 mb-lg-0">
+                <li class="nav-item"><a href="/consulta" class="nav-link">Consulta</a></li>
+                <li class="nav-item"><a href="/dbread" class="nav-link">Historial Viejo</a></li>
+                <li class="nav-item"><a href="#" class="nav-link fw-bold" style="color:#005993;">Historial Presupuestos</a></li>
+            </ul>
+        </div>
+    </nav>
+    -->
+    <h4 style="color:#005993;text-align:center; font-size: 25px; margin-bottom: 20px;">Auditoría de Presupuestos</h4>
+
+    <div class="filtros-container d-flex gap-3 align-items-end justify-content-center">
+        <div>
+            <label for="filtro-perito" class="form-label mb-1">Perito:</label>
+            <input type="text" id="filtro-perito" class="form-control" placeholder="Buscar por nombre...">
+        </div>
+        <div>
+            <label for="filtro-desde" class="form-label mb-1">Desde:</label>
+            <input type="date" id="filtro-desde" class="form-control">
+        </div>
+        <div>
+            <label for="filtro-hasta" class="form-label mb-1">Hasta:</label>
+            <input type="date" id="filtro-hasta" class="form-control">
+        </div>
+        <div>
+            <button class="btn" style="background-color:#005993; color:white;" onclick="buscar(1)">🔍 Buscar</button>
+            <button class="btn btn-secondary" onclick="limpiarFiltros()">Limpiar</button>
+        </div>
+    </div>
+
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th class="cabecera-tabla" style="width: 10%;">ID</th>
+                <th class="cabecera-tabla" style="width: 20%;">Presupuesto</th>
+                <th class="cabecera-tabla" style="width: 25%;">Fecha y Hora</th>
+                <th class="cabecera-tabla" style="width: 30%;">Perito</th>
+                <th class="cabecera-tabla" style="width: 15%; text-align: center;">Acción</th>
+            </tr>
+        </thead>
+        <tbody id="tabla-body">
+            </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <button id="btn-ant" class="btn btn-outline-primary" onclick="cambiarPagina(-1)">⮜ Anterior</button>
+        <span id="info-paginacion" class="fw-bold">Página 1 de 1</span>
+        <button id="btn-sig" class="btn btn-outline-primary" onclick="cambiarPagina(1)">Siguiente ⮞</button>
+    </div>
+
+</div>
+
+<div class="modal fade" id="modalDetalle" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable"> <div class="modal-content">
+      <div class="modal-header" style="background-color:#005993; color:white;">
+        <h5 class="modal-title" id="modalLabel">Detalle del Presupuesto</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modal-cuerpo">
+        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" style="background-color:#cc0000; color:white;" onclick="imprimirPDF()">📥 Descargar PDF</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+{% raw %}
+<script>
+    // Variables globales
+    let paginaActual = 1;
+    let paginasTotales = 1;
+    let presupuestosData = []; // Guardamos los datos traídos para leer el formato_txt rápido
+
+    // Modal de Bootstrap
+    const modalElement = new bootstrap.Modal(document.getElementById('modalDetalle'));
+
+    // Cargar datos al iniciar la pantalla
+    window.onload = function() {
+        buscar(1);
+    };
+
+    function limpiarFiltros() {
+        document.getElementById('filtro-perito').value = "";
+        document.getElementById('filtro-desde').value = "";
+        document.getElementById('filtro-hasta').value = "";
+        buscar(1);
+    }
+
+    function cambiarPagina(direccion) {
+        let nuevaPagina = paginaActual + direccion;
+        if (nuevaPagina >= 1 && nuevaPagina <= paginasTotales) {
+            buscar(nuevaPagina);
+        }
+    }
+
+    function buscar(pagina) {
+        paginaActual = pagina;
+        let formData = new FormData();
+        formData.append('perito', document.getElementById('filtro-perito').value);
+        formData.append('fecha_desde', document.getElementById('filtro-desde').value);
+        formData.append('fecha_hasta', document.getElementById('filtro-hasta').value);
+        formData.append('page', paginaActual);
+
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/api/presupuestos", true); // <--- Llama al método de Python
+        
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    let respuesta = JSON.parse(xhr.responseText);
+                    paginasTotales = respuesta.pages;
+                    presupuestosData = respuesta.data;
+                    renderizarTabla();
+                    actualizarPaginacion(respuesta.total);
+                } else {
+                    alert("Hubo un error consultando los datos.");
+                }
+            }
+        };
+        xhr.send(formData);
+    }
+
+    function renderizarTabla() {
+        let tbody = document.getElementById('tabla-body');
+        tbody.innerHTML = ""; // Limpiar tabla
+
+        if (presupuestosData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-3">No se encontraron presupuestos</td></tr>`;
+            return;
+        }
+
+        presupuestosData.forEach((fila, index) => {
+            // Reemplazamos los "inputs" del HTML original guardado por texto plano si quieres, 
+            // pero para el modal se verá bien.
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="align-middle text-center fw-bold">${fila.id}</td>
+                <td class="align-middle">${fila.nropresu}</td>
+                <td class="align-middle">${fila.fecha_hora}</td>
+                <td class="align-middle">${fila.perito}</td>
+                <td class="align-middle text-center">
+                    <button class="btn btn-sm" style="background-color:#28a745; color:white;" onclick="verDetalle(${index})">
+                        Ver Detalle
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function actualizarPaginacion(totalRegistros) {
+        document.getElementById('info-paginacion').innerText = `Página ${paginaActual} de ${paginasTotales} (Total: ${totalRegistros})`;
+        document.getElementById('btn-ant').disabled = (paginaActual <= 1);
+        document.getElementById('btn-sig').disabled = (paginaActual >= paginasTotales);
+    }
+
+    function verDetalle(index) {
+        let registro = presupuestosData[index];
+        // Metemos el formato HTML guardado adentro del cuerpo del popup
+        document.getElementById('modal-cuerpo').innerHTML = registro.formato_txt;
+        // Mostramos el popup
+        modalElement.show();
+    }
+    // 1. Nueva variable global para saber qué registro estamos viendo
+    let registroActual = null;
+
+    function verDetalle(index) {
+        registroActual = presupuestosData[index]; // Guardamos el registro en la variable global
+        document.getElementById('modal-cuerpo').innerHTML = registroActual.formato_txt;
+        modalElement.show();
+    }
+
+    // 2. Función auxiliar indispensable para cargar las imágenes (Logo y Firma)
+    function loadImageAsDataURL(url) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                resolve(canvas.toDataURL('image/png'));
+            };
+            img.onerror = () => reject(new Error(`No se pudo cargar la imagen: ${url}`));
+            img.src = url;
+        });
+    }
+
+    // 3. Tu función imprimirPDF adaptada y blindada
+    function imprimirPDF() {
+        const elementoOriginal = document.getElementById('modal-cuerpo');
+        
+        // Creamos un div temporal oculto para clonar el contenido. 
+        // Esto evita que html2canvas corte el PDF si el modal tiene scroll.
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = elementoOriginal.innerHTML;
+        tempDiv.style.position = 'absolute';
+        tempDiv.style.top = '-9999px';
+        tempDiv.style.left = '-9999px';
+        tempDiv.style.width = '800px'; // Ancho fijo para estandarizar la foto
+        tempDiv.style.backgroundColor = 'white';
+        document.body.appendChild(tempDiv);
+
+        // Formateamos la fecha del registro actual para el nombre del archivo
+        // Ej: "2026-04-03 08:42" -> "20260403_0842"
+        let cDiaHora = "presupuesto";
+        if (registroActual) {
+            cDiaHora = registroActual.fecha_hora.replace(/[- :]/g, "").substring(0, 13);
+        }
+
+        // Ejecutamos tu código exacto de html2canvas y jsPDF
+        html2canvas(tempDiv, { scale: 2 }).then(async canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4'); // Aseguramos formato A4
+            
+            try {
+                const imgLogo = await loadImageAsDataURL('./img/Pos_color_RGB.jpg');
+                doc.addImage(imgLogo, 'PNG', 10, 5, 20, 20);
+            } catch (error) {
+                console.error('Error cargando logo:', error);
+            }                
+
+            // Calculamos el ancho para que la tabla no se salga de la hoja A4
+            const imgProps = doc.getImageProperties(imgData);
+            const pdfWidth = doc.internal.pageSize.getWidth() - 20; // 10mm de margen a cada lado
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            // Insertamos la captura de la tabla
+            doc.addImage(imgData, 'PNG', 10, 25, pdfWidth, pdfHeight);
+            
+            try {
+                const imgFirma = await loadImageAsDataURL('./img/firma.png');
+                doc.addImage(imgFirma, 'PNG', 135, 80, 40, 40);
+            } catch (error) {
+                console.error('Error cargando firma:', error);
+            }                
+            
+            doc.save(cDiaHora + '_presupuesto.pdf');
+            
+            // Limpiamos el DOM eliminando el div temporal
+            document.body.removeChild(tempDiv);
+        });
+    };
+</script>
+{% endraw %}
+</body>
+</html>
