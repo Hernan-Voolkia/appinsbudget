@@ -35,6 +35,14 @@
             background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 10px;
             display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; justify-content: center;
         }
+        .contenedor-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 5px;
+        }
+        .contenedor-grid button {
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -44,8 +52,7 @@
         <div class="collapse navbar-collapse justify-content-center" id="navbarMenu">
             <ul class="navbar-nav mb-2 mb-lg-0">
                 <li class="nav-item"><a href="/consulta" class="nav-link">Consulta</a></li>
-                <li class="nav-item"><a href="#" class="nav-link fw-bold" style="color:#005993;">Historial Viejo</a></li>
-                <li class="nav-item"><a href="/historial_presupuestos" class="nav-link">Auditoría Presupuestos</a></li>
+                <li class="nav-item"><a href="#" class="nav-link fw-bold" style="color:#005993;">Historial</a></li>
                 <li class="nav-item dropdown">   
                     <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">Params</a>
                     <ul class="dropdown-menu">
@@ -60,7 +67,7 @@
     </nav>
 
     <h4 style="color:#005993; text-align:center; font-family:'Helvetica Neue', sans-serif; font-size:25px; margin-bottom:20px;">
-        Consulta de Evaluaciones (Historial Original)
+        Consulta de Presupuestos Detallados
     </h4>
 
     <div class="filtros-container">
@@ -77,8 +84,11 @@
             <input type="date" id="filtro-hasta" class="form-control form-control-sm">
         </div>
         <div>
-            <button class="btn btn-sm" style="background-color:#005993; color:white;" onclick="buscar(1)">🔍 Buscar</button>
-            <button class="btn btn-sm btn-secondary" onclick="limpiarFiltros()">Limpiar</button>
+            <div class="contenedor-grid">
+                <button class="btn btn-sm" style="background-color:#005993; color:white;" onclick="buscar(1)">🔍 Buscar</button>
+                <button class="btn btn-sm btn-secondary" onclick="limpiarFiltros()">🧹 Limpiar</button>
+                <button class="btn btn-sm" style="background-color:#00934e; color:white;" onclick="Extract()">📥 Extraer </button>
+            </div>
         </div>
     </div>
 
@@ -201,12 +211,47 @@
             tbody.appendChild(tr);
         });
     }
-
+   
     function actualizarPaginacion(totalRegistros) {
         document.getElementById('info-paginacion').innerText = `Página ${paginaActual} de ${paginasTotales} (Total: ${totalRegistros})`;
         document.getElementById('btn-ant').disabled = (paginaActual <= 1);
         document.getElementById('btn-sig').disabled = (paginaActual >= paginasTotales);
     }
+
+    function Extract() {
+        let formData = new FormData();
+        formData.append('busqueda', document.getElementById('filtro-busqueda').value);
+        formData.append('fecha_desde', document.getElementById('filtro-desde').value);
+        formData.append('fecha_hasta', document.getElementById('filtro-hasta').value);
+
+        fetch("/api/export_logpresupuestos", {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Error en la descarga del archivo");
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'extraccion_presupuestos.csv'; 
+            document.body.appendChild(a);
+            a.click(); 
+            
+            window.URL.revokeObjectURL(url);
+            a.remove();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Hubo un problema al generar el archivo.");
+        });
+    }
+
 </script>
 </body>
 </html>

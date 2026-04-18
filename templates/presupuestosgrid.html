@@ -31,8 +31,12 @@
 
     <div class="filtros-container d-flex gap-3 align-items-end justify-content-center">
         <div>
+            <label for="filtro-presupuesto" class="form-label mb-1">Presupuesto:</label>
+            <input type="text" id="filtro-presupuesto" class="form-control" placeholder="Número">
+        </div>
+        <div>
             <label for="filtro-perito" class="form-label mb-1">Perito:</label>
-            <input type="text" id="filtro-perito" class="form-control" placeholder="Buscar por nombre...">
+            <input type="text" id="filtro-perito" class="form-control" placeholder="Nombre">
         </div>
         <div>
             <label for="filtro-desde" class="form-label mb-1">Desde:</label>
@@ -105,6 +109,7 @@
     };
 
     function limpiarFiltros() {
+        document.getElementById('filtro-presupuesto').value = "";
         document.getElementById('filtro-perito').value = "";
         document.getElementById('filtro-desde').value = "";
         document.getElementById('filtro-hasta').value = "";
@@ -121,13 +126,14 @@
     function buscar(pagina) {
         paginaActual = pagina;
         let formData = new FormData();
+        formData.append('presupuesto', document.getElementById('filtro-presupuesto').value);
         formData.append('perito', document.getElementById('filtro-perito').value);
         formData.append('fecha_desde', document.getElementById('filtro-desde').value);
         formData.append('fecha_hasta', document.getElementById('filtro-hasta').value);
         formData.append('page', paginaActual);
 
         let xhr = new XMLHttpRequest();
-        xhr.open("POST", "/api/presupuestos", true); // <--- Llama al método de Python
+        xhr.open("POST", "/api/presupuestos", true);
         
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
