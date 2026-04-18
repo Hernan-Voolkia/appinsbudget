@@ -1,11 +1,11 @@
 
-from fastapi import FastAPI, HTTPException, Request, Depends, status, Form
+from fastapi import FastAPI, HTTPException, Request, Depends, status, Form, Response
 from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
-from fastapi import Form
+
 
 import warnings
 import datetime
@@ -21,6 +21,8 @@ import os
 from dotenv import load_dotenv
 import secrets
 import html
+import csv
+import io
 
 import param
 import paramal
@@ -1816,6 +1818,7 @@ async def view_presupuestos_grid(request: Request):
 # 2. Endpoint de la API para búsqueda y paginación
 @app.post("/api/presupuestos", response_class=JSONResponse)
 async def get_presupuestos_data(
+    presupuesto: str = Form(""),
     perito: str = Form(""),
     fecha_desde: str = Form(""),
     fecha_hasta: str = Form(""),
@@ -1831,7 +1834,12 @@ async def get_presupuestos_data(
     if perito.strip():
         where_clauses.append("perito LIKE :perito")
         params["perito"] = f"%{perito.strip()}%"
-        
+
+    # Filtro por Presupuesto (búsqueda parcial "LIKE")
+    if presupuesto.strip():
+        where_clauses.append("nropresu LIKE :presupuesto")
+        params["presupuesto"] = f"%{presupuesto.strip()}%"
+                
     # Filtro por Rango de Fechas (YYYY-MM-DD)
     if fecha_desde and fecha_hasta:
         # Extraemos los primeros 10 caracteres de fecha_hora para comparar fechas puras
@@ -1998,6 +2006,90 @@ async def api_logpresupuestos(
     except Exception as e:
         logger.error(f"Error consultando historial logpresupuestos: {e}")
         return JSONResponse(content={"error": "Error interno"}, status_code=500)    
+
+@app.post("/api/export_logpresupuestos")
+async def export_logpresupuestos(
+    busqueda: str = Form(""),
+    fecha_desde: str = Form(""),
+    fecha_hasta: str = Form("")
+):
+    where_clauses = []
+    params = {}
+    
+    # Filtros (iguales a tu búsqueda original)
+    if busqueda.strip():
+        where_clauses.append("(cliente LIKE :busqueda OR siniestro LIKE :busqueda OR perito LIKE :busqueda)")
+        params["busqueda"] = f"%{busqueda.strip()}%"
+        
+    if fecha_desde and fecha_hasta:
+        try:
+            ts_desde = datetime.datetime.strptime(f"{fecha_desde} 00:00:00", "%Y-%m-%d %H:%M:%S").timestamp()
+            ts_hasta = datetime.datetime.strptime(f"{fecha_hasta} 23:59:59", "%Y-%m-%d %H:%M:%S").timestamp()
+            where_clauses.append("CAST(timestamp AS FLOAT) BETWEEN :desde AND :hasta")
+            params["desde"] = ts_desde
+            params["hasta"] = ts_hasta
+        except ValueError:
+            pass
+        
+    where_sql = "WHERE " + " AND ".join(where_clauses) if where_clauses else ""
+        
+    # Consulta SQL
+    data_sql = text(f"""
+        SELECT timestamp, cliente, clase, marca, modelo, siniestro, 
+               frente, lateralr, trasero, 
+               frReparaPintura, frReponeElemento, frReponePintura, frReponeManoObra, 
+               frReponeFarito, frReponeFaro, frReponeFaro_Auxiliar, frReponeParabrisas, 
+               frReponeParagolpe_Rejilla, frReponeRejilla_Radiador, frTotal, 
+               ltReparaPintura, ltReponeElemento, ltReponePintura, ltReponeManoObra, 
+               ltReponeEspejoEle, ltReponeEspejoMan, ltReponeManijaDel, ltReponeManijaTra, 
+               ltReponeMolduraDel, ltReponeMolduraTra, ltReponeCristalDel, ltReponeCristalTra, ltTotal, 
+               trReparaPintura, trReponeElemento, trReponePintura, trReponeManoObra, 
+               trReponeMoldura, trReponeFaroExt, trReponeFaroInt, trTotal, 
+               Asegurado, Tercero, MObra, Pintura, Ajuste, Perito, ValorPerito 
+        FROM logpresupuestosV1
+        {where_sql}
+        ORDER BY id DESC
+    """)
+    
+    try:
+        with engine.connect() as conn:
+            result = conn.execute(data_sql, params)
+            
+            output = io.StringIO()
+            writer = csv.writer(output, delimiter=';', quoting=csv.QUOTE_MINIMAL)
+            
+            # Encabezados dinámicos extraídos directamente de la consulta
+            headers = list(result.keys())
+            writer.writerow(headers)
+            
+            for record in result:
+                # Accedemos a los datos como un diccionario mapeado
+                row_dict = record._mapping
+                
+                fila = []
+                for col in headers:
+                    val = row_dict[col]
+                    
+                    # Limpieza: Convertir nulos a vacío y reemplazar punto decimal por coma para Excel
+                    if val is None:
+                        fila.append("")
+                    else:
+                        fila.append(str(val).replace('.', ','))
+                
+                writer.writerow(fila)
+            
+            output.seek(0)
+            
+            # Retorno del archivo como descarga
+            return Response(
+                content=output.getvalue(),
+                media_type="text/csv",
+                headers={"Content-Disposition": "attachment; filename=extraccion_presupuestos.csv"}
+            )
+            
+    except Exception as e:
+        logger.error(f"Error exportando CSV dinámico: {e}", exc_info=True)
+        return Response(content="Error interno al generar CSV", status_code=500)
 #########################################################
 #########################################################
 
