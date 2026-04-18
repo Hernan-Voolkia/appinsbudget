@@ -1910,7 +1910,7 @@ async def api_logpresupuestos(
     
     # Búsqueda general (Cliente, Siniestro o Perito)
     if busqueda.strip():
-        where_clauses.append("(cliente LIKE :busqueda OR siniestro LIKE :busqueda OR perito LIKE :busqueda)")
+        where_clauses.append("(CAST(cliente AS TEXT) LIKE :busqueda OR CAST(siniestro AS TEXT) LIKE :busqueda OR CAST(perito AS TEXT) LIKE :busqueda)")
         params["busqueda"] = f"%{busqueda.strip()}%"
         
     # Filtro por Rango de Fechas (el timestamp en tu BD es numérico)
@@ -2018,7 +2018,7 @@ async def export_logpresupuestos(
     
     # Filtros (iguales a tu búsqueda original)
     if busqueda.strip():
-        where_clauses.append("(cliente LIKE :busqueda OR siniestro LIKE :busqueda OR perito LIKE :busqueda)")
+        where_clauses.append("(CAST(cliente AS TEXT) LIKE :busqueda OR CAST(siniestro AS TEXT) LIKE :busqueda OR CAST(perito AS TEXT) LIKE :busqueda)")
         params["busqueda"] = f"%{busqueda.strip()}%"
         
     if fecha_desde and fecha_hasta:
