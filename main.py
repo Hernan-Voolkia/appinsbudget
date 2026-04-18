@@ -1975,22 +1975,22 @@ async def api_logpresupuestos(
                     tipo_cliente,
                     record.clase, record.marca, record.modelo, record.siniestro,
                     
-                    fnRepFrente(record.frente), record.frReparaPintura,
-                    fnCmbFrente(record.frente), record.frReponeElemento, record.frReponePintura, record.frReponeManoObra,
-                    record.frReponeFarito, record.frReponeFaro, record.frReponeFaro_Auxiliar,
-                    record.frReponeParabrisas, record.frReponeParagolpe_Rejilla, record.frReponeRejilla_Radiador, record.frTotal,
+                    fnRepFrente(record.frente), record.frreparapintura,
+                    fnCmbFrente(record.frente), record.frreponeelemento, record.frreponepintura, record.frreponemanoobra,
+                    record.frreponefarito, record.frreponefaro, record.frreponefaro_auxiliar,
+                    record.frreponeparabrisas, record.frreponeparagolpe_rejilla, record.frreponerejilla_radiador, record.frtotal,
                     
-                    fnRepLateral(record.lateralr), record.ltReparaPintura,
-                    fnCmbLateral(record.lateralr), record.ltReponeElemento, record.ltReponePintura, record.ltReponeManoObra,
-                    record.ltReponeEspejoEle, record.ltReponeEspejoMan, record.ltReponeManijaDel, record.ltReponeManijaTra,
-                    record.ltReponeMolduraDel, record.ltReponeMolduraTra, record.ltReponeCristalDel, record.ltReponeCristalTra, record.ltTotal,
+                    fnRepLateral(record.lateralr), record.ltreparapintura,
+                    fnCmbLateral(record.lateralr), record.ltreponeelemento, record.ltreponepintura, record.ltreponemanoobra,
+                    record.ltreponeespejoele, record.ltreponeespejoman, record.ltreponemanijadel, record.ltreponemanijatra,
+                    record.ltreponemolduradel, record.ltreponemolduratra, record.ltreponecristaldel, record.ltreponecristaltra, record.lttotal,
                     
-                    fnRepTrasero(record.trasero), record.trReparaPintura,
-                    fnCmbTrasero(record.trasero), record.trReponeElemento, record.trReponePintura, record.trReponeManoObra,
-                    record.trReponeMoldura, record.trReponeFaroExt, record.trReponeFaroInt, record.trTotal,
+                    fnRepTrasero(record.trasero), record.trreparapintura,
+                    fnCmbTrasero(record.trasero), record.trreponeelemento, record.trreponepintura, record.trreponemanoobra,
+                    record.trreponemoldura, record.trreponefaroext, record.trreponefaroint, record.trtotal,
                     
-                    record.Asegurado, record.Tercero, record.MObra, record.Pintura, record.Ajuste,
-                    record.Perito, record.ValorPerito
+                    record.asegurado, record.tercero, record.mobra, record.pintura, record.ajuste,
+                    record.perito, record.valorperito
                 ]
                 # Reemplazar valores nulos por vacíos para evitar 'null' en la tabla
                 fila = ["" if v is None else v for v in fila]
