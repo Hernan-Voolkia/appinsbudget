@@ -1934,15 +1934,15 @@ async def api_logpresupuestos(
     data_sql = text(f"""
         SELECT timestamp, cliente, clase, marca, modelo, siniestro, 
                frente, lateralr, trasero, 
-               frReparaPintura, frReponeElemento, frReponePintura, frReponeManoObra, 
-               frReponeFarito, frReponeFaro, frReponeFaro_Auxiliar, frReponeParabrisas, 
-               frReponeParagolpe_Rejilla, frReponeRejilla_Radiador, frTotal, 
-               ltReparaPintura, ltReponeElemento, ltReponePintura, ltReponeManoObra, 
-               ltReponeEspejoEle, ltReponeEspejoMan, ltReponeManijaDel, ltReponeManijaTra, 
-               ltReponeMolduraDel, ltReponeMolduraTra, ltReponeCristalDel, ltReponeCristalTra, ltTotal, 
-               trReparaPintura, trReponeElemento, trReponePintura, trReponeManoObra, 
-               trReponeMoldura, trReponeFaroExt, trReponeFaroInt, trTotal, 
-               Asegurado, Tercero, MObra, Pintura, Ajuste, Perito, ValorPerito 
+               frreparapintura, frreponeelemento, frreponepintura, frreponemanoobra, 
+               frreponefarito, frreponefaro, frreponefaro_auxiliar, frreponeparabrisas, 
+               frreponeparagolpe_rejilla, frreponerejilla_radiador, frtotal, 
+               ltreparapintura, ltreponeelemento, ltreponepintura, ltreponemanoobra, 
+               ltreponeespejoele, ltreponeespejoman, ltreponemanijadel, ltreponemanijatra, 
+               ltreponemolduradel, ltreponemolduratra, ltreponecristaldel, ltreponecristaltra, lttotal, 
+               trreparapintura, trreponeelemento, trreponepintura, trreponemanoobra, 
+               trreponemoldura, trreponefaroext, trreponefaroint, trtotal, 
+               asegurado, tercero, mobra, pintura, ajuste, perito, valorperito 
         FROM logpresupuestosV1
         {where_sql}
         ORDER BY id DESC
