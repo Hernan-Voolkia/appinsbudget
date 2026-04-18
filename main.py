@@ -1966,7 +1966,7 @@ async def api_logpresupuestos(
                 except (ValueError, TypeError):
                     fecha_str, hora_str = "N/A", "N/A"
 
-                tipo_cliente = "Asegurado" if str(record.Asegurado) != "0.0" and str(record.Asegurado) != "0" else "Tercero"
+                tipo_cliente = "Asegurado" if str(record.asegurado) != "0.0" and str(record.asegurado) != "0" else "Tercero"
 
                 # Armamos un array puro con el orden exacto de las columnas de la tabla HTML
                 fila = [
