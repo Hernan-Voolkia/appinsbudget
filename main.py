@@ -1728,15 +1728,15 @@ async def dbRead(request: Request):
             sql = text('''
                 SELECT id, timestamp, user, cliente, clase, marca, modelo, siniestro, 
                        frente, lateralr, trasero, 
-                       frReparaPintura, frReponeElemento, frReponePintura, frReponeManoObra, 
-                       frReponeFarito, frReponeFaro, frReponeFaro_Auxiliar, frReponeParabrisas, 
-                       frReponeParagolpe_Rejilla, frReponeRejilla_Radiador, frTotal, 
-                       ltReparaPintura, ltReponeElemento, ltReponePintura, ltReponeManoObra, 
-                       ltReponeEspejoEle, ltReponeEspejoMan, ltReponeManijaDel, ltReponeManijaTra, 
-                       ltReponeMolduraDel, ltReponeMolduraTra, ltReponeCristalDel, ltReponeCristalTra, ltTotal, 
-                       trReparaPintura, trReponeElemento, trReponePintura, trReponeManoObra, 
-                       trReponeMoldura, trReponeFaroExt, trReponeFaroInt, trTotal, 
-                       Asegurado, Tercero, MObra, Pintura, Ajuste, Perito, ValorPerito 
+                       frreparapintura, frreponeelemento, frreponepintura, frreponemanoobra, 
+                       frreponefarito, frreponefaro, frreponefaro_auxiliar, frreponeparabrisas, 
+                       frreponeparagolpe_rejilla, frreponerejilla_radiador, frtotal, 
+                       ltreparapintura, ltreponeelemento, ltreponepintura, ltreponemanoobra, 
+                       ltreponeespejoele, ltreponeespejoman, ltreponemanijadel, ltreponemanijatra, 
+                       ltreponemolduradel, ltreponemolduratra, ltreponecristaldel, ltreponecristaltra, lttotal, 
+                       trreparapintura, trreponeelemento, trreponepintura, trreponemanoobra, 
+                       trreponemoldura, trreponefaroext, trreponefaroint, trtotal, 
+                       asegurado, tercero, mobra, pintura, ajuste, perito, valorperito 
                 FROM logpresupuestosV1
                 ORDER BY id DESC; -- Agregué ordenamiento por ID descendente por defecto
             ''')
@@ -3794,19 +3794,19 @@ def fnWriteLog(CLIENTE, CLASE, MARCA, MODELO, SINIESTRO, PERITO, VALORPERITO, FR
         
         sql = text("""
             INSERT INTO logpresupuestosV1 (
-                timestamp, cliente, clase, marca, modelo, siniestro, Perito, ValorPerito, frente, lateralr, trasero,
+                timestamp, cliente, clase, marca, modelo, siniestro, perito, valorperito, frente, lateralr, trasero,
                 
-                frReparaPintura, frReponeElemento, frReponePintura, frReponeManoObra, frReponeFarito, frReponeFaro,
-                frReponeFaro_Auxiliar, frReponeParabrisas, frReponeParagolpe_Rejilla, frReponeRejilla_Radiador, frTotal,
+                frreparapintura, frreponeelemento, frreponepintura, frreponemanoobra, frreponefarito, frreponefaro,
+                frreponefaro_auxiliar, frreponeparabrisas, frreponeparagolpe_rejilla, frreponerejilla_radiador, frtotal,
                 
-                ltReparaPintura, ltReponeElemento, ltReponePintura, ltReponeManoObra, ltReponeEspejoEle,
-                ltReponeEspejoMan, ltReponeManijaDel, ltReponeManijaTra, ltReponeMolduraDel, ltReponeMolduraTra,
-                ltReponeCristalDel, ltReponeCristalTra, ltTotal,
+                ltreparapintura, ltreponeelemento, ltreponepintura, ltreponemanoobra, ltreponeespejoele,
+                ltreponeespejoman, ltreponemanijadel, ltreponemanijatra, ltreponemolduradel, ltreponemolduratra,
+                ltreponecristaldel, ltreponecristaltra, lttotal,
                 
-                trReparaPintura, trReponeElemento, trReponePintura, trReponeManoObra,
-                trReponeMoldura, trReponeFaroExt, trReponeFaroInt, trTotal,
+                trreparapintura, trreponeelemento, trreponepintura, trreponemanoobra,
+                trreponemoldura, trreponefaroext, trreponefaroint, trtotal,
                 
-                Asegurado, Tercero, MObra, Pintura, Ajuste
+                asegurado, tercero, mobra, pintura, ajuste
             ) VALUES (
                 :timestamp, :cliente, :clase, :marca, :modelo, :siniestro, :perito, :valor_perito, :frente, :lateral, :trasero,
                 :v0, :v1, :v2, :v3, :v4, :v5, :v6, :v7, :v8, :v9, :v10,
