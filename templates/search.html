@@ -423,17 +423,17 @@
             const seleccionadosLateral = obtenerCheckeados("lateral_chk", "#lateral tr");
             const seleccionadosTrasero = obtenerCheckeados("trasero_chk", "#trasero tr");
             
-            let mensaje = '<h3>Elementos Incluidos en el Presupuesto</h3>';
+            let mensaje = "<p style=\"font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #005993; font-size: 20px;\">Elementos Incluidos en el Presupuesto</p>";
             if (seleccionadosFrente.length > 0) {
-                mensaje += '<h4>Frente</h4>';
+                mensaje += "<p style=\"font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #005993; font-size: 15px;\">Frente</p>";
                 seleccionadosFrente.forEach(item => { mensaje += "<p>&nbsp;&nbsp;&nbsp;" + item.descripcion  + "</p>"; });
             }
             if (seleccionadosLateral.length > 0) {
-                mensaje += '<h4>Lateral</h4>';
+                mensaje += "<p style=\"font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #005993; font-size: 15px;\">Lateral</p>";
                 seleccionadosLateral.forEach(item => { mensaje += "<p>&nbsp;&nbsp;&nbsp;" + item.descripcion  + "</p>"; });
             }
             if (seleccionadosTrasero.length > 0) {
-                mensaje += '<h4>Trasero</h4>';
+                mensaje += "<p style=\"font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #005993; font-size: 15px;\">Trasero</p>";
                 seleccionadosTrasero.forEach(item => { mensaje += "<p>&nbsp;&nbsp;&nbsp;" + item.descripcion  + "</p>"; });
             } 
                         
@@ -466,17 +466,17 @@
             const seleccionadosLateral = obtenerCheckeados("lateral_chk", "#lateral tr");
             const seleccionadosTrasero = obtenerCheckeados("trasero_chk", "#trasero tr");
             
-            let mensaje = '<h3>Elementos Incluidos en el Presupuesto</h3>';
+            let mensaje = "<p style=\"font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #005993; font-size: 20px;\">Elementos Incluidos en el Presupuesto</p>";
             if (seleccionadosFrente.length > 0) {
-                mensaje += '<h4>Frente</h4>';
+                mensaje += "<p style=\"font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #005993; font-size: 15px;\">Frente</p>";
                 seleccionadosFrente.forEach(item => { mensaje += "<p>&nbsp;&nbsp;&nbsp;" + item.descripcion  + "</p>"; });
             }
             if (seleccionadosLateral.length > 0) {
-                mensaje += '<h4>Lateral</h4>';
+                mensaje += "<p style=\"font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #005993; font-size: 15px;\">Lateral</p>";
                 seleccionadosLateral.forEach(item => { mensaje += "<p>&nbsp;&nbsp;&nbsp;" + item.descripcion  + "</p>"; });
             }
             if (seleccionadosTrasero.length > 0) {
-                mensaje += '<h4>Trasero</h4>';
+                mensaje += "<p style=\"font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #005993; font-size: 15px;\">Trasero</p>";
                 seleccionadosTrasero.forEach(item => { mensaje += "<p>&nbsp;&nbsp;&nbsp;" + item.descripcion  + "</p>"; });
             } 
                         
@@ -494,7 +494,6 @@
             tempDiv.style.position = 'absolute';
             tempDiv.style.left = '-9999px';
             tempDiv.style.top = '0px';
-            // Opcional: Forzar un ancho específico si el PDF sale muy angosto
             tempDiv.style.width = '1000px'; 
 
             document.body.appendChild(tempDiv);
@@ -512,7 +511,7 @@
                     console.error('Error cargando logo:', error);
                 }                
 
-                doc.addImage(imgData, 'PNG', 10, 25);
+                doc.addImage(imgData, 'PNG', 10, 27);
                 
                 try {
                     const imgFirma = await loadImageAsDataURL('./img/firma.png');
@@ -524,6 +523,9 @@
                 document.body.removeChild(tempDiv);
             });
             document.getElementById("consultar").disabled = false;
+            document.getElementById("descargar").disabled = true;
+            document.getElementById("confirmar").disabled = true;
+            fnClean();
         });    
     function loadImageAsDataURL(url) {
         return new Promise((resolve, reject) => {
@@ -582,185 +584,278 @@
     function fnClean(){
         var e = document.getElementById("stacked-cliente");
             e.selectedIndex = 0;
+            e.style.backgroundColor = "";
+            e.disabled = false;
         var e = document.getElementById("stacked-clase");
             e.selectedIndex = 0;
+            e.style.backgroundColor = "";
+            e.disabled = false;            
         var e = document.getElementById("stacked-marca");
             e.selectedIndex = 0;
+            e.style.backgroundColor = "";
+            e.disabled = false;            
         var e = document.getElementById("stacked-modelo");
             e.selectedIndex = 0;
             e.style.width = "250px";
+            e.style.backgroundColor = "";
+            e.disabled = false;            
         var e = document.getElementById("stacked-version");
             e.selectedIndex = 0;   
-            e.style.width = "250px";                     
+            e.style.width = "250px"; 
+            e.style.backgroundColor = "";    
+            e.disabled = false;                            
         var e = document.getElementById("stacked-siniestro");
             e.value = "";
+            e.style.backgroundColor = "transparent";
+            e.disabled = false;
+            e.readOnly = false;
         var e = document.getElementById("stacked-perito");
             e.value = "";
+            e.style.backgroundColor = "transparent";
+            e.disabled = false;
+            e.readOnly = false;
         var e = document.getElementById("stacked-valorperito");
-            e.value = "";        
+            e.value = ""; 
+            e.style.backgroundColor = "transparent";    
+            e.disabled = false;   
+            e.readOnly = false;
 
         var e = document.getElementById("frente_chk");
             e.checked = false;    
         var e = document.getElementById("frente_repara");    
             e.innerText = "";
+            e.disabled = false;
         var e = document.getElementById("frente_cambia");
             e.innerText = "";
+            e.disabled = false;            
         
         var e = document.getElementById("frente");
-            e.style.display = "none";      
+            e.style.display = "none";   
+            e.disabled = false;               
 
         var e = document.getElementById("FRT_CAM_DER_CAPOT");
-            e.checked = false;       
-        var e = document.getElementById("FRT_REP_DER_CAPOT");
-            e.checked = false;       
-        var e = document.getElementById("FRT_CAM_DER_FARITO");
-            e.checked = false;       
-        var e = document.getElementById("FRT_CAM_IZQ_FARITO");
-            e.checked = false;       
-        var e = document.getElementById("FRT_CAM_DER_FARO");
-            e.checked = false;       
-        var e = document.getElementById("FRT_CAM_IZQ_FARO");
             e.checked = false;    
+            e.disabled = false;              
+        var e = document.getElementById("FRT_REP_DER_CAPOT");
+            e.checked = false; 
+            e.disabled = false;      
+        var e = document.getElementById("FRT_CAM_DER_FARITO");
+            e.checked = false; 
+            e.disabled = false;      
+        var e = document.getElementById("FRT_CAM_IZQ_FARITO");
+            e.checked = false;   
+            e.disabled = false;    
+        var e = document.getElementById("FRT_CAM_DER_FARO");
+            e.checked = false; 
+            e.disabled = false;      
+        var e = document.getElementById("FRT_CAM_IZQ_FARO");
+            e.checked = false; 
+            e.disabled = false;   
         var e = document.getElementById("FRT_CAM_DER_FARO_AUXILIAR");
-            e.checked = false;                  
+            e.checked = false; 
+            e.disabled = false;                     
         var e = document.getElementById("FRT_CAM_IZQ_FARO_AUXILIAR");
             e.checked = false;  
+            e.disabled = false;
         var e = document.getElementById("FRT_CAM_DER_FRENTE");
-            e.checked = false;                   
+            e.checked = false; 
+            e.disabled = false;                  
         var e = document.getElementById("FRT_REP_DER_FRENTE");
-            e.checked = false;  
+            e.checked = false; 
+            e.disabled = false; 
         var e = document.getElementById("FRT_CAM_DER_GUARDABARRO");
-            e.checked = false;                   
+            e.checked = false; 
+            e.disabled = false;                  
         var e = document.getElementById("FRT_REP_DER_GUARDABARRO");
-            e.checked = false;  
+            e.checked = false; 
+            e.disabled = false; 
         var e = document.getElementById("FRT_CAM_IZQ_GUARDABARRO");
-            e.checked = false;  
+            e.checked = false; 
+            e.disabled = false; 
         var e = document.getElementById("FRT_REP_IZQ_GUARDABARRO");
-            e.checked = false;  
+            e.checked = false; 
+            e.disabled = false; 
         var e = document.getElementById("FRT_CAM_DER_PARABRISAS");
-            e.checked = false;  
+            e.checked = false; 
+            e.disabled = false; 
         var e = document.getElementById("FRT_CAM_DER_PARAGOLPE_ALMA");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("FRT_CAM_REP_PARAGOLPE_ALMA");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("FRT_CAM_DER_PARAGOLPE_CTRO");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("FRT_REP_DER_PARAGOLPE_CTRO");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("FRT_CAM_DER_PARAGOLPE_REJILLA");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("FRT_CAM_DER_REJILLA_RADIADOR");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
             
         var e = document.getElementById("lateral_chk");
-            e.checked = false;    
+            e.checked = false; 
+            e.disabled = false;  
         var e = document.getElementById("lateral_repara");    
             e.innerText = ""; 
+            e.disabled = false;    
         var e = document.getElementById("lateral_cambia");
             e.innerText = ""; 
+            e.disabled = false;
         
         var e = document.getElementById("lateral");
             e.style.display = "none";      
             
         var e = document.getElementById("LAT_CAM_DER_CRISTAL_DEL");
             e.checked = false;       
+            e.disabled = false;            
         var e = document.getElementById("LAT_CAM_IZQ_CRISTAL_DEL");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("LAT_CAM_DER_CRISTAL_TRA");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("LAT_CAM_IZQ_CRISTAL_TRA");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("LAT_CAM_DER_ESPEJO_ELEC");
-            e.checked = false;  
+            e.checked = false; 
+            e.disabled = false; 
         var e = document.getElementById("LAT_CAM_IZQ_ESPEJO_ELEC");
-            e.checked = false;                   
+            e.checked = false; 
+            e.disabled = false;                  
         var e = document.getElementById("LAT_CAM_DER_ESPEJO_MAN");
-            e.checked = false;  
+            e.checked = false; 
+            e.disabled = false;                 
         var e = document.getElementById("LAT_CAM_IZQ_ESPEJO_MAN");
-            e.checked = false;                   
+            e.checked = false; 
+            e.disabled = false;                  
         var e = document.getElementById("LAT_CAM_DER_MANIJA_DEL");
-            e.checked = false;  
+            e.checked = false; 
+            e.disabled = false;
         var e = document.getElementById("LAT_CAM_IZQ_MANIJA_DEL");
-            e.checked = false;  
+            e.checked = false; 
+            e.disabled = false; 
         var e = document.getElementById("LAT_CAM_DER_MANIJA_TRA");
-            e.checked = false;  
+            e.checked = false; 
+            e.disabled = false; 
         var e = document.getElementById("LAT_CAM_IZQ_MANIJA_TRA");
-            e.checked = false;  
+            e.checked = false; 
+            e.disabled = false; 
         var e = document.getElementById("LAT_CAM_DER_MOLDURA_DEL");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("LAT_CAM_IZQ_MOLDURA_DEL");
             e.checked = false;       
+            e.disabled = false;
         var e = document.getElementById("LAT_CAM_DER_MOLDURA_TRA");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("LAT_CAM_IZQ_MOLDURA_TRA");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("LAT_CAM_DER_PUERTA_DEL");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("LAT_CAM_IZQ_PUERTA_DEL");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("LAT_CAM_DER_PUERTA_TRA");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("LAT_CAM_IZQ_PUERTA_TRA");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("LAT_REP_DER_PUERTA_DEL_PANEL");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;                  
         var e = document.getElementById("LAT_REP_IZQ_PUERTA_DEL_PANEL");
             e.checked = false;       
+            e.disabled = false;
         var e = document.getElementById("LAT_REP_DER_PUERTA_TRA_PANEL");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("LAT_REP_IZQ_PUERTA_TRA_PANEL");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("LAT_CAM_DER_ZOCALO");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("LAT_CAM_IZQ_ZOCALO");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("LAT_REP_DER_ZOCALO");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
         var e = document.getElementById("LAT_REP_IZQ_ZOCALO");
-            e.checked = false;       
+            e.checked = false; 
+            e.disabled = false;      
 
         var e = document.getElementById("trasero_chk");
-            e.checked = false;    
+            e.checked = false;  
+            e.disabled = false;              
         var e = document.getElementById("trasero_repara");    
             e.innerText = ""; 
+            e.disabled = false;
         var e = document.getElementById("trasero_cambia");    
             e.innerText = ""; 
+            e.disabled = false;
                       
         var e = document.getElementById("trasero");
             e.style.display = "none";    
-            
+                        
         var e = document.getElementById("TRA_CAM_DER_BAUL");
             e.checked = false; 
+            e.disabled = false;
         var e = document.getElementById("TRA_REP_DER_BAUL");
             e.checked = false;                
+            e.disabled = false;            
         var e = document.getElementById("TRA_CAM_DER_FARO_EXT");    
-            e.checked = false;    
+            e.checked = false; 
+            e.disabled = false;   
         var e = document.getElementById("TRA_CAM_IZQ_FARO_EXT");
             e.checked = false;     
+            e.disabled = false;
         var e = document.getElementById("TRA_CAM_DER_FARO_INT");    
-            e.checked = false;    
+            e.checked = false; 
+            e.disabled = false;   
         var e = document.getElementById("TRA_CAM_IZQ_FARO_INT");
-            e.checked = false;     
+            e.checked = false; 
+            e.disabled = false;    
         var e = document.getElementById("TRA_CAM_DER_GUARDABARRO");
-            e.checked = false;    
+            e.checked = false; 
+            e.disabled = false;   
         var e = document.getElementById("TRA_CAM_IZQ_GUARDABARRO");    
             e.checked = false; 
+            e.disabled = false;
         var e = document.getElementById("TRA_REP_DER_GUARDABARRO");
-            e.checked = false;    
+            e.checked = false; 
+            e.disabled = false;   
         var e = document.getElementById("TRA_REP_IZQ_GUARDABARRO");    
             e.checked = false; 
+            e.disabled = false;
         var e = document.getElementById("TRA_CAM_DER_LUNETA");
-            e.checked = false;    
+            e.checked = false; 
+            e.disabled = false;                   
         var e = document.getElementById("TRA_CAM_DER_MOLDURA");
-            e.checked = false;    
+            e.checked = false;  
+            e.disabled = false;  
         var e = document.getElementById("TRA_REP_DER_PANELCOLA");
-            e.checked = false;    
+            e.checked = false; 
+            e.disabled = false;   
         var e = document.getElementById("TRA_CAM_DER_PANELCOLA");
-            e.checked = false;    
+            e.checked = false; 
+            e.disabled = false;   
         var e = document.getElementById("TRA_CAM_DER_PARAGOLPE");
-            e.checked = false;    
+            e.checked = false; 
+            e.disabled = false;   
         var e = document.getElementById("TRA_REP_DER_PARAGOLPE");
-            e.checked = false;    
+            e.checked = false; 
+            e.disabled = false;   
 
         var e = document.getElementById("frente_chk");
             e.checked = false;
@@ -789,6 +884,9 @@ function fnGetData() {
         alert('Debe seleccionar Cliente');
         e.focus();
         return;
+    } else {
+    e.readOnly = true;
+    e.style.backgroundColor = "#e9e9e9"; 
     }
     formData.append('CLIENTE', e.value);
 
@@ -797,6 +895,9 @@ function fnGetData() {
         alert('Debe seleccionar Clase');
         e.focus();
         return;
+    } else {
+        e.readOnly = true;
+        e.style.backgroundColor = "#e9e9e9"; 
     }
     formData.append('CLASE', e.value);
     isMoto = e.value;
@@ -806,6 +907,9 @@ function fnGetData() {
         alert('Debe seleccionar Marca');
         e.focus();
         return;
+    } else {
+        e.readOnly = true;
+        e.style.backgroundColor = "#e9e9e9"; 
     }
     formData.append('MARCA', e.value);
 
@@ -814,6 +918,9 @@ function fnGetData() {
         alert('Debe seleccionar Modelo');
         e.focus();
         return;
+    } else {
+       e.readOnly = true;
+       e.style.backgroundColor = "#e9e9e9"; 
     }
     formData.append('MODELO', e.value);
 
@@ -822,10 +929,15 @@ function fnGetData() {
         alert('Debe seleccionar Version');
         e.focus();
         return;
+    } else {
+       e.readOnly = true;
+       e.style.backgroundColor = "#e9e9e9"; 
     }
     formData.append('VERSION', e.value);
 
     var e = document.getElementById("stacked-siniestro");
+    e.readOnly = true;
+    e.style.backgroundColor = "#e9e9e9"; 
     formData.append('SINIESTRO', e.value);
 
     var e = document.getElementById("stacked-perito");
@@ -833,6 +945,9 @@ function fnGetData() {
         alert('Debe escribir el nombre del Perito');
         e.focus();
         return;
+    } else {
+       e.readOnly = true;
+       e.style.backgroundColor = "#e9e9e9"; 
     }
     formData.append('PERITO', e.value);
 
@@ -841,6 +956,9 @@ function fnGetData() {
         alert('Debe escribir el valor');
         e.focus();
         return;
+    } else {
+        e.readOnly = true;
+        e.style.backgroundColor = "#e9e9e9"; 
     }
     formData.append('VALORPERITO', e.value);
 
@@ -854,48 +972,118 @@ function fnGetData() {
 
     if (isMoto != "908") {
         if (document.getElementById('frente_chk').checked) {
+
+            var checkbox = document.getElementById('frente_chk');
+                checkbox.disabled = true;
+            var checkbox = document.getElementById('lateral_chk');
+                checkbox.disabled = true;
+            var checkbox = document.getElementById('trasero_chk');
+                checkbox.disabled = true;
+
             var e = (document.getElementById('FRT_CAM_DER_CAPOT').checked == true) ? 1 : 0;
             var frente = e + '-';
-            e = (document.getElementById('FRT_REP_DER_CAPOT').checked == true) ? 1 : 0;
+            var checkbox = document.getElementById('FRT_CAM_DER_CAPOT');
+                checkbox.disabled = true;
+            
+                e = (document.getElementById('FRT_REP_DER_CAPOT').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_REP_DER_CAPOT');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_CAM_DER_FARITO').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_CAM_DER_FARITO');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_CAM_IZQ_FARITO').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_CAM_IZQ_FARITO');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_CAM_DER_FARO').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_CAM_DER_FARO');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_CAM_IZQ_FARO').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_CAM_IZQ_FARO');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_CAM_DER_FARO_AUXILIAR').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_CAM_DER_FARO_AUXILIAR');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_CAM_IZQ_FARO_AUXILIAR').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_CAM_IZQ_FARO_AUXILIAR');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_CAM_DER_FRENTE').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_CAM_DER_FRENTE');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_REP_DER_FRENTE').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_REP_DER_FRENTE');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_CAM_DER_GUARDABARRO').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_CAM_DER_GUARDABARRO');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_REP_DER_GUARDABARRO').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_REP_DER_GUARDABARRO');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_CAM_IZQ_GUARDABARRO').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_CAM_IZQ_GUARDABARRO');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_REP_IZQ_GUARDABARRO').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_REP_IZQ_GUARDABARRO');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_CAM_DER_PARABRISAS').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_CAM_DER_PARABRISAS');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_CAM_DER_PARAGOLPE_ALMA').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_CAM_DER_PARAGOLPE_ALMA');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_CAM_REP_PARAGOLPE_ALMA').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_CAM_REP_PARAGOLPE_ALMA');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_CAM_DER_PARAGOLPE_CTRO').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_CAM_DER_PARAGOLPE_CTRO');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_REP_DER_PARAGOLPE_CTRO').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_REP_DER_PARAGOLPE_CTRO');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_CAM_DER_PARAGOLPE_REJILLA').checked == true) ? 1 : 0;
             frente += e + '-';
+            var checkbox = document.getElementById('FRT_CAM_DER_PARAGOLPE_REJILLA');
+                checkbox.disabled = true;
+
             e = (document.getElementById('FRT_CAM_DER_REJILLA_RADIADOR').checked == true) ? 1 : 0;
             frente += e;
+            var checkbox = document.getElementById('FRT_CAM_DER_REJILLA_RADIADOR');
+                checkbox.disabled = true;
 
             formData.append('FRENTE', frente); 
         } else {
@@ -903,62 +1091,154 @@ function fnGetData() {
         }
 
         if (document.getElementById('lateral_chk').checked) {
+
+            var checkbox = document.getElementById('frente_chk');
+                checkbox.disabled = true;
+            var checkbox = document.getElementById('lateral_chk');
+                checkbox.disabled = true;
+            var checkbox = document.getElementById('trasero_chk');
+                checkbox.disabled = true;
+
             var e = (document.getElementById('LAT_CAM_DER_CRISTAL_DEL').checked == true) ? 1 : 0;
             var lateral = e + '-';
+            var checkbox = document.getElementById('LAT_CAM_DER_CRISTAL_DEL');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_IZQ_CRISTAL_DEL').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_IZQ_CRISTAL_DEL');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_DER_CRISTAL_TRA').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_DER_CRISTAL_TRA');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_IZQ_CRISTAL_TRA').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_IZQ_CRISTAL_TRA');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_DER_ESPEJO_ELEC').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_DER_ESPEJO_ELEC');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_IZQ_ESPEJO_ELEC').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_IZQ_ESPEJO_ELEC');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_IZQ_ESPEJO_MAN').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_IZQ_ESPEJO_MAN');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_DER_ESPEJO_MAN').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_DER_ESPEJO_MAN');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_DER_MANIJA_DEL').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_DER_MANIJA_DEL');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_IZQ_MANIJA_DEL').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_IZQ_MANIJA_DEL');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_DER_MANIJA_TRA').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_DER_MANIJA_TRA');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_IZQ_MANIJA_TRA').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_IZQ_MANIJA_TRA');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_DER_MOLDURA_DEL').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_DER_MOLDURA_DEL');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_IZQ_MOLDURA_DEL').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_IZQ_MOLDURA_DEL');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_DER_MOLDURA_TRA').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_DER_MOLDURA_TRA');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_IZQ_MOLDURA_TRA').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_IZQ_MOLDURA_TRA');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_DER_PUERTA_DEL').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_DER_PUERTA_DEL');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_IZQ_PUERTA_DEL').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_IZQ_PUERTA_DEL');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_DER_PUERTA_TRA').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_DER_PUERTA_TRA');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_IZQ_PUERTA_TRA').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_IZQ_PUERTA_TRA');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_REP_DER_PUERTA_DEL_PANEL').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_REP_DER_PUERTA_DEL_PANEL');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_REP_IZQ_PUERTA_DEL_PANEL').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_REP_IZQ_PUERTA_DEL_PANEL');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_REP_DER_PUERTA_TRA_PANEL').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_REP_DER_PUERTA_TRA_PANEL');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_REP_IZQ_PUERTA_TRA_PANEL').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_REP_IZQ_PUERTA_TRA_PANEL');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_DER_ZOCALO').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_DER_ZOCALO');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_REP_DER_ZOCALO').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_REP_DER_ZOCALO');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_CAM_IZQ_ZOCALO').checked == true) ? 1 : 0;
             lateral += e + '-';
+            var checkbox = document.getElementById('LAT_CAM_IZQ_ZOCALO');
+                checkbox.disabled = true;
+
             e = (document.getElementById('LAT_REP_IZQ_ZOCALO').checked == true) ? 1 : 0;
             lateral += e;
+            var checkbox = document.getElementById('LAT_REP_IZQ_ZOCALO');
+                checkbox.disabled = true;
+
 
             formData.append('LATERAL', lateral); 
         } else {
@@ -966,38 +1246,93 @@ function fnGetData() {
         }
 
         if (document.getElementById('trasero_chk').checked) {
+
+            var checkbox = document.getElementById('frente_chk');
+                checkbox.disabled = true;
+            var checkbox = document.getElementById('lateral_chk');
+                checkbox.disabled = true;
+            var checkbox = document.getElementById('trasero_chk');
+                checkbox.disabled = true;
+
             var e = (document.getElementById('TRA_CAM_DER_BAUL').checked == true) ? 1 : 0;
             var trasero = e + '-';
+            var checkbox = document.getElementById('TRA_CAM_DER_BAUL');
+                checkbox.disabled = true;
+                
             e = (document.getElementById('TRA_REP_DER_BAUL').checked == true) ? 1 : 0;
             trasero += e + '-';
+            var checkbox = document.getElementById('TRA_REP_DER_BAUL');
+                checkbox.disabled = true;
+
             e = (document.getElementById('TRA_CAM_DER_FARO_EXT').checked == true) ? 1 : 0;
             trasero += e + '-';
+            var checkbox = document.getElementById('TRA_CAM_DER_FARO_EXT');
+                checkbox.disabled = true;
+
             e = (document.getElementById('TRA_CAM_IZQ_FARO_EXT').checked == true) ? 1 : 0;
             trasero += e + '-';
+            var checkbox = document.getElementById('TRA_CAM_IZQ_FARO_EXT');
+                checkbox.disabled = true;
+
             e = (document.getElementById('TRA_CAM_DER_FARO_INT').checked == true) ? 1 : 0;
             trasero += e + '-';
+            var checkbox = document.getElementById('TRA_CAM_DER_FARO_INT');
+                checkbox.disabled = true;
+
             e = (document.getElementById('TRA_CAM_IZQ_FARO_INT').checked == true) ? 1 : 0;
             trasero += e + '-';
+            var checkbox = document.getElementById('TRA_CAM_IZQ_FARO_INT');
+                checkbox.disabled = true;
+
             e = (document.getElementById('TRA_CAM_DER_GUARDABARRO').checked == true) ? 1 : 0;
             trasero += e + '-';
+            var checkbox = document.getElementById('TRA_CAM_DER_GUARDABARRO');
+                checkbox.disabled = true;
+
             e = (document.getElementById('TRA_REP_DER_GUARDABARRO').checked == true) ? 1 : 0;
             trasero += e + '-';
+            var checkbox = document.getElementById('TRA_REP_DER_GUARDABARRO');
+                checkbox.disabled = true;
+
             e = (document.getElementById('TRA_CAM_IZQ_GUARDABARRO').checked == true) ? 1 : 0;
             trasero += e + '-';
+            var checkbox = document.getElementById('TRA_CAM_IZQ_GUARDABARRO');
+                checkbox.disabled = true;
+
             e = (document.getElementById('TRA_REP_IZQ_GUARDABARRO').checked == true) ? 1 : 0;
             trasero += e + '-';
+            var checkbox = document.getElementById('TRA_REP_IZQ_GUARDABARRO');
+                checkbox.disabled = true;
+
             e = (document.getElementById('TRA_CAM_DER_LUNETA').checked == true) ? 1 : 0;
             trasero += e + '-';
+            var checkbox = document.getElementById('TRA_CAM_DER_LUNETA');
+                checkbox.disabled = true;
+
             e = (document.getElementById('TRA_CAM_DER_MOLDURA').checked == true) ? 1 : 0;
             trasero += e + '-';
+            var checkbox = document.getElementById('TRA_CAM_DER_MOLDURA');
+                checkbox.disabled = true;
+
             e = (document.getElementById('TRA_CAM_DER_PANELCOLA').checked == true) ? 1 : 0;
             trasero += e + '-';
+            var checkbox = document.getElementById('TRA_CAM_DER_PANELCOLA');
+                checkbox.disabled = true;
+
             e = (document.getElementById('TRA_REP_DER_PANELCOLA').checked == true) ? 1 : 0;
             trasero += e + '-';
+            var checkbox = document.getElementById('TRA_REP_DER_PANELCOLA');
+                checkbox.disabled = true;
+
             e = (document.getElementById('TRA_CAM_DER_PARAGOLPE').checked == true) ? 1 : 0;
             trasero += e + '-';
+            var checkbox = document.getElementById('TRA_CAM_DER_PARAGOLPE');
+                checkbox.disabled = true;
+
             e = (document.getElementById('TRA_REP_DER_PARAGOLPE').checked == true) ? 1 : 0;
             trasero += e;
+            var checkbox = document.getElementById('TRA_REP_DER_PARAGOLPE');
+                checkbox.disabled = true;
 
             formData.append('TRASERO', trasero); 
         } else {
@@ -1008,6 +1343,7 @@ function fnGetData() {
         } else if (isMoto == "908") {
             sendSearch(formData); 
         }
+
     }
     function sendSearch(formData) {
         let xhr = new XMLHttpRequest();
@@ -1241,7 +1577,7 @@ function fnGetData() {
         if (spanExterior ) {
             const spanInterior = spanExterior.innerText;             
             if (spanInterior) {
-                const valorNumerico = spanInterior.split('$')[1]; 
+                const valorNumerico = '$' + spanInterior.split('$')[1].trim(); 
                 valorLimpio = valorNumerico ? valorNumerico.trim() : ''; 
             }    
         }    
@@ -1250,41 +1586,41 @@ function fnGetData() {
         <table style="border-collapse: collapse;">
             <thead>
                 <tr>
-                    <th colspan="3" style="padding-bottom: 20px;">Detalle de Siniestro</th>
+                    <th colspan="3" style="padding-bottom: 20px; text-align: center; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color:#005993; font-size: 20px;">Detalle de Siniestro</th>
                 </tr>
                 <tr>
-                    <th>Dia</th>
-                    <th>Hora</th>
-                    <th>Monto Sugerido</th>
+                    <th style="padding-top: 3px; text-align: center;">Dia</th>
+                    <th style="padding-top: 3px; text-align: center;">Hora</th>
+                    <th style="padding-top: 3px; text-align: center;">Monto Sugerido</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td><input type="text" placeholder="${cDia}" style="text-align: center;"></td>
-                    <td><input type="text" placeholder="${cHora}" style="text-align: center;"></td>
-                    <td><input type="text" placeholder="${valorLimpio}" style="text-align: center;"></td>
+                    <td style="text-align: center; padding: 2px 2px;"><input type="text" placeholder="${cDia}" style="text-align: center; font-weight: bold;"></td>
+                    <td style="text-align: center; padding: 2px 2px;"><input type="text" placeholder="${cHora}" style="text-align: center; font-weight: bold;"></td>
+                    <td style="text-align: center; padding: 2px 2px;"><input type="text" placeholder="${valorLimpio}" style="text-align: center; font-weight: bold;"></td>
                 </tr>
                 <tr>
-                    <th style="padding-top: 10px;">Tipo Cliente</th>
-                    <th style="padding-top: 10px;">Tipo Vehículo</th>
-                    <th style="padding-top: 10px;">Marca</th>
+                    <th style="padding-top: 3px; text-align: center;">Tipo Cliente</th>
+                    <th style="padding-top: 3px; text-align: center;">Tipo Vehículo</th>
+                    <th style="padding-top: 3px; text-align: center;">Marca</th>
                 </tr>
                 <tr>
-                    <td><input type="text" placeholder="${bfCliente}" style="text-align:center;"></td>
-                    <td><input type="text" placeholder="${bfClase}" style="text-align:center;"></td>
-                    <td><input type="text" placeholder="${bfMarca}" style="text-align:center;"></td>
+                    <td style="text-align: center; padding: 2px 2px;"><input type="text" placeholder="${bfCliente}" style="text-align:center; font-weight: bold;"></td>
+                    <td style="text-align: center; padding: 2px 2px;"><input type="text" placeholder="${bfClase}" style="text-align:center; font-weight: bold;"></td>
+                    <td style="text-align: center; padding: 2px 2px;"><input type="text" placeholder="${bfMarca}" style="text-align:center; font-weight: bold;"></td>
                 </tr>
             </tbody>
             <tfoot>
                 <tr>
-                    <th style="padding-top: 10px;">Modelo</th>
-                    <th style="padding-top: 10px;">Siniestro</th>
-                    <th style="padding-top: 10px;">Perito</th>
+                    <th style="padding-top: 3px; text-align: center;">Modelo</th>
+                    <th style="padding-top: 3px; text-align: center;">Siniestro</th>
+                    <th style="padding-top: 3px; text-align: center;">Perito</th>
                 </tr>
                 <tr>
-                    <td><input type="text" placeholder="${bfModelo}" style="text-align:center;"></td>
-                    <td><input type="text" placeholder="${bfSiniestro}" style="text-align:center;"></td>
-                    <td><input type="text" placeholder="${bfPerito}" style="text-align:center;"></td>
+                    <td style="text-align: center; padding: 2px 2px;"><input type="text" placeholder="${bfModelo}" style="text-align:center; font-weight: bold;"></td>
+                    <td style="text-align: center; padding: 2px 2px;"><input type="text" placeholder="${bfSiniestro}" style="text-align:center; font-weight: bold;"></td>
+                    <td style="text-align: center; padding: 2px 2px;"><input type="text" placeholder="${bfPerito}" style="text-align:center; font-weight: bold;"></td>
                 </tr>
             </tfoot>
         </table>
@@ -1338,7 +1674,7 @@ function fnGetData() {
                 if (xhr.readyState === 4) {
                     if (xhr.status !== 200) {
                         var e = document.getElementById("CostBrief");
-                        e.innerHTML += "&nbsp;&nbsp;&nbsp; ❌ Error al guardar: " + xhr.responseText; 
+                        e.innerHTML += "&nbsp;&nbsp;&nbsp; Error al guardar: " + xhr.responseText; 
                     }
                 }
             }; 
