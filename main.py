@@ -137,7 +137,7 @@ try:
             if row[0] == 'Ajuste'   : param.bfAjuste    = float(row[1])
             if row[0] == 'Asegurado': param.bfAsegurado = float(row[1])
 except Exception as e:
-    logger.error(f"ERROR CLASE: {str(e)}")
+    logger.error(f"CLASE01: {str(e)}")
 
 app = FastAPI()
 app.add_middleware(
@@ -212,7 +212,7 @@ async def get_vh(CLASE: int = 0): # MEJORA: Nombre único de función
                 bfVH += "".join(opciones_html)
         
         except Exception as e:
-            logger.error(f"ERROR CLASE: {str(e)}")    
+            logger.error(f"CLASE02: {str(e)}")    
     
     return bfVH
 
@@ -246,7 +246,7 @@ async def get_modelo(CLASE: int = 901, MARCA: int = 0): # MEJORA: Nombre único
                 bfOptions += "".join(opciones_html)
 
         except Exception as e:
-            logger.error(f"ERROR CLASE: {str(e)}")    
+            logger.error(f"CLASE03: {str(e)}")    
 
     return bfOptions
 
@@ -271,7 +271,8 @@ async def get_version(CLASE: int = 901, MARCA: int = 0, MODELO: int = 0): # MEJO
                 opciones_html = []
                 for row in result:
                     cod_vehiculo = row.cyc_cod_vehiculo
-                    desc_version = html.escape(row.cyc_desc_version.title())
+                    raw_desc = row.cyc_desc_version
+                    desc_version = html.escape(raw_desc.title()) if raw_desc else ""
                     
                     # CORRECCIÓN: value en vez de id
                     linea = f'<option value="{cod_vehiculo}">{desc_version}</option>\n'
@@ -280,7 +281,7 @@ async def get_version(CLASE: int = 901, MARCA: int = 0, MODELO: int = 0): # MEJO
                 bfOptions += "".join(opciones_html)
 
         except Exception as e:
-            logger.error(f"ERROR CLASE: {str(e)}")    
+            logger.error(f"CLASE04: {str(e)}")    
 
     return bfOptions
 
@@ -2641,7 +2642,7 @@ def fnSegmento(bfCLASE,MARCA,MODELO,VERSION):
                 
                 if gama_upper == 'GA': isAlta = True
     except Exception as e:
-        logger.error(f"ERROR CLASE: "+str(e))           
+        logger.error(f"CLASE05: "+str(e))           
     return iSegmento, isAlta
 
 def fnGetFrentelElems(lsFrenteLc):
