@@ -587,98 +587,103 @@ async def admrlatsel(Clase: int = Form(...), Segmento: int = Form(...), Tipo: in
         raise HTTPException(status_code=500, detail="Error interno del servidor al consultar los valores.")
 #==========================================================
 @app.post("/admrlatsave", response_class=PlainTextResponse)
-async def admRLatSave(clase: str = Form(""),segmento: str = Form(""),Puerta_Del_Panel_Ratio: str = Form(""),Puerta_Tras_Panel_Ratio: str = Form(""),Zocalo_Ratio: str = Form(""),Puerta_Del_Panel_Ratio_PT: str = Form(""),Puerta_Tras_Panel_Ratio_PT: str = Form(""),Zocalo_Ratio_PT: str = Form(""),
-                      username: str = Depends(get_current_username)):
+async def admRLatSave(clase: str = Form(""), segmento: str = Form(""), Puerta_Del_Panel_Ratio: str = Form(""), Puerta_Tras_Panel_Ratio: str = Form(""), Zocalo_Ratio: str = Form(""), Puerta_Del_Panel_Ratio_PT: str = Form(""), Puerta_Tras_Panel_Ratio_PT: str = Form(""), Zocalo_Ratio_PT: str = Form(""),
+                      tipo: str = Form(""), username: str = Depends(get_current_username)):
     bfMsg = "Valores grabados satisfactoriamente"
-    #engine = db.create_engine(cDBConnValue)
+
     with engine.begin() as conn:
         try:
             p_seg   = int(segmento) if segmento else 0
             p_clase = int(clase)    if clase else 0
+            p_tipo  = int(tipo)     if tipo else 0
+            col_mo = "flmor" if p_tipo == 2 else "flmo"
+            col_pt = "flptr" if p_tipo == 2 else "flpt" 
+            
             ###PUERTA_DEL_PANEL M.O.###
-            sql_str = text(
-                """
+            sql_str = text(f"""
                 UPDATE admrlat 
-                SET flmo = :flmo 
+                SET {col_mo} = :{col_mo} 
                 WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql_str, {
-                "flmo": float(Puerta_Del_Panel_Ratio.replace(',', '.')) if Puerta_Del_Panel_Ratio else 0.0,
+                col_mo: float(Puerta_Del_Panel_Ratio.replace(',', '.')) if Puerta_Del_Panel_Ratio else 0.0,
                 "seg": p_seg,
                 "clase": p_clase,
                 "stname": "PUERTA_DEL_PANEL"
             })
+            
             ###PUERTA_TRA_PANEL M.O.###
-            sql_str = text(
-                """
+            sql_str = text(f"""
                 UPDATE admrlat 
-                SET flmo = :flmo 
+                SET {col_mo} = :{col_mo} 
                 WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql_str, {
-                "flmo": float(Puerta_Tras_Panel_Ratio.replace(',', '.')) if Puerta_Tras_Panel_Ratio else 0.0,
+                col_mo: float(Puerta_Tras_Panel_Ratio.replace(',', '.')) if Puerta_Tras_Panel_Ratio else 0.0,
                 "seg": p_seg,
                 "clase": p_clase,
                 "stname": "PUERTA_TRA_PANEL" 
             })
+            
             ###ZOCALO M.O.###
-            sql_str = text(
-                """
+            sql_str = text(f"""
                 UPDATE admrlat 
-                SET flmo = :flmo 
+                SET {col_mo} = :{col_mo} 
                 WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql_str, {
-                "flmo": float(Zocalo_Ratio.replace(',', '.')) if Zocalo_Ratio else 0.0,
+                col_mo: float(Zocalo_Ratio.replace(',', '.')) if Zocalo_Ratio else 0.0,
                 "seg": p_seg,
                 "clase": p_clase,
                 "stname": "ZOCALO" 
             })
+            
             ###PUERTA_DEL_PANEL PINTURA###
-            sql_str = text(
-                """
+            sql_str = text(f"""
                 UPDATE admrlat 
-                SET flpt = :flpt 
+                SET {col_pt} = :{col_pt} 
                 WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql_str, {
-                "flpt": float(Puerta_Del_Panel_Ratio_PT.replace(',', '.')) if Puerta_Del_Panel_Ratio_PT else 0.0,
+                col_pt: float(Puerta_Del_Panel_Ratio_PT.replace(',', '.')) if Puerta_Del_Panel_Ratio_PT else 0.0,
                 "seg": p_seg,
                 "clase": p_clase,
                 "stname": "PUERTA_DEL_PANEL"
             })
+            
             ###PUERTA_TRA_PANEL PINTURA###
-            sql_str = text(
-                """
+            sql_str = text(f"""
                 UPDATE admrlat 
-                SET flpt = :flpt 
+                SET {col_pt} = :{col_pt} 
                 WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql_str, {
-                "flpt": float(Puerta_Tras_Panel_Ratio_PT.replace(',', '.')) if Puerta_Tras_Panel_Ratio_PT else 0.0,
+                col_pt: float(Puerta_Tras_Panel_Ratio_PT.replace(',', '.')) if Puerta_Tras_Panel_Ratio_PT else 0.0,
                 "seg": p_seg,
                 "clase": p_clase,
                 "stname": "PUERTA_TRA_PANEL" 
             })
+            
             ###ZOCALO PINTURA###
-            sql_str = text(
-                """
+            sql_str = text(f"""
                 UPDATE admrlat 
-                SET flpt = :flpt 
+                SET {col_pt} = :{col_pt} 
                 WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql_str, {
-                "flpt": float(Zocalo_Ratio_PT.replace(',', '.')) if Zocalo_Ratio_PT else 0.0,
+                col_pt: float(Zocalo_Ratio_PT.replace(',', '.')) if Zocalo_Ratio_PT else 0.0,
                 "seg": p_seg,
                 "clase": p_clase,
                 "stname": "ZOCALO" 
             })
+
         except ValueError as e:
-            bfMsg = f"Error numero no valido"
+            bfMsg = "Error numero no valido"
             logger.error(f"Error: Uno de los valores no es un numero valido. {e}", exc_info=True)
         except Exception as e:
-            bfMsg =f"Error de base de datos"
+            bfMsg = "Error de base de datos"
             logger.error(f"Error de base de datos: {e}", exc_info=True)
+
     return bfMsg            
 ##############################################################
 # Reporte de Ratios Trasero
@@ -728,139 +733,132 @@ async def admrtrasel(Clase: int = Form(...), Segmento: int = Form(...), Tipo: in
 #==========================================================
 @app.post("/admrtrasave", response_class=PlainTextResponse)
 async def admRTraSave(clase: str = Form(""),segmento: str = Form(""),Baul_Ratio: str = Form(""),Guardabarro_Ratio: str = Form(""),Panel_Cola_Sup_Ratio: str = Form(""),Paragolpe_Ratio: str = Form(""),Porton_Ratio: str = Form(""),Baul_Ratio_PT: str = Form(""),Guardabarro_Ratio_PT: str = Form(""),Panel_Cola_Sup_Ratio_PT: str = Form(""),Paragolpe_Ratio_PT: str = Form(""),Porton_Ratio_PT: str = Form(""),
-                      username: str = Depends(get_current_username)):
+                      tipo: str = Form(""),username: str = Depends(get_current_username)):
     bfMsg = "Valores grabados satisfactoriamente"
     #engine = db.create_engine(cDBConnValue)
     with engine.begin() as conn:
         try:
             p_seg   = int(segmento) if segmento else 0
             p_clase = int(clase)    if clase else 0
+            p_tipo  = int(tipo)     if tipo else 0
+            col_mo = "flmor" if p_tipo == 2 else "flmo"
+            col_pt = "flptr" if p_tipo == 2 else "flpt" 
             ###BAUL M.O.###
-            sql = text(
-                """
-                UPDATE admrtra 
-                SET flmo = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stname = :stname
-                """)
+            sql = text(f"""
+                        UPDATE admrtra 
+                        SET {col_mo} = :{col_mo} 
+                        WHERE seg = :seg AND clase = :clase AND stname = :stname
+                        """)
             conn.execute(sql, {
-                "flmo": float(Baul_Ratio.replace(',', '.')) if Baul_Ratio else 0.0,
+                col_mo: float(Baul_Ratio.replace(',', '.')) if Baul_Ratio else 0.0,
                 "seg": p_seg,
                 "clase": p_clase,
                 "stname": "BAUL"
             })
             ###GUARDABARRO M.O.###
-            sql = text(
-                """
-                UPDATE admrtra 
-                SET flmo = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stname = :stname
-                """)
+            sql = text(f"""
+                        UPDATE admrtra 
+                        SET {col_mo} = :{col_mo} 
+                        WHERE seg = :seg AND clase = :clase AND stname = :stname
+                        """)
             conn.execute(sql, {
-                "flmo": float(Guardabarro_Ratio.replace(',', '.')) if Guardabarro_Ratio else 0.0,
+                col_mo: float(Guardabarro_Ratio.replace(',', '.')) if Guardabarro_Ratio else 0.0,
                 "seg": p_seg,
                 "clase": p_clase,
                 "stname": "GUARDABARRO" 
             })
             ###PANELCOLASUP M.O.###
-            sql = text(
-                """
-                UPDATE admrtra 
-                SET flmo = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stname = :stname
-                """)
+            sql = text(f"""
+                        UPDATE admrtra 
+                        SET {col_mo} = :{col_mo} 
+                        WHERE seg = :seg AND clase = :clase AND stname = :stname
+                        """)
             conn.execute(sql, {
-                "flmo": float(Panel_Cola_Sup_Ratio.replace(',', '.')) if Panel_Cola_Sup_Ratio else 0.0,
+                col_mo: float(Panel_Cola_Sup_Ratio.replace(',', '.')) if Panel_Cola_Sup_Ratio else 0.0,
                 "seg": p_seg,
                 "clase": p_clase,
                 "stname": "PANELCOLASUP" 
             })
             ###PARAGOLPE M.O.###
-            sql = text(
-                """
+            sql = text( f"""
                 UPDATE admrtra 
-                SET flmo = :flmo 
+                SET {col_mo} = :{col_mo} 
                 WHERE seg = :seg AND clase = :clase AND stname = :stname
                 """)
             conn.execute(sql, {
-                "flmo": float(Paragolpe_Ratio.replace(',', '.')) if Paragolpe_Ratio else 0.0,
+                col_mo: float(Paragolpe_Ratio.replace(',', '.')) if Paragolpe_Ratio else 0.0,
                 "seg": p_seg,
                 "clase": p_clase,
                 "stname": "PARAGOLPE" 
             })
             ###PORTON M.O.###
-            sql = text(
-                """
-                UPDATE admrtra 
-                SET flmo = :flmo 
-                WHERE seg = :seg AND clase = :clase AND stname = :stname
-                """)
+            sql = text(f"""
+                        UPDATE admrtra 
+                        SET {col_mo} = :{col_mo} 
+                        WHERE seg = :seg AND clase = :clase AND stname = :stname
+                        """)
             conn.execute(sql, {
-                "flmo": float(Porton_Ratio.replace(',', '.')) if Porton_Ratio else 0.0,
+                col_mo: float(Porton_Ratio.replace(',', '.')) if Porton_Ratio else 0.0,
                 "seg": p_seg,
                 "clase": p_clase,
                 "stname": "PORTON" 
             })
             ###CABAULPOT PINTURA###
-            sql = text(
-                """
-                UPDATE admrtra 
-                SET flpt = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stname = :stname
-                """)
+            sql = text(f"""
+                        UPDATE admrtra 
+                        SET {col_pt} = :{col_pt} 
+                        WHERE seg = :seg AND clase = :clase AND stname = :stname
+                        """)
             conn.execute(sql, {
-                "flpt": float(Baul_Ratio_PT.replace(',', '.')) if Baul_Ratio_PT else 0.0,
+                col_pt: float(Baul_Ratio_PT.replace(',', '.')) if Baul_Ratio_PT else 0.0,
                 "seg": p_seg,
                 "clase": p_clase,
                 "stname": "BAUL"
             })
             ###GUARDABARRO PINTURA###
-            sql = text(
-                """
-                UPDATE admrtra 
-                SET flpt = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stname = :stname
-                """)
+            sql = text(f"""
+                        UPDATE admrtra 
+                        SET {col_pt} = :{col_pt} 
+                        WHERE seg = :seg AND clase = :clase AND stname = :stname
+                        """)
             conn.execute(sql, {
-                "flpt": float(Guardabarro_Ratio_PT.replace(',', '.')) if Guardabarro_Ratio_PT else 0.0,
+                col_pt: float(Guardabarro_Ratio_PT.replace(',', '.')) if Guardabarro_Ratio_PT else 0.0,
                 "seg": p_seg,
                 "clase": p_clase,
                 "stname": "GUARDABARRO" 
             })
             ###PANELCOLASUP PINTURA###
-            sql = text(
-                """
-                UPDATE admrtra 
-                SET flpt = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stname = :stname
-                """)
+            sql = text(f"""
+                        UPDATE admrtra 
+                        SET {col_pt} = :{col_pt} 
+                        WHERE seg = :seg AND clase = :clase AND stname = :stname
+                        """)
             conn.execute(sql, {
-                "flpt": float(Panel_Cola_Sup_Ratio_PT.replace(',', '.')) if Panel_Cola_Sup_Ratio_PT else 0.0,
+                col_pt: float(Panel_Cola_Sup_Ratio_PT.replace(',', '.')) if Panel_Cola_Sup_Ratio_PT else 0.0,
                 "seg": p_seg,
                 "clase": p_clase,
                 "stname": "PANELCOLASUP" 
             })
             ###PARAGOLPE PINTURA###
-            sql = text(
-                """
-                UPDATE admrtra 
-                SET flpt = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stname = :stname
-                """)
+            sql = text(f"""
+                        UPDATE admrtra 
+                        SET {col_pt} = :{col_pt} 
+                        WHERE seg = :seg AND clase = :clase AND stname = :stname
+                        """)
             conn.execute(sql, {
-                "flpt": float(Paragolpe_Ratio_PT.replace(',', '.')) if Paragolpe_Ratio_PT else 0.0,
+                col_pt: float(Paragolpe_Ratio_PT.replace(',', '.')) if Paragolpe_Ratio_PT else 0.0,
                 "seg": p_seg,
                 "clase": p_clase,
                 "stname": "PARAGOLPE" 
             })
             ###PORTON PINTURA###
-            sql = text(
-                """
-                UPDATE admrtra 
-                SET flpt = :flpt 
-                WHERE seg = :seg AND clase = :clase AND stname = :stname
-                """)
+            sql = text(f"""
+                        UPDATE admrtra 
+                        SET {col_pt} = :{col_pt} 
+                        WHERE seg = :seg AND clase = :clase AND stname = :stname
+                        """)
             conn.execute(sql, {
-                "flpt": float(Porton_Ratio_PT.replace(',', '.')) if Porton_Ratio_PT else 0.0,
+                col_pt: float(Porton_Ratio_PT.replace(',', '.')) if Porton_Ratio_PT else 0.0,
                 "seg": p_seg,
                 "clase": p_clase,
                 "stname": "PORTON" 
@@ -871,7 +869,7 @@ async def admRTraSave(clase: str = Form(""),segmento: str = Form(""),Baul_Ratio:
         except Exception as e:
             bfMsg =f"Error de base de datos"
             logger.error(f"Error de base de datos: {e}", exc_info=True)
-    return bfMsg                  
+    return bfMsg                   
 ##############################################################
 # Reporte de Ratios Trasero
 ##############################################################
