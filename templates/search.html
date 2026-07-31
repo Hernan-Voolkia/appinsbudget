@@ -47,6 +47,21 @@
             font-size: 0.9em;
             flex: 1;
         }
+        /* Contenedor de los botones */
+        .btn-group-actions {
+            display: flex; 
+            gap: 4px; 
+            padding-bottom: 5px;
+        }
+
+        /* Estilo unificado para los botones */
+        .custom-btn {
+            background-color: #005993; 
+            color: #ffffff; 
+            /* El primer valor (0.4em) es la altura, el segundo (0.4em) es el ancho */
+            padding: 0.4em 0.4em; 
+            font-size: 0.9em;
+        }       
     </style>
     <title>App Presupuesto</title>
 </head>
@@ -404,11 +419,12 @@
         <div class="pure-u-1 pure-u-md-7-24"></div> 
         <div class="pure-u-1 pure-u-md-7-24">
             <div class="pure-controls"><input type="hidden" id="HiddenData" value="">&nbsp;</div>
-            <div style="display: flex; justify-content: left; gap: 4px; width: 100%; margin-top: 0px; padding-bottom: 5px;">
-                <button class="pure-button pure-button-primary" style="background-color:#005993; color:#ffffff; padding: 0.4em 0.8em; font-size: 0.9em;" id="consultar" onclick="fnGetData()">Consultar</button>
-                <button class="pure-button pure-button-primary" style="background-color:#005993; color:#ffffff; padding: 0.4em 0.8em; font-size: 0.9em;" id="limpiar" onclick="fnClean()">&nbsp;Limpiar&nbsp;</button>
-                <button class="pure-button pure-button-primary" style="background-color:#005993; color:#ffffff; padding: 0.4em 0.8em; font-size: 0.9em;" id="confirmar">Confirmar</button>
-                <button class="pure-button pure-button-primary" style="background-color:#005993; color:#ffffff; padding: 0.4em 0.8em; font-size: 0.9em;" id="descargar">&nbsp;Imprimir&nbsp;</button>
+            <div class="btn-group-actions">
+                <button class="pure-button pure-button-primary custom-btn" id="consultar" onclick="fnGetData()">Consultar</button>
+                <button class="pure-button pure-button-primary custom-btn" id="limpiar" onclick="fnClean()">Limpiar</button>
+                <button class="pure-button pure-button-primary custom-btn" id="confirmar">Confirmar</button>
+                <button class="pure-button pure-button-primary custom-btn" id="descargar">Imprimir</button>
+                <button class="pure-button pure-button-primary custom-btn" id="logout" onclick="sendLogout()">Logout</button>
             </div>
         </div>
         <div class="pure-u-1 pure-u-md-7-24"></div>
@@ -1363,6 +1379,9 @@ function fnGetData() {
         xhr.send(formData);
     }
 
+    function sendLogout() {
+    window.location.href = "/logout"; 
+    }  
 
     function fnGetClase(){
         var e = document.getElementById("stacked-clase");
