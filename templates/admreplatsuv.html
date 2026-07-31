@@ -22,18 +22,27 @@
     </style>
 </head>
 <body>
+    <div id="divContent" class="pure-g" style="text-align:center;"><div class="pure-u-*">&nbsp;</div></div>
+    <div class="pure-g" style="padding-left:5px;">
+        <div class="pure-u-1 pure-u-md-7-24"> <!--<div class="pure-u-1 pure-u-md-1-5">-->
+            &nbsp;
+        </div>
+        <div class="pure-u-1 pure-u-md-7-24">
+            {% include "menu.html" %}
+        </div>
+    </div>      
+    <!--
     <div id="divContent" class="pure-g" style="text-align:center;">
         <div class="pure-u-*">
             &nbsp;
         </div>
     </div>
     <div class="pure-g" style="padding-left:5px;">
-        <div class="pure-u-1 pure-u-md-7-24"> <!--<div class="pure-u-1 pure-u-md-1-5">-->
+        <div class="pure-u-1 pure-u-md-7-24"> 
             &nbsp;
         </div>
         <div class="pure-u-1 pure-u-md-7-24">
             <div class="pure-menu pure-menu-horizontal">
-               <!-- <a href="#" id="btnConsulta" class="pure-menu-link pure-menu-heading">Consulta</a>-->
                 <ul class="pure-menu-list">
                     <li class="pure-menu-item">
                         <a href="#" id="btnConsulta" class="pure-menu-link">Consulta</a>
@@ -103,6 +112,7 @@
             </div>
         </div>
     </div>    
+    -->
     <div class="pure-g" style="padding-left:5px;">
         <div class="pure-u-1 pure-u-md-7-24"> 
             <img src="./img/Pos_color_RGB.jpg" alt="logo" width="128" height="128"
@@ -179,6 +189,7 @@
     <br style="display: block;content:'';margin-top:5;">    
    </body>
    <script>
+    /*
     document.getElementById("btnConsulta").addEventListener("click", function(event) {
         event.preventDefault(); 
         window.location.href =  "/consulta"; 
@@ -250,7 +261,8 @@
     document.getElementById("btnTraseroagsuv").addEventListener("click", function(event) {
         event.preventDefault(); 
         window.location.href =  "/admreptraagsuv"; 
-    });    
+    });   
+    */ 
     function fnRtnConsulta(){  
         var protocolo = window.location.protocol;
         var hostname = window.location.hostname;

@@ -241,11 +241,11 @@
             cDiaHora = registroActual.fecha_hora.replace(/[- :]/g, "").substring(0, 13);
         }
 
-        // Ejecutamos tu código exacto de html2canvas y jsPDF
+        // Ejecutamos tu código de html2canvas y jsPDF
         html2canvas(tempDiv, { scale: 2 }).then(async canvas => {
             const imgData = canvas.toDataURL('image/png');
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4'); // Aseguramos formato A4
+            const doc = new jsPDF('p', 'mm', 'a4'); // formato A4
             
             try {
                 const imgLogo = await loadImageAsDataURL('./img/Pos_color_RGB.jpg');
@@ -260,7 +260,7 @@
             const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
             // Insertamos la captura de la tabla
-            doc.addImage(imgData, 'PNG', 10, 25, pdfWidth, pdfHeight);
+            doc.addImage(imgData, 'PNG', 10, 27, pdfWidth, pdfHeight);
             
             try {
                 const imgFirma = await loadImageAsDataURL('./img/firma.png');

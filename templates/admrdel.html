@@ -93,19 +93,15 @@
     </style>
 </head>
 <body>
-    <div id="divContent" class="pure-g" style="text-align:center;">
-        <div class="pure-u-*">
-            &nbsp;
-        </div>
-    </div>
+    <div id="divContent" class="pure-g" style="text-align:center;"><div class="pure-u-*">&nbsp;</div></div>
     <div class="pure-g" style="padding-left:5px;">
-        <div class="pure-u-1 pure-u-md-7-24">
+        <div class="pure-u-1 pure-u-md-7-24"> <!--<div class="pure-u-1 pure-u-md-1-5">-->
             &nbsp;
         </div>
         <div class="pure-u-1 pure-u-md-7-24">
             {% include "menu.html" %}
         </div>
-    </div>    
+    </div>      
     <div class="pure-g" style="padding-left:5px;">
         <div class="pure-u-1 pure-u-md-7-24"> 
             <img src="./img/Pos_color_RGB.jpg" alt="logo" width="128" height="128" style="margin-left:auto;margin-right:auto;display:block;"/>
@@ -219,6 +215,7 @@
     <br style="display: block;content:'';margin-top:5;">    
    </body>
    <script>
+    /*
     document.getElementById('menu-item-params').classList.add('pure-menu-selected');
     document.getElementById('menu-item-params-delantero').classList.add('pure-menu-selected');
 
@@ -294,7 +291,8 @@
     document.getElementById("btnTraRatio").addEventListener("click", function(event) {
         event.preventDefault(); 
         window.location.href =  "/admtraratio"; 
-    });    
+    }); 
+    */   
     document.addEventListener("DOMContentLoaded", function() {
         
         const comboClase = document.getElementById("clase");
