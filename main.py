@@ -1,15 +1,15 @@
 
-from fastapi import FastAPI, HTTPException, Request, Depends, status, Form, Response
-from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
+from fastapi import FastAPI, HTTPException, Request, Depends, status, Form, Response, status
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 
+from starlette.middleware.sessions import SessionMiddleware
 
 import warnings
 import datetime
-#import re
 import sys
 import pandas as pd
 import numpy as np
@@ -23,6 +23,9 @@ import secrets
 import html
 import csv
 import io
+import ssl
+import socket
+from ldap3 import Server, Connection, Tls, ALL
 
 import param
 import paramal
@@ -30,11 +33,14 @@ import paramsuv
 import paramsuval
 
 security = HTTPBasic()
+load_dotenv()
 
 warnings.filterwarnings("ignore")
 np.set_printoptions(suppress=True)
 
 CLASES_MAP = {900: 'COUPE', 901: 'SEDAN', 907: 'SUV', 908: 'MOTOCICLETA', 910: 'PICK-UP'}
+
+app = FastAPI()
 
 def setup_explicit_logger(name):
     """
@@ -62,24 +68,48 @@ def setup_explicit_logger(name):
     return logger
 logger = setup_explicit_logger(__name__)
 
-def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
+def check_admin_access(request: Request):
     """
-    Validación simple contra variables de entorno.
-    Se reemplazará por LDAP en la Fase 2.
+    Validación de seguridad para endpoints POST.
+    Lee la sesión actual y bloquea la petición si no es administrador.
     """
-    correct_username = os.getenv("ADMIN_USER", "*_")
-    correct_password = os.getenv("ADMIN_PASSWORD", "_*")
+    usuario = request.session.get("usuario")
+    rol = request.session.get("rol")
 
-    is_correct_username = secrets.compare_digest(credentials.username, correct_username)
-    is_correct_password = secrets.compare_digest(credentials.password, correct_password)
-
-    if not (is_correct_username and is_correct_password):
+    # Si no hay sesión o el rol no es admin, devolvemos un 403 Forbidden.
+    # Usar 403 en lugar de 401 evita que el navegador levante el popup de Basic Auth.
+    if not usuario or rol != "admin":
+        logger.warning(f"Intento de modificación bloqueado. Usuario: {usuario}, Rol: {rol}")
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Credenciales incorrectas",
-            headers={"WWW-Authenticate": "Basic"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tienes permisos de administrador para realizar esta acción."
         )
-    return credentials.username
+    
+    return usuario
+
+# ==============================================================
+# CONTROL DE SESIONES PARA PÁGINAS HTML (REDIRECCIÓN)
+# ==============================================================
+class RequiresLoginException(Exception):
+    pass
+
+@app.exception_handler(RequiresLoginException)
+async def requires_login_exception_handler(request: Request, exc: RequiresLoginException):
+    """Atrapa los intentos de acceso sin sesión y redirige al login de forma transparente."""
+    logger.warning(f"Acceso denegado a ruta protegida: {request.url.path}. Redirigiendo a login.")
+    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+
+def verify_logged_in(request: Request):
+    """Dependencia para páginas que requieren cualquier usuario logueado."""
+    if not request.session.get("usuario"):
+        raise RequiresLoginException()
+    return request.session.get("usuario")
+
+def verify_admin_page(request: Request):
+    """Dependencia para páginas que requieren ser administrador exclusivamente."""
+    if request.session.get("rol") != "admin":
+        raise RequiresLoginException()
+    return request.session.get("usuario")
 
 try:
     dfVALOR_REPUESTO_MO_Unif = pd.read_csv('./data/LPM_REPUESTOS_VER11_FMT_RED.csv',sep=';',encoding='utf-8',decimal='.',
@@ -88,41 +118,15 @@ try:
 except FileNotFoundError:
     #logger.error(f"Error: _dfVALOR_REPUESTO_ALL_V7.csv no fue encontrado.")
     logger.error(f"Error: LPM_REPUESTOS_VER11_FMT_RED.csv no fue encontrado.")
-'''
-#VALRO-MO-PINT-FRENTE
-try:
-    dfVALOR_REPUESTO_VALOR_MAT_FRENTE = pd.read_csv('./data/_dfVALOR_REPUESTO_MO&PINT_FRENTEV7.csv',sep=';',encoding='utf-8',decimal='.',
-                            dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
-                                    'VALOR_MO':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
-                                    'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
-                                    'RATIO_HS_PINT_MEAN':'float64','RATIO_HS_PINT_STD':'float64',
-                                    'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_STD':'float64'})
-except FileNotFoundError:
-    logger.error(f"Error: _dfVALOR_REPUESTO_MO&PINT_FRENTEV7.csv no fue encontrado.")
-#VALRO-MO-PINT-TRASERO
-try:
-    dfVALOR_REPUESTO_VALOR_MAT_TRASERO = pd.read_csv('./data/_dfVALOR_REPUESTO_MO&PINT_TRASEROV7.csv',sep=';',encoding='utf-8',decimal='.',
-                            dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
-                                    'VALOR_MO':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
-                                    'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
-                                    'RATIO_HS_PINT_MEAN':'float64','RATIO_HS_PINT_STD':'float64',
-                                    'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_STD':'float64'})
-except FileNotFoundError:
-    logger.error(f"Error: _dfVALOR_REPUESTO_MO&PINT_TRASEROV7.csv no fue encontrado.")
-#VALRO-MO-PINT-LATERAL
-try:
-    dfVALOR_REPUESTO_VALOR_MAT_LATERAL = pd.read_csv('./data/_dfVALOR_REPUESTO_MO&PINT_LATERALV7.csv',sep=';',encoding='utf-8',decimal='.',
-                            dtype = {'SEG':'int8','COD_CLASE':'int16','COD_PARTE':'int8','DESC_ELEM':'str',
-                                    'VALOR_MO':'float64','VALOR_MO_STD':'float64','RATIO_MO_MEAN':'float64',
-                                    'RATIO_MO_STD':'float64','CANT_HS_PINT_MEAN':'float64','CANT_HS_PINT_STD':'float64',
-                                    'RATIO_HS_PINT_MEAN':'float64','RATIO_HS_PINT_STD':'float64',
-                                    'VALOR_MAT_PINT_MEAN':'float64','VALOR_MAT_PINT_STD':'float64'})
-except FileNotFoundError:
-    logger.error(f"Error: _dfVALOR_REPUESTO_MO&PINT_LATERALV7.csv no fue encontrado.")
-'''
-#DBVALUES
-load_dotenv()
+
+#DBVALUES NO DOCKER
 cDBConnValue = os.getenv('DB_CONN_STRING', 'sqlite:///appinsbudget.sqlite3')
+#DBVALUES DOCKER
+'''
+db_conn_string = os.getenv('DB_CONN_STRING', 'sqlite:///appinsbudget.sqlite3')
+db_name = os.getenv('DB_NAME', 'dev_siniestros_lpm')
+cDBConnValue = f"postgresql://{admin_username}:{admin_password}@{db_conn_string}:5432/{db_name}"
+'''
 engine = db.create_engine(cDBConnValue, pool_size=10, max_overflow=20)
 
 try:
@@ -139,10 +143,28 @@ try:
 except Exception as e:
     logger.error(f"CLASE01: {str(e)}")
 
-app = FastAPI()
+# ==============================================================
+# CONFIGURACIÓN SEGURA DE SESIONES Y ENTORNO
+# ==============================================================
+# 1. Determinamos el entorno (Opcional, para la lógica de login)
+is_production = bool(os.getenv("SA_AD_LPM_USER") and os.getenv("SA_AD_LPM_PASS"))
+
+# 2. Generamos una clave maestra efímera en la RAM
+logger.info("Generando clave de sesión en memoria...")
+SECRET_KEY = secrets.token_hex(32)
+
+# 3. Agregamos el middleware de sesión
+app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY, max_age=28800)
+
 app.add_middleware(
-    TrustedHostMiddleware, 
-    allowed_hosts=["localhost", "127.0.0.1", "appinsbudget.onrender.com"] 
+    TrustedHostMiddleware,
+    allowed_hosts=[
+        "localhost",
+        "127.0.0.1",
+        "appinsbudget.onrender.com",
+        "api-dev.lacaja.local",
+        "*.lacaja.local"
+    ]
 )
 app.mount("/img", StaticFiles(directory="img"), name='img')
 templates = Jinja2Templates(directory="templates")
@@ -150,9 +172,6 @@ templates = Jinja2Templates(directory="templates")
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
     response = await call_next(request)
-    
-    # Definimos la CSP como un string único y limpio. 
-    # Esto evita que Jinja2 o el Logger intenten "hashear" la lista dinámica.
     csp = (
         "default-src 'self'; "
         "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.cdnfonts.com https://fonts.googleapis.com https://cdn.datatables.net; "
@@ -174,13 +193,159 @@ async def add_security_headers(request: Request, call_next):
     
     return response
 
+@app.post("/validar-login", response_class=HTMLResponse)
+async def validar_login(request: Request, username: str = Form(...)):
+    """
+    Endpoint unificado de validación. 
+    Detecta automáticamente el entorno basándose en la presencia de credenciales LDAP.
+    """
+    username = username.strip()
+    role = None
+    
+    # Capturar credenciales inyectadas por GitLab
+    bind_user_env = os.getenv("SA_AD_LPM_USER")
+    bind_pass_env = os.getenv("SA_AD_LPM_PASS")
+
+    # ==============================================================
+    # EVALUACIÓN DE ENTORNO
+    # ==============================================================
+    if bind_user_env and bind_pass_env:
+        # ----------------------------------------------------------
+        # MODO PRODUCCIÓN / UAT: Conexión LDAP Corporativa
+        # ----------------------------------------------------------
+        logger.info(f"Credenciales LDAP detectadas. Iniciando login (PROD/UAT) para: {username}")
+        
+        LDAP_HOST = "172.21.46.102"
+        LDAP_PORT = 636
+        BASE_DN = "dc=lc,dc=gc,dc=local"
+        
+        formatted_bind_user = bind_user_env if "\\" in bind_user_env else f"lc\\{bind_user_env}"
+
+        try:
+            tls_config = Tls(validate=ssl.CERT_NONE, version=ssl.PROTOCOL_TLSv1_2)
+            server = Server(LDAP_HOST, port=LDAP_PORT, use_ssl=True, tls=tls_config, get_info=ALL)
+            
+            conn = Connection(server, user=formatted_bind_user, password=bind_pass_env, auto_bind=True, receive_timeout=10)
+
+            search_filter = f"(sAMAccountName={username})"
+            conn.search(search_base=BASE_DN, search_filter=search_filter, attributes=['memberOf'])
+
+            if conn.entries:
+                entry = conn.entries[0]
+                grupos = entry.memberOf if hasattr(entry, 'memberOf') else []
+                str_grupos = str(grupos).upper()
+
+                if "CN=LCGU_ADMIN_LPM" in str_grupos:
+                    role = "admin"
+                elif "CN=LCGU_USERS_LPM" in str_grupos:
+                    role = "user"
+                else:
+                    logger.warning(f"Usuario {username} en AD sin grupos de la app.")
+                    return templates.TemplateResponse(
+                        request=request, name="login.html", 
+                        context={"request": request, "error": "No tienes permisos asignados a esta aplicación."}
+                    )
+            else:
+                logger.warning(f"Usuario {username} no encontrado en LDAP.")
+                return templates.TemplateResponse(
+                    request=request, name="login.html", 
+                    context={"request": request, "error": "Usuario no encontrado en el directorio."}
+                )
+
+        except Exception as e:
+            logger.error(f"Falla de conexión o protocolo LDAP: {e}")
+            return HTMLResponse(content="Falla temporal en el sistema de autenticación. Intente más tarde.", status_code=500)
+
+    else:
+        # ----------------------------------------------------------
+        # MODO DESARROLLO: Buscar en SQLite Local
+        # ----------------------------------------------------------
+        logger.info(f"Credenciales LDAP NO detectadas. Iniciando login local (DEV) para: {username}")
+        try:
+            with engine.connect() as conn:
+                sql = text("SELECT rol FROM usuarios_dev WHERE username = :usr")
+                result = conn.execute(sql, {"usr": username}).first()
+
+                if result:
+                    role = result.rol.lower()
+                else:
+                    logger.warning(f"Usuario {username} no encontrado en SQLite local.")
+                    return templates.TemplateResponse(
+                        request=request, name="login.html", 
+                        context={"request": request, "error": "Usuario no válido."}
+                    )
+        except Exception as e:
+            logger.error(f"Error crítico en BD de desarrollo: {e}")
+            return HTMLResponse(content="Error interno del sistema", status_code=500)
+
+    # ==============================================================
+    # REDIRECCIÓN Y CREACIÓN DE SESIÓN SEGÚN EL ROL
+    # ==============================================================
+    if role == "admin":
+        logger.info(f"Usuario {username} logueado exitosamente como ADMIN.")
+        request.session["usuario"] = username
+        request.session["rol"] = role
+        return RedirectResponse(url="/admhome", status_code=status.HTTP_303_SEE_OTHER)
+        
+    elif role == "user":
+        logger.info(f"Usuario {username} logueado exitosamente como USER.")
+        request.session["usuario"] = username
+        request.session["rol"] = role
+        return RedirectResponse(url="/consulta", status_code=status.HTTP_303_SEE_OTHER)
+    
+    else:
+        return templates.TemplateResponse(
+            request=request, name="login.html", 
+            context={"request": request, "error": "Rol no identificado."}
+        )
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    """Sirve el ícono de la pestaña del navegador."""
+    return FileResponse("favicon.ico")
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    context = {"request": request,}
-    return templates.TemplateResponse(request=request, name="search.html", context=context)
+    """Pantalla inicial. Si el usuario ya tiene sesión, lo redirige a su panel."""
+    rol = request.session.get("rol")
+    
+    if rol == "admin":
+        return RedirectResponse(url="/admhome", status_code=status.HTTP_303_SEE_OTHER)
+    elif rol == "user":
+        return RedirectResponse(url="/consulta", status_code=status.HTTP_303_SEE_OTHER)
+        
+    # Si no tiene sesión activa, le mostramos el formulario
+    context = {"request": request}
+    return templates.TemplateResponse(request=request, name="login.html", context=context)
+
+@app.get("/logout", response_class=HTMLResponse)
+async def logout(request: Request):
+    """Destruye la sesión actual y devuelve al usuario al login."""
+    usuario = request.session.get("usuario", "Desconocido")
+    logger.info(f"Usuario {usuario} cerró sesión correctamente.")
+    
+    # Limpiamos todos los datos de la cookie
+    request.session.clear() 
+    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+
+@app.get("/admhome", response_class=HTMLResponse)
+async def admin_home(request: Request, admin: str = Depends(verify_admin_page)):
+    """Pantalla principal (Dashboard) del Administrador."""
+    try:
+        # Aquí puedes pasar cualquier variable adicional que necesite tu panel
+        context = {
+            "request": request,
+            "usuario": admin
+        }
+        # Asegúrate de que el nombre del archivo sea exactamente el que creaste
+        return templates.TemplateResponse(request=request, name="admhome.html", context=context)
+    except Exception as e:
+        logger.error(f"Error al cargar admhome: {e}")
+        return HTMLResponse(content="Error cargando el panel de administrador", status_code=500)
 
 @app.post("/vh", response_class=PlainTextResponse)
-async def get_vh(CLASE: int = 0): # MEJORA: Nombre único de función
+async def get_vh(CLASE: int = 0, user: str = Depends(verify_logged_in)): # MEJORA: Nombre único de función
     bfVH = '<option value="0"></option>\n' # CORRECCIÓN: value en vez de id
     bfCLASE = CLASES_MAP.get(CLASE, '')    # MEJORA: Uso del diccionario
     
@@ -217,7 +382,7 @@ async def get_vh(CLASE: int = 0): # MEJORA: Nombre único de función
     return bfVH
 
 @app.post("/modelo", response_class=PlainTextResponse)
-async def get_modelo(CLASE: int = 901, MARCA: int = 0): # MEJORA: Nombre único
+async def get_modelo(CLASE: int = 901, MARCA: int = 0, user: str = Depends(verify_logged_in)): # MEJORA: Nombre único
     bfOptions = '<option value="0"></option>\n' # CORRECCIÓN: value
     bfCLASE = CLASES_MAP.get(CLASE, '')         # MEJORA: Uso del diccionario
 
@@ -251,7 +416,7 @@ async def get_modelo(CLASE: int = 901, MARCA: int = 0): # MEJORA: Nombre único
     return bfOptions
 
 @app.post("/version", response_class=PlainTextResponse)
-async def get_version(CLASE: int = 901, MARCA: int = 0, MODELO: int = 0): # MEJORA: Nombre único
+async def get_version(CLASE: int = 901, MARCA: int = 0, MODELO: int = 0, user: str = Depends(verify_logged_in)): # MEJORA: Nombre único
     bfOptions = '<option value="0"></option>\n' # CORRECCIÓN: value
     bfCLASE = CLASES_MAP.get(CLASE, '')         # MEJORA: Uso del diccionario
 
@@ -286,7 +451,7 @@ async def get_version(CLASE: int = 901, MARCA: int = 0, MODELO: int = 0): # MEJO
     return bfOptions
 
 @app.get("/consulta", response_class=HTMLResponse)
-async def consulta(request: Request):
+async def consulta(request: Request, user: str = Depends(verify_logged_in)):
     """
     Carga masiva de parámetros desde múltiples tablas usando una sola conexión
     y asignación dinámica de atributos.
@@ -366,7 +531,7 @@ async def consulta(request: Request):
 # Reporte de Valores de Valores Genericos
 ##############################################################
 @app.get("/admvalue", response_class=HTMLResponse)
-async def adminValues(request: Request):
+async def adminValues(request: Request, admin: str = Depends(verify_admin_page)):
     try:
         with engine.connect() as conn:
             result = conn.execute(text('SELECT stname, flvalue FROM admvalue;'))
@@ -410,7 +575,7 @@ async def adminValues(request: Request):
 #==========================================================
 @app.post("/admvaluesave", response_class=PlainTextResponse)
 async def adminValuesSave(ASEGURADO: str = Form(""), TERCERO: str = Form(""), MOBRA: str = Form(""), MOMINIMO: str = Form(""), PINTURA: str = Form(""), AJUSTE: str = Form(""),
-                          username: str = Depends(get_current_username) 
+                          username: str = Depends(check_admin_access) 
 ):    
     bfMsg = "Valores grabados satisfactoriamente"
     # Esto nos permitirá ejecutar una sola instrucción SQL
@@ -440,7 +605,7 @@ async def adminValuesSave(ASEGURADO: str = Form(""), TERCERO: str = Form(""), MO
 # Reporte de Ratios Delantero
 ##############################################################
 @app.get("/admdelratio", response_class=HTMLResponse)
-async def admDelRatio(request: Request):
+async def admDelRatio(request: Request, admin: str = Depends(verify_admin_page)):
     context = {"request": request,}
     return templates.TemplateResponse(request=request, name="admrdel.html", context=context)
 
@@ -499,7 +664,7 @@ async def admRDelSave(
         Frente_Ratio_PT: str = Form(""),
         Paragolpe_Alma_Ratio_PT: str = Form(""),
         Paragolpe_Ctro_Ratio_PT: str = Form(""),
-        username: str = Depends(get_current_username)
+        username: str = Depends(check_admin_access)
     ):    
     bfMsg = "Valores grabados satisfactoriamente"
     with engine.begin() as conn:
@@ -544,7 +709,7 @@ async def admRDelSave(
 # Reporte de Ratios Lateral
 ##############################################################
 @app.get("/admlatratio", response_class=HTMLResponse)
-async def admLatRatio(request: Request):
+async def admLatRatio(request: Request, admin: str = Depends(verify_admin_page)):
     context = {"request": request,}
     return templates.TemplateResponse(request=request, name="admrlat.html", context=context)
 #==========================================================
@@ -588,7 +753,7 @@ async def admrlatsel(Clase: int = Form(...), Segmento: int = Form(...), Tipo: in
 #==========================================================
 @app.post("/admrlatsave", response_class=PlainTextResponse)
 async def admRLatSave(clase: str = Form(""), segmento: str = Form(""), Puerta_Del_Panel_Ratio: str = Form(""), Puerta_Tras_Panel_Ratio: str = Form(""), Zocalo_Ratio: str = Form(""), Puerta_Del_Panel_Ratio_PT: str = Form(""), Puerta_Tras_Panel_Ratio_PT: str = Form(""), Zocalo_Ratio_PT: str = Form(""),
-                      tipo: str = Form(""), username: str = Depends(get_current_username)):
+                      tipo: str = Form(""), username: str = Depends(check_admin_access)):
     bfMsg = "Valores grabados satisfactoriamente"
 
     with engine.begin() as conn:
@@ -689,7 +854,7 @@ async def admRLatSave(clase: str = Form(""), segmento: str = Form(""), Puerta_De
 # Reporte de Ratios Trasero
 ##############################################################
 @app.get("/admtraratio", response_class=HTMLResponse)
-async def admTraRatio(request: Request):
+async def admTraRatio(request: Request, admin: str = Depends(verify_admin_page)):
     context = {"request": request,}
     return templates.TemplateResponse(request=request, name="admrtra.html", context=context)
 #==========================================================
@@ -733,7 +898,7 @@ async def admrtrasel(Clase: int = Form(...), Segmento: int = Form(...), Tipo: in
 #==========================================================
 @app.post("/admrtrasave", response_class=PlainTextResponse)
 async def admRTraSave(clase: str = Form(""),segmento: str = Form(""),Baul_Ratio: str = Form(""),Guardabarro_Ratio: str = Form(""),Panel_Cola_Sup_Ratio: str = Form(""),Paragolpe_Ratio: str = Form(""),Porton_Ratio: str = Form(""),Baul_Ratio_PT: str = Form(""),Guardabarro_Ratio_PT: str = Form(""),Panel_Cola_Sup_Ratio_PT: str = Form(""),Paragolpe_Ratio_PT: str = Form(""),Porton_Ratio_PT: str = Form(""),
-                      tipo: str = Form(""),username: str = Depends(get_current_username)):
+                      tipo: str = Form(""),username: str = Depends(check_admin_access)):
     bfMsg = "Valores grabados satisfactoriamente"
     #engine = db.create_engine(cDBConnValue)
     with engine.begin() as conn:
@@ -869,12 +1034,12 @@ async def admRTraSave(clase: str = Form(""),segmento: str = Form(""),Baul_Ratio:
         except Exception as e:
             bfMsg =f"Error de base de datos"
             logger.error(f"Error de base de datos: {e}", exc_info=True)
-    return bfMsg                   
+    return bfMsg                  
 ##############################################################
 # Reporte de Ratios Trasero
 ##############################################################
 @app.get("/admtraratio", response_class=HTMLResponse)
-async def admTraRatio(request: Request):
+async def admTraRatio(request: Request, admin: str = Depends(verify_admin_page)):
     context = {"request": request,
                "Capot_Ratio": "",
                "Guardabarro_Ratio":"",
@@ -886,7 +1051,7 @@ async def admTraRatio(request: Request):
 #==========================================================
 @app.post("/admtraratiosave", response_class=PlainTextResponse)
 async def admTraRatioSave(ASEGURADO:str="", TERCERO:str="", MOBRA:str="", MOMINIMO:str="", PINTURA:str="", AJUSTE:str="",
-                          username: str = Depends(get_current_username)):
+                          username: str = Depends(check_admin_access)):
     bfMsg = "Valores grabados satisfactoriamente"
     updates = [
         {'name': 'Asegurado', 'val': str(ASEGURADO).replace(',', '.')},
@@ -909,7 +1074,7 @@ async def admTraRatioSave(ASEGURADO:str="", TERCERO:str="", MOBRA:str="", MOMINI
 # Reporte de Valores de Partes Laterales
 ##############################################################
 @app.get("/admreplat", response_class=HTMLResponse)
-async def admreplat(request: Request):
+async def admreplat(request: Request, admin: str = Depends(verify_admin_page)):
     context = {
         "request": request,
         "Lat_Cristal_Delantero":  "Cristal Delantero",      "Lat_Cristal_Delantero_Val": 0.0,
@@ -946,7 +1111,7 @@ async def admvalueslat(request: Request,
                        Lat_Manija_Pta_Del: str = Form(""),    Lat_Manija_Pta_Tras: str = Form(""),
                        Lat_Moldura_Pta_Del: str = Form(""),   Lat_Moldura_Pta_Tras: str = Form(""),
                        Lat_Puerta_Delantera: str = Form(""),  Lat_Puerta_Trasera: str = Form(""),
-                       Lat_Zocalo: str = Form(""), username: str = Depends(get_current_username)):
+                       Lat_Zocalo: str = Form(""), username: str = Depends(check_admin_access)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     # Nota: Agregué 'Lat_Puerta_Delantera' que faltaba en tu query original.
@@ -978,7 +1143,7 @@ async def admvalueslat(request: Request,
     return bfMsg
 #####################################################
 @app.get("/admreplatsuv", response_class=HTMLResponse)
-async def admreplatsuv(request: Request):
+async def admreplatsuv(request: Request, admin: str = Depends(verify_admin_page)):
     # NOTA: Corregí "Lat_Espejo_Eléctrico_Val" a "Lat_Espejo_Electrico_Val" (sin acento)
     context = {
         "request": request,
@@ -1016,7 +1181,7 @@ async def admvalueslatsuv(request: Request,
                           Lat_Moldura_Pta_Del: str = Form(""),   Lat_Moldura_Pta_Tras: str = Form(""),
                           Lat_Puerta_Delantera: str = Form(""),  Lat_Puerta_Trasera: str = Form(""),
                           Lat_Zocalo: str = Form(""),
-                          username: str = Depends(get_current_username)):
+                          username: str = Depends(check_admin_access)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1047,7 +1212,7 @@ async def admvalueslatsuv(request: Request,
     return bfMsg
 ####################################################
 @app.get("/admreplatag", response_class=HTMLResponse)
-async def admreplatag(request: Request):
+async def admreplatag(request: Request, admin: str = Depends(verify_admin_page)):
     # Corrección: Unifiqué "Lat_Espejo_Electrico_Val" (sin acento) para coincidir
     context = {
         "request": request,
@@ -1084,7 +1249,7 @@ async def admvalueslatag(request: Request,
                          Lat_Manija_Pta_Del: str = Form(""),    Lat_Manija_Pta_Tras: str = Form(""),
                          Lat_Moldura_Pta_Del: str = Form(""),   Lat_Moldura_Pta_Tras: str = Form(""),
                          Lat_Puerta_Delantera: str = Form(""),  Lat_Puerta_Trasera: str = Form(""),
-                         Lat_Zocalo: str = Form(""), username: str = Depends(get_current_username)):
+                         Lat_Zocalo: str = Form(""), username: str = Depends(check_admin_access)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1116,7 +1281,7 @@ async def admvalueslatag(request: Request,
     return bfMsg
 ########################################################
 @app.get("/admreplatagsuv", response_class=HTMLResponse)
-async def admreplatagsuv(request: Request):
+async def admreplatagsuv(request: Request, admin: str = Depends(verify_admin_page)):
     # Corrección: "Lat_Espejo_Eléctrico_Val" -> "Lat_Espejo_Electrico_Val" (sin acento)
     context = {
         "request": request,
@@ -1153,7 +1318,7 @@ async def admvalueslatagsuv(request: Request,
                             Lat_Manija_Pta_Del: str = Form(""),    Lat_Manija_Pta_Tras: str = Form(""),
                             Lat_Moldura_Pta_Del: str = Form(""),   Lat_Moldura_Pta_Tras: str = Form(""),
                             Lat_Puerta_Delantera: str = Form(""),  Lat_Puerta_Trasera: str = Form(""),
-                            Lat_Zocalo: str = Form(""), username: str = Depends(get_current_username)):
+                            Lat_Zocalo: str = Form(""), username: str = Depends(check_admin_access)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1186,7 +1351,7 @@ async def admvalueslatagsuv(request: Request,
 # Reporte de Valores de Partes Traseras
 ##############################################################
 @app.get("/admreptra", response_class=HTMLResponse)
-async def admreptra(request: Request):
+async def admreptra(request: Request, admin: str = Depends(verify_admin_page)):
     context = {
         "request": request,
         "Baul_Porton": "Baul Portón",   "Baul_Porton_Val": 0.0,
@@ -1215,7 +1380,7 @@ async def admreptra(request: Request):
 @app.post("/admvaluestra", response_class=PlainTextResponse)
 async def admvaluestra(Baul_Porton: str = Form(""), Faro_Ext: str = Form(""), Faro_Int: str = Form(""),
                        Guardabarro: str = Form(""), Luneta: str = Form(""),   Moldura: str = Form(""),
-                       Panel_Cola: str = Form(""),  Paragolpe: str = Form(""), username: str = Depends(get_current_username)):
+                       Panel_Cola: str = Form(""),  Paragolpe: str = Form(""), username: str = Depends(check_admin_access)):
 
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1243,7 +1408,7 @@ async def admvaluestra(Baul_Porton: str = Form(""), Faro_Ext: str = Form(""), Fa
     return bfMsg
 ######################################################
 @app.get("/admreptrasuv", response_class=HTMLResponse)
-async def admreptrasuv(request: Request):
+async def admreptrasuv(request: Request, admin: str = Depends(verify_admin_page)):
     context = {
         "request": request,
         "Baul_Porton": "Baul Portón",   "Baul_Porton_Val": 0.0,
@@ -1272,7 +1437,7 @@ async def admreptrasuv(request: Request):
 @app.post("/admvaluestrasuv", response_class=PlainTextResponse)
 async def admvaluestrasuv(Baul_Porton: str = Form(""), Faro_Ext: str = Form(""), Faro_Int: str = Form(""),
                           Guardabarro: str = Form(""), Luneta: str = Form(""),   Moldura: str = Form(""),
-                          Panel_Cola: str = Form(""),  Paragolpe: str = Form(""), username: str = Depends(get_current_username)):
+                          Panel_Cola: str = Form(""),  Paragolpe: str = Form(""), username: str = Depends(check_admin_access)):
 
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1300,7 +1465,7 @@ async def admvaluestrasuv(Baul_Porton: str = Form(""), Faro_Ext: str = Form(""),
     return bfMsg
 #####################################################
 @app.get("/admreptraag", response_class=HTMLResponse)
-async def admreptraag(request: Request):
+async def admreptraag(request: Request, admin: str = Depends(verify_admin_page)):
     context = {
         "request": request,
         "Baul_Porton": "Baul Portón",   "Baul_Porton_Val": 0.0,
@@ -1329,7 +1494,7 @@ async def admreptraag(request: Request):
 @app.post("/admvaluestraag", response_class=PlainTextResponse)
 async def admvaluestraag(Baul_Porton: str = Form(""), Faro_Ext: str = Form(""), Faro_Int: str = Form(""),
                          Guardabarro: str = Form(""), Luneta: str = Form(""),   Moldura: str = Form(""),
-                         Panel_Cola: str = Form(""),  Paragolpe: str = Form(""), username: str = Depends(get_current_username)):
+                         Panel_Cola: str = Form(""),  Paragolpe: str = Form(""), username: str = Depends(check_admin_access)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1357,7 +1522,7 @@ async def admvaluestraag(Baul_Porton: str = Form(""), Faro_Ext: str = Form(""), 
     return bfMsg
 #######################################################
 @app.get("/admreptraagsuv", response_class=HTMLResponse)
-async def admreptraagsuv(request: Request):
+async def admreptraagsuv(request: Request, admin: str = Depends(verify_admin_page)):
     context = {
         "request": request,
         "Baul_Porton": "Baul Portón",   "Baul_Porton_Val": 0.0,
@@ -1386,7 +1551,7 @@ async def admreptraagsuv(request: Request):
 @app.post("/admvaluestraagsuv", response_class=PlainTextResponse)
 async def admvaluestraagsuv(Baul_Porton: str = Form(""), Faro_Ext: str = Form(""), Faro_Int: str = Form(""),
                             Guardabarro: str = Form(""), Luneta: str = Form(""),   Moldura: str = Form(""),
-                            Panel_Cola: str = Form(""),  Paragolpe: str = Form(""), username: str = Depends(get_current_username)):
+                            Panel_Cola: str = Form(""),  Paragolpe: str = Form(""), username: str = Depends(check_admin_access)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1417,7 +1582,7 @@ async def admvaluestraagsuv(Baul_Porton: str = Form(""), Faro_Ext: str = Form(""
 # Reporte de Valores de Partes Delanteras
 ######################################################
 @app.get("/admrepdel", response_class=HTMLResponse)
-async def admrepdel(request: Request):
+async def admrepdel(request: Request, admin: str = Depends(verify_admin_page)):
     context = {
         "request": request,
         "Paragolpe_Ctro":    "Paragolpe Centro",    "Paragolpe_Ctro_Val": 0.0,
@@ -1457,7 +1622,7 @@ async def admvaluesdel(Paragolpe_Ctro: str = Form(""),   Paragolpe_Rejilla: str 
                        Frente: str = Form(""),           Guardabarro: str = Form(""),
                        Faro: str = Form(""),             Faro_Auxiliar: str = Form(""),
                        Farito: str = Form(""),           Capot: str = Form(""),
-                       Parabrisas: str = Form(""), username: str = Depends(get_current_username)):
+                       Parabrisas: str = Form(""), username: str = Depends(check_admin_access)):
 
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1488,7 +1653,7 @@ async def admvaluesdel(Paragolpe_Ctro: str = Form(""),   Paragolpe_Rejilla: str 
     return bfMsg
 ######################################################
 @app.get("/admrepdelsuv", response_class=HTMLResponse)
-async def admrepdelsuv(request: Request):
+async def admrepdelsuv(request: Request, admin: str = Depends(verify_admin_page)):
     context = {
         "request": request,
         "Paragolpe_Ctro":    "Paragolpe Centro",    "Paragolpe_Ctro_Val": 0.0,
@@ -1528,7 +1693,7 @@ async def admvaluesdelsuv(Paragolpe_Ctro: str = Form(""),   Paragolpe_Rejilla: s
                           Frente: str = Form(""),           Guardabarro: str = Form(""),
                           Faro: str = Form(""),             Faro_Auxiliar: str = Form(""),
                           Farito: str = Form(""),           Capot: str = Form(""),
-                          Parabrisas: str = Form(""), username: str = Depends(get_current_username)):
+                          Parabrisas: str = Form(""), username: str = Depends(check_admin_access)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1559,7 +1724,7 @@ async def admvaluesdelsuv(Paragolpe_Ctro: str = Form(""),   Paragolpe_Rejilla: s
     return bfMsg
 #####################################################
 @app.get("/admrepdelag", response_class=HTMLResponse)
-async def admrepdelag(request: Request):
+async def admrepdelag(request: Request, admin: str = Depends(verify_admin_page)):
     context = {
         "request": request,
         "Paragolpe_Ctro":    "Paragolpe Centro",    "Paragolpe_Ctro_Val": 0.0,
@@ -1599,7 +1764,7 @@ async def admvaluesdelag(Paragolpe_Ctro: str = Form(""),   Paragolpe_Rejilla: st
                          Frente: str = Form(""),           Guardabarro: str = Form(""),
                          Faro: str = Form(""),             Faro_Auxiliar: str = Form(""),
                          Farito: str = Form(""),           Capot: str = Form(""),
-                         Parabrisas: str = Form(""), username: str = Depends(get_current_username)):
+                         Parabrisas: str = Form(""), username: str = Depends(check_admin_access)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1630,7 +1795,7 @@ async def admvaluesdelag(Paragolpe_Ctro: str = Form(""),   Paragolpe_Rejilla: st
     return bfMsg
 #########################################################
 @app.get("/admrepdelagsuv", response_class=HTMLResponse)
-async def admrepdelagsuv(request: Request):
+async def admrepdelagsuv(request: Request, admin: str = Depends(verify_admin_page)):
     context = {
         "request": request,
         "Paragolpe_Ctro":    "Paragolpe Centro",    "Paragolpe_Ctro_Val": 0.0,
@@ -1670,7 +1835,7 @@ async def admvaluesdelagsuv(Paragolpe_Ctro: str = Form(""),   Paragolpe_Rejilla:
                             Frente: str = Form(""),           Guardabarro: str = Form(""),
                             Faro: str = Form(""),             Faro_Auxiliar: str = Form(""),
                             Farito: str = Form(""),           Capot: str = Form(""),
-                            Parabrisas: str = Form(""), username: str = Depends(get_current_username)):
+                            Parabrisas: str = Form(""), username: str = Depends(check_admin_access)):
     
     bfMsg = "Valores grabados satisfactoriamente"
     raw_updates = [
@@ -1701,12 +1866,12 @@ async def admvaluesdelagsuv(Paragolpe_Ctro: str = Form(""),   Paragolpe_Rejilla:
     return bfMsg
 #########################################################
 @app.get("/admrdel", response_class=HTMLResponse)
-async def admrepdelagsuv(request: Request):
+async def admrepdelagsuv(request: Request, admin: str = Depends(verify_admin_page)):
     context = {"request": request}
     return templates.TemplateResponse(request=request, name="admrdel.html", context=context)
 #########################################################
 @app.get("/dbread", response_class=HTMLResponse)
-async def dbRead(request: Request):
+async def dbRead(request: Request, admin: str = Depends(verify_admin_page)):
     lsResult        = []
     lsTimeStamp     = []
     lsReparaTrasero = []
@@ -1773,7 +1938,8 @@ async def guardar_formato(
     PERITO: str = Form(""),
     FECHA_HORA: str = Form(""),
     FORMATO_TXT: str = Form(""),
-    NROPRESU: str = Form("")
+    NROPRESU: str = Form(""),
+    user: str = Depends(verify_logged_in),
 ):
     # Definimos los parámetros fuera para tener control
     params = {
@@ -1802,7 +1968,7 @@ async def guardar_formato(
         return "Error al guardar"
 #########################################################
 @app.get("/historial_presupuestos", response_class=HTMLResponse)
-async def view_presupuestos_grid(request: Request):
+async def view_presupuestos_grid(request: Request, admin: str = Depends(verify_admin_page)):
     try:
         context = {
             "request": request,
@@ -1821,7 +1987,8 @@ async def get_presupuestos_data(
     perito: str = Form(""),
     fecha_desde: str = Form(""),
     fecha_hasta: str = Form(""),
-    page: int = Form(1)
+    page: int = Form(1),
+    admin: str = Depends(check_admin_access),
 ):
     limit = 10
     offset = (page - 1) * limit
@@ -1899,7 +2066,8 @@ async def api_logpresupuestos(
     busqueda: str = Form(""),
     fecha_desde: str = Form(""),
     fecha_hasta: str = Form(""),
-    page: int = Form(1)
+    page: int = Form(1),
+    admin: str = Depends(check_admin_access)
 ):
     limit = 10
     offset = (page - 1) * limit
@@ -2010,7 +2178,8 @@ async def api_logpresupuestos(
 async def export_logpresupuestos(
     busqueda: str = Form(""),
     fecha_desde: str = Form(""),
-    fecha_hasta: str = Form("")
+    fecha_hasta: str = Form(""),
+    admin: str = Depends(check_admin_access),
 ):
     where_clauses = []
     params = {}
@@ -2255,7 +2424,9 @@ async def search_Data(CLIENTE: str = Form(""),
                       VALORPERITO: str = Form(""),
                       FRENTE: str = Form(""),
                       LATERAL: str = Form(""),
-                      TRASERO: str = Form("")):
+                      TRASERO: str = Form(""),
+                      user: str = Depends(verify_logged_in),
+                      ):
     
     if CLASE == "908":
         isWrited = fnWriteLogBrief(CLIENTE,CLASE,MARCA,MODELO,SINIESTRO,PERITO,VALORPERITO)
