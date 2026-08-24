@@ -1,0 +1,185 @@
+<html>
+<head>
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link id="favicon" rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <link href='https://fonts.cdnfonts.com/css/helvetica-neue-9' rel='stylesheet' type='text/css'>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.cdnfonts.com; font-src https://fonts.gstatic.com https://fonts.cdnfonts.com;">    
+    <title>App Presupuesto - Modelos</title>
+    <style>
+        body {background-color:rgb(255,255,255);}
+        label {font-family:'helvetica neue'; font-size: 100%;}
+        .vertical-text {
+            writing-mode: horizontal-tb; 
+            transform: none;
+            text-align: center;
+            margin: 10px 0;
+        }
+        @media screen and (min-width: 48em) {
+        .vertical-text {
+                writing-mode: vertical-rl; 
+                transform: rotate(180deg);
+                display: table;
+                margin: 20px auto;
+            }
+        }
+        
+        .center-container {
+            border: none; 
+            padding: 10px;
+            max-width: 350px; 
+            margin-left: 20px;
+        }
+        .center-container fieldset {
+            border: 1px solid rgb(0,89,147);
+            border-radius: 10px;
+            padding: 20px 15px; 
+            margin-top: 1px;
+            text-align: center; 
+        }
+        
+        .center-container legend {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: rgb(0,89,147);
+            text-align: center !important; 
+            width: 100%; 
+            border-bottom: none !important; 
+            margin-bottom: 15px; 
+        }
+        
+        input[type="file"].input-file-oculto {
+            display: none !important;
+        }
+        
+        .boton-seleccionar {
+            background-color: #e0e0e0;
+            color: #333;
+            cursor: pointer;
+            padding: 8px 15px;
+            border-radius: 4px;
+            display: inline-block;
+            font-size: 0.9em;
+            transition: background-color 0.2s;
+            border: 1px solid #ccc;
+        }
+        .boton-seleccionar:hover {
+            background-color: #ccc;
+        }
+        .texto-archivo {
+            font-size: 0.75em; 
+            color: #888;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            display: block;
+            word-wrap: break-word; 
+        }
+    </style>
+</head>
+<body>
+    <div id="divContent" class="pure-g" style="text-align:center;"><div class="pure-u-*">&nbsp;</div></div>
+    
+    <div class="pure-g" style="padding-left:5px;">
+        <div class="pure-u-1 pure-u-md-7-24">
+            &nbsp;
+        </div>
+        <div class="pure-u-1 pure-u-md-7-24">
+            {% include "menu.html" %}
+        </div>
+    </div>      
+    
+    <div class="pure-g" style="padding-left:5px;">
+        <div class="pure-u-1 pure-u-md-7-24"> 
+            <img src="./img/Pos_color_RGB.jpg" alt="logo" width="128" height="128"
+                 style="margin-left:auto;margin-right:auto;display:block;"/>
+            <p>&nbsp;</p>
+            <p class="vertical-text" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color:#005993; font-size: 25px;">
+                Parámetros<br>Generales
+            </p>             
+        </div> 
+        
+        <div class="pure-u-1 pure-u-md-8-24">
+            <div class="center-container">
+                <form id="formCargarSegmentos" class="pure-form pure-form-stacked" style="margin-top: 20px;">
+                    <fieldset>
+                        <legend>Actualizar Modelos y Segmentos</legend>
+                        
+                        <div class="pure-control-group">
+                            <label for="archivoSegmentos" class="boton-seleccionar">
+                                📁 Seleccionar Archivo
+                            </label>
+                            
+                            <input type="file" id="archivoSegmentos" class="input-file-oculto" name="file" accept=".csv">
+                            
+                            <span id="nombreArchivo" class="texto-archivo">Sin archivo seleccionado</span>
+                        </div>
+                        
+                        <div class="pure-controls" style="margin-top: 10px;">
+                            <button type="submit" class="pure-button pure-button-primary" style="background-color: rgb(0,89,147); width: 100%;">Subir CSV</button>
+                            <div id="mensajeRespuesta" style="margin-top: 15px; font-family:'helvetica neue'; font-weight: bold; font-size: 0.85em;"></div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>     
+
+    <script>
+        document.getElementById('archivoSegmentos').addEventListener('change', function(e) {
+            const displayNombre = document.getElementById('nombreArchivo');
+            if (this.files && this.files.length > 0) {
+                displayNombre.textContent = this.files[0].name; 
+                displayNombre.style.color = '#333';
+            } else {
+                displayNombre.textContent = 'Sin archivo seleccionado';
+                displayNombre.style.color = '#888';
+            }
+        });
+
+        document.getElementById('formCargarSegmentos').addEventListener('submit', async function(e) {
+            e.preventDefault(); 
+            
+            const divMensaje = document.getElementById('mensajeRespuesta');
+            const inputArchivo = document.getElementById('archivoSegmentos');
+            
+            if (!inputArchivo.files || inputArchivo.files.length === 0) {
+                divMensaje.innerHTML = `<span style="color: red;">✖ Debes seleccionar un archivo primero.</span>`;
+                return;
+            }
+
+            divMensaje.innerHTML = `<span style="color: blue;">Subiendo archivo...</span>`;
+            
+            const formData = new FormData();
+            formData.append("file", inputArchivo.files[0]);
+
+            try {
+                // Aquí cambiamos la ruta para que apunte al nuevo endpoint
+                const response = await fetch('/cargar-segmentos', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    divMensaje.innerHTML = `<span style="color: green;">✔ ${data.mensaje}</span>`;
+                    inputArchivo.value = ""; 
+                    document.getElementById('nombreArchivo').textContent = 'Sin archivo seleccionado'; 
+                    document.getElementById('nombreArchivo').style.color = '#888';
+                } else {
+                    divMensaje.innerHTML = `<span style="color: red;">✖ ${data.mensaje}</span>`;
+                }
+            } catch (error) {
+                console.error("Error en la petición:", error);
+                divMensaje.innerHTML = `<span style="color: red;">✖ Error de conexión.</span>`;
+            }
+        });
+    </script>
+</body>
+</html>
