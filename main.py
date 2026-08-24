@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi import File, UploadFile
 
 from starlette.middleware.sessions import SessionMiddleware
 
@@ -14,7 +15,8 @@ import sys
 import pandas as pd
 import numpy as np
 import sqlalchemy as db
-from sqlalchemy import text, exc, create_engine 
+from sqlalchemy import text, exc, create_engine, Engine 
+from sqlalchemy.exc import SQLAlchemyError
 from functools import lru_cache
 import logging
 import os
@@ -119,14 +121,18 @@ except FileNotFoundError:
     #logger.error(f"Error: _dfVALOR_REPUESTO_ALL_V7.csv no fue encontrado.")
     logger.error(f"Error: LPM_REPUESTOS_VER11_FMT_RED.csv no fue encontrado.")
 
-#DBVALUES NO DOCKER
+#DB NO DOCKER
 cDBConnValue = os.getenv('DB_CONN_STRING', 'sqlite:///appinsbudget.sqlite3')
-#DBVALUES DOCKER
-'''
-db_conn_string = os.getenv('DB_CONN_STRING', 'sqlite:///appinsbudget.sqlite3')
-db_name = os.getenv('DB_NAME', 'dev_siniestros_lpm')
-cDBConnValue = f"postgresql://{admin_username}:{admin_password}@{db_conn_string}:5432/{db_name}"
-'''
+#DB NO DOCKER
+
+#DB DOCKER
+#db_conn_string = os.getenv('DB_CONN_STRING')
+#db_name        = os.getenv('DB_NAME')
+#admin_username = os.getenv('DB_ADMIN_USER')
+#admin_password = os.getenv('DB_ADMIN_PASS')
+#cDBConnValue = f"postgresql://{admin_username}:{admin_password}@{db_conn_string}:5432/{db_name}"
+#DB DOCKER
+
 engine = db.create_engine(cDBConnValue, pool_size=10, max_overflow=20)
 
 try:
@@ -4019,3 +4025,260 @@ def fnWriteLogBrief(CLIENTE, CLASE, MARCA, MODELO, SINIESTRO, PERITO, VALORPERIT
         logger.error(f"Error en fnWriteLogBrief: {str(e)}")
     
     return bfWrite
+
+#####################################################################
+#  CARGA DE FILES REPUESTOS Y SEGMENTOS
+#####################################################################
+@app.get("/loadrepuestos", response_class=HTMLResponse)
+async def admRepuestos(request: Request, admin: str = Depends(verify_admin_page)):
+    """
+    Renderiza la vista HTML para la carga del archivo CSV de repuestos.
+    Solo accesible para administradores.
+    """
+    context = {"request": request}
+    # Apuntamos exactamente al archivo que creaste en la carpeta templates
+    return templates.TemplateResponse(request=request, name="loadrepuestos.html", context=context)
+
+@app.post("/cargar-repuestos", response_class=JSONResponse)
+async def endpoint_cargar_repuestos(
+    request: Request,
+    file: UploadFile = File(...),
+    admin: str = Depends(check_admin_access) # Seguridad: solo administradores
+):
+    """
+    Endpoint para subir y actualizar la tabla de repuestos mediante un archivo CSV.
+    """
+    # 1. Validar la extensión del archivo
+    if not file.filename.lower().endswith('.csv'):
+        return JSONResponse(
+            status_code=400, 
+            content={"exito": False, "mensaje": "Formato incorrecto. El archivo debe ser un .csv"}
+        )
+    
+    try:
+        # 2. Leer el archivo en memoria (sin guardarlo en disco)
+        contents = await file.read()
+        
+        # 3. Cargar en Pandas usando un buffer de memoria
+        # Nota: Ajusta sep=';' o sep=',' dependiendo de cómo se genere tu CSV. 
+        # (Tu main.py usa sep=';' para el archivo LPM_REPUESTOS...)
+        df_subido = pd.read_csv(
+            io.BytesIO(contents), 
+            sep=';', 
+            encoding='utf-8',
+            decimal='.'
+        )
+        
+        # 4. Llamar a tu función de base de datos
+        # Le pasamos el 'engine' global que ya existe en tu main.py
+        resultado = cargar_datos_repuestos(df=df_subido, engine=engine, table_name='repuestos')
+        
+        # 5. Retornar la respuesta según el resultado
+        if resultado.get("exito"):
+            logger.info(f"Usuario {admin} cargó archivo de repuestos: {resultado['mensaje']}")
+            return JSONResponse(status_code=200, content=resultado)
+        else:
+            logger.warning(f"Fallo al cargar repuestos: {resultado['mensaje']}")
+            return JSONResponse(status_code=400, content=resultado)
+            
+    except pd.errors.EmptyDataError:
+        return JSONResponse(
+            status_code=400, 
+            content={"exito": False, "mensaje": "El archivo CSV está completamente vacío."}
+        )
+    except Exception as e:
+        logger.error(f"Error crítico procesando el archivo CSV: {e}")
+        return JSONResponse(
+            status_code=500, 
+            content={"exito": False, "mensaje": f"Error interno del servidor: {str(e)}"}
+        )
+
+def cargar_datos_repuestos(df: pd.DataFrame, engine: Engine, table_name: str) -> dict:
+    # 1. Seguridad de tabla
+    if not table_name.isidentifier():
+        return {"exito": False, "mensaje": "Error: Nombre de tabla inválido."}
+
+    # 2. Validación de DataFrame
+    if df is None or df.empty:
+        return {"exito": False, "mensaje": "Error: El archivo subido está vacío."}
+
+    df.columns = df.columns.str.lower()
+    
+    columnas_requeridas = [
+        'cod_vehiculo', 'cod_parte', 'cod_elem_red', 
+        'cod_elemento', 'elemento', 'precio', 'faro_int_ext'
+    ]
+    
+    # 3. Validación de columnas
+    columnas_faltantes = [col for col in columnas_requeridas if col not in df.columns]
+    if columnas_faltantes:
+        return {"exito": False, "mensaje": f"Faltan columnas: {', '.join(columnas_faltantes)}"}
+
+    df_clean = df[columnas_requeridas].copy()
+
+    # 4. Prevención de nulos
+    nulos = df_clean['cod_elemento'].isnull().sum()
+    if nulos > 0:
+        return {"exito": False, "mensaje": f"La columna 'cod_elemento' tiene {nulos} filas vacías."}
+
+    # 5. Inserción con el Engine global de tu main.py
+    try:
+        with engine.begin() as connection:
+            connection.execute(text(f"DELETE FROM {table_name}"))
+            df_clean.to_sql(
+                name=table_name, 
+                con=connection, 
+                if_exists='append', 
+                index=False,
+                chunksize=10000
+            )
+        return {"exito": True, "mensaje": f"Se actualizaron {len(df_clean)} registros."}
+
+    except SQLAlchemyError as db_error:
+        error_original = str(db_error.__dict__.get('orig', db_error))
+        return {"exito": False, "mensaje": f"Error crítico (Rollback ejecutado):\n{error_original}"}
+    except Exception as e:
+        return {"exito": False, "mensaje": f"Error inesperado:\n{str(e)}"}
+
+
+# ==============================================================
+# ENDPOINTS PARA CARGA DE SEGMENTOS/MODELOS
+# ==============================================================
+
+@app.get("/loadsegmentos", response_class=HTMLResponse)
+async def loadSegmentos(request: Request, admin: str = Depends(verify_admin_page)):
+    """
+    Renderiza la vista HTML para la carga del archivo CSV de marcas y modelos.
+    """
+    context = {"request": request}
+    return templates.TemplateResponse(request=request, name="loadsegmentos.html", context=context)
+
+@app.post("/cargar-segmentos", response_class=JSONResponse)
+async def endpoint_cargar_segmentos(
+    request: Request,
+    file: UploadFile = File(...),
+    admin: str = Depends(check_admin_access)
+):
+    """
+    Endpoint para subir y actualizar la tabla clasemarcamodelo.
+    """
+    if not file.filename.lower().endswith('.csv'):
+        return JSONResponse(
+            status_code=400, 
+            content={"exito": False, "mensaje": "Formato incorrecto. El archivo debe ser un .csv"}
+        )
+    
+    try:
+        contents = await file.read()
+        df_subido = pd.read_csv(
+            io.BytesIO(contents), 
+            sep=';', 
+            encoding='utf-8',
+            decimal='.'
+        )
+        
+        # Invocamos la función con el engine global
+        resultado = cargar_datos_clasemarcamodelo(df=df_subido, engine=engine)
+        
+        if resultado.get("exito"):
+            logger.info(f"Usuario {admin} cargó archivo de segmentos: {resultado['mensaje']}")
+            return JSONResponse(status_code=200, content=resultado)
+        else:
+            logger.warning(f"Fallo al cargar segmentos: {resultado['mensaje']}")
+            return JSONResponse(status_code=400, content=resultado)
+            
+    except pd.errors.EmptyDataError:
+        return JSONResponse(
+            status_code=400, 
+            content={"exito": False, "mensaje": "El archivo CSV está completamente vacío."}
+        )
+    except Exception as e:
+        logger.error(f"Error crítico procesando el archivo CSV de segmentos: {e}")
+        return JSONResponse(
+            status_code=500, 
+            content={"exito": False, "mensaje": f"Error interno del servidor: {str(e)}"}
+        )
+
+def cargar_datos_clasemarcamodelo(df: pd.DataFrame, engine: Engine, table_name: str = "clasemarcamodelo") -> dict:
+    """
+    Carga datos desde un DataFrame a la tabla clasemarcamodelo.
+    Retorna un diccionario con el resultado para mostrar en el frontend.
+    """
+    # 1. Seguridad básica del nombre de la tabla
+    if not table_name.isidentifier():
+        return {"exito": False, "mensaje": "Error: Nombre de tabla inválido o no permitido."}
+
+    # 2. Validación de archivo vacío y ESTANDARIZACIÓN
+    if df is None or df.empty:
+        return {"exito": False, "mensaje": "Error: El archivo subido está vacío o no contiene datos."}
+
+    # NORMALIZACIÓN: Convertir todas las cabeceras del CSV a minúsculas para evitar errores
+    df.columns = df.columns.str.lower()
+
+    # Columnas extraídas exactamente de tu INSERT SQL
+    columnas_requeridas = [
+        'cyc_cod_marca', 'cyc_desc_marca', 'cyc_cod_modelo', 
+        'cyc_desc_modelo', 'cyc_cod_vehiculo', 'cyc_desc_version', 
+        'desc_cod_clase_vehic_poliza', 'segmento', 'gama'
+    ]
+    
+    # 3. Validación de estructura del archivo
+    columnas_faltantes = [col for col in columnas_requeridas if col not in df.columns]
+    if columnas_faltantes:
+        return {
+            "exito": False, 
+            "mensaje": f"Error de formato: Faltan estas columnas en el archivo: {', '.join(columnas_faltantes)}"
+        }
+
+    # Filtramos para enviar solo la información útil a la BD
+    df_clean = df[columnas_requeridas].copy()
+
+    # 4. Prevención de nulos en columnas críticas (NOT NULL)
+    columnas_obligatorias = ['cyc_cod_vehiculo', 'cyc_cod_marca', 'cyc_cod_modelo']
+    for col in columnas_obligatorias:
+        nulos = df_clean[col].isnull().sum()
+        if nulos > 0:
+            return {
+                "exito": False,
+                "mensaje": f"Error de datos: La columna '{col}' tiene {nulos} filas vacías y es un dato obligatorio."
+            }
+
+    # 5. Conexión y Transacción usando el engine global
+    try:
+        with engine.begin() as connection:
+            # Borrado seguro e inserción en bloques
+            connection.execute(text(f"DELETE FROM {table_name}"))
+            
+            df_clean.to_sql(
+                name=table_name, 
+                con=connection, 
+                if_exists='append', 
+                index=False,
+                chunksize=10000
+            )
+            
+        return {
+            "exito": True, 
+            "mensaje": f"Se actualizaron {len(df_clean)} registros."
+        }
+
+    # 6. Captura de errores crudos para que el usuario pueda copiarlos
+    except SQLAlchemyError as db_error:
+        error_original = str(db_error.__dict__.get('orig', db_error))
+        return {
+            "exito": False, 
+            "mensaje": (
+                "Error crítico al guardar en la base de datos (Se deshicieron los cambios).\n"
+                "Por favor, copia este error y repórtalo:\n\n"
+                f"{error_original}"
+            )
+        }
+    except Exception as e:
+        return {
+            "exito": False, 
+            "mensaje": (
+                "Ocurrió un error inesperado al procesar el archivo.\n"
+                "Por favor, copia este error y repórtalo:\n\n"
+                f"{str(e)}"
+            )
+        }    
