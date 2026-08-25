@@ -113,6 +113,7 @@ def verify_admin_page(request: Request):
         raise RequiresLoginException()
     return request.session.get("usuario")
 
+'''
 try:
     dfVALOR_REPUESTO_MO_Unif = pd.read_csv('./data/LPM_REPUESTOS_VER11_FMT_RED.csv',sep=';',encoding='utf-8',decimal='.',
                                 dtype = {'cod_vehiculo':'int32','cod_parte':'int8','cod_elem_red':'int16',
@@ -120,6 +121,7 @@ try:
 except FileNotFoundError:
     #logger.error(f"Error: _dfVALOR_REPUESTO_ALL_V7.csv no fue encontrado.")
     logger.error(f"Error: LPM_REPUESTOS_VER11_FMT_RED.csv no fue encontrado.")
+'''
 
 #DB NO DOCKER
 cDBConnValue = os.getenv('DB_CONN_STRING', 'sqlite:///appinsbudget.sqlite3')
@@ -3078,13 +3080,27 @@ def fnGetTraseroElems(iClaseLc, iMarcaLc, iModeloLc, iVersion, lsTraseroLc):
 
 def fnHasPorton(iVersion):
     blPorton = False
+    '''
     bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == iVersion) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == 2) & 
                             ~(dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains('MOLD',case=False,regex=True)) & 
             (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains("TAPA BAUL",case=False,regex=True))][['elemento']]
-    
-    if len(bfID_ELEM) == 0: blPorton = True
-
+    if len(bfID_ELEM) == 0: blPorton = True        
+    '''
+    try:
+        with engine.connect() as conn:
+            sql = text("""
+                SELECT elemento 
+                FROM repuestos 
+                WHERE cod_vehiculo = :version 
+                  AND cod_parte = 2 
+                  AND LOWER(elemento) NOT LIKE '%mold%' 
+                  AND LOWER(elemento) LIKE '%tapa baul%'
+                """)
+            bfID_ELEM = pd.read_sql(sql, conn, params={"version": iVersion})
+            if len(bfID_ELEM) == 0: blPorton = True
+    except Exception as e:
+        logger.error(f"fnHasPorton: " + str(e))    
     return blPorton
 
 ###TRASERO##########################################################################################
@@ -3159,11 +3175,36 @@ def fnCambiaTrasero(inCOD_VERSION,lsRepone,isAlta):
             inCOD_ELEMRED = 16005
             itemRed = "PARAGOLPE / CTRO"
 
+        '''
         bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                                  (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                                  (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                        ~(dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains('MOLD',case=False,regex=True)) & 
                            (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['elemento','precio']]
+        '''
+        try:
+            with engine.connect() as conn:
+                sql = text("""
+                    SELECT elemento, precio 
+                    FROM repuestos 
+                    WHERE cod_vehiculo = :version 
+                    AND cod_elem_red = :elem_red 
+                    AND cod_parte = :parte 
+                    AND LOWER(elemento) NOT LIKE '%mold%' 
+                    AND LOWER(elemento) LIKE :item_red
+                """)
+                
+                item_red_like = f"%{str(itemRed).lower()}%"
+                
+                params = {
+                    "version": inCOD_VERSION,
+                    "elem_red": inCOD_ELEMRED,
+                    "parte": inCOD_PARTE,
+                    "item_red": item_red_like
+                }
+                bfID_ELEM = pd.read_sql(sql, conn, params=params)
+        except Exception as e:
+            logger.error(f"Error en consulta de repuesto (itemRed): " + str(e))
         
         flAverage = np.round(bfID_ELEM['precio'].mean(),2)
         if pd.isna(flAverage):
@@ -3263,10 +3304,33 @@ def fnMolduraTrasero(inCOD_VERSION,isAlta):
     itemRed = "TAPA BAUL / PORTON MOLD CTRO"
     lsReponeAve = []
     flAverage   = 0
+    '''
     bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
+    '''
+    try:
+        with engine.connect() as conn:
+            sql = text("""
+                SELECT precio 
+                FROM repuestos 
+                WHERE cod_vehiculo = :version 
+                AND cod_elem_red = :elem_red 
+                AND cod_parte = :parte 
+                AND LOWER(elemento) LIKE :item_red
+            """)
+            item_red_like = f"%{str(itemRed).lower()}%"
+            
+            params = {
+                "version": inCOD_VERSION,
+                "elem_red": inCOD_ELEMRED,
+                "parte": inCOD_PARTE,
+                "item_red": item_red_like
+            }
+            bfID_ELEM = pd.read_sql(sql, conn, params=params)
+    except Exception as e:
+        logger.error(f"Error en consulta de precio (itemRed): " + str(e))
     
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
@@ -3282,10 +3346,37 @@ def fnFaroExtTrasero(inCOD_VERSION,isAlta):
     itemRed = "FARO DER"
     lsReponeAve = []
     flAverage   = 0
+    '''
     bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
+    '''
+    try:
+        with engine.connect() as conn:
+            sql = text("""
+                SELECT precio 
+                FROM repuestos 
+                WHERE cod_vehiculo = :version 
+                AND cod_elem_red = :elem_red 
+                AND cod_parte = :parte 
+                AND LOWER(elemento) LIKE :item_red
+            """)
+            
+            item_red_like = f"%{str(itemRed).lower()}%"
+            
+            params = {
+                "version": inCOD_VERSION,
+                "elem_red": inCOD_ELEMRED,
+                "parte": inCOD_PARTE,
+                "item_red": item_red_like
+            }
+            
+            bfID_ELEM = pd.read_sql(sql, conn, params=params)
+            
+    except Exception as e:
+        logger.error(f"Error al consultar precio de repuesto: " + str(e))    
+    
     
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
@@ -3301,10 +3392,36 @@ def fnFaroIntTrasero(inCOD_VERSION,isAlta):
     itemRed = "FARO DER"
     lsReponeAve = []
     flAverage   = 0
+    '''
     bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
+    '''
+    try:
+        with engine.connect() as conn:
+            sql = text("""
+                SELECT precio 
+                FROM repuestos 
+                WHERE cod_vehiculo = :version 
+                AND cod_elem_red = :elem_red 
+                AND cod_parte = :parte 
+                AND LOWER(elemento) LIKE :item_red
+            """)
+            
+            item_red_like = f"%{str(itemRed).lower()}%"
+            
+            params = {
+                "version": inCOD_VERSION,
+                "elem_red": inCOD_ELEMRED,
+                "parte": inCOD_PARTE,
+                "item_red": item_red_like
+            }
+            
+            bfID_ELEM = pd.read_sql(sql, conn, params=params)
+            
+    except Exception as e:
+        logger.error(f"Error al consultar precio: " + str(e))
     
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
@@ -3381,11 +3498,34 @@ def fnCambiaFrente(inCOD_VERSION,lsRepone,isAlta):
         elif item=="PARAGOLPE_CTRO":
             inCOD_ELEMRED = 16005
             itemRed = "PARAGOLPE / CTRO"
-
+        '''
         bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                                  (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                                  (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                     (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
+        '''
+        try:
+            with engine.connect() as conn:
+                sql = text("""
+                    SELECT precio 
+                    FROM repuestos 
+                    WHERE cod_vehiculo = :version 
+                    AND cod_elem_red = :elem_red 
+                    AND cod_parte = :parte 
+                    AND LOWER(elemento) LIKE :item_red
+                """)
+                
+                params = {
+                    "version": inCOD_VERSION,
+                    "elem_red": inCOD_ELEMRED,
+                    "parte": inCOD_PARTE,
+                    "item_red": f"%{str(itemRed).lower()}%"
+                }
+                
+                bfID_ELEM = pd.read_sql(sql, conn, params=params)
+                
+        except Exception as e:
+            logger.error(f"Error al consultar precio: " + str(e))
         
         flAverage = np.round(bfID_ELEM['precio'].mean(),2)
         if pd.isna(flAverage):
@@ -3485,10 +3625,34 @@ def fnParabrisas(inCOD_VERSION,isAlta):
     itemRed = "PARABRISAS"
     lsReponeAve = []
     flAverage   = 0
+    '''
     bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
+    '''
+    try:
+        with engine.connect() as conn:
+            sql = text("""
+                SELECT precio 
+                FROM repuestos 
+                WHERE cod_vehiculo = :version 
+                AND cod_elem_red = :elem_red 
+                AND cod_parte = :parte 
+                AND LOWER(elemento) LIKE :item_red
+            """)
+            
+            params = {
+                "version": inCOD_VERSION,
+                "elem_red": inCOD_ELEMRED,
+                "parte": inCOD_PARTE,
+                "item_red": f"%{str(itemRed).lower()}%"
+            }
+            
+            bfID_ELEM = pd.read_sql(sql, conn, params=params)
+            
+    except Exception as e:
+        logger.error(f"Error al consultar precio: " + str(e))    
     
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
@@ -3504,12 +3668,38 @@ def fnParagolpe_Rejilla(inCOD_VERSION,isAlta):
     itemRed = "PARAGOLPE REJILLA CENTRAL"
     lsReponeAve = []
     flAverage   = 0
+    '''
     bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                ~(dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains('MARCO',case=False,regex=True)) &
                                ~(dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains('MOLD',case=False,regex=True)) &              
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
+    '''
+    try:
+        with engine.connect() as conn:
+            sql = text("""
+                SELECT precio 
+                FROM repuestos 
+                WHERE cod_vehiculo = :version 
+                AND cod_elem_red = :elem_red 
+                AND cod_parte = :parte 
+                AND LOWER(elemento) NOT LIKE '%marco%'
+                AND LOWER(elemento) NOT LIKE '%mold%'
+                AND LOWER(elemento) LIKE :item_red
+            """)
+            
+            params = {
+                "version": inCOD_VERSION,
+                "elem_red": inCOD_ELEMRED,
+                "parte": inCOD_PARTE,
+                "item_red": f"%{str(itemRed).lower()}%"
+            }
+            
+            bfID_ELEM = pd.read_sql(sql, conn, params=params)
+            
+    except Exception as e:
+        logger.error(f"Error al consultar precio: " + str(e))    
     
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
@@ -3526,6 +3716,7 @@ def fnRejilla_Radiador(inCOD_VERSION,isAlta):
     itemRed = "REJILLA RADIADOR"
     lsReponeAve = []
     flAverage   = 0
+    '''
     bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
@@ -3533,6 +3724,32 @@ def fnRejilla_Radiador(inCOD_VERSION,isAlta):
                                ~(dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains('DER',case=False,regex=True)) &
                                ~(dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains('IZQ',case=False,regex=True)) &                                                
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
+    '''
+    try:
+        with engine.connect() as conn:
+            sql = text("""
+                SELECT precio 
+                FROM repuestos 
+                WHERE cod_vehiculo = :version 
+                AND cod_elem_red = :elem_red 
+                AND cod_parte = :parte 
+                AND LOWER(elemento) NOT LIKE '%marco%'
+                AND LOWER(elemento) NOT LIKE '%der%'
+                AND LOWER(elemento) NOT LIKE '%izq%'
+                AND LOWER(elemento) LIKE :item_red
+            """)
+            
+            params = {
+                "version": inCOD_VERSION,
+                "elem_red": inCOD_ELEMRED,
+                "parte": inCOD_PARTE,
+                "item_red": f"%{str(itemRed).lower()}%"
+            }
+            
+            bfID_ELEM = pd.read_sql(sql, conn, params=params)
+            
+    except Exception as e:
+        logger.error(f"Error al consultar precio: " + str(e))   
     
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
@@ -3549,10 +3766,34 @@ def fnFaroFrente(inCOD_VERSION,isAlta):
     itemRed = "FARO DER"
     lsReponeAve = []
     flAverage   = 0
+    '''
     bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
+    '''
+    try:
+        with engine.connect() as conn:
+            sql = text("""
+                SELECT precio 
+                FROM repuestos 
+                WHERE cod_vehiculo = :version 
+                AND cod_elem_red = :elem_red 
+                AND cod_parte = :parte 
+                AND LOWER(elemento) LIKE :item_red
+            """)
+            
+            params = {
+                "version": inCOD_VERSION,
+                "elem_red": inCOD_ELEMRED,
+                "parte": inCOD_PARTE,
+                "item_red": f"%{str(itemRed).lower()}%"
+            }
+            
+            bfID_ELEM = pd.read_sql(sql, conn, params=params)
+            
+    except Exception as e:
+        logger.error(f"Error al consultar precio: " + str(e))    
     
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
@@ -3568,10 +3809,34 @@ def fnFaroAuxiliarFrente(inCOD_VERSION,isAlta):
     itemRed = "FARO AUXILIAR DER"
     lsReponeAve = []
     flAverage   = 0
+    '''
     bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
+    '''
+    try:
+        with engine.connect() as conn:
+            sql = text("""
+                SELECT precio 
+                FROM repuestos 
+                WHERE cod_vehiculo = :version 
+                AND cod_elem_red = :elem_red 
+                AND cod_parte = :parte 
+                AND LOWER(elemento) LIKE :item_red
+            """)
+            
+            params = {
+                "version": inCOD_VERSION,
+                "elem_red": inCOD_ELEMRED,
+                "parte": inCOD_PARTE,
+                "item_red": f"%{str(itemRed).lower()}%"
+            }
+            
+            bfID_ELEM = pd.read_sql(sql, conn, params=params)
+            
+    except Exception as e:
+        logger.error(f"Error al consultar precio: " + str(e))    
     
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
@@ -3587,10 +3852,34 @@ def fnFaritoFrente(inCOD_VERSION,isAlta):
     itemRed = "FARITO DER"
     lsReponeAve = []
     flAverage   = 0
+    '''
     bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
+    '''
+    try:
+        with engine.connect() as conn:
+            sql = text("""
+                SELECT precio 
+                FROM repuestos 
+                WHERE cod_vehiculo = :version 
+                AND cod_elem_red = :elem_red 
+                AND cod_parte = :parte 
+                AND LOWER(elemento) LIKE :item_red
+            """)
+            
+            params = {
+                "version": inCOD_VERSION,
+                "elem_red": inCOD_ELEMRED,
+                "parte": inCOD_PARTE,
+                "item_red": f"%{str(itemRed).lower()}%"
+            }
+            
+            bfID_ELEM = pd.read_sql(sql, conn, params=params)
+            
+    except Exception as e:
+        logger.error(f"Error al consultar precio: " + str(e))    
     
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
@@ -3658,7 +3947,7 @@ def fnCambiaLateral(inCOD_VERSION,lsRepone,isAlta):
         elif item=="ZOCALO":
             inCOD_ELEMRED = 26001
             itemRed = "ZOCALO"
-
+        '''
         bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                                  (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                                  (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
@@ -3667,6 +3956,34 @@ def fnCambiaLateral(inCOD_VERSION,lsRepone,isAlta):
                                    ~(dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains('MOLD',case=False,regex=True)) &   
                                    ~(dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains('MANIJA',case=False,regex=True)) &                           
                                     (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
+        '''
+
+        try:
+            with engine.connect() as conn:
+                sql = text("""
+                    SELECT precio 
+                    FROM repuestos 
+                    WHERE cod_vehiculo = :version 
+                    AND cod_elem_red = :elem_red 
+                    AND cod_parte = :parte 
+                    AND LOWER(elemento) NOT LIKE '%cristal%'
+                    AND LOWER(elemento) NOT LIKE '%espejo%'
+                    AND LOWER(elemento) NOT LIKE '%mold%'
+                    AND LOWER(elemento) NOT LIKE '%manija%'
+                    AND LOWER(elemento) LIKE :item_red
+                """)
+                
+                params = {
+                    "version": inCOD_VERSION,
+                    "elem_red": inCOD_ELEMRED,
+                    "parte": inCOD_PARTE,
+                    "item_red": f"%{str(itemRed).lower()}%"
+                }
+                
+                bfID_ELEM = pd.read_sql(sql, conn, params=params)
+                
+        except Exception as e:
+            logger.error(f"Error al consultar precio: " + str(e))
         
         flAverage = np.round(bfID_ELEM['precio'].mean(),2)
         if pd.isna(flAverage):
@@ -3765,11 +4082,35 @@ def fnEspejoLateralElec(inCOD_VERSION,isAlta):
     itemRed = "PUERTA DEL ESPEJO ELECTRICO"
     lsReponeAve = []
     flAverage   = 0
+    '''
     bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
-    
+    '''
+    try:
+        with engine.connect() as conn:
+            sql = text("""
+                SELECT precio 
+                FROM repuestos 
+                WHERE cod_vehiculo = :version 
+                AND cod_elem_red = :elem_red 
+                AND cod_parte = :parte 
+                AND LOWER(elemento) LIKE :item_red
+            """)
+            
+            params = {
+                "version": inCOD_VERSION,
+                "elem_red": inCOD_ELEMRED,
+                "parte": inCOD_PARTE,
+                "item_red": f"%{str(itemRed).lower()}%"
+            }
+            
+            bfID_ELEM = pd.read_sql(sql, conn, params=params)
+            
+    except Exception as e:
+        logger.error(f"Error al consultar precio: " + str(e))
+   
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
         if isAlta: flAverage = paramal.bfLat_Espejo_Electrico 
@@ -3784,11 +4125,35 @@ def fnEspejoLateralMan(inCOD_VERSION,isAlta):
     itemRed = "PUERTA DEL ESPEJO MANUAL C/ CONTROL"
     lsReponeAve = []
     flAverage   = 0
+    '''
     bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
-    
+    '''
+    try:
+        with engine.connect() as conn:
+            sql = text("""
+                SELECT precio 
+                FROM repuestos 
+                WHERE cod_vehiculo = :version 
+                AND cod_elem_red = :elem_red 
+                AND cod_parte = :parte 
+                AND LOWER(elemento) LIKE :item_red
+            """)
+            
+            params = {
+                "version": inCOD_VERSION,
+                "elem_red": inCOD_ELEMRED,
+                "parte": inCOD_PARTE,
+                "item_red": f"%{str(itemRed).lower()}%"
+            }
+            
+            bfID_ELEM = pd.read_sql(sql, conn, params=params)
+            
+    except Exception as e:
+        logger.error(f"Error al consultar precio: " + str(e))
+        
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
         if isAlta: flAverage = paramal.bfLat_Espejo_Manual 
@@ -3803,10 +4168,34 @@ def fnManijaLateralDel(inCOD_VERSION,isAlta):
     itemRed = "PUERTA DEL MANIJA EXT"
     lsReponeAve = []
     flAverage   = 0
+    '''
     bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
+    '''
+    try:
+        with engine.connect() as conn:
+            sql = text("""
+                SELECT precio 
+                FROM repuestos 
+                WHERE cod_vehiculo = :version 
+                AND cod_elem_red = :elem_red 
+                AND cod_parte = :parte 
+                AND LOWER(elemento) LIKE :item_red
+            """)
+            
+            params = {
+                "version": inCOD_VERSION,
+                "elem_red": inCOD_ELEMRED,
+                "parte": inCOD_PARTE,
+                "item_red": f"%{str(itemRed).lower()}%"
+            }
+            
+            bfID_ELEM = pd.read_sql(sql, conn, params=params)
+            
+    except Exception as e:
+        logger.error(f"Error al consultar precio: " + str(e))   
     
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
@@ -3822,10 +4211,34 @@ def fnManijaLateralTra(inCOD_VERSION,isAlta):
     itemRed = "PUERTA TRAS MANIJA EXT"
     lsReponeAve = []
     flAverage   = 0
+    '''
     bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
+    '''
+    try:
+        with engine.connect() as conn:
+            sql = text("""
+                SELECT precio 
+                FROM repuestos 
+                WHERE cod_vehiculo = :version 
+                AND cod_elem_red = :elem_red 
+                AND cod_parte = :parte 
+                AND LOWER(elemento) LIKE :item_red
+            """)
+            
+            params = {
+                "version": inCOD_VERSION,
+                "elem_red": inCOD_ELEMRED,
+                "parte": inCOD_PARTE,
+                "item_red": f"%{str(itemRed).lower()}%"
+            }
+            
+            bfID_ELEM = pd.read_sql(sql, conn, params=params)
+            
+    except Exception as e:
+        logger.error(f"Error al consultar precio: " + str(e))    
     
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
@@ -3841,11 +4254,35 @@ def fnMolduraLateralDel(inCOD_VERSION,isAlta):
     itemRed = "PUERTA DEL MOLD MEDIA"
     lsReponeAve = []
     flAverage   = 0
+    '''
     bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
-    
+    '''
+    try:
+        with engine.connect() as conn:
+            sql = text("""
+                SELECT precio 
+                FROM repuestos 
+                WHERE cod_vehiculo = :version 
+                AND cod_elem_red = :elem_red 
+                AND cod_parte = :parte 
+                AND LOWER(elemento) LIKE :item_red
+            """)
+            
+            params = {
+                "version": inCOD_VERSION,
+                "elem_red": inCOD_ELEMRED,
+                "parte": inCOD_PARTE,
+                "item_red": f"%{str(itemRed).lower()}%"
+            }
+            
+            bfID_ELEM = pd.read_sql(sql, conn, params=params)
+            
+    except Exception as e:
+        logger.error(f"Error al consultar precio: " + str(e))
+
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
         if isAlta: flAverage = paramal.bfLat_Moldura_Pta_Del
@@ -3860,10 +4297,34 @@ def fnMolduraLateralTra(inCOD_VERSION,isAlta):
     itemRed = "PUERTA TRAS MOLD MEDIA"
     lsReponeAve = []
     flAverage   = 0
+    '''
     bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
+    '''
+    try:
+        with engine.connect() as conn:
+            sql = text("""
+                SELECT precio 
+                FROM repuestos 
+                WHERE cod_vehiculo = :version 
+                AND cod_elem_red = :elem_red 
+                AND cod_parte = :parte 
+                AND LOWER(elemento) LIKE :item_red
+            """)
+            
+            params = {
+                "version": inCOD_VERSION,
+                "elem_red": inCOD_ELEMRED,
+                "parte": inCOD_PARTE,
+                "item_red": f"%{str(itemRed).lower()}%"
+            }
+            
+            bfID_ELEM = pd.read_sql(sql, conn, params=params)
+            
+    except Exception as e:
+        logger.error(f"Error al consultar precio: " + str(e))    
     
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
@@ -3879,11 +4340,34 @@ def fnCristalLateralDel(inCOD_VERSION,isAlta):
     itemRed = "PUERTA DEL CRISTAL"
     lsReponeAve = []
     flAverage   = 0
+    '''
     bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
-    
+    '''
+    try:
+        with engine.connect() as conn:
+            sql = text("""
+                SELECT precio 
+                FROM repuestos 
+                WHERE cod_vehiculo = :version 
+                AND cod_elem_red = :elem_red 
+                AND cod_parte = :parte 
+                AND LOWER(elemento) LIKE :item_red
+            """)
+            
+            params = {
+                "version": inCOD_VERSION,
+                "elem_red": inCOD_ELEMRED,
+                "parte": inCOD_PARTE,
+                "item_red": f"%{str(itemRed).lower()}%"
+            }
+            
+            bfID_ELEM = pd.read_sql(sql, conn, params=params)
+            
+    except Exception as e:
+        logger.error(f"Error al consultar precio: " + str(e))    
 
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
@@ -3899,10 +4383,34 @@ def fnCristalLateralTra(inCOD_VERSION,isAlta):
     itemRed = "PUERTA TRAS CRISTAL"
     lsReponeAve = []
     flAverage   = 0
+    '''
     bfID_ELEM = dfVALOR_REPUESTO_MO_Unif.loc[(dfVALOR_REPUESTO_MO_Unif['cod_vehiculo'] == inCOD_VERSION) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_elem_red'] == inCOD_ELEMRED) &
                                              (dfVALOR_REPUESTO_MO_Unif['cod_parte'] == inCOD_PARTE) & 
                                 (dfVALOR_REPUESTO_MO_Unif['elemento'].str.contains(itemRed,case=False,regex=True))][['precio']]
+    '''
+    try:
+        with engine.connect() as conn:
+            sql = text("""
+                SELECT precio 
+                FROM repuestos 
+                WHERE cod_vehiculo = :version 
+                AND cod_elem_red = :elem_red 
+                AND cod_parte = :parte 
+                AND LOWER(elemento) LIKE :item_red
+            """)
+            
+            params = {
+                "version": inCOD_VERSION,
+                "elem_red": inCOD_ELEMRED,
+                "parte": inCOD_PARTE,
+                "item_red": f"%{str(itemRed).lower()}%"
+            }
+            
+            bfID_ELEM = pd.read_sql(sql, conn, params=params)
+            
+    except Exception as e:
+        logger.error(f"Error al consultar precio: " + str(e))    
     
     flAverage = np.round(bfID_ELEM['precio'].mean(),2)
     if pd.isna(flAverage):
