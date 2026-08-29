@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link id="favicon" rel="icon" type="image/x-icon" href="/img/favicon.ico">
     <link href='https://fonts.cdnfonts.com/css/helvetica-neue-9' rel='stylesheet' type='text/css'>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.cdnfonts.com; font-src https://fonts.gstatic.com https://fonts.cdnfonts.com;">    
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://cdn.jsdelivr.net; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.cdnfonts.com https://fonts.googleapis.com; font-src https://fonts.gstatic.com https://fonts.cdnfonts.com;">
     <title>App Presupuesto</title>
     <style>
         body {background-color:rgb(255,255,255);}
@@ -46,6 +46,20 @@
             color: rgb(0,89,147);
             width: auto;
         }
+         /* Forzar a que los recuadros incluyan el padding en su ancho total */
+        fieldset {
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        /* Forzar a que los inputs y selects no superen el límite del recuadro */
+        .pure-form input,
+        .pure-form select {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            margin-top: 5px !important;
+        }
     </style>
 </head>
 <body>
@@ -75,27 +89,27 @@
                         <div class="pure-control-group">
                             <div class="pure-control-group">
                                 <label for="stacked-Asegurado" style="color:#005993;text-align:left;">Ratio de Ajuste al Asegurado</label>
-                                <input type="text" id="stacked-Asegurado" style="min-width:343px;" value="{{ rplBfAsegurado | default('') }}" onblur="validarCampoDecimal(this)"/>
+                                <input type="text" id="stacked-Asegurado" value="{{ rplBfAsegurado | default('') }}" onblur="validarCampoDecimal(this)"/>
                             </div>
                             <div class="pure-control-group">
                                 <label for="stacked-AseguradoTercero" style="color:#005993;text-align:left;">Ratio de Ajuste al Tercero</label>
-                                <input type="text" id="stacked-Tercero" style="min-width:343px;" value="{{ rplBfTercero | default('') }}" onblur="validarCampoDecimal(this)"/>
+                                <input type="text" id="stacked-Tercero" value="{{ rplBfTercero | default('') }}" onblur="validarCampoDecimal(this)"/>
                             </div>
                             <div class="pure-control-group">
                                 <label for="stacked-Ajuste" style="color:#005993;text-align:left;">Ratio de Ajuste General</label>
-                                <input type="text" id="stacked-Ajuste" style="min-width:343px;" value="{{ rplBfAjuste | default('') }}" onblur="validarCampoDecimal(this)"/>
+                                <input type="text" id="stacked-Ajuste" value="{{ rplBfAjuste | default('') }}" onblur="validarCampoDecimal(this)"/>
                             </div>
                             <div class="pure-control-group">
                                 <label for="stacked-MObra" style="color:#005993;text-align:left;">Valor Mano de Obra General</label>
-                                <input type="text" id="stacked-MObra" style="min-width:343px;" value="{{ rplBfMObra | default('') }}" onblur="validarCampoDecimal(this)"/>
+                                <input type="text" id="stacked-MObra" value="{{ rplBfMObra | default('') }}" onblur="validarCampoDecimal(this)"/>
                             </div>
                             <div class="pure-control-group">
                                 <label for="stacked-MOMinimo" style="color:#005993;text-align:left;">Valor Mano de Obra Mínima</label>
-                                <input type="text" id="stacked-MOMinimo" style="min-width:343px;" value="{{ rplBfMOMinimo | default('') }}" onblur="validarCampoDecimal(this)"/>
+                                <input type="text" id="stacked-MOMinimo" value="{{ rplBfMOMinimo | default('') }}" onblur="validarCampoDecimal(this)"/>
                             </div>
                             <div class="pure-control-group">
                                 <label for="stacked-Pintura" style="color:#005993;text-align:left;">Valor Materiales de Pintura</label>
-                                <input type="text" id="stacked-Pintura" style="min-width:343px;" value="{{ rplBfPintura | default('') }}" onblur="validarCampoDecimal(this)"/>
+                                <input type="text" id="stacked-Pintura" value="{{ rplBfPintura | default('') }}" onblur="validarCampoDecimal(this)"/>
                             </div>
                         </div>    
                     </fieldset>

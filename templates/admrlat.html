@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link id="favicon" rel="icon" type="image/x-icon" href="/img/favicon.ico">
     <link href='https://fonts.cdnfonts.com/css/helvetica-neue-9' rel='stylesheet' type='text/css'>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.cdnfonts.com; font-src https://fonts.gstatic.com https://fonts.cdnfonts.com;">    
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://cdn.jsdelivr.net; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.cdnfonts.com https://fonts.googleapis.com; font-src https://fonts.gstatic.com https://fonts.cdnfonts.com;">
     <title>App Presupuesto</title>
     <style>
         body {background-color:rgb(255,255,255);}
@@ -66,8 +66,19 @@
             color: rgb(0,89,147);            /* Mismo color que el borde y las etiquetas */
             width: auto;               /* Necesario para que el fondo no se extienda */
         }
-        .pure-control-group input {
+        /* Controla tanto los inputs como los selects (combos) */
+        .pure-control-group input,
+        .pure-control-group select {
             width: 100%;
+            max-width: 100%;         /* Evita que desborde el recuadro */
+            box-sizing: border-box;  /* Asegura que el padding no sume ancho extra */
+            padding: 5px;            /* Le da un poco de "aire" interior al texto */
+            margin-bottom: 10px;     /* Separa un campo del siguiente */
+        }
+        
+        /* Añade un pequeño margen extra al contenedor para separar del borde derecho */
+        .pure-control-group {
+            padding-right: 15px; 
             box-sizing: border-box;
         }                
 
@@ -99,6 +110,22 @@
             -webkit-text-fill-color: #000000; /* Asegura el color en navegadores Chrome/Safari */
             background-color: #f2f2f2; /* Opcional: un fondo gris muy clarito para que el usuario entienda que está bloqueado */
         }
+
+        /* Forzar a que los recuadros incluyan el padding en su ancho total */
+        fieldset {
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        /* Forzar a que los inputs y selects no superen el límite del recuadro */
+        .pure-form input,
+        .pure-form select {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            margin-top: 5px !important;
+        }        
+
     </style>
 </head>
 <body>
@@ -131,7 +158,7 @@
                         <legend>Busqueda</legend>
                         <div class="pure-control-group">
                             <label for="clase" style="color:#005993;text-align:left;">Clase</label>
-                            <select id="clase" style="min-width:343px;">
+                            <select id="clase">
                                 <option value=0 selected></option>
                                 <option value=900>COUPE</option>
                                 <option value=901>SEDAN</option>
@@ -141,7 +168,7 @@
                         </div>
                         <div class="pure-control-group">
                             <label for="segmento" style="color:#005993;text-align:left;">Segmento</label>
-                            <select id="segmento" style="min-width:343px;" disabled>
+                            <select id="segmento" disabled>
                                 <option value=9 selected></option>
                                 <option value=1>MM1</option>
                                 <option value=2>MM2</option>
@@ -150,7 +177,7 @@
                         </div> 
                         <div class="pure-control-group">
                             <label for="tipo" style="color:#005993;text-align:left;">Tipo</label>
-                            <select id="tipo" style="min-width:343px;">
+                            <select id="tipo" >
                                 <option value=0 selected></option>
                                 <option value=1>CAMBIO</option>
                                 <option value=2>RAPARACIÓN</option>
@@ -163,15 +190,15 @@
                         <legend>Mano de Obra</legend>         
                         <div class="pure-control-group">
                             <label for="Puerta_Del_Panel_Ratio" style="color:#005993;text-align:left;">Puerta Delantera Panel</label>
-                            <input type="text" id="Puerta_Del_Panel_Ratio" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                            <input type="text" id="Puerta_Del_Panel_Ratio" value="" onblur="validarCampoDecimal(this)"/>
                         </div>
                         <div class="pure-control-group">
                             <label for="Puerta_Tras_Panel_Ratio" style="color:#005993;text-align:left;">Puerta Trasera Panel</label>
-                            <input type="text" id="Puerta_Tras_Panel_Ratio" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                            <input type="text" id="Puerta_Tras_Panel_Ratio" value="" onblur="validarCampoDecimal(this)"/>
                         </div>
                         <div class="pure-control-group">
                             <label for="Zocalo_Ratio" style="color:#005993;text-align:left;">Zocalo</label>
-                            <input type="text" id="Zocalo_Ratio" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                            <input type="text" id="Zocalo_Ratio" value="" onblur="validarCampoDecimal(this)"/>
                         </div>  
                     </fieldset>
                 </div>                 
@@ -181,15 +208,15 @@
                         <legend>Pintura</legend>         
                         <div class="pure-control-group">
                             <label for="Puerta_Del_Panel_Ratio_PT" style="color:#005993;text-align:left;">Puerta Delantera Panel</label>
-                            <input type="text" id="Puerta_Del_Panel_Ratio_PT" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                            <input type="text" id="Puerta_Del_Panel_Ratio_PT" value="" onblur="validarCampoDecimal(this)"/>
                         </div>
                         <div class="pure-control-group">
                             <label for="Puerta_Tras_Panel_Ratio_PT" style="color:#005993;text-align:left;">Puerta Trasera Panel</label>
-                            <input type="text" id="Puerta_Tras_Panel_Ratio_PT" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                            <input type="text" id="Puerta_Tras_Panel_Ratio_PT" value="" onblur="validarCampoDecimal(this)"/>
                         </div>
                         <div class="pure-control-group">
                             <label for="Zocalo_Ratio_PT" style="color:#005993;text-align:left;">Zocalo</label>
-                            <input type="text" id="Zocalo_Ratio_PT" style="min-width:343px;" value="" onblur="validarCampoDecimal(this)"/>
+                            <input type="text" id="Zocalo_Ratio_PT" value="" onblur="validarCampoDecimal(this)"/>
                         </div>  
                     </fieldset>
                 </div>                 
@@ -212,8 +239,8 @@
     <br style="display: block;content:'';margin-top:5;">    
    </body>
    <script>
-    document.getElementById('menu-item-params').classList.add('pure-menu-selected');
-    document.getElementById('menu-item-params-lateral').classList.add('pure-menu-selected');
+    document.getElementById('navbarParams')?.classList.add('active');
+    document.getElementById('btnLatRatio')?.classList.add('active', 'fw-bold');
 
     document.getElementById("btnConsulta").addEventListener("click", function(event) {
         event.preventDefault(); 
