@@ -249,38 +249,50 @@
         }
 
         // Ejecutamos tu código de html2canvas y jsPDF
-        html2canvas(tempDiv, { scale: 2 }).then(async canvas => {
-            const imgData = canvas.toDataURL('image/png');
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4'); // formato A4
-            
-            try {
-                const imgLogo = await loadImageAsDataURL('./img/Pos_color_RGB.jpg');
-                doc.addImage(imgLogo, 'PNG', 10, 5, 20, 20);
-            } catch (error) {
-                console.error('Error cargando logo:', error);
-            }                
+            html2canvas(tempDiv).then( async canvas => {
 
-            // Calculamos el ancho para que la tabla no se salga de la hoja A4
-            const imgProps = doc.getImageProperties(imgData);
-            const pdfWidth = doc.internal.pageSize.getWidth() - 20; // 10mm de margen a cada lado
-            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // 1. Agregar el Logo (Fijo arriba)
+                try {
+                    const imgLogo = await loadImageAsDataURL('./img/Pos_color_RGB.jpg');
+                    doc.addImage(imgLogo, 'PNG', 10, 5, 20, 20);
+                } catch (error) {
+                    console.error('Error cargando logo:', error);
+                }                
 
-            // Insertamos la captura de la tabla
-            doc.addImage(imgData, 'PNG', 10, 27, pdfWidth, pdfHeight);
-            
-            try {
-                const imgFirma = await loadImageAsDataURL('./img/firma.png');
-                doc.addImage(imgFirma, 'PNG', 135, 80, 40, 40);
-            } catch (error) {
-                console.error('Error cargando firma:', error);
-            }                
-            
-            doc.save(cDiaHora + '_presupuesto.pdf');
-            
-            // Limpiamos el DOM eliminando el div temporal
-            document.body.removeChild(tempDiv);
-        });
+                // --- INICIO DE LA LÓGICA DINÁMICA ---
+                
+                // Definimos el ancho útil de la hoja (Un A4 mide 210mm de ancho. 190 deja márgenes prolijos)
+                const pdfWidth = 190; 
+                
+                // Calculamos el ALTO proporcional del canvas para que no se deforme
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+                // Insertamos la imagen del contenido indicándole su ancho y alto exacto en milímetros
+                const inicioYContenido = 27;
+                doc.addImage(imgData, 'PNG', 10, inicioYContenido, pdfWidth, pdfHeight);
+                
+                // Calculamos dinámicamente dónde debe ir la firma:
+                // (Inicio en Y) + (El alto que ocupó el contenido) + (10mm de espacio/margen visual)
+                const posicionYFirma = inicioYContenido + pdfHeight + 10;
+                
+                // --- FIN DE LA LÓGICA DINÁMICA ---
+
+                // 2. Agregar la Firma (Dinámica)
+                try {
+                    const imgFirma = await loadImageAsDataURL('./img/firma.png');
+                    // Reemplazamos el '80' fijo por nuestra variable 'posicionYFirma'
+                    doc.addImage(imgFirma, 'PNG', 135, posicionYFirma, 40, 40);
+                } catch (error) {
+                    console.error('Error cargando firma:', error);
+                }                
+                
+                doc.save(cDiaHora + '_presupuesto.pdf');
+                document.body.removeChild(tempDiv);
+            });
     };
 </script>
 {% endraw %}

@@ -141,7 +141,20 @@
                             <label for="stacked-valorperito" style="color:#005993;text-align:left;">Valor</label>
                             <input type="text" id="stacked-valorperito" placeholder="" style="min-width:343px;"/>
                         </div>
-                </fieldset>
+                        <div class="pure-control-group">
+                            <label for="stacked-observacion" style="color:#005993;text-align:left;">Observación</label>
+                            <textarea 
+                                id="stacked-observacion" 
+                                placeholder="" 
+                                maxlength="1000" 
+                                rows="3" 
+                                style="min-width:343px; resize:vertical; display:block;"
+                                oninput="document.getElementById('contador-obs').innerText = (1000 - this.value.length) + ' caracteres libres'"></textarea>
+                            <small id="contador-obs" style="color:#666; display:block; text-align:right; max-width:343px; font-size:12px; margin-top:4px;">
+                                1000 caracteres libres
+                            </small>
+                        </div>
+                    </fieldset>
                 </form>
                 <table class="pure-table pure-table-striped">
                     <thead>
@@ -480,12 +493,15 @@
             const nombrePerito = inputPerito.value.trim(); 
             const inputSiniestro = document.getElementById("stacked-siniestro");
             const nroSiniestro   = inputSiniestro.value.trim(); 
+            const inputObservacion = document.getElementById("stacked-observacion");
+            const observacion = inputObservacion.value.trim(); 
+
             if (nombrePerito === "") {
                 alert("Debe ingresar el nombre del Perito antes de guardar.");
                 inputPerito.focus();
                 return;
             }
-            sendGuardarFormato(nombrePerito, cDiaHora, formatoTXT, nroSiniestro);
+            sendGuardarFormato(nombrePerito, cDiaHora, formatoTXT, nroSiniestro, observacion);
             
             document.getElementById("descargar").disabled = false;
             document.getElementById("consultar").disabled = true;
@@ -536,6 +552,7 @@
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
                 
+                // 1. Agregar el Logo (Fijo arriba)
                 try {
                     const imgLogo = await loadImageAsDataURL('./img/Pos_color_RGB.jpg');
                     doc.addImage(imgLogo, 'PNG', 10, 5, 20, 20);
@@ -543,14 +560,33 @@
                     console.error('Error cargando logo:', error);
                 }                
 
-                doc.addImage(imgData, 'PNG', 10, 27);
+                // --- INICIO DE LA LÓGICA DINÁMICA ---
                 
+                // Definimos el ancho útil de la hoja (Un A4 mide 210mm de ancho. 190 deja márgenes prolijos)
+                const pdfWidth = 190; 
+                
+                // Calculamos el ALTO proporcional del canvas para que no se deforme
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+                // Insertamos la imagen del contenido indicándole su ancho y alto exacto en milímetros
+                const inicioYContenido = 27;
+                doc.addImage(imgData, 'PNG', 10, inicioYContenido, pdfWidth, pdfHeight);
+                
+                // Calculamos dinámicamente dónde debe ir la firma:
+                // (Inicio en Y) + (El alto que ocupó el contenido) + (10mm de espacio/margen visual)
+                const posicionYFirma = inicioYContenido + pdfHeight + 10;
+                
+                // --- FIN DE LA LÓGICA DINÁMICA ---
+
+                // 2. Agregar la Firma (Dinámica)
                 try {
                     const imgFirma = await loadImageAsDataURL('./img/firma.png');
-                    doc.addImage(imgFirma, 'PNG', 135, 80, 40, 40);
+                    // Reemplazamos el '80' fijo por nuestra variable 'posicionYFirma'
+                    doc.addImage(imgFirma, 'PNG', 135, posicionYFirma, 40, 40);
                 } catch (error) {
                     console.error('Error cargando firma:', error);
                 }                
+                
                 doc.save(cDiaHora + '_presupuesto.pdf');
                 document.body.removeChild(tempDiv);
             });
@@ -647,6 +683,11 @@
             e.disabled = false;
             e.readOnly = false;
         var e = document.getElementById("stacked-valorperito");
+            e.value = ""; 
+            e.style.backgroundColor = "transparent";    
+            e.disabled = false;   
+            e.readOnly = false;
+        var e = document.getElementById("stacked-observacion");
             e.value = ""; 
             e.style.backgroundColor = "transparent";    
             e.disabled = false;   
@@ -1610,7 +1651,9 @@ function fnGetData() {
         
         const bfSiniestro = escapeHtml(divRecibido.querySelector('#stacked-siniestro')?.value || '');
         const bfPerito = escapeHtml(divRecibido.querySelector('#stacked-perito')?.value || '');
-        
+        const bfObservacion = escapeHtml(divRecibido.querySelector('#stacked-observacion')?.value || '');
+       
+
         const spanExterior  = document.getElementById('CostBrief');
         valorLimpio = '';
         if (spanExterior ) {
@@ -1661,12 +1704,66 @@ function fnGetData() {
                     <td style="text-align: center; padding: 2px 2px;"><input type="text" placeholder="${bfSiniestro}" style="text-align:center; font-weight: bold;"></td>
                     <td style="text-align: center; padding: 2px 2px;"><input type="text" placeholder="${bfPerito}" style="text-align:center; font-weight: bold;"></td>
                 </tr>
+                <tr>
+                    <th colspan="5" style="padding-top: 5px; text-align: left; border-top: 1px solid #ccc;">
+                        Observación
+                    </th>
+                </tr>
+                <tr>
+                    <td colspan="5" style="padding: 5px; text-align: left; vertical-align: top;">
+                        <!-- Reemplazamos el <input> por un <div>. Así el alto crecerá automáticamente -->
+                        <div style="font-weight: bold; white-space: pre-wrap; word-wrap: break-word; min-height: 40px;">${formatObservation(bfObservacion)}</div>
+                    </td>
+                </tr>
             </tfoot>
         </table>
         <p>${cElementos}</p>
         `;   
         return formato;
-        }    
+        }  
+        /**
+        * Formatea un texto cortándolo en un número máximo de caracteres por línea,
+        * respetando las palabras completas (corta en el espacio anterior).
+        * 
+        * @param {string} text - El texto original (ej. bfObservacion)
+        * @param {number} maxLength - El límite de caracteres por línea (por defecto 80)
+        * @returns {string} - El texto formateado con saltos de línea (\n)
+        */
+        function formatObservation(text, maxLength = 80) {
+            if (!text) return ""; // Si viene vacío o nulo, retornamos vacío
+
+            // 1. Separamos primero por si el usuario ya apretó "Enter" en el textarea
+            const lines = text.split('\n');
+            let formattedText = [];
+
+            lines.forEach(line => {
+                // Mientras la línea sea más larga que nuestro límite (80)
+                while (line.length > maxLength) {
+                    // Tomamos los primeros 80 caracteres
+                    let chunk = line.substring(0, maxLength);
+                    
+                    // Buscamos el último espacio en blanco dentro de esos 80 caracteres
+                    let lastSpaceIndex = chunk.lastIndexOf(' ');
+
+                    if (lastSpaceIndex !== -1) {
+                        // Si encontramos un espacio, cortamos la línea ahí
+                        formattedText.push(line.substring(0, lastSpaceIndex));
+                        // Recortamos la línea original para que empiece después de ese espacio
+                        line = line.substring(lastSpaceIndex + 1);
+                    } else {
+                        // Caso extremo: No hay espacios (es una palabra gigante de más de 80 caracteres).
+                        // En este caso no nos queda otra que forzar el corte en el caracter 80.
+                        formattedText.push(chunk);
+                        line = line.substring(maxLength);
+                    }
+                }
+                // Agregamos el remanente de la línea que ya tiene menos de 80 caracteres
+                formattedText.push(line);
+            });
+
+            // Unimos todo nuevamente con saltos de línea reales (\n)
+            return formattedText.join('\n');
+        }          
         
         function obtenerYFormatearFechaHoraActual() {
             const ahora = new Date();
@@ -1697,12 +1794,13 @@ function fnGetData() {
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
         }
-        function sendGuardarFormato(cPerito, cDiaHora, cFormatoTXT, CSiniestro) {
+        function sendGuardarFormato(cPerito, cDiaHora, cFormatoTXT, CSiniestro,cObservacion) {
             let formData = new FormData();
             formData.append('PERITO', cPerito);
             formData.append('FECHA_HORA', cDiaHora);
             formData.append('FORMATO_TXT', cFormatoTXT);
             formData.append('NROPRESU', CSiniestro);
+            formData.append(' OBSERVACION', cObservacion);
 
             let xhr = new XMLHttpRequest();
             let url = "/guardar_formato"; 
