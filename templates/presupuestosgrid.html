@@ -27,7 +27,7 @@
         </div>
     </nav>
     -->
-    <h4 style="color:#005993;text-align:center; font-size: 25px; margin-bottom: 20px;">Auditoría de Presupuestos</h4>
+    <h4 style="color:#005993;text-align:center; font-size: 25px; margin-bottom: 20px;">Imprimir Presupuestos</h4>
 
     <div class="filtros-container d-flex gap-3 align-items-end justify-content-center">
         <div>
@@ -48,7 +48,8 @@
         </div>
         <div>
             <button class="btn" style="background-color:#005993; color:white;" onclick="buscar(1)">🔍 Buscar</button>
-            <button class="btn btn-secondary" onclick="limpiarFiltros()">Limpiar</button>
+            <button class="btn" style="background-color:#005993; color:white;" onclick="limpiarFiltros()">🧹 Limpiar</button>
+            <button class="btn" style="background-color:#005993; color:white;" onclick="consultar()">↩️ Volver</button>
         </div>
     </div>
 
@@ -108,6 +109,7 @@
         buscar(1);
     };
 
+   
     function limpiarFiltros() {
         document.getElementById('filtro-presupuesto').value = "";
         document.getElementById('filtro-perito').value = "";
@@ -115,6 +117,11 @@
         document.getElementById('filtro-hasta').value = "";
         buscar(1);
     }
+
+    function consultar() {
+        window.location.href = "/consulta"; 
+    }  
+
 
     function cambiarPagina(direccion) {
         let nuevaPagina = paginaActual + direccion;

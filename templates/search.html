@@ -61,7 +61,18 @@
             /* El primer valor (0.4em) es la altura, el segundo (0.4em) es el ancho */
             padding: 0.4em 0.4em; 
             font-size: 0.9em;
-        }       
+        }  
+        .btn-group-actions {
+            display: flex;
+            flex-direction: column; /* Obliga a los .btn-row a ponerse uno debajo del otro */
+        }
+
+        /* Mantienes el código de los hijos que te pasé antes */
+        .btn-row {
+            display: flex;
+            gap: 10px;           
+            margin-bottom: 15px; 
+        }
     </style>
     <title>App Presupuesto</title>
 </head>
@@ -419,13 +430,18 @@
         <div class="pure-u-1 pure-u-md-7-24"></div> 
         <div class="pure-u-1 pure-u-md-7-24">
             <div class="pure-controls"><input type="hidden" id="HiddenData" value="">&nbsp;</div>
-            <div class="btn-group-actions">
-                <button class="pure-button pure-button-primary custom-btn" id="consultar" onclick="fnGetData()">Consultar</button>
-                <button class="pure-button pure-button-primary custom-btn" id="limpiar" onclick="fnClean()">Limpiar</button>
-                <button class="pure-button pure-button-primary custom-btn" id="confirmar">Confirmar</button>
-                <button class="pure-button pure-button-primary custom-btn" id="descargar">Imprimir</button>
-                <button class="pure-button pure-button-primary custom-btn" id="logout" onclick="sendLogout()">Logout</button>
-            </div>
+<div class="btn-group-actions">
+    <div class="btn-row">
+        <button class="pure-button pure-button-primary custom-btn" id="consultar" onclick="fnGetData()">Consultar</button>
+        <button class="pure-button pure-button-primary custom-btn" id="limpiar" onclick="fnClean()">Limpiar</button>
+        <button class="pure-button pure-button-primary custom-btn" id="confirmar">Confirmar</button>
+        <button class="pure-button pure-button-primary custom-btn" id="descargar">Imprimir</button>
+    </div>
+    <div class="btn-row">
+        <button class="pure-button pure-button-primary custom-btn" id="presupuestos"  onclick="presupuesto()">Presupuestos</button>
+        <button class="pure-button pure-button-primary custom-btn" id="logout" onclick="sendLogout()">Logout</button>
+    </div>
+</div>
         </div>
         <div class="pure-u-1 pure-u-md-7-24"></div>
     </div> 
@@ -1379,8 +1395,12 @@ function fnGetData() {
         xhr.send(formData);
     }
 
+    function presupuesto() {
+        window.location.href = "/historial_presupuestos"; 
+    }  
+
     function sendLogout() {
-    window.location.href = "/logout"; 
+        window.location.href = "/logout"; 
     }  
 
     function fnGetClase(){
