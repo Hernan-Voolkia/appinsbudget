@@ -1976,7 +1976,9 @@ async def guardar_formato(
         return "Error al guardar"
 #########################################################
 @app.get("/historial_presupuestos", response_class=HTMLResponse)
-async def view_presupuestos_grid(request: Request, admin: str = Depends(verify_admin_page)):
+async def view_presupuestos_grid(request: Request, 
+                                 #admin: str = Depends(verify_admin_page)
+                                 user: str = Depends(verify_logged_in),):
     try:
         context = {
             "request": request,
@@ -1996,7 +1998,8 @@ async def get_presupuestos_data(
     fecha_desde: str = Form(""),
     fecha_hasta: str = Form(""),
     page: int = Form(1),
-    admin: str = Depends(check_admin_access),
+    #admin: str = Depends(check_admin_access),
+    user: str = Depends(verify_logged_in),
 ):
     limit = 10
     offset = (page - 1) * limit
@@ -2075,7 +2078,7 @@ async def api_logpresupuestos(
     fecha_desde: str = Form(""),
     fecha_hasta: str = Form(""),
     page: int = Form(1),
-    admin: str = Depends(check_admin_access)
+    #admin: str = Depends(check_admin_access)
 ):
     limit = 10
     offset = (page - 1) * limit
